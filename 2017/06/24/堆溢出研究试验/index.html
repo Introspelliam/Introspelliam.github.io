@@ -81,7 +81,7 @@
 <link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="调试,heap," />
+  <meta name="keywords" content="heap,调试," />
 
 
 
@@ -100,7 +100,7 @@
 
 
 <meta name="description" content="1. 环境准备针对堆进行调试，我整整花了3天时间，中间多次想不再进行调试！开始觉得还没怎么调试就结束，这不太好...中间觉得离最终能够调试已经很近了，加油...最后觉得已经到了这一步了，放弃就怪可惜的哎！人就是这样矛盾的生物  话归正传，我们来看看调试所需要的环境    软件 备注     Windows 2000虚拟机 无论你用的VMware，亦或是Virtualbox，请确保windows 2">
-<meta name="keywords" content="调试,heap">
+<meta name="keywords" content="heap,调试">
 <meta property="og:type" content="article">
 <meta property="og:title" content="堆溢出研究试验">
 <meta property="og:url" content="http://yoursite.com/2017/06/24/堆溢出研究试验/index.html">
@@ -734,9 +734,9 @@ void main()
       
         <div class="post-tags">
           
-            <a href="/tags/调试/" rel="tag"># 调试</a>
-          
             <a href="/tags/heap/" rel="tag"># heap</a>
+          
+            <a href="/tags/调试/" rel="tag"># 调试</a>
           
         </div>
       
@@ -801,6 +801,8 @@ void main()
           
   <div class="comments" id="comments">
     
+      <div id="gitalk-container"></div>
+    
   </div>
 
 
@@ -852,7 +854,7 @@ void main()
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">129</span>
+                <span class="site-state-item-count">132</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -863,7 +865,7 @@ void main()
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-count">16</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -874,7 +876,7 @@ void main()
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">54</span>
+                <span class="site-state-item-count">55</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -1120,6 +1122,23 @@ void main()
 
 
 
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '41857e5205be9fe36c48',
+          clientSecret: 'c927ea37a432eff67cdb1081658112c7409ca7ff',
+          repo: 'Introspelliam.github.io',
+          owner: 'Introspelliam',
+          admin: ['Introspelliam'],
+          id: location.pathname,
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script>
 
 
 

@@ -333,6 +333,484 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/11/15/渗透测试经验之谈/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="上善若水">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/11/15/渗透测试经验之谈/" itemprop="url">渗透测试经验之谈</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-15T20:44:31+08:00">
+                2017-11-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web/" itemprop="url" rel="index">
+                    <span itemprop="name">web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p><strong>1,分析目标网站内容及功能 </strong></p>
+<p><strong>(1)  首先确定网站采用何种语言编写.或者是否有混用的情况.此处可以通过查看网站源文件,观察网站链接,捕获提交请求等方式获取. </strong></p>
+<p><strong>(2)  爬行网站目录,使用工具对网站目录进行爬行,可以辅助上一步让结果更加精准.将爬行结果存档,如果可以,此处应分析出网站是否使用通用程序,如果是,记录下来.进行下一步. </strong></p>
+<p><strong>(3)  根据上一步的爬行结果,对网站根目录或者关键目录进行暴力目录探测,如果网站为通用程序,判读是否有过二次开发,如非通用程序,在探测到的目录中寻找关键目录及文件. </strong></p>
+<p><strong>此步骤详细测试方法: </strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">1.输入并访问一些不可能存在的文件或目录名,再输入并访问一些通过目录爬行已知存在的目录及文件名,从而得知服务器如何处理无效资源. </div><div class="line">2.使用网站爬行到的结果作为此步骤暴力目录探测的依据,扫描关键目录或全部. </div><div class="line">3.确定服务器如何处理文件无法找到的回应,并使用关键字技术来处理这些回应.从而判断有效资源及无效资源. </div><div class="line">4.收集此步骤暴力扫描得到的结果,并手工检测探测到目录的有效性. </div><div class="line">5.重复以上步骤,得到更多更关键的目录及文件.</div></pre></td></tr></table></figure>
+<hr>
+<p><strong>(4)  通过上面步骤,得到一个完整的网站目录结构,以及枚举到的所有目录名称,文件名称及文件扩展名.了解网站开发人员的命名思路,确定其命名规则,推测出更多的目录及文件名. </strong></p>
+<p><strong>此步骤详细测试方法: </strong></p>
+<p>1.检查整个列表中的文件命名规则,判读其命名依据,如发现几个部分内容相同的文件名,addnews.php,viewnews.php,那么我们就可以尝试是否存在editnews.php,delnews.php,通常只要查看几个文件名,就可以推测出网站开发人员的命名习惯,根据其个人风格,开发者可能采用各种命名方法,如冗长式(addnewuser.php),简洁式(adduser.php),缩写式(addusr.php),或者更加模糊的命名方式(addu.php).了解开发者使用的命名习惯有助于推测出尚未确定内容的准确名称. </p>
+<p>2.有些不同内容的命名方案使用数字和日期作为标识符,通过他们可以轻易推测出隐藏的内容.静态页面经常采用这种命名方式.</p>
+<blockquote>
+<p> 例如PKAV.NET 的团队博客中,文章里所展示的图片的文件名没有被重新定义,采用了日期加数字递增的命名方案,如2012年12月12号发布的文章中的图片分别为1.jpg,2.jpg,3.jpg.那么这些图片的路径就是/2012-12-12/1.jpg, /2012-12-12/2.jpg, /2012-12-12/3.jpg  , 此时我们在博客上发布了一篇内容加密的文章,只有团队成员才知道密码,但是黑客们根据博客以往发布文章的命名规则推测出了这些图片的准确地址,从而通过图片内容泄漏了文章的大致概念. </p>
+</blockquote>
+<p>3.检查所有客户端代码,如HTML及JS代码,寻找任何隐藏了服务器端的线索,以及隐藏的表单元素等.认证检查注释内容,往往能带给我们惊喜,如部分通用程序会在网站首页放置一个通向网站管理后台的链接,但网站管理人员不希望这个链接被正常访问者所得知,于是将内容注释,我们可以通过查看HTML代码得知此具体地址,还有大多数的管理后台中所调用的JS 中常常会存储着后台所有功能模块的链接地址,但在判断了当前用户权限后将其隐藏起来,我们也可以通过直接查看JS代码的方式得知具体的内容,还有一些开发者会在注释内容中记录一些敏感信息,我多次从注释信息中得到数据库的名称,甚至可以得到数据库的具体连接信息,SQL 查询语句等. </p>
+<p>4.把我们通过推测枚举出来的内容放在其他地方进行尝试。</p>
+<blockquote>
+<p> 如文件a.php 在/111/这个目录下存在,那么我们可以尝试在/222/这个目录下尝试是否存在相同文件,把所有枚举出来的文件名使用一些常规后缀来尝试访问,如index.php 这个文件已知存在,我们可以使用txt,bak,src,inc,tmp 等后缀进行尝试,如尝试index.txt,index.bak 或者添加在原有后缀基础上,index.php.bak 等.这样可以帮助我们获取这些文件的未编译版本,开发版本或者备份文件,还可以通过网站使用的语言来推测,如java 使用的.cs 后缀等. </p>
+</blockquote>
+<p>5.搜索开发者使用的开发工具或者文本编辑器创建的临时文件。如SVN的.svn/entries,又或者Ultraedit这类文本编辑器的自动备份功能创建的.bak文件,被大量使用的.tmp后缀,以及index.php~1 这样的遗留文件,这些都是可能会发现重要线索的细节,测试中一定不要遗漏这些步骤. </p>
+<p>6.将上述的步骤自动化,提取所有存在的文件名以及目录,后缀的词干信息,在所有目录下进行自动化批量探测. </p>
+<p>7.如果通过以上步骤已经确定一种统一的命名方案,那么就可以使用此命名规则在整个站点下进行测试. </p>
+<p>8.不断重复以上步骤,获取更多的关键信息,根据时间及个人想象力尽情发挥! </p>
+<p><strong>(5)  利用公共信息,如搜索引擎,站点快照信息,以及其网站所使用的程序开发商公布的一些使用文档等信息近一步获取目标站点更多信息. </strong></p>
+<p>1.使用几种不同的搜索引擎和网站快照来获取目标站点的索引和历史内容记录.<br>2.使用搞基搜索技巧如: </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">site:www.hao123.com  (返回此目标站点被搜索引擎抓取收录的所有内容) </div><div class="line">site:www.hao123.com  关键词  (返回此目标站点被搜索引擎抓取收录的包含此关键词的所有页面.此处我们可以将关键词设定为,网站后台,管理后台,密码修改,密码找回等.) </div><div class="line">site:www.hao123.com inurl:admin.php  (返回目标站点的地址中包含admin.php的所有页面,可以使用admin.php,manage.php或者其他关键词来寻找关键功能页面) </div><div class="line">link:www.hao123.com  (返回所有包含目标站点链接的页面,其中包括其开发人员的个人博客,开发日志,或者开放这个站点的第三方公司,合作伙伴等) </div><div class="line">related:www.hao123.com  (返回所有与目标站点”相似”的页面,可能会包含一些通用程序的信息等.)</div></pre></td></tr></table></figure>
+<p>3.在搜索时不要只使用网页的搜索功能,可以尝试如图片,新闻等功能来定位具体信息.<br>4.从搜索引擎的快照中寻找一些关键信息,如程序报错信息可以会泄漏网站具体路径,或者一些快照中会保存一些测试用的测试信息,比如说某个网站在开发了后台功能模块的时候,还没给所有页面增加权限鉴别,此时被搜索引擎抓取了快照,即使后来网站增加了权限鉴别,但搜索引擎的快照中仍会保留这些信息.<br>5通过搜索引擎获取目标站点的子域名,得到更多的功能,如有些网站经常使用admin 这个子域名作为其管理后台,如admin.hao123.com等. </p>
+<p><strong>(6)  收集网站开发者信息,如网站的开发人员,管理维护人员等在互联网上的一些信息. </strong></p>
+<p>1.列出网站中得到的所有开发及维护人员的姓名和邮件地址及其他联系方式,其中包含从网站联系功能中获取到的,从HTML或JS中的注释信息中得到的,已经内容页面上获取到的。</p>
+<p>2.使用上面介绍的一些高级搜索技巧,查找这些人在互联网上发布的与目标站点有关的一切信息,分析并发现有用的信息,如我曾经在用这个方法获取某国内大型网站的开发人员的信息时,竟发现他把他开发过的所有功能页面的源代码都放在一个公开的网站中,可以随意下载,包含了这个网站的数据库链接信息等关键内容,从而导致我轻松获取到这个大型网站的权限。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/11/15/渗透测试综述/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="上善若水">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/11/15/渗透测试综述/" itemprop="url">渗透测试综述</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-15T13:52:34+08:00">
+                2017-11-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web/" itemprop="url" rel="index">
+                    <span itemprop="name">web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>零、前言</p>
+<p>渗透测试在未得到被测试方授权之前依据某些地区法律规定是违法行为。 这里我们提供的所有渗透测试方法均为（假设为）合法的评估服务，也就是通常所说的道德黑客行为（Ethical hacking），因此我们这里的所有读者应当都是Ethical Hackers，如果您还不是，那么我希望您到过这里后会成为他们中的一员 ；）<br>这里，我还想对大家说一些话：渗透测试重在实践，您需要一颗永不言败的心和一个有着活跃思维的大脑。不是说您将这一份文档COPY到您网站上或者保存到本地电脑您就会了，即使您将它打印出来沾点辣椒酱吃了也不行，您一定要根据文档一步一步练习才行。而且测试重在用脑，千万别拿上一两个本文中提到的工具一阵乱搞，我敢保证：互联网的安全不为因为这样而更安全。祝您好运。。。</p>
+<p>一、简介</p>
+<ul>
+<li>什么叫渗透测试？<br>渗透测试最简单直接的解释就是：完全站在攻击者角度对目标系统进行的安全性测试过程。</li>
+<li>进行渗透测试的目的？<br>了解当前系统的安全性、了解攻击者可能利用的途径。它能够让管理人员非常直观的了解当前系统所面临的问题。为什么说叫直观呢？就像Mitnick书里面提到的那样，安全管理（在这里我们改一下，改成安全评估工作）需要做到面面俱到才算成功，而一位黑客（渗透测试）只要能通过一点进入系统进行破坏，他就算是很成功的了。</li>
+<li>渗透测试是否等同于风险评估？<br>不是，你可以暂时理解成渗透测试属于风险评估的一部分。事实上，风险评估远比渗透测试复杂的多，它除渗透测试外还要加上资产识别，风险分析，除此之外，也还包括了人工审查以及后期的优化部分（可选）。</li>
+<li>已经进行了安全审查，还需要渗透测试吗？<br>如果我对您说：嘿，中国的现有太空理论技术通过计算机演算已经能够证明中国完全有能力实现宇航员太空漫步了，没必要再发射神8了。您能接受吗？</li>
+<li>渗透测试是否就是黑盒测试？<br>否，很多技术人员对这个问题都存在这个错误的理解。渗透测试不只是要模拟外部黑客的入侵，同时，防止内部人员的有意识（无意识）攻击也是很有必要的。这时，安全测试人员可以被告之包括代码片段来内的有关于系统的一些信息。这时，它就满足灰盒甚至白盒测试。</li>
+<li>渗透测试涉及哪些内容?<br>技术层面主要包括网络设备，主机，数据库，应用系统。另外可以考虑加入社会工程学（<a href="http://www.china-pub.com/computers/common/info.asp?id=33722" target="_blank" rel="external">入侵的艺术</a>/<a href="http://www.amazon.com/Art-Intrusion-Exploits-Intruders-Deceivers/dp/0764569597/sr=11-1/qid=1169101240/ref=sr_11_1/103-4901794-2076652" target="_blank" rel="external">THE ART OF INTRUSION</a>）。</li>
+<li>渗透测试有哪些不足之处？<br>主要是投入高，风险高。而且必须是专业的Ethical Hackers才能相信输出的最终结果。</li>
+<li>你说的那么好，为什么渗透测试工作在中国开展的不是很火热呢？<br>我只能说：会的，一定会的。渗透测试的关键在于没法证明你的测试结果就是完善的。用户不知道花了钱证明了系统有问题以后，自己的安全等级到了一个什么程序。但是很显然，用户是相信一个专业且经验丰富的安全团队的，这个在中国问题比较严重。在我接触了一些大型的安全公司进行的一些渗透测试过程来看，测试人员的水平是对不住开的那些价格的，而且从测试过程到结果报表上来看也是不负责的。我估计在三年以后，这种情况会有所改观，到时一方面安全人员的技术力量有很大程度的改观，另一方面各企业对渗透测试会有一个比较深刻的理解，也会将其做为一种IT审计的方式加入到开发流程中去。渗透测试的专业化、商业化会越来越成熟。</li>
+</ul>
+<p>二、制定实施方案</p>
+<p>实施方案应当由测试方与客户之间进行沟通协商。一开始测试方提供一份简单的问卷调查了解客户对测试的基本接收情况。内容包括但不限于如下：</p>
+<ul>
+<li>目标系统介绍、重点保护对象及特性。</li>
+<li>是否允许数据破坏？</li>
+<li>是否允许阻断业务正常运行？</li>
+<li>测试之前是否应当知会相关部门接口人？</li>
+<li>接入方式？外网和内网？</li>
+<li>测试是发现问题就算成功，还是尽可能的发现多的问题？</li>
+<li>渗透过程是否需要考虑社会工程？</li>
+<li>。。。</li>
+</ul>
+<p>在得到客户反馈后，由测试方书写实施方案初稿并提交给客户，由客户进行审核。在审核完成后，客户应当对测试方进行书面委托授权。这里，两部分文档分别应当包含如下内容：</p>
+<ul>
+<li>实施方案部分：<br>...</li>
+<li>书面委托授权部分：<br>...</li>
+</ul>
+<p>三、具体操作过程</p>
+<p><strong>1、信息收集过程</strong></p>
+<ul>
+<li><p>网络信息收集:</p>
+<p>​</p>
+<p>在这一部还不会直接对被测目标进行扫描，应当先从网络上搜索一些相关信息，包括Google Hacking， Whois查询， DNS等信息（如果考虑进行社会工程学的话，这里还可以相应从邮件列表/新闻组中获取目标系统中一些边缘信息如内部员工帐号组成，身份识别方式，邮件联系地址等）。</p>
+<p>​</p>
+<p>涉及的工具包括：<a href="http://www.google.com/" target="_blank" rel="external">Google</a>,<a href="http://www.nosec.org/web/index.php?q=demon" target="_blank" rel="external">Demon</a>,<a href="http://www.webhosting.info/" target="_blank" rel="external">webhosting.info</a>,<a href="http://worm.ccert.edu.cn/GoogleHacking/Apollo/" target="_blank" rel="external">Apollo</a>,<a href="http://snakeoillabs.com/" target="_blank" rel="external">Athena</a>,<a href="http://snakeoillabs.com/downloads/GHDB.xml" target="_blank" rel="external">GHDB.XML</a>,<a href="http://uptime.netcraft.com/up/graph" target="_blank" rel="external">netcraft</a>,<a href="http://www.seologs.com/ip-domains.html" target="_blank" rel="external">seologs</a>　除此之外，我想特别提醒一下使用Googlebot/2.1绕过一些文件的获取限制。</p>
+<p>Google hacking 中常用的一些语法描述<br>1.搜索指定站点关键字site。你可以搜索具体的站点如site:<a href="http://www.nosec.org。使用site:nosec.org可以搜索该域名下的所有子域名的页面。甚至可以使用site:org.cn来搜索中国政府部门的网站。" target="_blank" rel="external">www.nosec.org。使用site:nosec.org可以搜索该域名下的所有子域名的页面。甚至可以使用site:org.cn来搜索中国政府部门的网站。</a><br>2.搜索在URL网址中的关键字inurl。比如你想搜索带参数的站点，你可以尝试用inurl:asp?id=<br>3.搜索在网页标题中的关键字intitle。如果你想搜索一些登陆后台，你可以尝试使用intitle:&quot;admin login&quot;</p>
+</li>
+<li><p>目标系统信息收集:<br>通过上面一步，我们应当可以简单的描绘出目标系统的网络结构，如公司网络所在区域，子公司IP地址分布，VPN接入地址等。这里特别要注意一些比较偏门的HOST名称地址，如一些backup开头或者temp开关的域名很可能就是一台备份服务器，其安全性很可能做的不够。<br>从获取的地址列表中进行系统判断，了解其组织架构及操作系统使用情况。最常用的方法的是目标所有IP网段扫描。</p>
+</li>
+<li><p>端口/服务信息收集:</p>
+<p>​</p>
+<p>这一部分已经可以开始直接的扫描操作，涉及的工具包括：</p>
+<p>nmap</p>
+<p>,</p>
+<p>thc-amap</p>
+<p>​</p>
+<p>1.我最常使用的参数<br>nmap -sS -p1-10000 -n -P0 -oX filename.xml --open -T5 <ip address=""></ip></p>
+</li>
+<li><p>应用信息收集：<a href="http://net-square.com/httprint/" target="_blank" rel="external">httprint</a>，SIPSCAN，smap</p>
+</li>
+<li><p>这里有必要将SNMP拿出来单独说一下，因为目前许多运营商、大型企业内部网络的维护台通过SNMP进行数据传输，大部分情况是使用了默认口令的，撑死改了private口令。这样，攻击者可以通过它收集到很多有效信息。<a href="http://www.japplis.com/snmp-gui/index.html" target="_blank" rel="external">snmp-gui</a>，<a href="http://www.hilisoft.com/" target="_blank" rel="external">HiliSoft MIB Browser</a>，<a href="http://www.mibsearch.com/" target="_blank" rel="external">mibsearch</a>，<a href="http://sourceforge.net/project/showfiles.php?group_id=12694" target="_blank" rel="external">net-snmp</a>都是一些很好的资源。</p>
+</li>
+</ul>
+<p><strong>2、漏洞扫描</strong></p>
+<p>这一步主要针对具体系统目标进行。如通过第一步的信息收集，已经得到了目标系统的IP地址分布及对应的域名，并且我们已经通过一些分析过滤出少许的几个攻击目标，这时，我们就可以针对它们进行有针对性的漏洞扫描。这里有几个方面可以进行：</p>
+<p>针对系统层面的工具有：ISS, <a href="http://www.nessus.org/" target="_blank" rel="external">Nessus</a>, SSS, Retina, 天镜, 极光</p>
+<p>针对WEB应用层面的工具有：<a href="http://www.watchfire.com/products/appscan/default.aspx" target="_blank" rel="external">AppScan</a>, <a href="http://www.acunetix.com/vulnerability-scanner/" target="_blank" rel="external">Acunetix Web Vulnerability Scanner</a>, <a href="http://www.nosec.org/web/www.spidynamics.com/products/webinspect/" target="_blank" rel="external">WebInspect</a>, <a href="http://www.nstalker.com/" target="_blank" rel="external">Nstalker</a></p>
+<p>针对数据库的工具有：<a href="http://www.safety-lab.com/securityscanner/database_vulnerability_scanner" target="_blank" rel="external">ShadowDatabaseScanner</a>, <a href="http://www.ngssoftware.com/" target="_blank" rel="external">NGSSQuirreL</a></p>
+<p>针对VOIP方面的工具有：<a href="http://www.ee.oulu.fi/research/ouspg/protos/testing/c07/sip/index.html" target="_blank" rel="external">PROTOS c07 sip</a>(在测试中直接用这个工具轰等于找死)以及<a href="http://www.ee.oulu.fi/research/ouspg/protos/testing/c07/h2250v4/index.html" target="_blank" rel="external">c07 h225</a>, <a href="http://www.vopsecurity.org/html/tools.html" target="_blank" rel="external">Sivus</a>, <a href="http://sipsak.org/" target="_blank" rel="external">sipsak</a>等。</p>
+<p>事实上，每个渗透测试团队或多或少都会有自己的测试工具包，在漏洞扫描这一块针对具体应用的工具也比较个性化。</p>
+<p><strong>3、漏洞利用</strong></p>
+<p>有时候，通过服务/应用扫描后，我们可以跳过漏洞扫描部分，直接到漏洞利用。因为很多情况下我们根据目标服务/应用的版本就可以到一些安全网站上获取针对该目标系统的漏洞利用代码，如<a href="http://www.milw0rm.com/" target="_blank" rel="external">milw0rm</a>, <a href="http://www.securityfocus.net/" target="_blank" rel="external">securityfocus</a>,<a href="http://www.nosec.org/web/packetstormsecurity.nl" target="_blank" rel="external">packetstormsecurity</a>等网站，上面都对应有搜索模块。实在没有，我们也可以尝试在GOOGLE上搜索“应用名称 exploit”、“应用名称 vulnerability”等关键字。</p>
+<p>当然，大部分情况下你都可以不这么麻烦，网络中有一些工具可供我们使用，最著名的当属<a href="http://www.metasploit.org/" target="_blank" rel="external">metasploit</a>了，它是一个开源免费的漏洞利用攻击平台。其他的多说无益，您就看它从榜上无名到冲进<a href="http://sectools.org/" target="_blank" rel="external">前五（top 100)</a>这一点来说，也能大概了解到它的威力了。除此之外，如果您（您们公司）有足够的moeny用于购买商用软件的话，<a href="http://www.coresecurity.com/products/coreimpact/" target="_blank" rel="external">CORE IMPACT</a>是相当值得考虑的，虽然说价格很高，但是它却是被业界公认在渗透测试方面的泰山北斗，基本上测试全自动。如果您觉得还是接受不了，那么您可以去购买<a href="http://www.immunitysec.com/products-canvas.shtml" target="_blank" rel="external">CANVAS</a>，据说有不少0DAY，不过它跟<a href="http://www.metasploit.org/" target="_blank" rel="external">metasploit</a>一样，是需要手动进行测试的。最后还有一个需要提及一下的<a href="http://www.securityforest.com/wiki/index.php/Exploitation_Framework" target="_blank" rel="external">Exploitation_Framework</a>，它相当于一个漏洞利用代码管理工具，方便进行不同语言，不同平台的利用代码收集，把它也放在这里是因为它本身也维护了一个exploit库，大家参考着也能使用。</p>
+<p>上面提到的是针对系统进行的，在针对WEB方面，注入工具有NBSI, <a href="http://www.owasp.org/index.php/Category:OWASP_SQLiX_Project" target="_blank" rel="external">OWASP SQLiX</a>, <a href="http://www.sqlpowerinjector.com/download.htm" target="_blank" rel="external">SQL Power Injector</a>, <a href="http://www.ictsc.it/site/IT/projects/sqlDumper/sqlDumper.php" target="_blank" rel="external">sqlDumper</a>, <a href="http://sqlninja.sourceforge.net/" target="_blank" rel="external">sqlninja</a>, <a href="http://sqlmap.sourceforge.net/" target="_blank" rel="external">sqlmap</a>, <a href="http://www.reversing.org/node/view/11" target="_blank" rel="external">Sqlbftools</a>, <a href="http://www.priamos-project.com/" target="_blank" rel="external">priamos</a>, <a href="http://www.infobyte.com.ar/development.html" target="_blank" rel="external">ISR-sqlget</a>***等等。</p>
+<p>在针对数据库方面的工具有：</p>
+<p>数据库 工具列表</p>
+<p> Oracle（1521端口）: 目前主要存在以下方面的安全问题：</p>
+<p>1、TNS监听程序攻击（sid信息泄露,停止服务等）</p>
+<p>2、默认账号(</p>
+<p>default password list</p>
+<p>)</p>
+<p>3、SQL INJECTION（这个与传统的意思还不太一样）</p>
+<p>4、缓冲区溢出，现在比较少了。 </p>
+<p>thc-orakel, tnscmd ,oscanner,Getsids,TNSLSNR, lsnrcheck, OAT, Checkpwd, orabf</p>
+<p> MS Sql Server（1433、1434端口）   Mysql（3306端口）   DB2（523、50000、50001、50002、50003端口） </p>
+<p>db2utils Informix（1526、1528端口）  </p>
+<p>在针对Web服务器方面的工具有：</p>
+<p>WEB服务器 工具列表IIS IISPUTSCANNER</p>
+<p> Tomcat 想起/admin和/manager管理目录了吗？另外，目录列表也是Tomcat服务器中最常见的问题。比如5.*版本中的<a href="http://127.0.0.1/;index.jsp" target="_blank" rel="external">http://127.0.0.1/;index.jsp</a></p>
+<p><a href="http://www.example.com/foo/&quot;../manager/html" target="_blank" rel="external">http://www.example.com/foo/&quot;../manager/html</a> </p>
+<p><a href="http://www.example.com:8080/examples/servlets/servlet/CookieExample?cookiename=HAHA&amp;cookievalue=%5C%22FOO%3B+Expires%3DThu%2C+1+Jan+2009+00%3A00%3A01+UTC%3B+Path%3D%2F%3B" target="_blank" rel="external">http://www.example.com:8080/examples/servlets/servlet/CookieExample?cookiename=HAHA&amp;cookievalue=%5C%22FOO%3B+Expires%3DThu%2C+1+Jan+2009+00%3A00%3A01+UTC%3B+Path%3D%2F%3B</a></p>
+<p><a href="http://www.example.com:8080/servlets-examples/servlet/CookieExample?cookiename=BLOCKER&amp;cookievalue=%5C%22A%3D%27%3B+Expires%3DThu%2C+1+Jan+2009+00%3A00%3A01+UTC%3B+Path%3D%2Fservlets-examples%2Fservlet+%3B" target="_blank" rel="external">http://www.example.com:8080/servlets-examples/servlet/CookieExample?cookiename=BLOCKER&amp;cookievalue=%5C%22A%3D%27%3B+Expires%3DThu%2C+1+Jan+2009+00%3A00%3A01+UTC%3B+Path%3D%2Fservlets-examples%2Fservlet+%3B</a> JBOSS jboss的漏洞很少，老版本中8083端口有%符号的漏洞：</p>
+<p>GET %. HTTP/1.0可以获取物理路径信息，</p>
+<p>GET %server.policy HTTP/1.0可以获取安全策略配置文档。</p>
+<p>你也可以直接访问GET %org/xxx/lib.class来获取编译好的java程序，再使用一些反编译工具还原源代码。 Apache   Resin <a href="http://victim/C:%5C/" target="_blank" rel="external">http://victim/C:%5C/</a></p>
+<p><a href="http://victim/resin-doc/viewfile/?file=index.jsp" target="_blank" rel="external">http://victim/resin-doc/viewfile/?file=index.jsp</a></p>
+<p><a href="http://victim/resin-doc/viewfile/?contextpath=/otherwebapp&amp;servletpath=&amp;file=WEB-INF/web.xml" target="_blank" rel="external">http://victim/resin-doc/viewfile/?contextpath=/otherwebapp&amp;servletpath=&amp;file=WEB-INF/web.xml</a></p>
+<p><a href="http://victim/resin-doc/viewfile/?contextpath=/&amp;servletpath=&amp;file=WEB-INF/classes/com/webapp/app/target.class" target="_blank" rel="external">http://victim/resin-doc/viewfile/?contextpath=/&amp;servletpath=&amp;file=WEB-INF/classes/com/webapp/app/target.class</a></p>
+<p><a href="http://victim/[path]/[device].[extension]" target="_blank" rel="external">http://victim/[path]/[device].[extension]</a></p>
+<p><a href="http://victim/%20..&quot;web-inf" target="_blank" rel="external">http://victim/%20..&quot;web-inf</a></p>
+<p><a href="http://victim/%20" target="_blank" rel="external">http://victim/%20</a></p>
+<p><a href="http://victim/[path]/%20.xtp" target="_blank" rel="external">http://victim/[path]/%20.xtp</a> WebLogic  </p>
+<p>Web安全测试主要围绕几块进行：</p>
+<ul>
+<li>Information Gathering：也就是一般的信息泄漏，包括异常情况下的路径泄漏、文件归档查找等</li>
+<li>Business logic testing：业务逻辑处理攻击，很多情况下用于进行业务绕过或者欺骗等等</li>
+<li>Authentication Testing：有无验证码、有无次数限制等，总之就是看能不能暴力破解或者说容不容易通过认证，比较直接的就是“默认口令”或者弱口令了</li>
+<li>Session Management Testing：会话管理攻击在COOKIE携带认证信息时最有效</li>
+<li>Data Validation Testing：数据验证最好理解了，就是SQL Injection和Cross Site Script等等</li>
+</ul>
+<p>目前网上能够找到许多能够用于进行Web测试的工具，根据不同的功能分主要有：</p>
+<ol>
+<li>枚举（Enumeration）： DirBuster, http-dir-enum, wget</li>
+<li>基于代理测试类工具：paros, webscarab, Burp Suite</li>
+</ol>
+<p>针对WebService测试的部分有一些尚不是很成熟的工具，如：<a href="http://www.isecpartners.com/wsbang.html" target="_blank" rel="external">wsbang</a>，<a href="http://net-square.com/wschess/index.shtml" target="_blank" rel="external">wschess</a>，<a href="http://www.isecpartners.com/wsmap.html" target="_blank" rel="external">wsmap</a>，<a href="http://www.foundstone.com/us/resources/proddesc/wsdigger.htm" target="_blank" rel="external">wsdigger</a>，<a href="http://www.neurofuzz.com/modules/software/wsfuzzer.php" target="_blank" rel="external">wsfuzzer</a></p>
+<p>这一部分值得一提的是，很多渗透测试团队都有着自己的测试工具甚至是0DAY代码，最常见的是SQL注入工具，现网开发的注入工具（如NBSI等）目前都是针对中小企业或者是个人站点/数据库进行的，针对大型目标系统使用的一些相对比较偏门的数据库系统（如INFORMIX，DB2）等，基本上还不涉及或者说还不够深入。这时各渗透测试团队就开发了满足自身使用习惯的测试工具。</p>
+<p>在针对无线环境的攻击有：<a href="http://community.corest.com/~hochoa/wifizoo/index.html" target="_blank" rel="external">WifiZoo</a></p>
+<p><strong>4、权限提升</strong></p>
+<p>在前面的一些工作中，你或许已经得到了一些控制权限，但是对于进一步攻击来说却还是不够。例如：你可能很容易的能够获取Oracle数据库的访问权限，或者是得到了UNIX(AIX,HP-UX,SUNOS)的一个基本账号权限，但是当你想进行进一步的渗透测试的时候问题就来了。你发现你没有足够的权限打开一些密码存储文件、你没有办法安装一个SNIFFER、你甚至没有权限执行一些很基本的命令。这时候你自然而然的就会想到权限提升这个途径了。</p>
+<p>目前一些企业对于补丁管理是存在很大一部分问题的，他们可能压根就没有想过对一些服务器或者应用进行补丁更新，或者是延时更新。这时候就是渗透测试人员的好机会了。经验之谈：有一般权限的Oracle账号或者AIX账号基本上等于root，因为这就是现实生活。</p>
+<p><strong>5、密码破解</strong></p>
+<p>有时候，目标系统任何方面的配置都是无懈可击的，但是并不是说就完全没办法进入。最简单的说，一个缺少密码完全策略的论证系统就等于你安装了一个不能关闭的防盗门。很多情况下，一些安全技术研究人员对此不屑一顾，但是无数次的安全事故结果证明，往往破坏力最大的攻击起源于最小的弱点，例如弱口令、目录列表、SQL注入绕过论证等等。所以说，对于一些专门的安全技术研究人员来说，这一块意义不大，但是对于一个ethical hacker来说，这一步骤是有必要而且绝大部分情况下是必须的。；）</p>
+<p>目前比较好的网络密码暴力破解工具有：<a href="http://www.thc.org/thc-hydra/" target="_blank" rel="external">thc-hydra</a>，<a href="http://www.hoobie.net/brutus/" target="_blank" rel="external">brutus</a></p>
+<p>>hydra.exe -L users.txt -P passwords.txt -o test.txt -s 2121 <a href="http://www.heimian.com/" target="_blank" rel="external">www.heimian.com</a> ftp</p>
+<p>目前网络中有一种资源被利用的很广泛，那就是rainbow table技术，说白了也就是一个HASH对应表，有一些网站提供了该种服务，对外宣称存储空间大于多少G，像<a href="https://www.rainbowcrack.com/" target="_blank" rel="external">rainbowcrack</a>更是对外宣称其数据量已经大于1.3T。<br>针对此种方式对外提供在线服务的有：</p>
+<p>网址 描述rainbowcrack里面对应了多种加密算法的HASH。 </p>
+<p><a href="http://gdataonline.com/seekhash.php" target="_blank" rel="external">http://gdataonline.com/seekhash.php</a></p>
+<p><a href="http://www.milw0rm.com/cracker/info.php" target="_blank" rel="external">http://www.milw0rm.com/cracker/info.php</a></p>
+<p><a href="http://www.hashchecker.com/?_sls=search_hash" target="_blank" rel="external">http://www.hashchecker.com/?_sls=search_hash</a></p>
+<p><a href="http://bokehman.com/cracker/" target="_blank" rel="external">http://bokehman.com/cracker/</a></p>
+<p><a href="http://passcracking.ru/" target="_blank" rel="external">http://passcracking.ru/</a></p>
+<p><a href="http://www.md5.org.cn" target="_blank" rel="external">http://www.md5.org.cn</a></p>
+<p><a href="http://www.cmd5.com/" target="_blank" rel="external">http://www.cmd5.com/</a></p>
+<p> 数据量全球第一，如果本站无法破解，那么你只能去拜春哥...</p>
+<p>当然，有些单机破解软件还是必不可少的：<a href="http://ophcrack.sourceforge.net/" target="_blank" rel="external">Ophcrack</a>，<a href="http://www.antsight.com/zsl/rainbowcrack/" target="_blank" rel="external">rainbowcrack</a>（国人开发，赞一个），<a href="http://www.oxid.it/cain.html" target="_blank" rel="external">cain</a>，L0phtCrack（破解Windows密码），<a href="http://www.openwall.com/john" target="_blank" rel="external">John the Ripper</a>（破解UNIX/LINUX）密码，当然，还少不了一个<a href="http://www.xfocus.net/tools/200307/445.html" target="_blank" rel="external">FindPass</a>...</p>
+<p>针对网络设备的一些默认帐号，你可以查询<a href="http://www.routerpasswords.com/" target="_blank" rel="external">http://www.routerpasswords.com/</a>和<a href="http://www.phenoelit-us.org/dpl/dpl.html" target="_blank" rel="external">http://www.phenoelit-us.org/dpl/dpl.html</a></p>
+<p>在渗透测试过程中，一旦有机会接触一些OFFICE文档，且被加了密的话，那么，<a href="http://www.rixler.com/" target="_blank" rel="external">rixler</a>是您马上要去的地方，他们提供的OFFICE密码套件能在瞬间打开OFFICE文档（2007中我没有试过，大家有机会测试的话请给我发一份测试结果说明，谢谢）。看来微软有理由来个补丁什么的了。对于企业来说，您可以考虑使用<a href="http://www.unnoo.com/html/infoguard/" target="_blank" rel="external">铁卷</a>或者RMS了。</p>
+<p><strong>６、日志清除</strong></p>
+<p>It is not necessary actually.</p>
+<p><strong>7、进一步渗透</strong></p>
+<p>攻入了DMZ区一般情况下我们也不会获取多少用价值的信息。为了进一步巩固战果，我们需要进行进一步的内网渗透。到这一步就真的算是无所不用其及。最常用且最有效的方式就是Sniff抓包（可以加上ARP欺骗）。当然，最简单的你可以翻翻已入侵机器上的一些文件，很可能就包含了你需要的一些连接帐号。比如说你入侵了一台Web服务器，那么绝大部分情况下你可以在页面的代码或者某个配置文件中找到连接数据库的帐号。你也可以打开一些日志文件看一看。</p>
+<p>除此之外，你可以直接回到第二步漏洞扫描来进行。</p>
+<p>四、生成报告</p>
+<p>报告中应当包含：</p>
+<ol>
+<li>薄弱点列表清单（按照严重等级排序）</li>
+<li>薄弱点详细描述（利用方法）</li>
+<li>解决方法建议</li>
+<li>参与人员/测试时间/内网/外网</li>
+</ol>
+<p>五、测试过程中的风险及规避</p>
+<p>在测试过程中无可避免的可能会发生很多可预见和不可预见的风险，测试方必须提供规避措施以免对系统造成重大的影响。以下一些可供参考：</p>
+<p>\1. 不执行任何可能引起业务中断的攻击（包括资源耗竭型DoS，畸形报文攻击，数据破坏）。</p>
+<p>\2. 测试验证时间放在业务量最小的时间进行。</p>
+<p>\3. 测试执行前确保相关数据进行备份。</p>
+<p>\4. 所有测试在执行前和维护人员进行沟通确认。</p>
+<p>\5. 在测试过程中出现异常情况时立即停止测试并及时恢复系统。</p>
+<p>\6. 对原始业务系统进行一个完全的镜像环境，在镜像环境上进行渗透测试。</p>
+<p>参考资料:</p>
+<ol>
+<li><a href="http://www.unnoo.com/upimg/upload/research/20051204_UnnooPentestingServiceWhitepaper_wlj_v1.4.pdf" target="_blank" rel="external">大成天下渗透测试服务技术白皮书 v1.4</a></li>
+<li><a href="http://www.vulnerabilityassessment.co.uk/Penetration%20Test.html" target="_blank" rel="external">Penetration Testing Framework</a></li>
+<li><a href="http://www.vulnerabilityassessment.co.uk/report%20template.html" target="_blank" rel="external">Report Template</a></li>
+<li><a href="http://www.phenoelit.de/dpl/dpl.html" target="_blank" rel="external">http://www.phenoelit.de/dpl/dpl.html</a></li>
+<li><a href="http://snakeoillabs.com/downloads/GHDB.xml" target="_blank" rel="external">http://snakeoillabs.com/downloads/GHDB.xml</a></li>
+<li><a href="http://www.eccouncil.org/Course-Outline/Ethical%20Hacking%20and%20Countermeasures%20Course.htm" target="_blank" rel="external">http://www.eccouncil.org/Course-Outline/Ethical%20Hacking%20and%20Countermeasures%20Course.htm</a></li>
+<li><a href="http://www.owasp.org/index.php/OWASP_Testing_Project" target="_blank" rel="external">http://www.owasp.org/index.php/OWASP_Testing_Project</a></li>
+<li><a href="http://www.red-database-security.com/" target="_blank" rel="external">http://www.red-database-security.com</a></li>
+<li><a href="http://www.petefinnigan.com/" target="_blank" rel="external">http://www.petefinnigan.com</a></li>
+<li><a href="http://www.insomniasec.com/releases/whitepapers-presentations" target="_blank" rel="external">http://www.insomniasec.com/releases/whitepapers-presentations</a></li>
+<li><a href="http://www.isecom.org/osstmm/" target="_blank" rel="external">http://www.isecom.org/osstmm/</a></li>
+</ol>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/11/14/JavaScript反混淆与混淆/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2112,323 +2590,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/30/shell命令解析/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/30/shell命令解析/" itemprop="url">shell命令解析</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-30T16:14:22+08:00">
-                2017-09-30
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/安全技术/" itemprop="url" rel="index">
-                    <span itemprop="name">安全技术</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>此标题范围广，内容多，不易梳理清楚。本人也因为能力有限，不可能面面俱到，只能讲讲在ctf中可能会遇到的一些命令。</p>
-<h3 id="1-checksec"><a href="#1-checksec" class="headerlink" title="1. checksec"></a>1. checksec</h3><p>它是用来检查可执行文件属性，例如PIE, RELRO, PaX, Canaries, ASLR, Fortify Source等等属性。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">$ checksec tiny_easy</div><div class="line">[*] &apos;/tmp/tiny_easy&apos;</div><div class="line">    Arch:     i386-32-little</div><div class="line">    RELRO:    No RELRO</div><div class="line">    Stack:    No canary found</div><div class="line">    NX:       NX disabled</div><div class="line">    PIE:      No PIE (0x8048000)</div></pre></td></tr></table></figure>
-<h3 id="2-ldd"><a href="#2-ldd" class="headerlink" title="2. ldd"></a>2. ldd</h3><p>用来查看程序运行所需的共享库,常用来解决程序因缺少某个库文件而不能运行的一些问题。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$ ldd ascii_easy</div><div class="line">	linux-gate.so.1 =&gt;  (0xf7765000)</div><div class="line">	libc.so.6 =&gt; /lib32/libc.so.6 (0xf7591000)</div><div class="line">	/lib/ld-linux.so.2 (0x56565000)</div></pre></td></tr></table></figure>
-<h3 id="3-export"><a href="#3-export" class="headerlink" title="3. export"></a>3. export</h3><p>设置全局变量</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">$ export PATH=/tmp/test:$PATH</div><div class="line">$ echo $PATH      # 输出某个全局变量，没有的话就输出一行空串</div><div class="line">$ env     # 查看所有全局变量</div><div class="line">$ set     # 显示所有本地定义的Shell变量</div><div class="line">$ unset PATH     # 清除环境变量</div></pre></td></tr></table></figure>
-<p>export是设置的临时全局变量，在关闭shell之后就自动清除了；</p>
-<p>而如果修改文件/etc/bashrc和/etc/profile，那这个改变就会是永久的。</p>
-<h3 id="4-ldconfig"><a href="#4-ldconfig" class="headerlink" title="4. ldconfig"></a>4. ldconfig</h3><p>ldconfig是一个动态链接库管理命令。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ export LD_LIBRARY_PATH=/tmp/test</div><div class="line">$ ldconfig</div><div class="line">$ ldd ascii_easy</div></pre></td></tr></table></figure>
-<p>最后没有正确链接上，可能的原因是因为本机与那个动态链接库不兼容导致！</p>
-<h3 id="5-strace"><a href="#5-strace" class="headerlink" title="5. strace"></a>5. strace</h3><p>strace常用来跟踪进程执行时的系统调用和所接收的信号。 在Linux世界，进程不能直接访问硬件设备，当进程需要访问硬件设备(比如读取磁盘文件，接收网络数据等等)时，必须由用户态模式切换至内核态模式，通过系统调用访问硬件设备。strace可以跟踪到一个进程产生的系统调用,包括参数，返回值，执行消耗的时间。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">-c 统计每一系统调用的所执行的时间,次数和出错的次数等. </div><div class="line">-d 输出strace关于标准错误的调试信息. </div><div class="line">-f 跟踪由fork调用所产生的子进程. </div><div class="line">-ff 如果提供-o filename,则所有进程的跟踪结果输出到相应的filename.pid中,pid是各进程的进程号. </div><div class="line">-F 尝试跟踪vfork调用.在-f时,vfork不被跟踪. </div><div class="line">-h 输出简要的帮助信息. </div><div class="line">-i 输出系统调用的入口指针. </div><div class="line">-q 禁止输出关于脱离的消息. </div><div class="line">-r 打印出相对时间关于,,每一个系统调用. </div><div class="line">-t 在输出中的每一行前加上时间信息. </div><div class="line">-tt 在输出中的每一行前加上时间信息,微秒级. </div><div class="line">-ttt 微秒级输出,以秒了表示时间. </div><div class="line">-T 显示每一调用所耗的时间. </div><div class="line">-v 输出所有的系统调用.一些调用关于环境变量,状态,输入输出等调用由于使用频繁,默认不输出. </div><div class="line">-V 输出strace的版本信息. </div><div class="line">-x 以十六进制形式输出非标准字符串 </div><div class="line">-xx 所有字符串以十六进制形式输出. </div><div class="line">-a column  设置返回值的输出位置.默认 为40. </div><div class="line">-e expr 指定一个表达式,用来控制如何跟踪.格式如下: </div><div class="line">[qualifier=][!]value1[,value2]...  qualifier只能是 trace,abbrev,verbose,raw,signal,read,write其中之一.value是用来限定的符号或数字.默认的 qualifier是 trace.感叹号是否定符号.例如: </div><div class="line">-eopen等价于 -e trace=open,表示只跟踪open调用.而-etrace!=open表示跟踪除了open以外的其他调用.有两个特殊的符号 all 和 none. 注意有些shell使用!来执行历史记录里的命令,所以要使用\\. </div><div class="line">-e trace=set 只跟踪指定的系统 调用.例如:-e trace=open,close,rean,write表示只跟踪这四个系统调用.默认的为set=all. </div><div class="line">-e trace=file 只跟踪有关文件操作的系统调用. </div><div class="line">-e trace=process 只跟踪有关进程控制的系统调用. </div><div class="line">-e trace=network 跟踪与网络有关的所有系统调用. </div><div class="line">-e strace=signal 跟踪所有与系统信号有关的 系统调用 </div><div class="line">-e trace=ipc 跟踪所有与进程通讯有关的系统调用 </div><div class="line">-e abbrev=set 设定 strace输出的系统调用的结果集.-v 等与 abbrev=none.默认为abbrev=all. </div><div class="line">-e raw=set 将指 定的系统调用的参数以十六进制显示. </div><div class="line">-e signal=set 指定跟踪的系统信号.默认为all.如 signal=!SIGIO(或者signal=!io),表示不跟踪SIGIO信号. </div><div class="line">-e read=set 输出从指定文件中读出 的数据.例如: </div><div class="line">-e read=3,5 -e write=set 输出写入到指定文件中的数据. </div><div class="line">-o filename 将strace的输出写入文件filename </div><div class="line">-p pid 跟踪指定的进程pid. </div><div class="line">-s strsize 指定输出的字符串的最大长度.默认为32.文件名一直全部输出. </div><div class="line">-u username 以username 的UID和GID执行被跟踪的命令</div></pre></td></tr></table></figure>
-<p>strace -if elfname   一般而言会返回   execve(elf绝对路径， elf绝对路径，其他)</p>
-<p>但是，如果elf所在目录被加入PATH全局变量，返回的就是  execve(elf绝对路径， elfname，其他)</p>
-<p>也就是说，后一种直接用文件名就可执行！</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/30/全是可见字符的shellcode/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/30/全是可见字符的shellcode/" itemprop="url">全是可见字符的shellcode</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-30T12:19:10+08:00">
-                2017-09-30
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/安全技术/" itemprop="url" rel="index">
-                    <span itemprop="name">安全技术</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>最近做了pwnable.kr上的一道题，收获颇丰！其中就有对全是可见字符组成的shellcode的总结，也就是本文。</p>
-<h3 id="全是可见字符的shellcode"><a href="#全是可见字符的shellcode" class="headerlink" title="全是可见字符的shellcode"></a>全是可见字符的shellcode</h3><blockquote>
-<p>shellcode1: PYj0X40PPPPQPaJRX4Dj0YIIIII0DN0RX502A05r9sOPTY01A01RX500D05cFZBPTY01SX540D05ZFXbPTYA01A01SX50A005XnRYPSX5AA005nnCXPSX5AA005plbXPTYA01Tx</p>
-<p>shellcode2: PYIIIIIIIIIIQZVTX30VX4AP0A3HH0A00ABAABTAAQ2AB2BB0BBXP8ACJJIRJTKV8MIPR2FU86M3SLIZG2H6O43SX30586OCRCYBNLIM3QBKXDHS0C0EPVOE22IBNFO3CBH5P0WQCK9KQXMK0AA</p>
-</blockquote>
-<h3 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h3><p>首先写一个test.c文件:</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line"><span class="comment">//    char shellcode[] = "PYj0X40PPPPQPaJRX4Dj0YIIIII0DN0RX502A05r9sOPTY01A01RX500D05cFZBPTY01SX540D05ZFXbPTYA01A01SX50A005XnRYPSX5AA005nnCXPSX5AA005plbXPTYA01Tx";</span></div><div class="line">    <span class="keyword">char</span> shellcode[] = <span class="string">"PYIIIIIIIIIIQZVTX30VX4AP0A3HH0A00ABAABTAAQ2AB2BB0BBXP8ACJJIRJTKV8MIPR2FU86M3SLIZG2H6O43SX30586OCRCYBNLIM3QBKXDHS0C0EPVOE22IBNFO3CBH5P0WQCK9KQXMK0AA"</span>;</div><div class="line">    (*(<span class="keyword">void</span> (*)())shellcode)();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>关闭NX保护:</p>
-<blockquote>
-<p>gcc -z execstack -o test test.c</p>
-</blockquote>
-<p>运行之后获得shell</p>
-<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="http://inaz2.hatenablog.com/entry/2014/07/11/004655" target="_blank" rel="external">http://inaz2.hatenablog.com/entry/2014/07/11/004655</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -2478,7 +2644,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">129</span>
+                <span class="site-state-item-count">132</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2489,7 +2655,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-count">16</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -2500,7 +2666,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">54</span>
+                <span class="site-state-item-count">55</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -2725,6 +2891,8 @@
 
 
   
+
+
 
 
 

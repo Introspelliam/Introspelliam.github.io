@@ -333,6 +333,349 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/21/malloc源码分析——4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="上善若水">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/05/21/malloc源码分析——4/" itemprop="url">malloc源码分析——4</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-21T14:41:58+08:00">
+                2018-05-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/pwn/" itemprop="url" rel="index">
+                    <span itemprop="name">pwn</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="malloc源码分析—-int-malloc"><a href="#malloc源码分析—-int-malloc" class="headerlink" title="malloc源码分析—_int_malloc"></a>malloc源码分析—_int_malloc</h1><p>上一章分析了<code>_int_malloc</code>中的fastbin、smallbin和部分largebin的处理，本章继续往下看余下的代码。最后会对整个<code>_int_malloc</code>做一个总结。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div></pre></td><td class="code"><pre><div class="line">static void * _int_malloc(mstate av, size_t bytes) &#123;</div><div class="line"></div><div class="line">...</div><div class="line"></div><div class="line">    for (;;) &#123;</div><div class="line">        int iters = 0;</div><div class="line">        while ((victim = unsorted_chunks (av)-&gt;bk) != unsorted_chunks (av))&#123;</div><div class="line">            bck = victim-&gt;bk;</div><div class="line">            if (__builtin_expect(victim-&gt;size &lt;= 2 * SIZE_SZ, 0)</div><div class="line">                    || __builtin_expect(victim-&gt;size &gt; av-&gt;system_mem, 0))</div><div class="line">                malloc_printerr(check_action, &quot;malloc(): memory corruption&quot;,</div><div class="line">                        chunk2mem(victim), av);</div><div class="line">            size = chunksize(victim);</div><div class="line"></div><div class="line">            if (in_smallbin_range (nb) &amp;&amp;</div><div class="line">            bck == unsorted_chunks (av) &amp;&amp;</div><div class="line">            victim == av-&gt;last_remainder &amp;&amp;</div><div class="line">            (unsigned long) (size) &gt; (unsigned long) (nb + MINSIZE)) &#123;</div><div class="line">                remainder_size = size - nb;</div><div class="line">                remainder = chunk_at_offset(victim, nb);</div><div class="line">                unsorted_chunks (av)-&gt;bk = unsorted_chunks (av)-&gt;fd = remainder;</div><div class="line">                av-&gt;last_remainder = remainder;</div><div class="line">                remainder-&gt;bk = remainder-&gt;fd = unsorted_chunks (av);</div><div class="line">                if (!in_smallbin_range(remainder_size)) &#123;</div><div class="line">                    remainder-&gt;fd_nextsize = NULL;</div><div class="line">                    remainder-&gt;bk_nextsize = NULL;</div><div class="line">                &#125;</div><div class="line"></div><div class="line">                set_head(victim,</div><div class="line">                        nb | PREV_INUSE | (av != &amp;main_arena ? NON_MAIN_ARENA : 0));</div><div class="line">                set_head(remainder, remainder_size | PREV_INUSE);</div><div class="line">                set_foot(remainder, remainder_size);</div><div class="line"></div><div class="line">                check_malloced_chunk (av, victim, nb);</div><div class="line">                void *p = chunk2mem(victim);</div><div class="line">                alloc_perturb(p, bytes);</div><div class="line">                return p;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            unsorted_chunks (av)-&gt;bk = bck;</div><div class="line">            bck-&gt;fd = unsorted_chunks (av);</div><div class="line"></div><div class="line">            if (size == nb) &#123;</div><div class="line">                set_inuse_bit_at_offset(victim, size);</div><div class="line">                if (av != &amp;main_arena)</div><div class="line">                    victim-&gt;size |= NON_MAIN_ARENA;</div><div class="line">                check_malloced_chunk (av, victim, nb);</div><div class="line">                void *p = chunk2mem(victim);</div><div class="line">                alloc_perturb(p, bytes);</div><div class="line">                return p;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            ...</div><div class="line"></div><div class="line">        &#125;</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这部分代码的整体意思就是遍历unsortedbin，从中查找是否有符合用户要求大小的chunk并返回。<br>第一个while循环从尾到头依次取出unsortedbin中的所有chunk，将该chunk对应的前一个chunk保存在<code>bck</code>中，并将大小保存在<code>size</code>中。<br>如果用户需要分配的内存大小对应的chunk属于smallbin，unsortedbin中只有这一个chunk，并且该chunk属于last remainder chunk且其大小大于用户需要分配内存大小对应的chunk大小加上最小的chunk大小（保证可以拆开成两个chunk），就将该chunk拆开成两个chunk，分别为<code>victim</code>和<code>remainder</code>，进行相应的设置后，将用户需要的<code>victim</code>返回。<br>如果不能拆开，就从unsortedbin中取出该chunk（<code>victim</code>）。<br>再下来，如果刚刚从unsortedbin中取出的<code>victim</code>正好是用户需要的大小<code>nb</code>，就设置相应的标志位，直接返回该<code>victim</code>。</p>
+<p>继续往下看<code>_int_malloc</code>函数，为了使整个代码结构清晰，这里保留了外层的for循环和while循环。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div></pre></td><td class="code"><pre><div class="line">static void * _int_malloc(mstate av, size_t bytes) &#123;</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">    for (;;) &#123;</div><div class="line">        int iters = 0;</div><div class="line">        while ((victim = unsorted_chunks (av)-&gt;bk) != unsorted_chunks (av))&#123;</div><div class="line"></div><div class="line">            ...</div><div class="line"></div><div class="line">            if (in_smallbin_range(size)) &#123;</div><div class="line">                victim_index = smallbin_index(size);</div><div class="line">                bck = bin_at (av, victim_index);</div><div class="line">                fwd = bck-&gt;fd;</div><div class="line">            &#125; else &#123;</div><div class="line">                victim_index = largebin_index(size);</div><div class="line">                bck = bin_at (av, victim_index);</div><div class="line">                fwd = bck-&gt;fd;</div><div class="line"></div><div class="line">                if (fwd != bck) &#123;</div><div class="line">                    size |= PREV_INUSE;</div><div class="line">                    assert((bck-&gt;bk-&gt;size &amp; NON_MAIN_ARENA) == 0);</div><div class="line">                    if ((unsigned long) (size) &lt; (unsigned long) (bck-&gt;bk-&gt;size)) &#123;</div><div class="line">                        fwd = bck;</div><div class="line">                        bck = bck-&gt;bk;</div><div class="line"></div><div class="line">                        victim-&gt;fd_nextsize = fwd-&gt;fd;</div><div class="line">                        victim-&gt;bk_nextsize = fwd-&gt;fd-&gt;bk_nextsize;</div><div class="line">                        fwd-&gt;fd-&gt;bk_nextsize = victim-&gt;bk_nextsize-&gt;fd_nextsize =</div><div class="line">                                victim;</div><div class="line">                    &#125; else &#123;</div><div class="line">                        assert((fwd-&gt;size &amp; NON_MAIN_ARENA) == 0);</div><div class="line">                        while ((unsigned long) size &lt; fwd-&gt;size) &#123;</div><div class="line">                            fwd = fwd-&gt;fd_nextsize;</div><div class="line">                            assert((fwd-&gt;size &amp; NON_MAIN_ARENA) == 0);</div><div class="line">                        &#125;</div><div class="line"></div><div class="line">                        if ((unsigned long) size == (unsigned long) fwd-&gt;size)</div><div class="line">                            fwd = fwd-&gt;fd;</div><div class="line">                        else &#123;</div><div class="line">                            victim-&gt;fd_nextsize = fwd;</div><div class="line">                            victim-&gt;bk_nextsize = fwd-&gt;bk_nextsize;</div><div class="line">                            fwd-&gt;bk_nextsize = victim;</div><div class="line">                            victim-&gt;bk_nextsize-&gt;fd_nextsize = victim;</div><div class="line">                        &#125;</div><div class="line">                        bck = fwd-&gt;bk;</div><div class="line">                    &#125;</div><div class="line">                &#125; else</div><div class="line">                    victim-&gt;fd_nextsize = victim-&gt;bk_nextsize = victim;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            mark_bin(av, victim_index);</div><div class="line">            victim-&gt;bk = bck;</div><div class="line">            victim-&gt;fd = fwd;</div><div class="line">            fwd-&gt;bk = victim;</div><div class="line">            bck-&gt;fd = victim;</div><div class="line"></div><div class="line">    #define MAX_ITERS       10000</div><div class="line">            if (++iters &gt;= MAX_ITERS)</div><div class="line">                break;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这部分代码的整体意思是如果从unsortedbin中取出的chunk不符合用户要求的大小，就将该chunk合并到smallbin或者largebin中。<br>首先如果取出的chunk（victim）属于smallbin，就通过<code>smallbin_index</code>计算需要插入的位置<code>victim_index</code>，然后获取smallbin中对应位置的链表头指针保存在<code>bck</code>中，最后直接插入到smallbin中，由于smallbin中的chunk不使用<code>fd_nextsize</code>和<code>bk_nextsize</code>指针，插入操作只需要更新<code>bk</code>和<code>fd</code>指针，具体的插入操作在后面。这里需解释一下，<code>fd_nextsize</code>指针指向的是chunk双向链表中下一个大小不同的chunk，<code>bk_nextsize</code>指向的是chunk双向链表中前一个大小不同的chunk。<br>如果取出的chunk（victim）属于largebin，通过<code>largebin_index</code>计算需要插入的位置<code>victim_index</code>，然后获取largebin链表头指针保存在<code>bck</code>中。<br>如果<code>fwd</code>等于<code>bck</code>，即<code>bck-&gt;fd=bck</code>，则表示largebin中对应位置上的chunk双向链表为空，直接进入后面的else部分中，代码<code>victim-&gt;fd_nextsize = victim-&gt;bk_nextsize = victim</code>表示插入到largebin中的victim是唯一的chunk，因此其<code>fd_nextsize</code>和<code>bk_nextsize</code>指针都指向自己。<br>如果<code>fwd</code>不等于<code>bck</code>，对应的chunk双向链表存在空闲chunk，这时就要在该链表中找到合适的位置插入了。因为largebin中的chunk链表是按照chunk大小从大到小排序的，如果<code>victim</code>的<code>size</code>小于<code>bck-&gt;bk-&gt;size</code>即最后一个chunk的大小，则表示即将插入<code>victim</code>的大小在largebin的chunk双向链表中是最小的，因此要把<code>victim</code>插入到该链表的最后。在这种情况下，经过操作后的结果如下所示（因为我手边的画图软件有限，这里就用符号“|”隔出数组，然后从代码中摘除核心的<code>fd_nextsize</code>和<code>bk_nextsize</code>指针的修改操作，对照这两个指针的意思，很容易看懂），</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">| fwd（头指针） | fwd-&gt;fd | ... | bck | victim（插入到末尾） |</div><div class="line">fwd-&gt;fd-&gt;bk_nextsize = victim</div><div class="line">victim-&gt;bk_nextsize-&gt;fd_nextsize = victim</div><div class="line">victim-&gt;fd_nextsize = fwd-&gt;fd</div><div class="line">victim-&gt;bk_nextsize = fwd-&gt;fd-&gt;bk_nextsize</div></pre></td></tr></table></figure>
+<p>如果要插入的<code>victim</code>的<code>size</code>不是最小的，就要通过一个while循环遍历找到合适的位置，这里是从双向链表头<code>bck-&gt;fd</code>开始遍历，利用<code>fd_nextsize</code>加快遍历的速度，找到第一个<code>size&gt;=fwd-&gt;size</code>的chunk。如果<code>size=fwd-&gt;size</code>，就只是改变<code>victim</code>以及前后相应chunk的<code>bk</code>、<code>fd</code>指针就行。这里要特别注意，先做一个假设，假设chunk双向链表中A、B、C是三个不同大小的chunk集合，A集合有A0=A1=…，B集合有B0=B1=…，C集合有C0=C1=…，然后构造chunk链表，<br>| A0 | A1 | A2 | B0 | B1 | B2 | C0 | C1 | C2 |<br>特别注意，在ptmalloc中，只有A0、B0、C0可以配置<code>fd_nextsize</code>和<code>bk_nextsize</code>指针，其他位置是不用配置这两个指针的。因此相同大小的chunk只有最低地址的chunk会设置<code>fd_nextsize</code>和<code>bk_nextsize</code>指针。根据这个假设，很容易知道当两个size相等时，为什么要执行<code>fwd = fwd-&gt;fd</code>，因为要保证插入victim的位置是相同大小的chunk的右边，即高地址的地方。插入后的链表如下，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">...| bck | victim | fwd |...</div></pre></td></tr></table></figure>
+<p>链表中所有chunk的<code>fd_nextsize</code> 和<code>bk_nextsize</code>指针不变。<br>再往下，如果<code>size</code>不相等，则直接插入在<code>fwd</code>的左边，这样也能保证所有的<code>fd_nextsize</code>和<code>bk_nextsize</code>指针设置在相同chunk大小的最地地址处（最左边）。插入后的链表如下，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">...| bck | victim | fwd |...</div><div class="line">victim-&gt;fd_nextsize = fwd</div><div class="line">victim-&gt;bk_nextsize = fwd-&gt;bk_nextsize;</div><div class="line">fwd-&gt;bk_nextsize = victim</div><div class="line">fwd-&gt;bk_nextsize-&gt;fd_nextsize = victim</div></pre></td></tr></table></figure>
+<p>再往下，<code>mark_bin</code>用来标识<code>malloc_state</code>中的<code>binmap</code>，标识相应位置的chunk空闲。然后就更改<code>fd</code>、<code>bk</code>指针，插入到双向链表中，这个插入操作同时适用于smallbin和largebin，因此放在这里。最后如果在unsortedbin中处理了超过10000个chunk，就直接退出循环，这里保证不会因为unsortedbin中chunk太多，处理的时间太长了。<br>在这部分代码中，有个<code>size |= PREV_INUSE</code>是暂时让我比较费解的地方，经过分析后，暂时认为<code>size |= PREV_INUSE</code>是没必要的，虽然不会产生错误，也不会影响largebin中的排序，并且注释说这行代码能加速排序，但没看出能加速的地方，经过分析这里反而会多出一个无效的指针赋值，希望往后看代码时能解决这里的问题，或者希望有人能解答这行代码的具体作用。</p>
+<p>回到<code>_int_malloc</code>函数中，继续往下看，为了使整个代码结构清晰，这里继续保留了外层的for循环。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div></pre></td><td class="code"><pre><div class="line">static void * _int_malloc(mstate av, size_t bytes) &#123;</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">    for (;;) &#123;</div><div class="line"></div><div class="line">        ...</div><div class="line"></div><div class="line">        if (!in_smallbin_range(nb)) &#123;</div><div class="line">            bin = bin_at (av, idx);</div><div class="line"></div><div class="line">            if ((victim = first(bin)) != bin</div><div class="line">                    &amp;&amp; (unsigned long) (victim-&gt;size) &gt;= (unsigned long) (nb)) &#123;</div><div class="line">                victim = victim-&gt;bk_nextsize;</div><div class="line">                while (((unsigned long) (size = chunksize(victim))</div><div class="line">                        &lt; (unsigned long) (nb)))</div><div class="line">                    victim = victim-&gt;bk_nextsize;</div><div class="line"></div><div class="line">                if (victim != last(bin) &amp;&amp; victim-&gt;size == victim-&gt;fd-&gt;size)</div><div class="line">                    victim = victim-&gt;fd;</div><div class="line"></div><div class="line">                remainder_size = size - nb;</div><div class="line">                unlink(av, victim, bck, fwd);</div><div class="line"></div><div class="line">                if (remainder_size &lt; MINSIZE) &#123;</div><div class="line">                    set_inuse_bit_at_offset(victim, size);</div><div class="line">                    if (av != &amp;main_arena)</div><div class="line">                        victim-&gt;size |= NON_MAIN_ARENA;</div><div class="line">                &#125;</div><div class="line">                else &#123;</div><div class="line">                    remainder = chunk_at_offset(victim, nb);</div><div class="line">                    bck = unsorted_chunks (av);</div><div class="line">                    fwd = bck-&gt;fd;</div><div class="line">                    if (__glibc_unlikely(fwd-&gt;bk != bck)) &#123;</div><div class="line">                        errstr = &quot;malloc(): corrupted unsorted chunks&quot;;</div><div class="line">                        goto errout;</div><div class="line">                    &#125;</div><div class="line">                    remainder-&gt;bk = bck;</div><div class="line">                    remainder-&gt;fd = fwd;</div><div class="line">                    bck-&gt;fd = remainder;</div><div class="line">                    fwd-&gt;bk = remainder;</div><div class="line">                    if (!in_smallbin_range(remainder_size)) &#123;</div><div class="line">                        remainder-&gt;fd_nextsize = NULL;</div><div class="line">                        remainder-&gt;bk_nextsize = NULL;</div><div class="line">                    &#125;</div><div class="line">                    set_head(victim,</div><div class="line">                            nb | PREV_INUSE | (av != &amp;main_arena ? NON_MAIN_ARENA : 0));</div><div class="line">                    set_head(remainder, remainder_size | PREV_INUSE);</div><div class="line">                    set_foot(remainder, remainder_size);</div><div class="line">                &#125;</div><div class="line">                check_malloced_chunk (av, victim, nb);</div><div class="line">                void *p = chunk2mem(victim);</div><div class="line">                alloc_perturb(p, bytes);</div><div class="line">                return p;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        ...</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这部分代码的整体意思就是要尝试从largebin中取出对应的chunk了。<br>这里的<code>idx</code>是在前面（上一章分析的<code>_int_malloc</code>函数前面一部分中）根据宏<code>largebin_index</code>计算的。接下来就要根据<code>idx</code>获得largebin中的双向链表头指针<code>bin</code>，然后从<code>bin-&gt;bk</code>开始从尾到头（根据chunk大小从小到大）遍历整个双向链表，找到第一个大于用户需要分配的chunk大小<code>nb</code>的chunk指针<code>victim</code>。<br>找到<code>victim</code>后，需要将其拆开成两部分，第一部分是要返回给用户的chunk，第二部分分为两种情况，如果其大小小于<code>MINSIZE</code>，则不能构成一个最小chunk，这种情况下就将拆开前的整个<code>victim</code>返回给用户；如果大于<code>MINSIZE</code>，就将拆开后的第二部分<code>remainder</code>插入到unsortedbin中，然后把第一部分<code>victim</code>返回给用户。</p>
+<p>继续往下看<code>_int_malloc</code>函数，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div></pre></td><td class="code"><pre><div class="line">static void * _int_malloc(mstate av, size_t bytes) &#123;</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">    for (;;) &#123;</div><div class="line"></div><div class="line">        ...</div><div class="line"></div><div class="line">        ++idx;</div><div class="line">        bin = bin_at (av, idx);</div><div class="line">        block = idx2block(idx);</div><div class="line">        map = av-&gt;binmap[block];</div><div class="line">        bit = idx2bit(idx);</div><div class="line"></div><div class="line">        for (;;) &#123;</div><div class="line">            if (bit &gt; map || bit == 0) &#123;</div><div class="line">                do &#123;</div><div class="line">                    if (++block &gt;= BINMAPSIZE) /* out of bins */</div><div class="line">                        goto use_top;</div><div class="line">                &#125; while ((map = av-&gt;binmap[block]) == 0);</div><div class="line"></div><div class="line">                bin = bin_at (av, (block &lt;&lt; BINMAPSHIFT));</div><div class="line">                bit = 1;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            while ((bit &amp; map) == 0) &#123;</div><div class="line">                bin = next_bin(bin);</div><div class="line">                bit &lt;&lt;= 1;</div><div class="line">                assert(bit != 0);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            victim = last(bin);</div><div class="line">            if (victim == bin) &#123;</div><div class="line">                av-&gt;binmap[block] = map &amp;= ~bit;</div><div class="line">                bin = next_bin(bin);</div><div class="line">                bit &lt;&lt;= 1;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            else &#123;</div><div class="line">                size = chunksize(victim);</div><div class="line">                assert((unsigned long ) (size) &gt;= (unsigned long ) (nb));</div><div class="line">                remainder_size = size - nb;</div><div class="line">                unlink(av, victim, bck, fwd);</div><div class="line">                if (remainder_size &lt; MINSIZE) &#123;</div><div class="line">                    set_inuse_bit_at_offset(victim, size);</div><div class="line">                    if (av != &amp;main_arena)</div><div class="line">                        victim-&gt;size |= NON_MAIN_ARENA;</div><div class="line">                &#125;</div><div class="line">                else &#123;</div><div class="line">                    remainder = chunk_at_offset(victim, nb);</div><div class="line">                    bck = unsorted_chunks (av);</div><div class="line">                    fwd = bck-&gt;fd;</div><div class="line">                    if (__glibc_unlikely(fwd-&gt;bk != bck)) &#123;</div><div class="line">                        errstr = &quot;malloc(): corrupted unsorted chunks 2&quot;;</div><div class="line">                        goto errout;</div><div class="line">                    &#125;</div><div class="line">                    remainder-&gt;bk = bck;</div><div class="line">                    remainder-&gt;fd = fwd;</div><div class="line">                    bck-&gt;fd = remainder;</div><div class="line">                    fwd-&gt;bk = remainder;</div><div class="line"></div><div class="line">                    if (in_smallbin_range(nb))</div><div class="line">                        av-&gt;last_remainder = remainder;</div><div class="line">                    if (!in_smallbin_range(remainder_size)) &#123;</div><div class="line">                        remainder-&gt;fd_nextsize = NULL;</div><div class="line">                        remainder-&gt;bk_nextsize = NULL;</div><div class="line">                    &#125;</div><div class="line">                    set_head(victim,</div><div class="line">                            nb | PREV_INUSE | (av != &amp;main_arena ? NON_MAIN_ARENA : 0));</div><div class="line">                    set_head(remainder, remainder_size | PREV_INUSE);</div><div class="line">                    set_foot(remainder, remainder_size);</div><div class="line">                &#125;check_malloced_chunk (av, victim, nb);</div><div class="line">                void *p = chunk2mem(victim);</div><div class="line">                alloc_perturb(p, bytes);</div><div class="line">                return p;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        ...</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这一部分的整体意思是，前面在largebin中寻找特定大小的空闲chunk，如果没找到，这里就要遍历largebin中的其他更大的chunk双向链表，继续寻找。<br>开头的<code>++idx</code>就表示，这里要从largebin中下一个更大的chunk双向链表开始遍历。ptmalloc中用一个bit表示<code>malloc_state</code>的<code>bins</code>数组中对应的位置上是否有空闲chunk，bit为1表示有，为0则没有。ptmalloc通过4个block（一个block 4字节）一共128个bit管理<code>bins</code>数组。因此，代码中计算的block表示对应的<code>idx</code>属于哪一个block，<code>map</code>就表是block对应的bit组成的二进制数字。<br>接下来进入for循环，如果<code>bit &gt; map</code>，表示该<code>map</code>对应的整个<code>block</code>里都没有大于<code>bit</code>位置的空闲的chunk，因此就要找下一个<code>block</code>。因为后面的<code>block</code>只要不等于0，就肯定有空闲chunk，并且其大小大于<code>bit</code>位置对应的chunk，下面就根据<code>block</code>，取出<code>block</code>对应的第一个双向链表的头指针。这里也可以看出，设置<code>map</code>和<code>block</code>也是为了加快查找的速度。如果遍历完所有<code>block</code>都没有空闲chunk，这时只能从top chunk里分配chunk了，因此跳转到<code>use_top</code>。<br>如果有空闲chunk，接下来就通过一个while循环依次比较找出到底在哪个双向链表里存在空闲chunk，最后获得空闲chunk所在的双向链表的头指针<code>bin</code>和位置<code>bit</code>。<br>接下来，如果找到的双向链表又为空，则继续前面的遍历，找到空闲chunk所在的双向链表的头指针<code>bin</code>和位置<code>bit</code>。如果找到的双向链表不为空，就和上面一部分再largebin中找到空闲chunk的操作一样了，这里就不继续分析了。</p>
+<p>继续往下看<code>_int_malloc</code>，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">static void * _int_malloc(mstate av, size_t bytes) &#123;</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">    for (;;) &#123;</div><div class="line"></div><div class="line">        ...</div><div class="line"></div><div class="line">        use_top:</div><div class="line"></div><div class="line">        victim = av-&gt;top;</div><div class="line">        size = chunksize(victim);</div><div class="line"></div><div class="line">        if ((unsigned long) (size) &gt;= (unsigned long) (nb + MINSIZE )) &#123;</div><div class="line">            remainder_size = size - nb;</div><div class="line">            remainder = chunk_at_offset(victim, nb);</div><div class="line">            av-&gt;top = remainder;</div><div class="line">            set_head(victim,</div><div class="line">                    nb | PREV_INUSE | (av != &amp;main_arena ? NON_MAIN_ARENA : 0));</div><div class="line">            set_head(remainder, remainder_size | PREV_INUSE);</div><div class="line"></div><div class="line">            check_malloced_chunk (av, victim, nb);</div><div class="line">            void *p = chunk2mem(victim);</div><div class="line">            alloc_perturb(p, bytes);</div><div class="line">            return p;</div><div class="line">        &#125;</div><div class="line">        else if (have_fastchunks(av)) &#123;</div><div class="line">            malloc_consolidate(av);</div><div class="line">            if (in_smallbin_range(nb))</div><div class="line">                idx = smallbin_index(nb);</div><div class="line">            else</div><div class="line">                idx = largebin_index(nb);</div><div class="line">        &#125;</div><div class="line">        else &#123;</div><div class="line">            void *p = sysmalloc(nb, av);</div><div class="line">            if (p != NULL)</div><div class="line">                alloc_perturb(p, bytes);</div><div class="line">            return p;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里就是<code>_int_malloc</code>的最后一部分了，这部分代码的整体意思分为三部分，首先从top chunk中尝试分配内存；如果失败，就检查fastbin中是否有空闲内存了（其他线程此时可能将释放的chunk放入fastbin中了），如果不空闲，就合并fastbin中的空闲chunk并放入smallbin或者largebin中，然后会回到<code>_int_malloc</code>函数中最前面的for循环，重新开始查找空闲chunk；如果连fastbin中都没有空闲内存了，这时只能通过<code>sysmalloc</code>从系统分配内存了，该函数前面几章里已经分析过了一部分了，下一章会再次进入这个函数进行分析。这部分代码很简单，关键函数前面几章都碰到过了，这里就不详细分析了。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>下面简单总结一遍<code>_int_malloc</code>函数的整体思路。<br>第一步：如果进程没有关联的分配区，就通过<code>sysmalloc</code>从操作系统分配内存。<br>第二步：从fastbin查找对应大小的chunk并返回，如果失败进入第三步。<br>第三步：从smallbin查找对应大小的chunk并返回，或者将fastbin中的空闲chunk合并放入unsortedbin中，如果失败进入第四步。<br>第四步：遍历unsortedbin，从unsortedbin中查找对应大小的chunk并返回，根据大小将unsortedbin中的空闲chunk插入smallbin或者largebin中。进入第五步。<br>第五步：从largebin指定位置查找对应大小的chunk并返回，如果失败进入第六步。<br>第六步：从largebin中大于指定位置的双向链表中查找对应大小的chunk并返回，如果失败进入第七步。<br>第七步：从topchunk中分配对应大小的chunk并返回，topchunk中没有足够的空间，就查找fastbin中是否有空闲chunk，如果有，就合并fastbin中的chunk并加入到unsortedbin中，然后跳回第四步。如果fastbin中没有空闲chunk，就通过<code>sysmalloc</code>从操作系统分配内存。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/21/malloc源码分析——3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="上善若水">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/05/21/malloc源码分析——3/" itemprop="url">malloc源码分析——3</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-21T14:40:59+08:00">
+                2018-05-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/pwn/" itemprop="url" rel="index">
+                    <span itemprop="name">pwn</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="malloc源码分析—-int-malloc"><a href="#malloc源码分析—-int-malloc" class="headerlink" title="malloc源码分析—_int_malloc"></a>malloc源码分析—_int_malloc</h1><p>上一章分析了<code>_int_malloc</code>的前面一小部分，本章继续往下看，</p>
+<h1 id="int-malloc-—-fastbin"><a href="#int-malloc-—-fastbin" class="headerlink" title="_int_malloc — fastbin"></a>_int_malloc — fastbin</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">static void * _int_malloc(mstate av, size_t bytes) &#123;</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">    if ((unsigned long) (nb) &lt;= (unsigned long) (get_max_fast ())) &#123;</div><div class="line">        idx = fastbin_index(nb);</div><div class="line">        mfastbinptr *fb = &amp;fastbin(av, idx);</div><div class="line">        mchunkptr pp = *fb;</div><div class="line">        do &#123;</div><div class="line">            victim = pp;</div><div class="line">            if (victim == NULL)</div><div class="line">                break;</div><div class="line">        &#125; while ((pp = catomic_compare_and_exchange_val_acq(fb, victim-&gt;fd, victim))</div><div class="line">                != victim);</div><div class="line">        if (victim != 0) &#123;</div><div class="line">            if (__builtin_expect(fastbin_index (chunksize (victim)) != idx, 0)) &#123;</div><div class="line">                errstr = &quot;malloc(): memory corruption (fast)&quot;;</div><div class="line">                errout: malloc_printerr(check_action, errstr, chunk2mem(victim),</div><div class="line">                        av);</div><div class="line">                return NULL;</div><div class="line">            &#125;check_remalloced_chunk (av, victim, nb);</div><div class="line">            void *p = chunk2mem(victim);</div><div class="line">            alloc_perturb(p, bytes);</div><div class="line">            return p;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>get_max_fast</code>返回fastbin可以存储内存的最大值，它在ptmalloc的初始化函数<code>malloc_init_state</code>中定义，后面会分析这个函数。<br>如果需要分配的内存大小nb落在fastbin的范围内，首先调用<code>fastbin_index</code>获得chunk大小<code>nb</code>对应的fastbin索引。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">#define fastbin_index(sz) \</div><div class="line">  ((((unsigned int) (sz)) &gt;&gt; (SIZE_SZ == 8 ? 4 : 3)) - 2)</div></pre></td></tr></table></figure>
+<p>减2是根据fastbin存储的内存最小值计算的，本章假设<code>SIZE_SZ=4</code>，因此改写后<code>idx = nb/8-2</code>。<br>获得索引idx后，就通过fastbin取出空闲chunk链表指针，<code>mfastbinptr</code>其实就是<code>malloc_chunk</code>指针，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">#define fastbin(ar_ptr, idx) ((ar_ptr)-&gt;fastbinsY[idx])</div></pre></td></tr></table></figure>
+<p>下面的do、while循环又是一个CAS操作，其作用是从刚刚得到的空闲chunk链表指针中取出第一个空闲的chunk(victim)，并将链表头设置为该空闲chunk的下一个chunk(victim-&gt;fd)。这里注意，fastbin中使用的是单链表，而后面smallbin使用的是双链表。<br>获得空闲chunk后，需要转换为可以存储的内存指针，<code>chunk2mem</code>上一章分析过了，就是返回<code>malloc_chunk</code>结构中fd所在的位置，因为当一个chunk被使用时，<code>malloc_chunk</code>结构中<code>fd</code>、<code>bk</code>包括后面的变量都没有用了。最后调用<code>alloc_perturb</code>对用户使用的内存进行初始化，然后就返回该内存的指针了。<br>假设fastbin中没有找到空闲chunk，或者fastbin根本没有初始化，或者其他原因，就进入下一步，从smallbin中获取内存，因此继续往下看.</p>
+<h1 id="int-malloc-—-smallbin-amp-largebin"><a href="#int-malloc-—-smallbin-amp-largebin" class="headerlink" title="_int_malloc — smallbin &amp; largebin"></a>_int_malloc — smallbin &amp; largebin</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">static void * _int_malloc(mstate av, size_t bytes) &#123;</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">    if (in_smallbin_range(nb)) &#123;</div><div class="line">        idx = smallbin_index(nb);</div><div class="line">        bin = bin_at (av, idx);</div><div class="line"></div><div class="line">        if ((victim = last(bin)) != bin) &#123;</div><div class="line">            if (victim == 0)</div><div class="line">                malloc_consolidate(av);</div><div class="line">            else &#123;</div><div class="line">                bck = victim-&gt;bk;</div><div class="line">                if (__glibc_unlikely(bck-&gt;fd != victim)) &#123;</div><div class="line">                    errstr = &quot;malloc(): smallbin double linked list corrupted&quot;;</div><div class="line">                    goto errout;</div><div class="line">                &#125;</div><div class="line">                set_inuse_bit_at_offset(victim, nb);</div><div class="line">                bin-&gt;bk = bck;</div><div class="line">                bck-&gt;fd = bin;</div><div class="line"></div><div class="line">                if (av != &amp;main_arena)</div><div class="line">                    victim-&gt;size |= NON_MAIN_ARENA;</div><div class="line">                check_malloced_chunk (av, victim, nb);</div><div class="line">                void *p = chunk2mem(victim);</div><div class="line">                alloc_perturb(p, bytes);</div><div class="line">                return p;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;else &#123;</div><div class="line">        idx = largebin_index(nb);</div><div class="line">        if (have_fastchunks(av))</div><div class="line">            malloc_consolidate(av);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>首先</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">#define in_smallbin_range(sz)  \</div><div class="line">  ((unsigned long) (sz) &lt; (unsigned long) MIN_LARGE_SIZE)</div></pre></td></tr></table></figure>
+<p>基于本章假设，<code>MIN_LARGE_SIZE</code>经过换算后为512字节，因此低于512字节大小的内存块都归smallbin管理。<br>接下来通过<code>bin_at</code>获得smallbin空闲chunk链表指针，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">#define bin_at(m, i) \</div><div class="line">  (mbinptr) (((char *) &amp;((m)-&gt;bins[((i) - 1) * 2]))               \</div><div class="line">             - offsetof (struct malloc_chunk, fd))</div></pre></td></tr></table></figure>
+<p>这里乘2，并且减去fd相对于<code>malloc_chunk</code>中的位置是因为smallbin中存储的是fd和bk指针。<br><code>last</code>定义为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">#define last(b)      ((b)-&gt;bk)</div></pre></td></tr></table></figure>
+<p>该函数获得chunk的前一个chunk，由因为该chunk是smallbin的链表头，因此获得的是最后一个chunk，如果两者相等，表示对应的链表为空，什么都不做。<br>这里假设不相等，接下来有两种情况，第一种是<code>victim=0</code>，表示smallbin还没有初始化，这里需要特别说明一下这里。smallbin初始化为<code>malloc_chunk</code>指针数组，虽然定义为指针数组，但实际上存储的是fd和bk指针，如下所示<br>|fd|bk|fd|bk|…|fd|bk|<br>当smallbin还未初始化时，假设<code>idx=1</code>，根据<code>bin_at</code>取出的<code>bin</code>是一个虚拟的<code>malloc_chunk</code>指针，<code>bin-&gt;fd</code>，是第二个fd，因此<code>bin-&gt;bk</code>就是对应的bk，其值为0（bin-&gt;bk取出的不是地址，而是值）。因此当<code>victim</code>为0时，可以断定smallbin未初始化，此时调用<code>malloc_consolidate</code>进行初始化，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">static void malloc_consolidate(mstate av) &#123;</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">    if (get_max_fast () != 0) &#123;</div><div class="line"></div><div class="line">        ...</div><div class="line"></div><div class="line">    &#125; else &#123;</div><div class="line">        malloc_init_state(av);</div><div class="line">        check_malloc_state(av);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>省略代码的if语句里是将fastbin中的chunk进行合并，然后添加到bins中，这里不分析，因为还未初始化，因此<code>get_max_fast</code>返回0，后面的章节碰到了再分析。进入else部分，<code>check_malloc_state</code>为空函数，<code>malloc_init_state</code>就是主要的初始化函数，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">static void malloc_init_state(mstate av) &#123;</div><div class="line">    int i;</div><div class="line">    mbinptr bin;</div><div class="line"></div><div class="line">    for (i = 1; i &lt; NBINS; ++i) &#123;</div><div class="line">        bin = bin_at (av, i);</div><div class="line">        bin-&gt;fd = bin-&gt;bk = bin;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">#if MORECORE_CONTIGUOUS</div><div class="line">    if (av != &amp;main_arena)</div><div class="line">#endif</div><div class="line">        set_noncontiguous(av);</div><div class="line">    if (av == &amp;main_arena)</div><div class="line">        set_max_fast(DEFAULT_MXFAST);</div><div class="line">    av-&gt;flags |= FASTCHUNKS_BIT;</div><div class="line"></div><div class="line">    av-&gt;top = initial_top (av);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>该函数做了四件事情，第一是初始化<code>malloc_state</code>中的<code>bins</code>数组，初始化的结果是对<code>bins</code>数组中的每一个<code>fd</code>和对应的<code>bk</code>，都初始化为<code>fd</code>的地址，即<code>fd=bk=&amp;fd</code>；第二是设置fastbin可管理的内存块的最大值，即<code>global_max_fast</code>，<code>DEFAULT_MXFAST</code>定义为，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">#define DEFAULT_MXFAST     (64 * SIZE_SZ / 4)</div></pre></td></tr></table></figure>
+<p>本章假设为64，<code>set_max_fast</code>定义为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">#define set_max_fast(s) \</div><div class="line">  global_max_fast = (((s) == 0)                           \</div><div class="line">                     ? SMALLBIN_WIDTH : ((s + SIZE_SZ) &amp; ~MALLOC_ALIGN_MASK))</div></pre></td></tr></table></figure>
+<p>第三是设置一些标志位；第四是初始化分配去中的top chunk，就是一个<code>malloc_chunk</code>指针，<code>fd</code>保存在<code>bins[0]</code>中（smallbin中不使用<code>bins[0]</code>和<code>bins[1]</code>）。<br>重新回到<code>_int_malloc</code>中，假设<code>victim</code>不为0，下面就从双向链表中取出<code>victim</code>，设置其中的标志位，然后返回用户可分配的内存指针。<br>假设smallbin中没有空闲chunk可用，下面就要开始寻找largebin了，<code>largebin_index</code>定义为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">#define largebin_index(sz) \</div><div class="line">  (SIZE_SZ == 8 ? largebin_index_64 (sz)                                     \</div><div class="line">   : MALLOC_ALIGNMENT == 16 ? largebin_index_32_big (sz)                     \</div><div class="line">   : largebin_index_32 (sz))</div></pre></td></tr></table></figure>
+<p>根据前面<code>SIZE_SZ</code>的假设，这里<code>largebin_index</code>对应的就是<code>largebin_index_32</code>，定义为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">#define largebin_index_32(sz)                                                \</div><div class="line">  (((((unsigned long) (sz)) &gt;&gt; 6) &lt;= 38) ?  56 + (((unsigned long) (sz)) &gt;&gt; 6) :\</div><div class="line">   ((((unsigned long) (sz)) &gt;&gt; 9) &lt;= 20) ?  91 + (((unsigned long) (sz)) &gt;&gt; 9) :\</div><div class="line">   ((((unsigned long) (sz)) &gt;&gt; 12) &lt;= 10) ? 110 + (((unsigned long) (sz)) &gt;&gt; 12) :\</div><div class="line">   ((((unsigned long) (sz)) &gt;&gt; 15) &lt;= 4) ? 119 + (((unsigned long) (sz)) &gt;&gt; 15) :\</div><div class="line">   ((((unsigned long) (sz)) &gt;&gt; 18) &lt;= 2) ? 124 + (((unsigned long) (sz)) &gt;&gt; 18) :\</div><div class="line">   126)</div></pre></td></tr></table></figure>
+<p>这里就不多解释了，如果需要知道sz和索引的对应关系，可以自己计算一下。<br>再接下来<code>have_fastchunks</code>根据标志位判断fastbin中是否有空闲chunk，如果有，就调用<code>malloc_consolidate</code>将这些chunk和并，然后加入到unsortedbin中。</p>
+<h1 id="int-malloc-—-合并fastbin"><a href="#int-malloc-—-合并fastbin" class="headerlink" title="_int_malloc — 合并fastbin"></a>_int_malloc — 合并fastbin</h1><p>下面重新看一下<code>malloc_consolidate</code>函数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div></pre></td><td class="code"><pre><div class="line">static void malloc_consolidate(mstate av) &#123;</div><div class="line">    mfastbinptr* fb;</div><div class="line">    mfastbinptr* maxfb;</div><div class="line">    mchunkptr p;</div><div class="line">    mchunkptr nextp;</div><div class="line">    mchunkptr unsorted_bin;</div><div class="line">    mchunkptr first_unsorted;</div><div class="line"></div><div class="line">    mchunkptr nextchunk;</div><div class="line">    INTERNAL_SIZE_T size;</div><div class="line">    INTERNAL_SIZE_T nextsize;</div><div class="line">    INTERNAL_SIZE_T prevsize;</div><div class="line">    int nextinuse;</div><div class="line">    mchunkptr bck;</div><div class="line">    mchunkptr fwd;</div><div class="line"></div><div class="line">    if (get_max_fast () != 0) &#123;</div><div class="line">        clear_fastchunks(av);</div><div class="line">        unsorted_bin = unsorted_chunks(av);</div><div class="line"></div><div class="line">        maxfb = &amp;fastbin(av, NFASTBINS - 1);</div><div class="line">        fb = &amp;fastbin(av, 0);</div><div class="line">        do &#123;</div><div class="line">            p = atomic_exchange_acq(fb, 0);</div><div class="line">            if (p != 0) &#123;</div><div class="line">                do &#123;</div><div class="line">                    check_inuse_chunk(av, p);</div><div class="line">                    nextp = p-&gt;fd;</div><div class="line"></div><div class="line">                    size = p-&gt;size &amp; ~(PREV_INUSE | NON_MAIN_ARENA);</div><div class="line">                    nextchunk = chunk_at_offset(p, size);</div><div class="line">                    nextsize = chunksize(nextchunk);</div><div class="line"></div><div class="line">                    if (!prev_inuse(p)) &#123;</div><div class="line">                        prevsize = p-&gt;prev_size;</div><div class="line">                        size += prevsize;</div><div class="line">                        p = chunk_at_offset(p, -((long ) prevsize));</div><div class="line">                        unlink(av, p, bck, fwd);</div><div class="line">                    &#125;</div><div class="line"></div><div class="line">                    if (nextchunk != av-&gt;top) &#123;</div><div class="line">                        nextinuse = inuse_bit_at_offset(nextchunk, nextsize);</div><div class="line"></div><div class="line">                        if (!nextinuse) &#123;</div><div class="line">                            size += nextsize;</div><div class="line">                            unlink(av, nextchunk, bck, fwd);</div><div class="line">                        &#125; else</div><div class="line">                            clear_inuse_bit_at_offset(nextchunk, 0);</div><div class="line"></div><div class="line">                        first_unsorted = unsorted_bin-&gt;fd;</div><div class="line">                        unsorted_bin-&gt;fd = p;</div><div class="line">                        first_unsorted-&gt;bk = p;</div><div class="line"></div><div class="line">                        if (!in_smallbin_range(size)) &#123;</div><div class="line">                            p-&gt;fd_nextsize = NULL;</div><div class="line">                            p-&gt;bk_nextsize = NULL;</div><div class="line">                        &#125;</div><div class="line"></div><div class="line">                        set_head(p, size | PREV_INUSE);</div><div class="line">                        p-&gt;bk = unsorted_bin;</div><div class="line">                        p-&gt;fd = first_unsorted;</div><div class="line">                        set_foot(p, size);</div><div class="line">                    &#125;</div><div class="line"></div><div class="line">                    else &#123;</div><div class="line">                        size += nextsize;</div><div class="line">                        set_head(p, size | PREV_INUSE);</div><div class="line">                        av-&gt;top = p;</div><div class="line">                    &#125;</div><div class="line"></div><div class="line">                &#125; while ((p = nextp) != 0);</div><div class="line"></div><div class="line">            &#125;</div><div class="line">        &#125; while (fb++ != maxfb);</div><div class="line">    &#125; else &#123;</div><div class="line"></div><div class="line">        ...</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>因为ptmalloc前面已经初始化过了，这里直接进入if内部，首先通过<code>clear_fastchunks</code>设置标志位表示fastbin中存在空闲chunk，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">#define clear_fastchunks(M)    catomic_or (&amp;(M)-&gt;flags, FASTCHUNKS_BIT)</div></pre></td></tr></table></figure>
+<p>然后通过<code>unsorted_chunks</code>获得bins数组中unsortedbin对应的<code>malloc_chunk</code>指针（其<code>fd</code>和<code>bk</code>指针对应<code>bins[0]</code>和<code>bins[1]</code>）。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">#define unsorted_chunks(M)          (bin_at (M, 1))</div></pre></td></tr></table></figure>
+<p>再往下，将fastbin中的最大和最小的chunk对应的<code>malloc_chunk</code>指针赋值给<code>maxfb</code>和<code>fb</code>，然后通过do，while循环遍历fastbin中的每个chunk链表，<code>atomic_exchange_acq</code>又是一个CAS操作，该函数取出<code>fb</code>指针，并将原来的chunk链表头指针的值设为0，表示chunk链表空闲了。然后开始进入内层的循环，这里遍历的是每个chunk链表中的每个<code>malloc_chunk</code>指针。<br>接下来首先去除chunk中的<code>PREV_INUSE</code>和<code>NON_MAIN_ARENA</code>标志，为了获得chunk的大小（size中的最低三位被用来作为标志位，并且fastbin中chunk的标志位<code>IS_MMAPPED</code>默认为0）。然后通过<code>chunk_at_offset</code>和<code>chunksize</code>获得下一个chunk以及其大小，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">#define chunk_at_offset(p, s)  ((mchunkptr) (((char *) (p)) + (s)))</div><div class="line">#define SIZE_BITS (PREV_INUSE | IS_MMAPPED | NON_MAIN_ARENA)</div><div class="line">#define chunksize(p)         ((p)-&gt;size &amp; ~(SIZE_BITS))</div></pre></td></tr></table></figure>
+<p>再往下，如果chunk的前一个chunk没在使用中，就合并该chunk与前一个chunk，主要是重新计算<code>malloc_chunk</code>的指针，并调用<code>unlink</code>将前一个chunk从bins数组中删除，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">#define unlink(AV, P, BK, FD) &#123;                                            \</div><div class="line">    FD = P-&gt;fd;                                   \</div><div class="line">    BK = P-&gt;bk;                                   \</div><div class="line">    if (__builtin_expect (FD-&gt;bk != P || BK-&gt;fd != P, 0))             \</div><div class="line">      malloc_printerr (check_action, &quot;corrupted double-linked list&quot;, P, AV);  \</div><div class="line">    else &#123;                                    \</div><div class="line">        FD-&gt;bk = BK;                                  \</div><div class="line">        BK-&gt;fd = FD;                                  \</div><div class="line">        if (!in_smallbin_range (P-&gt;size)                      \</div><div class="line">            &amp;&amp; __builtin_expect (P-&gt;fd_nextsize != NULL, 0)) &#123;            \</div><div class="line">        if (__builtin_expect (P-&gt;fd_nextsize-&gt;bk_nextsize != P, 0)        \</div><div class="line">        || __builtin_expect (P-&gt;bk_nextsize-&gt;fd_nextsize != P, 0))    \</div><div class="line">          malloc_printerr (check_action,                      \</div><div class="line">                   &quot;corrupted double-linked list (not small)&quot;,    \</div><div class="line">                   P, AV);                        \</div><div class="line">            if (FD-&gt;fd_nextsize == NULL) &#123;                    \</div><div class="line">                if (P-&gt;fd_nextsize == P)                      \</div><div class="line">                  FD-&gt;fd_nextsize = FD-&gt;bk_nextsize = FD;             \</div><div class="line">                else &#123;                                \</div><div class="line">                    FD-&gt;fd_nextsize = P-&gt;fd_nextsize;                 \</div><div class="line">                    FD-&gt;bk_nextsize = P-&gt;bk_nextsize;                 \</div><div class="line">                    P-&gt;fd_nextsize-&gt;bk_nextsize = FD;                 \</div><div class="line">                    P-&gt;bk_nextsize-&gt;fd_nextsize = FD;                 \</div><div class="line">                  &#125;                               \</div><div class="line">              &#125; else &#123;                                \</div><div class="line">                P-&gt;fd_nextsize-&gt;bk_nextsize = P-&gt;bk_nextsize;             \</div><div class="line">                P-&gt;bk_nextsize-&gt;fd_nextsize = P-&gt;fd_nextsize;             \</div><div class="line">              &#125;                                   \</div><div class="line">          &#125;                                   \</div><div class="line">      &#125;                                       \</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>简单来说，该宏定义就是将前一个chunk从两个双线链表中删除，<code>fd</code>和<code>bk</code>指针构成的双向链表存在于smallbin和largebin中，<code>fd_nextsize</code>和<code>bk_nextsize</code>指针构成的双向链表只存在于largebin中。<br>再往下，如果相邻的下一个chunk不是top chunk，并且下一个chunk不在使用中，就继续合并，否则，就清除下一个chunk的<code>PREV_INUSE</code>，表示该chunk已经空闲了。<br>然后将刚刚合并完的chunk添加进<code>unsorted_bin</code>中，<code>unsorted_bin</code>也是一个双向链表。<br>如果合并完的chunk属于smallbin的大小，则需要清除<code>fd_nextsize</code>和<code>bk_nextsize</code>，因为smallbin中的chunk不会使用这两个指针。并且通过<code>setHead</code>保证不会有相邻的两个chunk都空闲，并且通过<code>setFoot</code>设置下一个chunk的<code>prev_size</code>。<br>如果相邻的下一个chunk是top chunk，则将合并完的chunk继续合并到top chunk中。<br>至此，<code>malloc_consolidate</code>就分析完了，总结一下，<code>malloc_consolidate</code>就是遍历fastbin中每个chunk链表的每个<code>malloc_chunk</code>指针，合并前一个不在使用中的chunk，如果后一个chunk是top chunk，则直接合并到top chunk中，如果后一个chunk不是top chunk，则合并后一个chunk并添加进<code>unsorted_bin</code>中。</p>
+<p>下一章继续往下分析_int_malloc函数。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/21/malloc源码分析——2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2601,421 +2944,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/27/hexo使用hexo-math插件支持MathJax/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/03/27/hexo使用hexo-math插件支持MathJax/" itemprop="url">hexo使用hexo-math插件支持MathJax</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-27T11:57:57+08:00">
-                2018-03-27
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Hexo搭建博客网站/" itemprop="url" rel="index">
-                    <span itemprop="name">Hexo搭建博客网站</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>MathJax是使用LaTeX方式输入数学公式的好工具。Hexo虽然可以直接使用mathjax，但是存在一些不方便之处。使用<a href="https://github.com/akfish/hexo-math" target="_blank" rel="external">hexo-math</a>这个插件可以大大方便使用。<br>使用Hexo 3.2.0，主题NexT 5.0.1，hexo-math 3.0.0安装方式如下</p>
-<p>在hexo安装目录下执行</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install hexo-math --save</div></pre></td></tr></table></figure>
-<p>然后编辑站点根目录下的<code>_config.yml</code>，添加</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">math:</div><div class="line">  engine: &apos;mathjax&apos; # or &apos;katex&apos;</div><div class="line">  mathjax:</div><div class="line">    src: custom_mathjax_source</div><div class="line">    config:</div><div class="line">      # MathJax config</div></pre></td></tr></table></figure>
-<p>之后进入theme的目录，编辑主题的<code>_config.yml</code>，找到mathjax字段。NexT 5.0.1中默认mathjax是禁用，需要改成</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mathjax:</div><div class="line">   enable: true</div></pre></td></tr></table></figure>
-<p>最后<code>hexo g</code>，就可以部署或者运行server查看效果了。</p>
-<hr>
-<p>几个测试例子<br>使用<code>$</code>的一行代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Simple inline $a = b + c$.</div></pre></td></tr></table></figure>
-<p>Simple inline $a=b+c$.</p>
-<p>使用<code>$$</code>的多行代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$$\frac&#123;\partial u&#125;&#123;\partial t&#125;</div><div class="line">= h^2 \left( \frac&#123;\partial^2 u&#125;&#123;\partial x^2&#125; +</div><div class="line">\frac&#123;\partial^2 u&#125;&#123;\partial y^2&#125; +</div><div class="line">\frac&#123;\partial^2 u&#125;&#123;\partial z^2&#125;\right)$$</div></pre></td></tr></table></figure>
-<p>$$\frac{\partial u}{\partial t}= h^2 \left( \frac{\partial^2 u}{\partial x^2} +\frac{\partial^2 u}{\partial y^2} +\frac{\partial^2 u}{\partial z^2}\right)$$</p>
-<p>使用Tag的块貌似不能用！！！</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">这儿讲了一些细节：首先是不能直接用\\来当换行符，需要用\newline</div><div class="line">另外编辑公式的时候，不要使用* &#123;% math %&#125; 双大括号 等容易发生冲突的符号</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">$$</div><div class="line">\left[</div><div class="line">    \begin&#123;array&#125;&#123;cc|c&#125;</div><div class="line">      1&amp;2&amp;3\newline</div><div class="line">      4&amp;5&amp;6</div><div class="line">    \end&#123;array&#125;</div><div class="line">\right] </div><div class="line">$$</div></pre></td></tr></table></figure>
-<p>$$<br>\left[<br>    \begin{array}{cc|c}<br>      1&amp;2&amp;3\newline<br>      4&amp;5&amp;6<br>    \end{array}<br>\right]<br>$$</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/26/常用于密码学中的算法/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/03/26/常用于密码学中的算法/" itemprop="url">常用于密码学中的算法</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-26T13:44:56+08:00">
-                2018-03-26
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/crypto/" itemprop="url" rel="index">
-                    <span itemprop="name">crypto</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="0x0-前言"><a href="#0x0-前言" class="headerlink" title="0x0 前言"></a>0x0 前言</h3><p>最近做了不少密码学的题目，对于常见的RSA密钥攻击已经非常熟悉，但是对于比较特殊的密码学攻击手段，我却不甚清楚。下面主要讲解的是几种常见的算法。</p>
-<h3 id="0x1-baby-step-giant-step算法"><a href="#0x1-baby-step-giant-step算法" class="headerlink" title="0x1 baby step giant step算法"></a>0x1 baby step giant step算法</h3><p>baby step giant step算法常用于ACM竞赛中，该算法的目的是让$a^x=b(mod\ p)$ 求解的速度更快，核心是利用hash表查询的速度较普通查询方式快，当然同样是用空间换时间的一种思想。大概的时间复杂度$O(\sqrt{p}\ )$</p>
-<p>设$m=\lceil\sqrt{p}\ \rceil$</p>
-<p>那么可以设$x=i*m-j$</p>
-<p>所以原式等价于 $a^{i*m-j}=b(mod\ p) $</p>
-<p>也即 $(a^{m})^i=b*a^j$</p>
-<p>枚举$j$ (从0-m)，将$b*a^j$ 存入hash表中</p>
-<p>枚举i(范围1-m)，从hash表中寻找第一个满足$(a^{m})^i=b*a^j$ 的解</p>
-<p>此时$x=i*m-j$</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cstdio&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;algorithm&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;map&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cmath&gt;</span></span></div><div class="line"></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"><span class="keyword">typedef</span> <span class="keyword">long</span> <span class="keyword">long</span> ll;</div><div class="line"></div><div class="line"><span class="built_in">map</span>&lt;ll,<span class="keyword">int</span>&gt;mp;</div><div class="line">ll p,a,b;</div><div class="line">ll n,m,now,ans,t;</div><div class="line"><span class="keyword">bool</span> flag;</div><div class="line"></div><div class="line"><span class="function">ll <span class="title">fast_pow</span><span class="params">(ll x)</span></span></div><div class="line">&#123;</div><div class="line">    ll sum = <span class="number">1</span>;</div><div class="line">    ll aa = a;</div><div class="line">    <span class="keyword">while</span> (x&gt;<span class="number">0</span>)</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">if</span> (x&amp;<span class="number">1</span>) </div><div class="line">            sum = (sum*aa)%p;</div><div class="line">        x = x&gt;&gt;<span class="number">1</span>;</div><div class="line">        aa = (aa*aa)%p;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> sum;</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">while</span>(<span class="built_in">scanf</span>(<span class="string">"%lld%lld%lld"</span>,&amp;p,&amp;a,&amp;b)!=EOF)</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">if</span>(a%p==<span class="number">0</span>)</div><div class="line">        &#123;</div><div class="line">            <span class="built_in">printf</span>(<span class="string">"no solution\n"</span>);</div><div class="line">            <span class="keyword">continue</span>;</div><div class="line">        &#125;</div><div class="line">        mp.clear();</div><div class="line">        m = <span class="built_in">ceil</span>(<span class="built_in">sqrt</span>(p));</div><div class="line">        flag = <span class="literal">false</span> ;</div><div class="line">        now = b%p;        <span class="comment">//b*a^j 当j==0时 </span></div><div class="line">        mp[now] = <span class="number">0</span>;</div><div class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;=m;++i)</div><div class="line">        &#123;</div><div class="line">            now = (now*a)%p;</div><div class="line">            mp[now] = i;</div><div class="line">        &#125;</div><div class="line">        t = fast_pow(m);</div><div class="line">        now = <span class="number">1</span>;</div><div class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;=m;++i)    <span class="comment">//枚举 (a^m)^i</span></div><div class="line">        &#123;</div><div class="line">            now = (now*t)%p;</div><div class="line">            <span class="keyword">if</span>(mp[now])</div><div class="line">            &#123;</div><div class="line">                flag = <span class="literal">true</span>;</div><div class="line">                ans = i*m-mp[now];</div><div class="line">                <span class="built_in">printf</span>(<span class="string">"%lld\n"</span>,(ans%p+p)%p);    <span class="comment">//printf("%lld\n",(ans%p+p)%p);</span></div><div class="line">                <span class="keyword">break</span>;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">if</span>(!flag) <span class="built_in">printf</span>(<span class="string">"no solution\n"</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="0x2-Pohlig-Hellman算法"><a href="#0x2-Pohlig-Hellman算法" class="headerlink" title="0x2 Pohlig-Hellman算法"></a>0x2 Pohlig-Hellman算法</h3><p>此算法应用于密码学中比bsgs算法更广，而且效果也更佳！（因为bsgs算法所能求解的p值不能太大，位数多了就不能在有限时间内跑完）</p>
-<p>原理： </p>
-<p>问题： 已知a,b,p,以及p-1的分解质因数，求x使得 $a^x=b(mod\ p)$</p>
-<p>设 $p-1=p_1^{e_1}*p_2^{e_2}...p_k^{e_k}$</p>
-<p>若能有 $k$ 组可用的等式  $x=x_i\ (mod\ p_i^{e_i})$ ，就可以用中国剩余定理求解出 $x(mod\ p-1)$ </p>
-<h4 id="2-1-求解-x-i"><a href="#2-1-求解-x-i" class="headerlink" title="2.1 求解$x_i$"></a>2.1 求解$x_i$</h4><p>对于 $p_i$ ，设   $x_i=c_0+c_1*p_i+c_2*p_i^2...c_{e_i-1}*p_i^{e_i-1}$ ，则  $x=x_i+s*p_i^{e_i}$</p>
-<p><strong>求解 $c_0$ ：</strong></p>
-<p>$b^{(p-1)/p_i}=(a^x)^{(p-1)/p_i}\ mod\ p$</p>
-<p>$=(a^{c_0+c_1*p_i+c_2*p_i^2...c_{e_i-1}*p_i^{e_i-1}+s*p_i^{e_i}})^{(p-1)/p_i} \ mod\ p$</p>
-<p>$=(a ^{c_0})^{(p-1)/p_i}\ mod\ p$</p>
-<p>由于 $b^{(p-1)/p_i}$ 已知， 而 $c_0$ 取值范围只在$[0,p_i-1]$ ，因而在 $p_i$ 不是特别大的时候，完全是可解的。</p>
-<p>有心的同学会发现，这个求解只需要在 $O(\lceil \sqrt{p_i} \rceil)$ 时间内就可求解，使用的仍是大步小步的思想。</p>
-<p>设 $m=\lceil \sqrt{p_i}\ \rceil $ ，$c_0 = u*m - v$</p>
-<p>则上式可表示为 $b^{(p-1)/p_i}*(a^{(p-1)/p_i})^v = (a^{m*(p-1)/p_i})^u$</p>
-<p>利用hash表可以快速求解出来！</p>
-<p><strong>求解 $c_i $ :</strong></p>
-<p>基于上面的表达式，我们可以快速求解出$c_0$ 等值，然后求解$c_1$ ，依次求解，最终可以将所有解求出来。</p>
-<p><strong>组合：</strong></p>
-<p>$x_i=c_0+c_1*p_i+c_2*p_i^2+...+c_{e_i-1}*p_i^{e_i-1}$</p>
-<h4 id="2-2-中国剩余定理求解x"><a href="#2-2-中国剩余定理求解x" class="headerlink" title="2.2 中国剩余定理求解x"></a>2.2 中国剩余定理求解x</h4><h4 id="2-3-范例"><a href="#2-3-范例" class="headerlink" title="2.3 范例"></a>2.3 范例</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div></pre></td><td class="code"><pre><div class="line">Let the prime p = 8101, and a generator of Z8101 be a = 6. Find x so that</div><div class="line">ax = 7531 mod 8101.</div><div class="line"></div><div class="line">Observe that p-1 = 8100 = (22)(34)(52), is a product of small primes. We shall determine the numbers x2 = x mod (22), x3 = x mod (34) and x5 = x mod (52).</div><div class="line"></div><div class="line">Determination of x2.</div><div class="line">Since x2 is a number mod 4, we have x2 = c0 + c1 (2), with the coefficients being either 0 or 1. We determine these coefficients as follows.</div><div class="line">7531(p-1)/2 = 75314050 = -1 and as this = ac0 (p-1)/2, we have c0 = 1.</div><div class="line">Now, divide 7531 by ac0 to get</div><div class="line">7531(a-1) = 7531(6751) = 8006 mod p.</div><div class="line">8006(p-1)/4 = 80062025 = 1 and as this = ac1 (p-1)/2, we have c1 = 0.</div><div class="line"></div><div class="line">x2 = c0 + c1 (2) = 1 + 0(2) = 1.</div><div class="line"></div><div class="line">Determination of x3.</div><div class="line">Since x3 is a number mod 81, we have x3 = c0 + c1 (3) + c2 (9) + c3 (27), with the coefficients being either 0, 1 or 2. It will be of use to know the numbers a(p-1)/3 = 5883, and a2(p-1)/3 = 2217.</div><div class="line">7531(p-1)/3 = 2217, so c0 = 2.</div><div class="line">Now divide 7531 by ac0 to get</div><div class="line">7531(a-2) = 6735 mod p.</div><div class="line">6735(p-1)/9 = 1, so c1 = 0.</div><div class="line">Now divide 6735 by a3c1 to get</div><div class="line">6735(a0) = 6735 mod p.</div><div class="line">6735(p-1)/27 = 2217, so c2 = 2.</div><div class="line">Now divide 6735 by a9c2 to get</div><div class="line">6735(a-18) = 6992 mod p.</div><div class="line">6992(p-1)/81 = 5883, so c3 = 1.</div><div class="line"></div><div class="line">x3 = 2 + 0(3) + 2(9) + 1(27) = 47.</div><div class="line"></div><div class="line">Determination of x5.</div><div class="line">Since x5 is a number mod 25, x5 = c0 + c1 (5), with the coefficients being either 0, 1, 2, 3 or 4. We need to compute a(p-1)/5 = 3547, a2(p-1)/5 = 356, a3(p-1)/5 = 7077, a4(p-1)/5 = 5221.</div><div class="line">7531(p-1)/5 = 5221, so c0 = 4.</div><div class="line">Divide 7531 by ac0 to get</div><div class="line">7531(a-4) = 7613 mod p.</div><div class="line">7613(p-1)/25 = 356, so c1 = 2.</div><div class="line"></div><div class="line">x5 = 4 + 2(5) = 14.</div><div class="line"></div><div class="line">Determination of x.</div><div class="line">We now use the Chinese Remainder Theorem to compute the common solution of the congruences,</div><div class="line">x = 1 mod 4</div><div class="line">x = 47 mod 81</div><div class="line">x = 14 mod 25.</div><div class="line">M1 = 8100/(4) = 2025 </div><div class="line">y1 = M1-1 mod 4, y1 = 1.</div><div class="line">M2 = 8100/81 = 100</div><div class="line">y2 = M2-1 mod 81, y2 = 64.</div><div class="line"></div><div class="line">M3 = 8100/25 = 324</div><div class="line">y3 = M3-1 mod 25, y3 = 24.</div><div class="line"></div><div class="line">x = 1(2025)(1) + 47(100)(64) + 14(324)(24) = 6689 mod 8100.</div></pre></td></tr></table></figure>
-<p>上文转载于 <a href="http://www-math.ucdenver.edu/~wcherowi/courses/m5410/phexam.html" target="_blank" rel="external">Pohlig-Hellman范例</a></p>
-<h3 id="0x3-Pollard’s-rho算法"><a href="#0x3-Pollard’s-rho算法" class="headerlink" title="0x3 Pollard’s rho算法"></a>0x3 Pollard’s rho算法</h3><p>Pollard’s rho算法是一种常用的因数分解算法，对于分解因子较小的组合数特别有用。对于一个正整数n，在一般情况下，我们主要使用的是枚举1到n^(1/2)来求n的因子，所以算法复杂度是O(n^(1/2))。但是实际上有更好的办法，那就是Pollard&#39;s Rho算法，这个算法是一个随机化的算法，简单的说不是完全靠谱，一般我们认为它的平均算法复杂度是O(n^(1/4))。</p>
-<h4 id="3-1-通过-𝐁𝐢𝐫𝐭𝐡𝐝𝐚𝐲-𝐓𝐫𝐢𝐜𝐤-提高概率"><a href="#3-1-通过-𝐁𝐢𝐫𝐭𝐡𝐝𝐚𝐲-𝐓𝐫𝐢𝐜𝐤-提高概率" class="headerlink" title="3.1 通过 𝐁𝐢𝐫𝐭𝐡𝐝𝐚𝐲 𝐓𝐫𝐢𝐜𝐤 提高概率"></a>3.1 通过 𝐁𝐢𝐫𝐭𝐡𝐝𝐚𝐲 𝐓𝐫𝐢𝐜𝐤 提高概率</h4><p>我们随即地从[1,N]中选择一个数，这个数是 p 或者 q 的可能性是非常小的，所有我们不得不重复运行算法来提高概率。那么，我们现在可以提出一个不同的问题：<br>不再只选取一个整数，我们能够选取 𝑘 个数，并问是否存在𝑥𝑖 − 𝑥𝑗能够整除N</p>
-<p>当 $k=\sqrt{N}$ 时，可能性跳高到了50%</p>
-<p>策略：</p>
-<blockquote>
-<p>在区间[𝟐, 𝑵 − 𝟏]中随即选取 𝒌 个数，𝒙𝟏, … … , 𝒙𝒌<br>判断是否存在𝒈𝒄𝒅(𝒙𝒊 − 𝒙𝒚 , 𝑵) &gt; 𝟏, 若存在，𝒈𝒄𝒅(𝒙𝒊 − 𝒙𝒚 ,𝑵) 是𝑵的一个因子 ( 𝒑 或 𝒒 )</p>
-</blockquote>
-<p>但是很早就出现了一个问题，我们需要选取大约 𝑁^1/4 个数，<br>这个数量太大了，以至于我们并不能将其存放在内存中</p>
-<h4 id="3-2-Pollard‘s-rho算法详解"><a href="#3-2-Pollard‘s-rho算法详解" class="headerlink" title="3.2 Pollard‘s rho算法详解"></a>3.2 Pollard‘s rho算法详解</h4><p>为了解决数太多无法存储的问题，Pollard′s rho algorithm 只将两个数存放在内存中。</p>
-<p>我们并不随机生成 k 个数并两两进行比较，而是一个一个地生成并检查连续的两个数。反复执行这个步骤并希望能够得到我们想要的数。我们使用一个函数来生成伪随机数。换句话说，我们不断地使用函数 𝑓 来生成（看上去或者说感觉上像的）随机数。并不是所有的函都能够这样做，但是有一个神奇的函数可以。它就是</p>
-<p>$𝑓(𝑥) = ( 𝑥^2 + 𝑎 ) mod 𝑁$</p>
-<p>你可以发现对于大部分的数据这个算法能够正常运行，但是对于某些数据，它将会进入无限循环。为什么呢？这是因为存在 𝑓 环的原因。当它发生的时候，我们会在一个有限数集中进行无限循环。</p>
-<p>例如，我们可以构造一个伪随机函数并生成如下伪随机数：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">2, 10, 16, 23, 29, 13, 16, 23, 29, 13 … …</div></pre></td></tr></table></figure>
-<p>在这个例子中，我们最终将会在16, 23, 29, 13这个圈中无限循环，永远找不到因子。</p>
-<p>那么，<strong>如何探测环的出现呢？</strong></p>
-<p>一种方法是记录当前产生过的所有的数𝑥1, 𝑥2, … … 𝑥𝑛,并检测是否存在𝑥𝑙 = 𝑥𝑛(𝑙 &lt; 𝑛)。在实际过程中，当 𝑛 增长到一定大小时，可能会造成的内存不够用的情况。</p>
-<p>另一种方法是由Floyd发明的一个算法，我们举例来说明这个聪明而又有趣的算法。假设我们在一个很长很长的圆形轨道上行走，我们如何知道我们已经走完了一圈呢？当然，我们可以像第一种方法那样做，但是更聪明的方法是让 A 和 B 按照 B 的速度是A 的速度的两倍从同一起点开始往前走，当 B 第一次敢上 A 时(也就是我们常说的套圈)，我们便知道，B 已经走了至少一圈了。</p>
-<h4 id="3-3-算法实现"><a href="#3-3-算法实现" class="headerlink" title="3.3 算法实现"></a>3.3 算法实现</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt; </span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstdio&gt; </span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;  </span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cmath&gt;  </span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstring&gt;  </span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;map&gt;  </span></span></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"></div><div class="line"><span class="keyword">const</span> <span class="keyword">int</span> times = <span class="number">50</span>;</div><div class="line"><span class="keyword">int</span> number = <span class="number">0</span>;</div><div class="line"></div><div class="line"><span class="built_in">map</span>&lt;<span class="keyword">long</span> <span class="keyword">long</span>, <span class="keyword">int</span>&gt;m;</div><div class="line"><span class="function"><span class="keyword">long</span> <span class="keyword">long</span> <span class="title">Random</span><span class="params">( <span class="keyword">long</span> <span class="keyword">long</span> n )</span></span></div><div class="line">&#123;</div><div class="line">	<span class="keyword">return</span> ((<span class="keyword">double</span>)rand( ) / RAND_MAX*n + <span class="number">0.5</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">long</span> <span class="keyword">long</span> <span class="title">q_mul</span><span class="params">( <span class="keyword">long</span> <span class="keyword">long</span> a, <span class="keyword">long</span> <span class="keyword">long</span> b, <span class="keyword">long</span> <span class="keyword">long</span> mod )</span> <span class="comment">//快速乘法取模</span></span></div><div class="line">&#123;</div><div class="line">	<span class="keyword">long</span> <span class="keyword">long</span> ans = <span class="number">0</span>;</div><div class="line">	<span class="keyword">while</span>(b)</div><div class="line">	&#123;</div><div class="line">		<span class="keyword">if</span>(b &amp; <span class="number">1</span>)</div><div class="line">		&#123;</div><div class="line">			ans += a;</div><div class="line">		&#125;</div><div class="line">		b /= <span class="number">2</span>;</div><div class="line">		a = (a + a) % mod;</div><div class="line"></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> ans;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">long</span> <span class="keyword">long</span> <span class="title">q_pow</span><span class="params">( <span class="keyword">long</span> <span class="keyword">long</span> a, <span class="keyword">long</span> <span class="keyword">long</span> b, <span class="keyword">long</span> <span class="keyword">long</span> mod )</span> <span class="comment">//快速乘法下的快速幂，叼</span></span></div><div class="line">&#123;</div><div class="line">	<span class="keyword">long</span> <span class="keyword">long</span> ans = <span class="number">1</span>;</div><div class="line">	<span class="keyword">while</span>(b)</div><div class="line">	&#123;</div><div class="line">		<span class="keyword">if</span>(b &amp; <span class="number">1</span>)</div><div class="line">		&#123;</div><div class="line">			ans = q_mul( ans, a, mod );</div><div class="line">		&#125;</div><div class="line">		b /= <span class="number">2</span>;</div><div class="line">		a = q_mul( a, a, mod );</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> ans;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">bool</span> <span class="title">witness</span><span class="params">( <span class="keyword">long</span> <span class="keyword">long</span> a, <span class="keyword">long</span> <span class="keyword">long</span> n )</span><span class="comment">//miller_rabin算法的精华</span></span></div><div class="line">&#123;</div><div class="line">	<span class="keyword">long</span> <span class="keyword">long</span> tem = n - <span class="number">1</span>;</div><div class="line">	<span class="keyword">int</span> j = <span class="number">0</span>;</div><div class="line">	<span class="keyword">while</span>(tem % <span class="number">2</span> == <span class="number">0</span>)</div><div class="line">	&#123;</div><div class="line">		tem /= <span class="number">2</span>;</div><div class="line">		j++;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="keyword">long</span> <span class="keyword">long</span> x = q_pow( a, tem, n ); <span class="comment">//得到a^(n-1) mod n</span></div><div class="line">	<span class="keyword">if</span>(x == <span class="number">1</span> || x == n - <span class="number">1</span>) <span class="keyword">return</span> <span class="literal">true</span>;</div><div class="line">	<span class="keyword">while</span>(j--)</div><div class="line">	&#123;</div><div class="line">		x = q_mul( x, x, n );</div><div class="line">		<span class="keyword">if</span>(x = n - <span class="number">1</span>) <span class="keyword">return</span> <span class="literal">true</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="literal">false</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">bool</span> <span class="title">miller_rabin</span><span class="params">( <span class="keyword">long</span> <span class="keyword">long</span> n )</span>  <span class="comment">//检验n是否是素数</span></span></div><div class="line">&#123;</div><div class="line"></div><div class="line">	<span class="keyword">if</span>(n == <span class="number">2</span>)</div><div class="line">		<span class="keyword">return</span> <span class="literal">true</span>;</div><div class="line">	<span class="keyword">if</span>(n &lt; <span class="number">2</span> || n % <span class="number">2</span> == <span class="number">0</span>)</div><div class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</div><div class="line"></div><div class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= times; i++)  <span class="comment">//做times次随机检验</span></div><div class="line">	&#123;</div><div class="line">		<span class="keyword">long</span> <span class="keyword">long</span> a = Random( n - <span class="number">2</span> ) + <span class="number">1</span>; <span class="comment">//得到随机检验算子 a</span></div><div class="line">		<span class="keyword">if</span>(!witness( a, n ))  <span class="comment">//用a检验n是否是素数</span></div><div class="line">			<span class="keyword">return</span> <span class="literal">false</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="literal">true</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">long</span> <span class="keyword">long</span> <span class="title">gcd</span><span class="params">( <span class="keyword">long</span> <span class="keyword">long</span> a, <span class="keyword">long</span> <span class="keyword">long</span> b )</span></span></div><div class="line">&#123;</div><div class="line">	<span class="keyword">if</span>(b == <span class="number">0</span>)</div><div class="line">		<span class="keyword">return</span> a;</div><div class="line">	<span class="keyword">return</span> gcd( b, a%b );</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">long</span> <span class="keyword">long</span> <span class="title">pollard_rho</span><span class="params">( <span class="keyword">long</span> <span class="keyword">long</span> n, <span class="keyword">long</span> <span class="keyword">long</span> c )</span><span class="comment">//找到n的一个因子</span></span></div><div class="line">&#123;</div><div class="line">	<span class="keyword">long</span> <span class="keyword">long</span> x, y, d, i = <span class="number">1</span>, k = <span class="number">2</span>;</div><div class="line">	x = Random( n - <span class="number">1</span> ) + <span class="number">1</span>;</div><div class="line">	y = x;</div><div class="line">	<span class="keyword">while</span>(<span class="number">1</span>)</div><div class="line">	&#123;</div><div class="line">		i++;</div><div class="line">		x = (q_mul( x, x, n ) + c) % n;</div><div class="line">		d = gcd( y - x, n );</div><div class="line">		<span class="keyword">if</span>(<span class="number">1</span>&lt;d&amp;&amp;d&lt;n)</div><div class="line">			<span class="keyword">return</span> d;</div><div class="line">		<span class="keyword">if</span>(y == x)<span class="comment">//找到循环，选取失败，重新来</span></div><div class="line">			<span class="keyword">return</span> n;</div><div class="line">		<span class="keyword">if</span>(i == k) <span class="comment">//似乎是一个优化，但是不是很清楚</span></div><div class="line">		&#123;</div><div class="line">			y = x;</div><div class="line">			k &lt;&lt;= <span class="number">1</span>;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">find</span><span class="params">( <span class="keyword">long</span> <span class="keyword">long</span> n, <span class="keyword">long</span> <span class="keyword">long</span> c )</span></span></div><div class="line">&#123;</div><div class="line">	<span class="keyword">if</span>(n == <span class="number">1</span>)</div><div class="line">		<span class="keyword">return</span>;</div><div class="line">	<span class="keyword">if</span>(miller_rabin( n ))</div><div class="line">	&#123;</div><div class="line">		m[n]++;</div><div class="line">		number++;</div><div class="line">		<span class="keyword">return</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">long</span> <span class="keyword">long</span> p = n;</div><div class="line">	<span class="keyword">while</span>(p &gt;= n)</div><div class="line">		p = pollard_rho( p, c-- );</div><div class="line">	find( p, c );</div><div class="line">	find( n / p, c );</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">( )</span></span></div><div class="line">&#123;</div><div class="line">	<span class="keyword">long</span> <span class="keyword">long</span> tar;</div><div class="line">	<span class="keyword">while</span>(<span class="built_in">cin</span> &gt;&gt; tar)</div><div class="line">	&#123;</div><div class="line">		number = <span class="number">0</span>;</div><div class="line">		m.clear();</div><div class="line">		find( tar, <span class="number">2137342</span> );</div><div class="line">		<span class="built_in">printf</span>( <span class="string">"%lld = "</span>, tar );</div><div class="line">		<span class="keyword">if</span>(m.empty())</div><div class="line">		&#123;</div><div class="line">			<span class="built_in">printf</span>( <span class="string">"%lld\n"</span>, tar );</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">for</span>(<span class="built_in">map</span>&lt;<span class="keyword">long</span> <span class="keyword">long</span>, <span class="keyword">int</span>&gt;::iterator c = m.begin(); c != m.end();)</div><div class="line">		&#123;</div><div class="line">			<span class="built_in">printf</span>( <span class="string">"%lld^%d"</span>, c-&gt;first, c-&gt;second );</div><div class="line">			<span class="keyword">if</span>((++c) != m.end())</div><div class="line">				<span class="built_in">printf</span>( <span class="string">" * "</span> );</div><div class="line">		&#125;</div><div class="line">		<span class="built_in">printf</span>( <span class="string">"\n"</span> );</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="0x4-Pollard-39-s-p-1-算法"><a href="#0x4-Pollard-39-s-p-1-算法" class="headerlink" title="0x4 Pollard&#39;s p-1 算法"></a>0x4 Pollard&#39;s p-1 算法</h3><h4 id="4-1-smooth与powersmooth"><a href="#4-1-smooth与powersmooth" class="headerlink" title="4.1 smooth与powersmooth"></a>4.1 smooth与powersmooth</h4><p>如果一个整数的所有素因子都不大于B，我们称这个整数是B-Smooth数</p>
-<p>如果一个整数的所有素因子的对应指数次幂不大于B，我们称这个整数是B-powersmooth数</p>
-<p>$720({2^4}{3^2}{5^1})$ 是一个5-smooth数，6-smooth数，7-smooth数</p>
-<p>但5^1\&lt;3^2\&lt;2^4=16，所以它也是一个16-powersmooth数</p>
-<h4 id="4-2-原理解释"><a href="#4-2-原理解释" class="headerlink" title="4.2 原理解释"></a>4.2 原理解释</h4><p>n 是一个合数，其中一个质数位p，由费马小定理有：$a^{K(p-1)}=1(mod\ p)$</p>
-<p>如果 $x=1(mod\ p)$ ，就有 $p|gcd(x-1,n)$</p>
-<p>这个算法的思想就是构造p-1，其有多个素因子，并且每个素因子的powersmooth不超过B，开始时随机选取一个x， 计算 $x^w\ mod\ n$ , $w=\prod_{primes\ q\leq\ B}\ q^{\lfloor \log_{q}{B}\rfloor}$ ， 如果有$gcd(x^w, n)$ 不等于1， 那么我们就相当于找到一个素数p了</p>
-<h4 id="4-3-算法"><a href="#4-3-算法" class="headerlink" title="4.3 算法"></a>4.3 算法</h4><p><strong>Inputs</strong>: n: a composite number<br><strong>Output</strong>: a nontrivial factor of n or failure</p>
-<ol>
-<li>select a smoothness bound B</li>
-<li>define $M=\prod_{primes\ q\leq\ B}\ q^{\lfloor \log_{q}{B}\rfloor}$ (note: explicitly evaluating M may not be necessary)</li>
-<li>randomly pick a coprime to n (note: we can actually fix a, e.g. if n is odd, then we can always select a = 2, random selection here is not imperative)</li>
-<li>compute $g = gcd(a^M − 1, n)$ (note: exponentiation can be done modulo n)</li>
-<li>if 1 &lt; g &lt; n then return g</li>
-<li>if g = 1 then select a larger B and go to step 2 or return failure</li>
-<li>if g = n then select a smaller B and go to step 2 or return failure</li>
-</ol>
-<p>这里的larger B和smaller B有选择性的方法，具体是啥我也不太清楚！ </p>
-<h4 id="4-4-范例"><a href="#4-4-范例" class="headerlink" title="4.4 范例"></a>4.4 范例</h4><p>If we want to factor the number n = 299.</p>
-<ol>
-<li>We select B = 5.</li>
-<li>Thus $M = 2^2 × 3^1 × 5^1$.</li>
-<li>We select a = 2.</li>
-<li>$g = gcd(a^M − 1, n) = 13$.</li>
-<li>Since 1 &lt; 13 &lt; 299, thus return 13.</li>
-<li>299 / 13 = 23 is prime, thus it is fully factored: 299 = 13 × 23.</li>
-</ol>
-<h3 id="0x5-Williams-39-s-p-1-算法"><a href="#0x5-Williams-39-s-p-1-算法" class="headerlink" title="0x5 Williams&#39;s p + 1 算法"></a>0x5 Williams&#39;s p + 1 算法</h3><p>Pollard&#39;s p-1算法比较容易懂，但是Williams’s p+1算法却不怎么让人明白！</p>
-<h4 id="5-1-算法"><a href="#5-1-算法" class="headerlink" title="5.1 算法"></a>5.1 算法</h4><p>选择大于2的整数A，用其生成一个卢卡斯序列：</p>
-<p>$V_0=2, V_1=A,V_j=AV_{j-1}-V_{j-2}$</p>
-<h3 id="0xn-smooth质数"><a href="#0xn-smooth质数" class="headerlink" title="0xn smooth质数"></a>0xn smooth质数</h3><h4 id="n-1-p-1-光滑"><a href="#n-1-p-1-光滑" class="headerlink" title="n.1 p - 1 光滑"></a>n.1 p - 1 光滑</h4><p>当 p 是 N 的因数，并且 p - 1 是光滑的时候，可能可以使用 Pollard&#39;s p − 1 算法来分解 N，但是也不是完全可以成功的。</p>
-<h4 id="n-2-p-1-光滑"><a href="#n-2-p-1-光滑" class="headerlink" title="n.2 p + 1 光滑"></a>n.2 p + 1 光滑</h4><p>当 p 是 n 的因数，并且 p + 1 是光滑的时候，可能可以使用 Williams&#39;s p + 1 算法来分解 N，但是也不是完全可以成功的。</p>
-<h4 id="n-3-primefac包"><a href="#n-3-primefac包" class="headerlink" title="n.3 primefac包"></a>n.3 primefac包</h4><p>上面的两种光滑，都可以使用包<a href="https://pypi.python.org/pypi/primefac" target="_blank" rel="external">primefac</a> 来做</p>
-<p>primefac是一个贼好用的工具，环境一般在linux上，cygwin上也能用，运行速度贼快！</p>
-<font color="#f00">不能在windows上使用的原因</font>
-
-<p>在Windows中，多进程multiprocessing使用的是序列化pickle来在多进程之间转移数据，而socket对象是不能被序列化的，但是在linux操作系统上却没问题，因为在linux上多进程multiprocessing使用的是fork，所以在windows上可以改用多线程。</p>
-<p>常用的命令行使用方式：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">python -m primefac [-vs] [-v|--verbose] [-s|--summary] [-t=NUM] [-r=NUM]</div><div class="line">                [-m=[prb][,p-1][,p+1][,ecm][,mpqs]] rpn</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"> </div><div class="line">rpn is an expression in revese Polish notation and is evaluated using integer arithmetic. Each number that remains on the stack after evaluation is then factored.</div><div class="line"></div><div class="line">-t sets the trial division limit; the default value is 1000. Use -t=inf to use trial division exclusively.</div><div class="line"></div><div class="line">-r sets the number of rounds of Pollard’s rho algorithm to try before calling a factor “difficult”. The default value is 42,000. Use -r=inf to use Pollard’s rho exclusively once the trial division is completed.</div><div class="line"></div><div class="line">If verbosity is invoked, we indicate in the output which algorithm produced which factors during the multifactor phase.</div><div class="line"></div><div class="line">If the -s (or --summary) flag is absent, then output is identical to the output of the GNU factor command, except possibly for the order of the factors and, if verbosity has been turned on, the annotations indicating which algorithm produced which factors.</div><div class="line"></div><div class="line">If the -s (or --summary) flag is present, then output is modified by adding a single newline between each item’s output, before the first item, and after the last item. Each item’s output is also modified by printing a second line of data summarizing the results by describing the number of decimal digits in the input, the number of decimal digits in each prime factor, and the factors’ multiplicities</div><div class="line"></div><div class="line">The -v and -s flags may be combined into a single flag in either order — i.e., into -vs or -sv.</div><div class="line"></div><div class="line">The -m= flag controls the functions used during the multifactor phase. The options are prb, p-1, p+1, ecm, and mpqs, representing Pollard’s rho, Pollard’s p-1, Williams’ p+1, the elliptic curve method, and the multiple polynomial quadratic sieve, respectively. The options must be separated by commas. The options can be repeated: if prb is listed twice, for example, then multifactor will run two instances of pollardRho_brent simultaneously. In the case of prb and ecm, this decreases the expectation value of the time to find a factor, whereas the other three algorithms (p-1, p+1, and MPQS) have no randomized component so that running duplicate instances of these three algorithms confers no benefit. We therefore ignore repeated listings of the latter three methods: for example, calling</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">python -m primefac -m=prb,prb,ecm,ecm,ecm,mpqs,mpqs 38 ! 1 +</div></pre></td></tr></table></figure>
-<p>从上面的说明中可以看出，primefac可以使用多种常用的分解质因数的方法，而rpn时使用逆波兰表示法表示的数。</p>
-<h4 id="n-4-整数分解的方法"><a href="#n-4-整数分解的方法" class="headerlink" title="n.4 整数分解的方法"></a>n.4 整数分解的方法</h4><ul>
-<li><a href="https://en.wikipedia.org/wiki/Trial_division" target="_blank" rel="external">Trial division</a></li>
-<li><a href="https://en.wikipedia.org/wiki/Wheel_factorization" target="_blank" rel="external">Wheel factorization</a></li>
-<li><a href="https://en.wikipedia.org/wiki/Pollard%27s_rho_algorithm" target="_blank" rel="external">Pollard&#39;s rho algorithm</a></li>
-<li><a href="https://en.wikipedia.org/wiki/Algebraic-group_factorisation_algorithms" target="_blank" rel="external">Algebraic-group factorisation algorithms</a>, among which are <a href="https://en.wikipedia.org/wiki/Pollard%27s_p_%E2%88%92_1_algorithm" target="_blank" rel="external">Pollard&#39;s <em>p</em> − 1 algorithm</a>, <a href="https://en.wikipedia.org/wiki/Williams%27_p_%2B_1_algorithm" target="_blank" rel="external">Williams&#39; <em>p</em> + 1 algorithm</a>, and <a href="https://en.wikipedia.org/wiki/Lenstra_elliptic_curve_factorization" target="_blank" rel="external">Lenstra elliptic curve factorization</a></li>
-<li><a href="https://en.wikipedia.org/wiki/Fermat%27s_factorization_method" target="_blank" rel="external">Fermat&#39;s factorization method</a></li>
-<li><a href="https://en.wikipedia.org/wiki/Euler%27s_factorization_method" target="_blank" rel="external">Euler&#39;s factorization method</a></li>
-<li><a href="https://en.wikipedia.org/wiki/Special_number_field_sieve" target="_blank" rel="external">Special number field sieve</a></li>
-</ul>
-<h3 id="0xn-1-ctf中范例"><a href="#0xn-1-ctf中范例" class="headerlink" title="0xn+1 ctf中范例"></a>0xn+1 ctf中范例</h3><h4 id="n-1-1-2017-SECCON-very-smooth"><a href="#n-1-1-2017-SECCON-very-smooth" class="headerlink" title="n+1.1 2017 SECCON very smooth"></a>n+1.1 2017 SECCON very smooth</h4><p>将题目从文件中binwalk出来之后，发现了一个证书，给出了大整数n</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">python -m primefac -vs -m=p+1  149767527975084886970446073530848114556615616489502613024958495602726912268566044330103850191720149622479290535294679429142532379851252608925587476670908668848275349192719279981470382501117310509432417895412013324758865071052169170753552224766744798369054498758364258656141800253652826603727552918575175830897</div><div class="line"></div><div class="line">149767527975084886970446073530848114556615616489502613024958495602726912268566044330103850191720149622479290535294679429142532379851252608925587476670908668848275349192719279981470382501117310509432417895412013324758865071052169170753552224766744798369054498758364258656141800253652826603727552918575175830897: p+1 11807485231629132025602991324007150366908229752508016230400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001 12684117323636134264468162714319298445454220244413621344524758865071052169170753552224766744798369054498758364258656141800253652826603727552918575175830897</div><div class="line">Z309  =  P155 x P155  =  11807485231629132025602991324007150366908229752508016230400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001 x 12684117323636134264468162714319298445454220244413621344524758865071052169170753552224766744798369054498758364258656141800253652826603727552918575175830897</div></pre></td></tr></table></figure>
-<p>至于这里为什么只能用Williams&#39;s <em>p</em> + 1 算法而不能用 Pollard&#39;s p − 1 算法分解，其原因可能如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">➜ python -m primefac -vs 1180748523162913202560299132400715036690822975250801623040000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002</div><div class="line"></div><div class="line">1180748523162913202560299132400715036690822975250801623040000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002: 2 7 43 503 761429 5121103123294685745276806480148867612214394022184063853387799606010231770631857868979139305712805242051823263337587909550709296150544706624823</div><div class="line">Z154  =  P1 x P1 x P2 x P3 x P6 x P142  =  2 x 7 x 43 x 503 x 761429 x 5121103123294685745276806480148867612214394022184063853387799606010231770631857868979139305712805242051823263337587909550709296150544706624823</div><div class="line"></div><div class="line">➜ python -m primefac -vs 1180748523162913202560299132400715036690822975250801623040000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 </div><div class="line"></div><div class="line">1180748523162913202560299132400715036690822975250801623040000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000: 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5</div><div class="line">Z154  =  P1^185 x P1^62 x P1^97  =  2^185 x 3^62 x 5^97</div></pre></td></tr></table></figure>
-<p>其实从此处看出，对于 p-1 确实有很多小因子，但是个数太多，这就会使得进行枚举的时候出现指数爆炸的情况，因此没有分解出来。</p>
-<h4 id="n-1-2-2018-Backdoor-Awesome-mix2"><a href="#n-1-2-2018-Backdoor-Awesome-mix2" class="headerlink" title="n+1.2 2018 Backdoor Awesome-mix2"></a>n+1.2 2018 Backdoor Awesome-mix2</h4><p>这道题是一道验证题，但是需要解决一个问题：</p>
-<p>已知s，m，（都是不超过1024位的大整数），求使得 $s^e=m(mod n)$ 的 e和n，约束条件是:</p>
-<p>$e&gt;=3, n&gt;=s, n.bit_length &lt;= 1025$</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -3065,7 +2998,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">129</span>
+                <span class="site-state-item-count">132</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -3076,7 +3009,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-count">16</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -3087,7 +3020,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">54</span>
+                <span class="site-state-item-count">55</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -3312,6 +3245,8 @@
 
 
   
+
+
 
 
 
