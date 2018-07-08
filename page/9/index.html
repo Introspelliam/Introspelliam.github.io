@@ -115,7 +115,7 @@
     root: '/',
     scheme: 'Mist',
     version: '5.1.2',
-    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":true,"onmobile":true},
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":false,"onmobile":true},
     fancybox: true,
     tabs: true,
     motion: true,
@@ -319,6 +319,185 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/11/XMAN之旅——Misc/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="上善若水">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/08/11/XMAN之旅——Misc/" itemprop="url">XMAN之旅——Misc</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-11T00:49:22+08:00">
+                2017-08-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/xman/" itemprop="url" rel="index">
+                    <span itemprop="name">xman</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="1-Misc概述"><a href="#1-Misc概述" class="headerlink" title="1. Misc概述"></a>1. Misc概述</h3><p>MISC，即Miscellaneous，即安全杂项，题目或涉及流量分析、电子取证、人肉搜索、数据分析等等。</p>
+<p>MISC，中文即杂项，包括隐写，数据还原，脑洞、社会工程、与信息安全相关的大数据等。</p>
+<p>竞赛过程中解MISC时会涉及到各种脑洞，各种花式技巧，主要考察选手的快速理解、学习能力以及日常知识积累的广度、深度。</p>
+<p>MISC这一块并不像PWN\REVERSE等需要深厚的理论基础，所以我们直接从经典题目开始入手。</p>
+<h3 id="2-Misc题目类型"><a href="#2-Misc题目类型" class="headerlink" title="2. Misc题目类型"></a>2. Misc题目类型</h3><p>Misc大体上分为Encode编码转换、Steg隐写分析、Forensic数字取证以及其他类型</p>
+<h3 id="3-编码转换"><a href="#3-编码转换" class="headerlink" title="3. 编码转换"></a>3. 编码转换</h3><p>由于编码很多种，可以在网上找各种站长工具对编码进行转换，而且效率很高！</p>
+<p>常见的编码有：base64、base32、base16、ascii、unicode、url、摩斯编码、曼切斯特编码等</p>
+<h3 id="4-取证和隐写分析"><a href="#4-取证和隐写分析" class="headerlink" title="4. 取证和隐写分析"></a>4. 取证和隐写分析</h3><h4 id="4-1-常见的工具"><a href="#4-1-常见的工具" class="headerlink" title="4.1 常见的工具"></a>4.1 常见的工具</h4><p>文本编辑工具：</p>
+<ul>
+<li>010Editor</li>
+<li>UtralEdit</li>
+<li>Winhex</li>
+</ul>
+<p>隐写工具：</p>
+<ul>
+<li>StegSolver</li>
+<li>Stegdetect</li>
+<li>wbSteg4</li>
+<li>MP3Stego</li>
+<li>outguess</li>
+<li>stepic</li>
+<li>steghide</li>
+</ul>
+<p>其他工具：</p>
+<ul>
+<li>7zcracker</li>
+<li>archpr</li>
+<li>tweakpng</li>
+<li>audacity</li>
+<li>binwalk</li>
+<li>foremost</li>
+<li>Ffmpeg</li>
+<li>Alternatestreamview</li>
+<li>Dsfok-tools</li>
+<li>Snow</li>
+</ul>
+<h4 id="4-2-常见的隐写术"><a href="#4-2-常见的隐写术" class="headerlink" title="4.2 常见的隐写术"></a>4.2 常见的隐写术</h4><p>从最早的图种(copy /b test.jpg+test.torrent test.jpg),<br>CTF比赛中最开始的图片隐写(JPG，PNG，GIF)<br>Word，PDF等隐写<br>音频，视频中的隐写(波形，频谱…….)<br>Exe中的病毒行为分析<br>Pcap流量包<br>磁盘文件(IMG,VMDK)<br>交换数据流(NTFS数据流)<br>HTML文件</p>
+<h3 id="5-自己的思考"><a href="#5-自己的思考" class="headerlink" title="5. 自己的思考"></a>5. 自己的思考</h3><p>想要深入学习Misc，首先需要熟练掌握一些文件格式，并能够根据相应的格式合理运用工具，如此才能掌握Misc！</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -9186,371 +9365,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/03/XMAN之旅-逆向基础（下）/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/08/03/XMAN之旅-逆向基础（下）/" itemprop="url">XMAN之旅_逆向基础（下）</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-03T00:07:08+08:00">
-                2017-08-03
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/xman/" itemprop="url" rel="index">
-                    <span itemprop="name">xman</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="三、-CTF逆向与现实逆向"><a href="#三、-CTF逆向与现实逆向" class="headerlink" title="三、 CTF逆向与现实逆向"></a>三、 CTF逆向与现实逆向</h3><ul>
-<li><p>CTF逆向特点</p>
-<ul>
-<li>代码量小</li>
-<li>结构简单<ul>
-<li>单文件</li>
-</ul>
-</li>
-<li>编码单一</li>
-<li>现代语言特性少<ul>
-<li>面向过程</li>
-</ul>
-</li>
-<li>加密壳/优化少</li>
-<li>语言常见<ul>
-<li>C/C++/ASM</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>现实逆向</p>
-<ul>
-<li>代码量巨大</li>
-<li>结构复杂<ul>
-<li>大量静态库、动态库</li>
-</ul>
-</li>
-<li>各种乱码</li>
-<li>大量现代语言特性<ul>
-<li>OO、Template</li>
-</ul>
-</li>
-<li>优化和加密壳十分常见</li>
-<li>语言可能十分神器<ul>
-<li>Go/VB/Delphi</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="四、IDA高级使用"><a href="#四、IDA高级使用" class="headerlink" title="四、IDA高级使用"></a>四、IDA高级使用</h3><h4 id="1-设置字符串编码和格式"><a href="#1-设置字符串编码和格式" class="headerlink" title="1. 设置字符串编码和格式"></a>1. 设置字符串编码和格式</h4><ul>
-<li>快捷键：<font color="#f00">Alt+A</font></li>
-<li>可以设置字符串类型<ul>
-<li>Unicode字符串 （WCS）</li>
-<li>多字节字符串 （MBS）</li>
-<li>其他</li>
-</ul>
-</li>
-<li>可以设置字符串编码<ul>
-<li>需要系统支持相应的编码</li>
-</ul>
-</li>
-</ul>
-<h4 id="2-导入-导出数据"><a href="#2-导入-导出数据" class="headerlink" title="2. 导入/导出数据"></a>2. 导入/导出数据</h4><ul>
-<li>快捷键：<font color="#f00">Shift+E</font></li>
-<li>菜单名：<ul>
-<li>Edit -&gt; Import Data</li>
-<li>Edit -&gt; Export Data</li>
-</ul>
-</li>
-<li>操作：<ul>
-<li>选定后按快捷键</li>
-</ul>
-</li>
-<li>方便提取数据或修改idb数据库</li>
-</ul>
-<h4 id="3-选定大段数据"><a href="#3-选定大段数据" class="headerlink" title="3. 选定大段数据"></a>3. 选定大段数据</h4><ul>
-<li>快捷键： <font color="#f00">Alt+L</font></li>
-<li><ul>
-<li>菜单名：<ul>
-<li>Edit -&gt; Begin Selection</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>将标定选择起始点</li>
-<li>滚轮或按g跳转至结束位置</li>
-</ul>
-<h4 id="4-批量应用类型"><a href="#4-批量应用类型" class="headerlink" title="4. 批量应用类型"></a>4. 批量应用类型</h4><ul>
-<li>操作<ul>
-<li>设置好第一个类型</li>
-<li>利用选定大量数据的方法选定数据</li>
-<li>按*或按d弹出建立数组对话框</li>
-<li><font color="#f0f">不勾选Create as array</font>
-
-</li>
-</ul>
-</li>
-</ul>
-<h4 id="5-设置间接跳转地址"><a href="#5-设置间接跳转地址" class="headerlink" title="5. 设置间接跳转地址"></a>5. 设置间接跳转地址</h4><ul>
-<li>快捷键：<font color="#f00">Alt+F11</font></li>
-<li>菜单名：<ul>
-<li>Edit -&gt; Plugins -&gt; Change the callee address </li>
-</ul>
-</li>
-<li>将利用动态调试获取到的调用/跳转地址填入，可以极大地帮助IDA和F5的分析（不如参数个数、调用约定等），获得更准确的结果</li>
-</ul>
-<h4 id="6-修复跳转表"><a href="#6-修复跳转表" class="headerlink" title="6. 修复跳转表"></a>6. 修复跳转表</h4><ul>
-<li>默认无快捷键，可手动设置</li>
-<li>菜单<ul>
-<li>Edit -&gt; Other -&gt; Specify switch idiom</li>
-</ul>
-</li>
-<li>当程序在PIE时可能会导致<font color="#f00">跳转表分析失败</font>，于是需要手动修复来获得更好的分析结果</li>
-</ul>
-<h4 id="7-IDAPython"><a href="#7-IDAPython" class="headerlink" title="7. IDAPython"></a>7. IDAPython</h4><ul>
-<li>IDA自带支持的脚本</li>
-<li>可以使用几乎所有IDA提供的API</li>
-<li>可以快速完成大量重复性操作</li>
-<li>可以方便的了解IDA内部的数据和结构</li>
-</ul>
-<h3 id="五、IDA-F5出错处理"><a href="#五、IDA-F5出错处理" class="headerlink" title="五、IDA F5出错处理"></a>五、IDA F5出错处理</h3><h4 id="1-positive-sp-value"><a href="#1-positive-sp-value" class="headerlink" title="1. positive sp value"></a>1. positive sp value</h4><ul>
-<li>成因：IDA会自动分析SP寄存器的变化量，由于缺少调用约定、参数个数等信息，导致分析出错</li>
-<li>解决方案<ul>
-<li>推荐：在<font color="#f00">Option -&gt; General设置显示Stack pointer</font>，然后去检查对应地址附近调用的函数的调用约定以及栈指针变化</li>
-<li>不推荐： 在对应地址处按<font color="#f00">Alt+K</font>，然后输入一个较大的负值（有风险）</li>
-</ul>
-</li>
-</ul>
-<h4 id="2-call-analysis-failed"><a href="#2-call-analysis-failed" class="headerlink" title="2. call analysis failed"></a>2. call analysis failed</h4><ul>
-<li>成因：F5在分析调用时，未能成功解析<font color="#f00">参数位置/参数个苏</font></li>
-<li>解决方案：<ul>
-<li>对于间接调用（类似call eax等），可使用之前讲过的<font color="#f0f">设置调用地址</font>的方法解决</li>
-<li>对于直接调用，查看<font color="#f0f">调用目标的type</font>是否正确设置。<font color="#f0f">可变参数</font>是引发这种错误的主要原因之一</li>
-</ul>
-</li>
-</ul>
-<h4 id="3-cannot-convert-to-microcode"><a href="#3-cannot-convert-to-microcode" class="headerlink" title="3. cannot convert to microcode"></a>3. cannot convert to microcode</h4><ul>
-<li>成因：部分指令无法被编译</li>
-<li>解决方案：<ul>
-<li>最常见起因是函数中<font color="#f0f">有未设置成指令的数据字节</font>，按c将其设置为指令即可</li>
-<li>其次常见的是<font color="#f0f">x86中的rep前缀</font>，比如<font color="#f0f">repxx  jmp</font>等。可以将该指令的<font color="#f0f">第一个字节(repxx前缀的对应位置)patch为0x90 (NOP)</font></li>
-</ul>
-</li>
-</ul>
-<h4 id="4-stack-frame-is-too-big"><a href="#4-stack-frame-is-too-big" class="headerlink" title="4. stack frame is too big"></a>4. stack frame is too big</h4><ul>
-<li>成因：在分析栈帧时，IDA出现异常，导致分析出错</li>
-<li>解决方案：<ul>
-<li>找到明显不合常理的stack variable offset，双击进入栈帧界面，<font color="#f0f">按u键删除对应的stack variable</font></li>
-<li>如果是去壳导致的原因，先用OD等软件脱壳</li>
-<li>可能由花指令导致，请手动或自动检查并去除花指令</li>
-</ul>
-</li>
-<li>非常罕见</li>
-</ul>
-<h4 id="5-local-variable-allocation-failed"><a href="#5-local-variable-allocation-failed" class="headerlink" title="5. local variable allocation failed"></a>5. local variable allocation failed</h4><ul>
-<li>成因： 分析函数时，有部分变量对应的区域<font color="#f0f">发生重叠</font>，多见于ARM平台出现Point、Rect等8字节、16字节、32字节结构</li>
-<li>解决方案<ul>
-<li>修改对应参数为多个int</li>
-<li>修改ida安装目录下hexrays.cfg中的HO_IGNORE_OVERLAPS</li>
-</ul>
-</li>
-</ul>
-<h4 id="6-F5结果不正确"><a href="#6-F5结果不正确" class="headerlink" title="6. F5结果不正确"></a>6. F5结果不正确</h4><ul>
-<li>成因：F5会自动删除其认为不可能到达的死代码</li>
-<li>常见起因是一个函数错误的标注为noretur函数</li>
-<li>解决方案<ul>
-<li>进到目前反编译结果，找到<font color="#f0f">最后被调用的函数(被错误分析的函数)，双击进入（迫使HexRays重新分析相应函数）</font></li>
-<li>如果上述方案不成功，那么进到被错误分析的函数，按Tab切换到反汇编界面，按Alt+P进入界面取消函数的Does not return 属性</li>
-</ul>
-</li>
-</ul>
-<h3 id="六、IDA-F5高级使用"><a href="#六、IDA-F5高级使用" class="headerlink" title="六、IDA F5高级使用"></a>六、IDA F5高级使用</h3><h4 id="1-自定义寄存器传参"><a href="#1-自定义寄存器传参" class="headerlink" title="1. 自定义寄存器传参"></a>1. 自定义寄存器传参</h4><ul>
-<li>使用IDA中的<strong>usercall和</strong>userpurge调用约定（两个下划线）</li>
-<li>设置范例<ul>
-<li>int __usercall test&lt;eax&gt; (int al &lt;ebx&gt;);</li>
-<li>&lt;&gt;中为对应值的位置</li>
-<li>第一个&lt;&gt;为返回值位置，注意返回值的位置即使不变也要填写</li>
-</ul>
-</li>
-</ul>
-<h4 id="2-HexRays源码级调试"><a href="#2-HexRays源码级调试" class="headerlink" title="2. HexRays源码级调试"></a>2. HexRays源码级调试</h4><ul>
-<li>注意<ul>
-<li>F5中显示的变量很可能不是变量原来的值，尤其是寄存器变量，尽量在  值位置断下并查看</li>
-<li>对于优化后的代码，F5调试bug很多</li>
-<li>F5单步不太稳定，在ARM平台可能会跑飞</li>
-<li>F5的运行至指定位置功能功能不稳定</li>
-</ul>
-</li>
-</ul>
-<h4 id="3-恢复符号"><a href="#3-恢复符号" class="headerlink" title="3. 恢复符号"></a>3. 恢复符号</h4><ul>
-<li>找到程序的旧版本<ul>
-<li>大量程序早期版本中安全意识薄弱，没有删除符号等各种信息</li>
-<li>苹果用户可以在AppAdmin中获取版本应用</li>
-</ul>
-</li>
-<li>Rizzo匹配</li>
-<li>看程序自带的String<ul>
-<li>许多程序自带大量调试信息，从而可以获取符号</li>
-</ul>
-</li>
-<li>Google搜索源码<ul>
-<li>CS、iOS都有被泄露过</li>
-<li>按获得信息搜索源码<ul>
-<li>大量程序中使用Stack Overflow、CSDN等答案</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>制作Signtature<ul>
-<li>IDA提供自动制作Signature的工具</li>
-<li>打开IDASDK68文件夹找到flair 58文件夹</li>
-</ul>
-</li>
-</ul>
-<h3 id="七、IDA-插件搞定虚表"><a href="#七、IDA-插件搞定虚表" class="headerlink" title="七、IDA 插件搞定虚表"></a>七、IDA 插件搞定虚表</h3><h4 id="1-虚表简介"><a href="#1-虚表简介" class="headerlink" title="1. 虚表简介"></a>1. 虚表简介</h4><p>虚表是业界难题，虚函数的处理会因编译器采取的ABI的不同而不同</p>
-<ul>
-<li>IDA操作的插件<ul>
-<li>HexraysCodeXplorer</li>
-<li>hexrays_tool</li>
-<li>HexRaysPyTools</li>
-</ul>
-</li>
-</ul>
-<h4 id="2-实验样例"><a href="#2-实验样例" class="headerlink" title="2. 实验样例"></a>2. 实验样例</h4><ul>
-<li>快捷键： Shift + F</li>
-<li>菜单： 右键 -&gt; Deeo Scan Variable</li>
-<li>操作<ul>
-<li>在构造函数中执行上述操作、等待扫描完毕</li>
-<li>按Alt+F8打开Signature Builder，看到有黄色部分，然后选不正确的field点</li>
-<li>清楚所有的黄色部分后即可点击Finalize，在新弹出的窗口中修改名称</li>
-</ul>
-</li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -9605,7 +9419,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">128</span>
+                <span class="site-state-item-count">129</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -9688,8 +9502,6 @@
       
         <div class="back-to-top">
           <i class="fa fa-arrow-up"></i>
-          
-            <span id="scrollpercent"><span>0</span>%</span>
           
         </div>
       

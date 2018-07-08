@@ -124,7 +124,7 @@
     root: '/',
     scheme: 'Mist',
     version: '5.1.2',
-    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":true,"onmobile":true},
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":false,"onmobile":true},
     fancybox: true,
     tabs: true,
     motion: true,
@@ -736,7 +736,7 @@ attack_buf = &apos;a&apos;*204 + [target[&apos;Ret&apos;]].pack(&apos;V&apos;) +
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">128</span>
+                <span class="site-state-item-count">129</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -824,7 +824,7 @@ attack_buf = &apos;a&apos;*204 + [target[&apos;Ret&apos;]].pack(&apos;V&apos;) +
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、开始之前"><span class="nav-number">1.</span> <span class="nav-text">1、开始之前</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、环境要求"><span class="nav-number">2.</span> <span class="nav-text">2、环境要求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、windows主机上存在漏洞的Server程序"><span class="nav-number">3.</span> <span class="nav-text">3、windows主机上存在漏洞的Server程序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4、开发exploit"><span class="nav-number">4.</span> <span class="nav-text">4、开发exploit</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-Ruby开发exploit的正常结构"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 Ruby开发exploit的正常结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-Ruby开发“傻瓜式”Exploit"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 Ruby开发“傻瓜式”Exploit</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-获取返回地址和覆盖返回地址"><span class="nav-number">4.3.</span> <span class="nav-text">4.3 获取返回地址和覆盖返回地址</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#获取返回地址："><span class="nav-number">4.3.1.</span> <span class="nav-text">获取返回地址：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#覆盖返回地址"><span class="nav-number">4.3.2.</span> <span class="nav-text">覆盖返回地址</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#综合编写exploit"><span class="nav-number">4.3.3.</span> <span class="nav-text">综合编写exploit</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5、测试结果"><span class="nav-number">5.</span> <span class="nav-text">5、测试结果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考文献"><span class="nav-number">6.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、开始之前"><span class="nav-text">1、开始之前</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、环境要求"><span class="nav-text">2、环境要求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、windows主机上存在漏洞的Server程序"><span class="nav-text">3、windows主机上存在漏洞的Server程序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4、开发exploit"><span class="nav-text">4、开发exploit</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-Ruby开发exploit的正常结构"><span class="nav-text">4.1 Ruby开发exploit的正常结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-Ruby开发“傻瓜式”Exploit"><span class="nav-text">4.2 Ruby开发“傻瓜式”Exploit</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-获取返回地址和覆盖返回地址"><span class="nav-text">4.3 获取返回地址和覆盖返回地址</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#获取返回地址："><span class="nav-text">获取返回地址：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#覆盖返回地址"><span class="nav-text">覆盖返回地址</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#综合编写exploit"><span class="nav-text">综合编写exploit</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5、测试结果"><span class="nav-text">5、测试结果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考文献"><span class="nav-text">参考文献</span></a></li></ol></div>
             
 
           </div>
@@ -835,8 +835,6 @@ attack_buf = &apos;a&apos;*204 + [target[&apos;Ret&apos;]].pack(&apos;V&apos;) +
       
         <div class="back-to-top">
           <i class="fa fa-arrow-up"></i>
-          
-            <span id="scrollpercent"><span>0</span>%</span>
           
         </div>
       

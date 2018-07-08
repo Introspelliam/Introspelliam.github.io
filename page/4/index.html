@@ -115,7 +115,7 @@
     root: '/',
     scheme: 'Mist',
     version: '5.1.2',
-    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":true,"onmobile":true},
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":false,"onmobile":true},
     fancybox: true,
     tabs: true,
     motion: true,
@@ -319,6 +319,224 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/07/ssh端口转发/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="上善若水">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/12/07/ssh端口转发/" itemprop="url">ssh端口转发</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-07T00:49:29+08:00">
+                2017-12-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web/" itemprop="url" rel="index">
+                    <span itemprop="name">web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="第一部分-概述"><a href="#第一部分-概述" class="headerlink" title="第一部分 概述"></a>第一部分 概述</h2><p>当你在咖啡馆享受免费 WiFi 的时候，有没有想到可能有人正在窃取你的密码及隐私信息？当你发现实验室的防火墙阻止了你的网络应用端口，是不是有苦难言？来看看 SSH 的端口转发功能能给我们带来什么好处吧！</p>
+<h3 id="端口转发概述"><a href="#端口转发概述" class="headerlink" title="端口转发概述"></a>端口转发概述</h3><p>让我们先来了解一下端口转发的概念吧。我们知道，SSH 会自动加密和解密所有 SSH 客户端与服务端之间的网络数据。但是，SSH 还同时提供了一个非常有用的功能，这就是端口转发。它能够将其他 TCP 端口的网络数据通过 SSH 链接来转发，并且自动提供了相应的加密及解密服务。这一过程有时也被叫做“隧道”（tunneling），这是因为 SSH 为其他 TCP 链接提供了一个安全的通道来进行传输而得名。例如，Telnet，SMTP，LDAP 这些 TCP 应用均能够从中得益，避免了用户名，密码以及隐私信息的明文传输。而与此同时，如果您工作环境中的防火墙限制了一些网络端口的使用，但是允许 SSH 的连接，那么也是能够通过将 TCP 端口转发来使用 SSH 进行通讯。总的来说 SSH 端口转发能够提供两大功能：</p>
+<ol>
+<li>加密 SSH Client 端至 SSH Server 端之间的通讯数据。</li>
+<li>突破防火墙的限制完成一些之前无法建立的 TCP 连接。</li>
+</ol>
+<h5 id="图-1-SSH-端口转发"><a href="#图-1-SSH-端口转发" class="headerlink" title="图 1. SSH 端口转发"></a>图 1. SSH 端口转发</h5><p><img src="/images/2017-12-07/image001.jpg" alt=""></p>
+<p>如上图所示，使用了端口转发之后，TCP 端口 A 与 B 之间现在并不直接通讯，而是转发到了 SSH 客户端及服务端来通讯，从而自动实现了数据加密并同时绕过了防火墙的限制。</p>
+<h2 id="第二部分-本地转发与远程转发"><a href="#第二部分-本地转发与远程转发" class="headerlink" title="第二部分 本地转发与远程转发"></a>第二部分 本地转发与远程转发</h2><h3 id="本地转发实例分析"><a href="#本地转发实例分析" class="headerlink" title="本地转发实例分析"></a>本地转发实例分析</h3><p>我们先来看第一个例子，在实验室里有一台 LDAP 服务器（LdapServerHost），但是限制了只有本机上部署的应用才能直接连接此 LDAP 服务器。如果我们由于调试或者测试的需要想临时从远程机器（LdapClientHost）直接连接到这个 LDAP 服务器 , 有什么方法能够实现呢？</p>
+<p>答案无疑是本地端口转发了，它的命令格式是：</p>
+<p><code>ssh -L &lt;local port&gt;:&lt;remote host&gt;:&lt;remote port&gt; &lt;SSH hostname&gt;</code></p>
+<p>在 LdapClientHost 上执行如下命令即可建立一个 SSH 的本地端口转发，例如：</p>
+<p><code>$ ssh -L 7001:localhost:389 LdapServerHost</code></p>
+<h5 id="图-2-本地端口转发"><a href="#图-2-本地端口转发" class="headerlink" title="图 2. 本地端口转发"></a>图 2. 本地端口转发</h5><p><img src="/images/2017-12-07/image002.jpg" alt=""></p>
+<p>这里需要注意的是本例中我们选择了 7001 端口作为本地的监听端口，在选择端口号时要注意非管理员帐号是无权绑定 1-1023 端口的，所以一般是选用一个 1024-65535 之间的并且尚未使用的端口号即可。</p>
+<p>然后我们可以将远程机器（LdapClientHost）上的应用直接配置到本机的 7001 端口上（而不是 LDAP 服务器的 389 端口上）。之后的数据流将会是下面这个样子：</p>
+<ul>
+<li>我们在 LdapClientHost 上的应用将数据发送到本机的 7001 端口上，</li>
+<li>而本机的 SSH Client 会将 7001 端口收到的数据加密并转发到 LdapServertHost 的 SSH Server 上。</li>
+<li>SSH Server 会解密收到的数据并将之转发到监听的 LDAP 389 端口上，</li>
+<li>最后再将从 LDAP 返回的数据原路返回以完成整个流程。</li>
+</ul>
+<p>我们可以看到，这整个流程应用并没有直接连接 LDAP 服务器，而是连接到了本地的一个监听端口，但是 SSH 端口转发完成了剩下的所有事情，加密，转发，解密，通讯。</p>
+<p>这里有几个地方需要注意：</p>
+<ol>
+<li>SSH 端口转发是通过 SSH 连接建立起来的，我们必须保持这个 SSH 连接以使端口转发保持生效。一旦关闭了此连接，相应的端口转发也会随之关闭。</li>
+<li>我们只能在建立 SSH 连接的同时创建端口转发，而不能给一个已经存在的 SSH 连接增加端口转发。</li>
+<li>你可能会疑惑上面命令中的 \<remote host\=""> 为什么用 localhost，它指向的是哪台机器呢？在本例中，它指向 LdapServertHost 。我们为什么用 localhost 而不是 IP 地址或者主机名呢？其实这个取决于我们之前是如何限制 LDAP 只有本机才能访问。如果只允许 lookback 接口访问的话，那么自然就只有 localhost 或者 IP 为 127.0.0.1 才能访问了，而不能用真实 IP 或者主机名。</remote></li>
+<li>命令中的\<remote host\=""> 和 \<ssh hostname\=""> 必须是同一台机器么？其实是不一定的，它们可以是两台不同的机器。我们在后面的例子里会详细阐述这点。</ssh></remote></li>
+<li>好了，我们已经在 LdapClientHost 建立了端口转发，那么这个端口转发可以被其他机器使用么？比如能否新增加一台 LdapClientHost2 来直接连接 LdapClientHost 的 7001 端口？答案是不行的，在主流 SSH 实现中，本地端口转发绑定的是 lookback 接口，这意味着只有 localhost 或者 127.0.0.1 才能使用本机的端口转发 , 其他机器发起的连接只会得到“ connection refused. ”。好在 SSH 同时提供了 GatewayPorts 关键字，我们可以通过指定它与其他机器共享这个本地端口转发。<br><code>ssh -g -L &lt;local port&gt;:&lt;remote host&gt;:&lt;remote port&gt; &lt;SSH hostname&gt;</code></li>
+</ol>
+<h3 id="远程转发实例分析"><a href="#远程转发实例分析" class="headerlink" title="远程转发实例分析"></a>远程转发实例分析</h3><p>我们来看第二个例子，这次假设由于网络或防火墙的原因我们不能用 SSH 直接从 LdapClientHost 连接到 LDAP 服务器（LdapServertHost），但是反向连接却是被允许的。那此时我们的选择自然就是远程端口转发了。</p>
+<p>它的命令格式是：</p>
+<p><code>ssh -R &lt;local port&gt;:&lt;remote host&gt;:&lt;remote port&gt; &lt;SSH hostname&gt;</code></p>
+<p>例如在 LDAP 服务器（LdapServertHost）端执行如下命令：</p>
+<p><code>$ ssh -R 7001:localhost:389 LdapClientHost</code></p>
+<h5 id="图-3-远程端口转发"><a href="#图-3-远程端口转发" class="headerlink" title="图 3. 远程端口转发"></a>图 3. 远程端口转发</h5><p><img src="/images/2017-12-07/image003.jpg" alt=""></p>
+<p>和本地端口转发相比，这次的图里，SSH Server 和 SSH Client 的位置对调了一下，但是数据流依然是一样的。我们在 LdapClientHost 上的应用将数据发送到本机的 7001 端口上，而本机的 SSH Server 会将 7001 端口收到的数据加密并转发到 LdapServertHost 的 SSH Client 上。 SSH Client 会解密收到的数据并将之转发到监听的 LDAP 389 端口上，最后再将从 LDAP 返回的数据原路返回以完成整个流程。</p>
+<p>看到这里，你是不是会有点糊涂了么？为什么叫本地转发，而有时又叫远程转发？这两者有什么区别？</p>
+<h3 id="本地转发与远程转发的对比与分析"><a href="#本地转发与远程转发的对比与分析" class="headerlink" title="本地转发与远程转发的对比与分析"></a>本地转发与远程转发的对比与分析</h3><p>不错，SSH Server，SSH Client，LdapServertHost，LdapClientHost，本地转发，远程转发，这么多的名词的确容易让人糊涂。让我们来分析一下其中的结构吧。首先，SSH 端口转发自然需要 SSH 连接，而 SSH 连接是有方向的，从 SSH Client 到 SSH Server 。而我们的应用也是有方向的，比如需要连接 LDAP Server 时，LDAP Server 自然就是 Server 端，我们应用连接的方向也是从应用的 Client 端连接到应用的 Server 端。如果这两个连接的方向一致，那我们就说它是本地转发。而如果两个方向不一致，我们就说它是远程转发。</p>
+<p>我们可以回忆上面的两个例子来做个对照。</p>
+<p>本地转发时：</p>
+<p>LdapClientHost 同时是应用的客户端，也是 SSH Client，这两个连接都从它指向 LdapServertHost（既是 LDAP 服务端，也是 SSH Server）。</p>
+<p>远程转发时：</p>
+<p>LdapClientHost 是应用的客户端，但却是 SSH Server ；而 LdapServertHost 是 LDAP 的服务端，但却是 SSH Client 。这样两个连接的方向刚好相反。</p>
+<p>另一个方便记忆的方法是，Server 端的端口都是预定义的固定端口（SSH Server 的端口 22，LDAP 的端口 389），而 Client 端的端口都是动态可供我们选择的端口（如上述例子中选用的 7001 端口）。如果 Server 端的两个端口都在同一台机器，Client 端的两个端口都在另一台机器上，那么这就是本地连接；如果这四个端口交叉分布在两个机器上，每台机器各有一个 Server 端端口，一个 Client 端端口，那就是远程连接。</p>
+<p>弄清楚了两者的区别之后，再来看看两者的相同之处。如果你所在的环境下，既允许 LdapClientHost 发起 SSH 连接到 LdapServerHost，也允许 LdapServerHost 发起 SSH 连接到 LdapClientHost 。那么这时我们选择本地转发或远程转发都是可以的，能完成一样的功能。</p>
+<p>接着让我们来看个进阶版的端口转发。我们之前涉及到的各种连接 / 转发都只涉及到了两台机器，还记得我们在本地转发中提到的一个问题么？本地转发命令中的 \<remote host\=""> 和 \<ssh hostname\=""> 可以是不同的机器么？</ssh></remote></p>
+<p><code>ssh -L &lt;local port&gt;:&lt;remote host&gt;:&lt;remote port&gt; &lt;SSH hostname&gt;</code></p>
+<p>答案是可以的！让我们来看一个涉及到四台机器 (A,B,C,D) 的例子。</p>
+<h5 id="图-4-多主机转发应用"><a href="#图-4-多主机转发应用" class="headerlink" title="图 4. 多主机转发应用"></a>图 4. 多主机转发应用</h5><p><img src="/images/2017-12-07/image004.jpg" alt=""></p>
+<p>在 SSH Client(C) 执行下列命令来建立 SSH 连接以及端口转发：</p>
+<p><code>$ ssh -g -L 7001:&lt;B&gt;:389 &lt;D&gt;</code></p>
+<p>然后在我们的应用客户端（A）上配置连接机器（C ）的 7001 端口即可。注意我们在命令中指定了“ -g ”参数以保证机器（A）能够使用机器（C）建立的本地端口转发。而另一个值得注意的地方是，在上述连接中，（A）<-> (C) 以及 (B)<->(D) 之间的连接并不是安全连接，它们之间没有经过 SSH 的加密及解密。如果他们之间的网络并不是值得信赖的网络连接，我们就需要谨慎使用这种连接方式了。</-></-></p>
+<h2 id="第三部分-其他类型的转发"><a href="#第三部分-其他类型的转发" class="headerlink" title="第三部分 其他类型的转发"></a>第三部分 其他类型的转发</h2><h3 id="动态转发实例分析"><a href="#动态转发实例分析" class="headerlink" title="动态转发实例分析"></a>动态转发实例分析</h3><p>恩，动态转发，听上去很酷。当你看到这里时，有没有想过我们已经讨论过了本地转发，远程转发，但是前提都是要求有一个固定的应用服务端的端口号，例如前面例子中的 LDAP 服务端的 389 端口。那如果没有这个端口号怎么办？等等，什么样的应用会没有这个端口号呢？嗯，比如说用浏览器进行 Web 浏览，比如说 MSN 等等。</p>
+<p>当我们在一个不安全的 WiFi 环境下上网，用 SSH 动态转发来保护我们的网页浏览及 MSN 信息无疑是十分必要的。让我们先来看一下动态转发的命令格式：</p>
+<p><code>$ ssh -D &lt;local port&gt; &lt;SSH Server&gt;</code></p>
+<p>例如：</p>
+<p><code>$ ssh -D 7001 &lt;SSH Server&gt;</code></p>
+<h5 id="图-5-动态端口转发"><a href="#图-5-动态端口转发" class="headerlink" title="图 5. 动态端口转发"></a>图 5. 动态端口转发</h5><p><img src="/images/2017-12-07/image005.jpg" alt=""></p>
+<p>似乎很简单，我们依然选择了 7001 作为本地的端口号，其实在这里 SSH 是创建了一个 SOCKS 代理服务。来看看帮助文档中对 -D 参数的描述：</p>
+<p><code>-D port `</code> <code>This works by allocating a socket to listen to port on the local</code> <code>side, and whenever a connection is made to this port, the con-</code> <code>nection is forwarded over the secure channel, and the applica-</code> <code>tion protocol is then used to determine where to connect to from</code> <code>the remote machine.  Currently the SOCKS4 and SOCKS5 protocols</code> <code>are supported, and ssh will act as a SOCKS server.  Only root</code> <code>can forward privileged ports.  Dynamic port forwardings can also</code> <code></code>be specified in the configuration file.`</p>
+<p>之后的使用就简单了，我们可以直接使用 localhost:7001 来作为正常的 SOCKS 代理来使用，直接在浏览器或 MSN 上设置即可。在 SSH Client 端无法访问的网站现在也都可以正常浏览。而这里需要值得注意的是，此时 SSH 所包护的范围只包括从浏览器端（SSH Client 端）到 SSH Server 端的连接，并不包含从 SSH Server 端 到目标网站的连接。如果后半截连接的安全不能得到充分的保证的话，这种方式仍不是合适的解决方案。</p>
+<h3 id="X-协议转发实例分析"><a href="#X-协议转发实例分析" class="headerlink" title="X 协议转发实例分析"></a>X 协议转发实例分析</h3><p>好了，让我们来看最后一个例子 - X 协议转发。</p>
+<p>我们日常工作当中，可能会经常会远程登录到 Linux/Unix/Solaris/HP 等机器上去做一些开发或者维护，也经常需要以 GUI 方式运行一些程序，比如要求图形化界面来安装 DB2/WebSphere 等等。这时候通常有两种选择来实现：VNC 或者 X 窗口，让我们来看看后者。</p>
+<p>使用 X 窗口通常需要分别安装：X Client 和 X Server 。在本例中我们的 X Client 就是所访问的远程 Linux/Unix/Solaris/HP，而我们的 X Server 则是发起访问的本地机器（例如你面前正在使用的笔记本或台式机）。把 X Client 端的 X 窗口显示在 X Server 端需要先行在 X Client 端指定 X Server 的位置，命令格式如下：</p>
+<p><code>export DISPLAY=&lt;X Server IP&gt;:&lt;display #&gt;.&lt;virtual #&gt;</code></p>
+<p>例如：</p>
+<p><code>export DISPLAY=myDesktop:1.0</code></p>
+<p>然后直接运行 X 应用即可，X 窗口就会自动在我们的本地端打开。</p>
+<p>一切运行正常，但是，这时候 IT 部门突然在远程 Linux/Unix/Solaris/HP 前面加了一道防火墙。非常不幸的是，X 协议并不在允许通过的列表之内。怎么办？只能使用 VNC 了么？不，其实只要使用了 SSH 端口转发即可通过，同时也对 X 通讯数据做了加密，真是一举两得。（当然，使用此方法前最好先咨询相关 IT 部门是否符合相应的安全条例，以免造成违规操作。）</p>
+<p>建立命令也很简单，直接从本地机器（X Server 端）发起一个如下的 SSH 连接即可：</p>
+<p><code>$ ssh -X &lt;SSH Server&gt;</code></p>
+<h5 id="图-6-X-转发"><a href="#图-6-X-转发" class="headerlink" title="图 6. X 转发"></a>图 6. X 转发</h5><p><img src="/images/2017-12-07/image006.jpg" alt=""></p>
+<p>建立连接之后就可以直接运行远程的 X 应用。注意建立 X 转发之后会自动设置 DISPLAY 环境变量，通常会被设置成<code>localhost:10.0</code>，我们无需也不应该在连接之后再进行修改此环境变量。</p>
+<p>一个比较常见的场景是，我们的本地机器是 Windows 操作系统，这时可以选择开源的 XMing 来作为我们的 XServer，而 SSH Client 则可以任意选择了，例如 PuTTY，Cygwin 均可以配置 访问 SSH 的同时建立 X 转发。</p>
+<h2 id="第四部分-总结"><a href="#第四部分-总结" class="headerlink" title="第四部分 总结"></a>第四部分 总结</h2><p>至此，我们已经完成了本地端口转发，远程端口转发，动态端口转发以及 X 转发的介绍。回顾起来，总的思路是通过将 TCP 连接转发到 SSH 通道上以解决数据加密以及突破防火墙的种种限制。对一些已知端口号的应用，例如 Telnet/LDAP/SMTP，我们可以使用本地端口转发或者远程端口转发来达到目的。动态端口转发则可以实现 SOCKS 代理从而加密以及突破防火墙对 Web 浏览的限制。对于 X 应用，无疑是 X 转发最为适用了。虽然每一部分我们都只是简单的介绍了一下，但如果能灵活应用这些技巧，相信对我们的日常生活 / 工作也是会有所帮助的。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -2524,185 +2742,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/11/14/JavaScript反混淆与混淆/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/11/14/JavaScript反混淆与混淆/" itemprop="url">JavaScript反混淆与混淆</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-14T00:10:18+08:00">
-                2017-11-14
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/misc/" itemprop="url" rel="index">
-                    <span itemprop="name">misc</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>本文摘抄于岚光的博客<a href="https://0x0d.im/archives/javascript-anti-debug-and-obfuscator.html" target="_blank" rel="external">https://0x0d.im/archives/javascript-anti-debug-and-obfuscator.html</a></p>
-<p>前些时候因为人机识别和反作弊业务的需求调研了<a href="https://0x0d.im/archives/broswer-fingerprint-and-tracking.html" target="_blank" rel="external">浏览器指纹和追踪</a>的一些方法，那么当我们把检测代码上线后，怎么保护它，不被攻击者迅速分析破解呢？</p>
-<p>常见的编码（如 <a href="http://dean.edwards.name/packer/" target="_blank" rel="external">Base62</a>）、压缩（如 <a href="https://github.com/mishoo/UglifyJS2" target="_blank" rel="external">UglifyJS</a>）、复杂化表达式（如填充无用代码，拆分字符串）就不细说了。<br>至于将 JavaScript 代码隐藏在图片中类似隐写术的方法，一般是恶意程序为了逃避杀毒软件检测所用，正常业务很少用到。</p>
-<p>通常用各种编码“加密”的代码，无论怎样变形，其最终都要调用一次 <code>eval</code> 等函数执行。<br>只需劫持关键函数调用的行为，改为文本输出（如 <code>console.log</code>）即可得到载体中隐藏的代码。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">eval</span> = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">'eval'</span>, <span class="built_in">JSON</span>.stringify(<span class="built_in">arguments</span>));</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="built_in">eval</span>(<span class="string">'console.log("Hello world!")'</span>);</div></pre></td></tr></table></figure>
-<p>去除空格、换行，缩短函数、变量名之类的压缩代码可以直接用浏览器的开发者工具格式化，或是使用 <a href="http://jsbeautifier.org/" target="_blank" rel="external">jsbeautifier</a> 等在线工具美化。<br>复杂化表达式会增加代码复杂度，极大地降低可读性，但有经验和耐心的研究者依然能慢慢调试还原出功能来。</p>
-<p>(下面代码在 Chrome 59 上测试通过）</p>
-<h4 id="Console"><a href="#Console" class="headerlink" title="Console"></a>Console</h4><p>检测到浏览器 Console 打开（<a href="http://stackoverflow.com/questions/40153206/detect-all-browser-console-open-or-not" target="_blank" rel="external">Detect all browser console open or not</a>）时阻塞 Javascript 执行：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> checkStatus;</div><div class="line"><span class="keyword">var</span> element = <span class="keyword">new</span> Image();</div><div class="line"><span class="comment">// var element = document.createElement('any');</span></div><div class="line">element.__defineGetter__(<span class="string">'id'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    checkStatus = <span class="string">'on'</span>;</div><div class="line">&#125;);</div><div class="line">setInterval(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    checkStatus = <span class="string">'off'</span>;</div><div class="line">    <span class="built_in">console</span>.log(element);</div><div class="line">    <span class="built_in">console</span>.clear();</div><div class="line">    <span class="keyword">if</span>(checkStatus = <span class="string">'on'</span>) &#123;</div><div class="line">        alert(<span class="string">'Prohibit the use of console!'</span>);</div><div class="line">    &#125;</div><div class="line">&#125;, <span class="number">1000</span>)</div></pre></td></tr></table></figure>
-<h4 id="Debugger"><a href="#Debugger" class="headerlink" title="Debugger"></a>Debugger</h4><p>Console 调试时会自动停在断点处，借此可以插入随机的 debugger 干扰正常调试。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">!<span class="function"><span class="keyword">function</span> <span class="title">test</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="comment">// 捕获异常，递归次数过多调试工具会抛出异常。</span></div><div class="line">    <span class="keyword">try</span>&#123;</div><div class="line">        !<span class="function"><span class="keyword">function</span> <span class="title">cir</span>(<span class="params">i</span>)</span></div><div class="line">        &#123;</div><div class="line">            <span class="comment">// 当打开调试工具后，抛出异常，setTimeout执行test无参数，此时i == NaN，("" + i / i).length == 3</span></div><div class="line">            <span class="comment">// debugger设置断点</span></div><div class="line">            ( <span class="number">1</span> !== ( <span class="string">""</span> + i / i).length || <span class="number">0</span>===i ) &amp;&amp; <span class="function"><span class="keyword">function</span>(<span class="params">&#123;&#125;.constructor(<span class="string">"debugger"</span></span>)(<span class="params"></span>),<span class="title">cir</span>(<span class="params">++i</span>);</span></div><div class="line">        &#125; (<span class="params"><span class="number">0</span></span>)</div><div class="line">    &#125; <span class="title">catch</span>(<span class="params">e</span>) &#123;</div><div class="line">        setTimeout(test,<span class="number">500</span>)</div><div class="line">    &#125;</div><div class="line">&#125;()</div></pre></td></tr></table></figure>
-<p><strong>demo：</strong><a href="https://jsfiddle.net/ftpgxm/t4ux8xp4/2/" target="_blank" rel="external">https://jsfiddle.net/ftpgxm/t4ux8xp4/2/</a></p>
-<p>当然，为了能够调试，我们可以使用Tampermonkey，在执行js代码之前，先执行下列代码</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">window._setTimeout = window.setTimeout;</div><div class="line">window.setTimeout = function () &#123;&#125;;</div></pre></td></tr></table></figure>
-<p>具体可参考：</p>
-<ul>
-<li><a href="http://www.jianshu.com/p/9148d215c119" target="_blank" rel="external">http://www.jianshu.com/p/9148d215c119</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/29214928" target="_blank" rel="external">https://zhuanlan.zhihu.com/p/29214928</a></li>
-</ul>
-<h4 id="AST"><a href="#AST" class="headerlink" title="AST"></a>AST</h4><p>通过修改 <a href="https://en.wikipedia.org/wiki/Abstract_syntax_tree" target="_blank" rel="external">AST(Abstract Syntax Tree)</a> 生成一个新的 AST，混淆规则有拆分字符串、拆分数组，增加废代码等。<br>如在同构语法的基础上提取出所有 key 值到闭包的参数中，破坏代码的可读性：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> a = <span class="built_in">document</span>.getElementById(<span class="string">'a'</span>);</div><div class="line">a.innerHTML = <span class="string">'test'</span>;</div></pre></td></tr></table></figure>
-<p>混淆之后是：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">(<span class="function"><span class="keyword">function</span>(<span class="params">a,b,c,d,e,f</span>)</span>&#123;</div><div class="line">    <span class="keyword">var</span> g=a[b][c](d);</div><div class="line">    g[e]=f</div><div class="line">&#125;)(<span class="built_in">window</span>,<span class="string">'document'</span>, <span class="string">'getElementById'</span>, <span class="string">'a'</span>, <span class="string">'innerHTML'</span>, <span class="string">'test'</span>);</div></pre></td></tr></table></figure>
-<h4 id="WebAssembly"><a href="#WebAssembly" class="headerlink" title="WebAssembly"></a>WebAssembly</h4><p><a href="https://en.wikipedia.org/wiki/WebAssembly" target="_blank" rel="external">WebAssembly</a> 是可用于浏览器的字节码格式，比 JS 更高效，能从 <code>C/C++</code> 编译。<br>如一个简单的 <code>add</code> 和 <code>square</code>：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">WebAssembly.compile(<span class="keyword">new</span> <span class="built_in">Uint8Array</span>(<span class="string">`</span></div><div class="line">  00 61 73 6d  01 00 00 00  01 0c 02 60  02 7f 7f 01</div><div class="line">  7f 60 01 7f  01 7f 03 03  02 00 01 07  10 02 03 61</div><div class="line">  64 64 00 00  06 73 71 75  61 72 65 00  01 0a 13 02</div><div class="line">  08 00 20 00  20 01 6a 0f  0b 08 00 20  00 20 00 6c</div><div class="line">  0f 0b`.trim().split(<span class="regexp">/[\s\r\n]+/g</span>).map(<span class="function"><span class="params">str</span> =&gt;</span> <span class="built_in">parseInt</span>(str, <span class="number">16</span>))</div><div class="line">)).then(<span class="function"><span class="params">module</span> =&gt;</span> &#123;</div><div class="line">  <span class="keyword">const</span> instance = <span class="keyword">new</span> WebAssembly.Instance(<span class="built_in">module</span>)</div><div class="line">  <span class="keyword">const</span> &#123; add, square &#125; = instance.exports</div><div class="line">  <span class="built_in">console</span>.log(<span class="string">'2 + 4 ='</span>, add(<span class="number">2</span>, <span class="number">4</span>))</div><div class="line">  <span class="built_in">console</span>.log(<span class="string">'3^2 ='</span>, square(<span class="number">3</span>))</div><div class="line">  <span class="built_in">console</span>.log(<span class="string">'(2 + 5)^2 ='</span>, square(add(<span class="number">2</span> + <span class="number">5</span>)))</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
-<p>它可能是终极的解决办法，因为作为二进制编码它自带“混淆”，还可以进一步加壳或虚拟机保护。</p>
-<h4 id="绕过方法"><a href="#绕过方法" class="headerlink" title="绕过方法"></a>绕过方法</h4><p>对于大部分的 JS 代码混淆加密，其实都可以用 <a href="https://en.wikipedia.org/wiki/Partial_evaluation" target="_blank" rel="external">Partial evaluation</a> 解决（参见讨论：<a href="https://www.v2ex.com/t/367641" target="_blank" rel="external">https://www.v2ex.com/t/367641</a>）。<br>如 Google 的 <a href="https://closure-compiler.appspot.com/" target="_blank" rel="external">Closure Compiler</a> 和 FaceBook 的 <a href="https://prepack.io/" target="_blank" rel="external">Prepack</a>，虽然是用于 JS 代码优化的工具，<br>但它们都会在编译期重构 AST、计算函数、初始化对象等，最终还原出正常的可读的代码。</p>
-<p>对于干扰 Console 调试的方法，可以用 Fiddler 或 Burp Suite 抓包，拦截页面请求，删除或注释掉干扰代码。</p>
-<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><blockquote>
-<ul>
-<li><a href="http://blog.knownsec.com/2015/08/use-estools-aid-deobfuscate-javascript/" target="_blank" rel="external">使用 estools 辅助反混淆</a></li>
-<li><a href="http://div.io/topic/1220" target="_blank" rel="external">Javascript 移动时代的前端加密</a></li>
-<li><a href="https://jaq.alibaba.com/community/art/show?spm=a313e.7916648.0.0.foiOcx&amp;articleid=503" target="_blank" rel="external">可信前端之路-代码保护</a></li>
-<li><a href="http://infosec.bjtu.edu.cn/wangwei/wp-content/uploads/2016/10/%E6%B7%B7%E6%B7%86%E6%81%B6%E6%84%8FJavaScript%E4%BB%A3%E7%A0%81%E7%9A%84%E6%A3%80%E6%B5%8B%E4%B8%8E%E5%8F%8D%E6%B7%B7%E6%B7%86%E6%96%B9%E6%B3%95%E7%A0%94%E7%A9%B6-%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%AD%A6%E6%8A%A5.pdf" target="_blank" rel="external">混淆恶意JavaScript代码的检测与反混淆方法研究</a></li>
-<li><a href="https://www.zhihu.com/question/29266193" target="_blank" rel="external">怎样理解 Partial Evaluation</a></li>
-<li><a href="https://segmentfault.com/a/1190000008402872" target="_blank" rel="external">WebAssembly 实践：如何写代码</a></li>
-</ul>
-</blockquote>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2757,7 +2796,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">128</span>
+                <span class="site-state-item-count">129</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2840,8 +2879,6 @@
       
         <div class="back-to-top">
           <i class="fa fa-arrow-up"></i>
-          
-            <span id="scrollpercent"><span>0</span>%</span>
           
         </div>
       

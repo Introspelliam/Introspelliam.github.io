@@ -126,7 +126,7 @@
     root: '/',
     scheme: 'Mist',
     version: '5.1.2',
-    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":true,"onmobile":true},
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":false,"onmobile":true},
     fancybox: true,
     tabs: true,
     motion: true,
@@ -975,7 +975,7 @@ void main()
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">128</span>
+                <span class="site-state-item-count">129</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -1063,7 +1063,7 @@ void main()
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-shellcode概述"><span class="nav-number">1.</span> <span class="nav-text">1. shellcode概述</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-shellcode和exploit"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 shellcode和exploit</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-shellcode需要解决的问题"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 shellcode需要解决的问题</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-定位shellcode"><span class="nav-number">2.</span> <span class="nav-text">2. 定位shellcode</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-栈帧移位与jmp-esp"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 栈帧移位与jmp esp</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-获取跳板地址"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 获取跳板地址</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-测试shellcode的可执行性"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 测试shellcode的可执行性</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-缓冲区的组织"><span class="nav-number">3.</span> <span class="nav-text">3. 缓冲区的组织</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-缓冲区的组成"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 缓冲区的组成</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-抬高栈顶保护shellcode"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 抬高栈顶保护shellcode</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-使用其他跳转指令"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 使用其他跳转指令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-不使用跳转指令"><span class="nav-number">3.4.</span> <span class="nav-text">3.4 不使用跳转指令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-5-函数返回地址移位"><span class="nav-number">3.5.</span> <span class="nav-text">3.5 函数返回地址移位</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-开发通用的shellcode"><span class="nav-number">4.</span> <span class="nav-text">4. 开发通用的shellcode</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-定位API的原理"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 定位API的原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-shellcode的加载与测试"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 shellcode的加载与测试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-动态定位API地址的shellcode"><span class="nav-number">4.3.</span> <span class="nav-text">4.3 动态定位API地址的shellcode</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-shellcode概述"><span class="nav-text">1. shellcode概述</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-shellcode和exploit"><span class="nav-text">1.1 shellcode和exploit</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-shellcode需要解决的问题"><span class="nav-text">1.2 shellcode需要解决的问题</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-定位shellcode"><span class="nav-text">2. 定位shellcode</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-栈帧移位与jmp-esp"><span class="nav-text">2.1 栈帧移位与jmp esp</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-获取跳板地址"><span class="nav-text">2.2 获取跳板地址</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-测试shellcode的可执行性"><span class="nav-text">2.3 测试shellcode的可执行性</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-缓冲区的组织"><span class="nav-text">3. 缓冲区的组织</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-缓冲区的组成"><span class="nav-text">3.1 缓冲区的组成</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-抬高栈顶保护shellcode"><span class="nav-text">3.2 抬高栈顶保护shellcode</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-使用其他跳转指令"><span class="nav-text">3.3 使用其他跳转指令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-不使用跳转指令"><span class="nav-text">3.4 不使用跳转指令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-5-函数返回地址移位"><span class="nav-text">3.5 函数返回地址移位</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-开发通用的shellcode"><span class="nav-text">4. 开发通用的shellcode</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-定位API的原理"><span class="nav-text">4.1 定位API的原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-shellcode的加载与测试"><span class="nav-text">4.2 shellcode的加载与测试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-动态定位API地址的shellcode"><span class="nav-text">4.3 动态定位API地址的shellcode</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -1074,8 +1074,6 @@ void main()
       
         <div class="back-to-top">
           <i class="fa fa-arrow-up"></i>
-          
-            <span id="scrollpercent"><span>0</span>%</span>
           
         </div>
       

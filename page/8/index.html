@@ -115,7 +115,7 @@
     root: '/',
     scheme: 'Mist',
     version: '5.1.2',
-    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":true,"onmobile":true},
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":false,"onmobile":true},
     fancybox: true,
     tabs: true,
     motion: true,
@@ -319,6 +319,330 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/04/python-socket编程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="上善若水">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/09/04/python-socket编程/" itemprop="url">python socket编程</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-04T22:50:23+08:00">
+                2017-09-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/code/" itemprop="url" rel="index">
+                    <span itemprop="name">code</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>Python 提供了两个基本的 socket 模块。</p>
+<p>   第一个是 Socket，它提供了标准的 BSD Sockets API。</p>
+<p>   第二个是 SocketServer， 它提供了服务器中心类，可以简化网络服务器的开发。</p>
+<p>下面讲的是Socket模块功能</p>
+<h3 id="1、Socket-类型"><a href="#1、Socket-类型" class="headerlink" title="1、Socket 类型"></a>1、Socket 类型</h3><p>套接字格式：</p>
+<p>socket(family,type[,protocal]) 使用给定的地址族、套接字类型、协议编号（默认为0）来创建套接字。</p>
+<table>
+<thead>
+<tr>
+<th><strong>socket类型</strong></th>
+<th><strong>描述</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>socket.AF_UNIX</td>
+<td>只能够用于单一的Unix系统进程间通信</td>
+</tr>
+<tr>
+<td>socket.AF_INET</td>
+<td>服务器之间网络通信</td>
+</tr>
+<tr>
+<td>socket.AF_INET6</td>
+<td>IPv6</td>
+</tr>
+<tr>
+<td>socket.SOCK_STREAM</td>
+<td>流式socket , for TCP</td>
+</tr>
+<tr>
+<td>socket.SOCK_DGRAM</td>
+<td>数据报式socket , for UDP</td>
+</tr>
+<tr>
+<td>socket.SOCK_RAW</td>
+<td>原始套接字，普通的套接字无法处理ICMP、IGMP等网络报文，而SOCK_RAW可以；其次，SOCK_RAW也可以处理特殊的IPv4报文；此外，利用原始套接字，可以通过IP_HDRINCL套接字选项由用户构造IP头。</td>
+</tr>
+<tr>
+<td>socket.SOCK_SEQPACKET</td>
+<td>可靠的连续数据包服务</td>
+</tr>
+<tr>
+<td>创建TCP Socket：</td>
+<td>s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)()</td>
+</tr>
+<tr>
+<td>创建UDP Socket：</td>
+<td>s=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2、Socket-函数"><a href="#2、Socket-函数" class="headerlink" title="2、Socket 函数"></a>2、Socket 函数</h3><p>注意点:</p>
+<p>1）TCP发送数据时，已建立好TCP连接，所以不需要指定地址。UDP是面向无连接的，每次发送要指定是发给谁。</p>
+<p>2）服务端与客户端不能直接发送列表，元组，字典。需要字符串化repr(data)。</p>
+<table>
+<thead>
+<tr>
+<th><strong>socket函数</strong></th>
+<th><strong>描述</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>服务端socket函数</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>s.bind(address)</td>
+<td>将套接字绑定到地址, 在AF_INET下,以元组（host,port）的形式表示地址.</td>
+</tr>
+<tr>
+<td>s.listen(backlog)</td>
+<td>开始监听TCP传入连接。backlog指定在拒绝连接之前，操作系统可以挂起的最大连接数量。该值至少为1，大部分应用程序设为5就可以了。</td>
+</tr>
+<tr>
+<td>s.accept()</td>
+<td>接受TCP连接并返回（conn,address）,其中conn是新的套接字对象，可以用来接收和发送数据。address是连接客户端的地址。</td>
+</tr>
+<tr>
+<td><strong>客户端socket函数</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>s.connect(address)</td>
+<td>连接到address处的套接字。一般address的格式为元组（hostname,port），如果连接出错，返回socket.error错误。</td>
+</tr>
+<tr>
+<td>s.connect_ex(adddress)</td>
+<td>功能与connect(address)相同，但是成功返回0，失败返回errno的值。</td>
+</tr>
+<tr>
+<td><strong>公共socket函数</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>s.recv(bufsize[,flag])</td>
+<td>接受TCP套接字的数据。数据以字符串形式返回，bufsize指定要接收的最大数据量。flag提供有关消息的其他信息，通常可以忽略。</td>
+</tr>
+<tr>
+<td>s.send(string[,flag])</td>
+<td>发送TCP数据。将string中的数据发送到连接的套接字。返回值是要发送的字节数量，该数量可能小于string的字节大小。</td>
+</tr>
+<tr>
+<td>s.sendall(string[,flag])</td>
+<td>完整发送TCP数据。将string中的数据发送到连接的套接字，但在返回之前会尝试发送所有数据。成功返回None，失败则抛出异常。</td>
+</tr>
+<tr>
+<td>s.recvfrom(bufsize[.flag])</td>
+<td>接受UDP套接字的数据。与recv()类似，但返回值是（data,address）。其中data是包含接收数据的字符串，address是发送数据的套接字地址。</td>
+</tr>
+<tr>
+<td>s.sendto(string[,flag],address)</td>
+<td>发送UDP数据。将数据发送到套接字，address是形式为（ipaddr，port）的元组，指定远程地址。返回值是发送的字节数。</td>
+</tr>
+<tr>
+<td>s.close()</td>
+<td>关闭套接字。</td>
+</tr>
+<tr>
+<td>s.getpeername()</td>
+<td>返回连接套接字的远程地址。返回值通常是元组（ipaddr,port）。</td>
+</tr>
+<tr>
+<td>s.getsockname()</td>
+<td>返回套接字自己的地址。通常是一个元组(ipaddr,port)</td>
+</tr>
+<tr>
+<td>s.setsockopt(level,optname,value)</td>
+<td>设置给定套接字选项的值。</td>
+</tr>
+<tr>
+<td>s.getsockopt(level,optname[.buflen])</td>
+<td>返回套接字选项的值。</td>
+</tr>
+<tr>
+<td>s.settimeout(timeout)</td>
+<td>设置套接字操作的超时期，timeout是一个浮点数，单位是秒。值为None表示没有超时期。一般，超时期应该在刚创建套接字时设置，因为它们可能用于连接的操作（如connect()）</td>
+</tr>
+<tr>
+<td>s.gettimeout()</td>
+<td>返回当前超时期的值，单位是秒，如果没有设置超时期，则返回None。</td>
+</tr>
+<tr>
+<td>s.fileno()</td>
+<td>返回套接字的文件描述符。</td>
+</tr>
+<tr>
+<td>s.setblocking(flag)</td>
+<td>如果flag为0，则将套接字设为非阻塞模式，否则将套接字设为阻塞模式（默认值）。非阻塞模式下，如果调用recv()没有发现任何数据，或send()调用无法立即发送数据，那么将引起socket.error异常。</td>
+</tr>
+<tr>
+<td>s.makefile()</td>
+<td>创建一个与该套接字相关连的文件</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3、socket编程思路"><a href="#3、socket编程思路" class="headerlink" title="3、socket编程思路"></a>3、socket编程思路</h3><p>TCP服务端：</p>
+<p>1 创建套接字，绑定套接字到本地IP与端口</p>
+<p> socket.socket(socket.AF_INET,socket.SOCK_STREAM) , s.bind()</p>
+<p>2 开始监听连接                   #s.listen()</p>
+<p>3 进入循环，不断接受客户端的连接请求              #s.accept()</p>
+<p>4 然后接收传来的数据，并发送给对方数据         #s.recv() , s.sendall()</p>
+<p>5 传输完毕后，关闭套接字                     #s.close()</p>
+<p>TCP客户端:</p>
+<p>1 创建套接字，连接远端地址</p>
+<p>​       # socket.socket(socket.AF_INET,socket.SOCK_STREAM) , s.connect()</p>
+<p>2 连接后发送数据和接收数据          # s.sendall(), s.recv()</p>
+<p>3 传输完毕后，关闭套接字          #s.close()</p>
+<h3 id="4、Socket编程之服务端代码："><a href="#4、Socket编程之服务端代码：" class="headerlink" title="4、Socket编程之服务端代码："></a>4、Socket编程之服务端代码：</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">root@yangrong:/python<span class="comment"># cat day5-socket-server.py</span></div><div class="line"><span class="comment">#!/usr/bin/python</span></div><div class="line"><span class="keyword">import</span> socket   <span class="comment">#socket模块</span></div><div class="line"><span class="keyword">import</span> commands   <span class="comment">#执行系统命令模块</span></div><div class="line">HOST=<span class="string">'10.0.0.245'</span></div><div class="line">PORT=<span class="number">50007</span></div><div class="line">s= socket.socket(socket.AF_INET,socket.SOCK_STREAM)   <span class="comment">#定义socket类型，网络通信，TCP</span></div><div class="line">s.bind((HOST,PORT))   <span class="comment">#套接字绑定的IP与端口</span></div><div class="line">s.listen(<span class="number">1</span>)         <span class="comment">#开始TCP监听</span></div><div class="line"><span class="keyword">while</span> <span class="number">1</span>:</div><div class="line">       conn,addr=s.accept()   <span class="comment">#接受TCP连接，并返回新的套接字与IP地址</span></div><div class="line">       <span class="keyword">print</span><span class="string">'Connected by'</span>,addr    <span class="comment">#输出客户端的IP地址</span></div><div class="line">       <span class="keyword">while</span> <span class="number">1</span>:</div><div class="line">                data=conn.recv(<span class="number">1024</span>)    <span class="comment">#把接收的数据实例化</span></div><div class="line">               cmd_status,cmd_result=commands.getstatusoutput(data)   <span class="comment">#commands.getstatusoutput执行系统命令（即shell命令），返回两个结果，第一个是状态，成功则为0，第二个是执行成功或失败的输出信息</span></div><div class="line">                <span class="keyword">if</span> len(cmd_result.strip()) ==<span class="number">0</span>:   <span class="comment">#如果输出结果长度为0，则告诉客户端完成。此用法针对于创建文件或目录，创建成功不会有输出信息</span></div><div class="line">                        conn.sendall(<span class="string">'Done.'</span>)</div><div class="line">                <span class="keyword">else</span>:</div><div class="line">                       conn.sendall(cmd_result)   <span class="comment">#否则就把结果发给对端（即客户端）</span></div><div class="line">conn.close()     <span class="comment">#关闭连接</span></div></pre></td></tr></table></figure>
+<h3 id="5、Socket编程之客户端代码："><a href="#5、Socket编程之客户端代码：" class="headerlink" title="5、Socket编程之客户端代码："></a>5、Socket编程之客户端代码：</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">root@yangrong:/python<span class="comment"># cat day5-socket-client.py</span></div><div class="line"><span class="comment">#!/usr/bin/python</span></div><div class="line"><span class="keyword">import</span> socket</div><div class="line">HOST=<span class="string">'10.0.0.245'</span></div><div class="line">PORT=<span class="number">50007</span></div><div class="line">s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)      <span class="comment">#定义socket类型，网络通信，TCP</span></div><div class="line">s.connect((HOST,PORT))       <span class="comment">#要连接的IP与端口</span></div><div class="line"><span class="keyword">while</span> <span class="number">1</span>:</div><div class="line">       cmd=raw_input(<span class="string">"Please input cmd:"</span>)       <span class="comment">#与人交互，输入命令</span></div><div class="line">       s.sendall(cmd)      <span class="comment">#把命令发送给对端</span></div><div class="line">       data=s.recv(<span class="number">1024</span>)     <span class="comment">#把接收的数据定义为变量</span></div><div class="line">        <span class="keyword">print</span> data         <span class="comment">#输出变量</span></div><div class="line">s.close()   <span class="comment">#关闭连接</span></div></pre></td></tr></table></figure>
+<h3 id="6、程序缺限："><a href="#6、程序缺限：" class="headerlink" title="6、程序缺限："></a>6、程序缺限：</h3><p>这是一个简单的socket通信，里面存在一些bug</p>
+<p>1.在客户端输入回车，会挂死。</p>
+<p>2.服务端返回的数据大于1024，客户端显示不全。</p>
+<p>3.单进程，如果多个客户端连接，要排队，前一个断开，后一个客户端才能通信。</p>
+<p>不想把代码写的太复杂，简单的说下解决方案：</p>
+<p>问题1.在客户端上判断输入为空，要求重新输入。</p>
+<p>问题2.在客户端上循环接收，直到接收完。但有没有完客户端是不知道的，需要服务端发一个结束符。</p>
+<p>问题3.在服务端导入SocketServer模块，使得每建立一个连接，就新创建一个线程。实现多个客户端与服务端通信。多线程通信原理如下图：</p>
+<p><a href="http://img1.51cto.com/attachment/201312/000109234.jpg" target="_blank" rel="external"><img src="http://img1.51cto.com/attachment/201312/000109234.jpg" alt="000109234.jpg"></a></p>
+<h3 id="python-socket参考地址："><a href="#python-socket参考地址：" class="headerlink" title="python socket参考地址："></a>python socket参考地址：</h3><p><a href="http://blog.163.com/yi_yixinyiyi/blog/static/136286889201152814341144/" target="_blank" rel="external">http://blog.163.com/yi_yixinyiyi/blog/static/136286889201152814341144/</a></p>
+<p><a href="http://blog.sina.com.cn/s/blog_4b5039210100ep72.html" target="_blank" rel="external">http://blog.sina.com.cn/s/blog_4b5039210100ep72.html</a></p>
+<p><a href="http://blog.sina.com.cn/s/blog_523491650100hikg.html" target="_blank" rel="external">http://blog.sina.com.cn/s/blog_523491650100hikg.html</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -2501,185 +2825,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/11/XMAN之旅——Misc/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/08/11/XMAN之旅——Misc/" itemprop="url">XMAN之旅——Misc</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-11T00:49:22+08:00">
-                2017-08-11
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/xman/" itemprop="url" rel="index">
-                    <span itemprop="name">xman</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="1-Misc概述"><a href="#1-Misc概述" class="headerlink" title="1. Misc概述"></a>1. Misc概述</h3><p>MISC，即Miscellaneous，即安全杂项，题目或涉及流量分析、电子取证、人肉搜索、数据分析等等。</p>
-<p>MISC，中文即杂项，包括隐写，数据还原，脑洞、社会工程、与信息安全相关的大数据等。</p>
-<p>竞赛过程中解MISC时会涉及到各种脑洞，各种花式技巧，主要考察选手的快速理解、学习能力以及日常知识积累的广度、深度。</p>
-<p>MISC这一块并不像PWN\REVERSE等需要深厚的理论基础，所以我们直接从经典题目开始入手。</p>
-<h3 id="2-Misc题目类型"><a href="#2-Misc题目类型" class="headerlink" title="2. Misc题目类型"></a>2. Misc题目类型</h3><p>Misc大体上分为Encode编码转换、Steg隐写分析、Forensic数字取证以及其他类型</p>
-<h3 id="3-编码转换"><a href="#3-编码转换" class="headerlink" title="3. 编码转换"></a>3. 编码转换</h3><p>由于编码很多种，可以在网上找各种站长工具对编码进行转换，而且效率很高！</p>
-<p>常见的编码有：base64、base32、base16、ascii、unicode、url、摩斯编码、曼切斯特编码等</p>
-<h3 id="4-取证和隐写分析"><a href="#4-取证和隐写分析" class="headerlink" title="4. 取证和隐写分析"></a>4. 取证和隐写分析</h3><h4 id="4-1-常见的工具"><a href="#4-1-常见的工具" class="headerlink" title="4.1 常见的工具"></a>4.1 常见的工具</h4><p>文本编辑工具：</p>
-<ul>
-<li>010Editor</li>
-<li>UtralEdit</li>
-<li>Winhex</li>
-</ul>
-<p>隐写工具：</p>
-<ul>
-<li>StegSolver</li>
-<li>Stegdetect</li>
-<li>wbSteg4</li>
-<li>MP3Stego</li>
-<li>outguess</li>
-<li>stepic</li>
-<li>steghide</li>
-</ul>
-<p>其他工具：</p>
-<ul>
-<li>7zcracker</li>
-<li>archpr</li>
-<li>tweakpng</li>
-<li>audacity</li>
-<li>binwalk</li>
-<li>foremost</li>
-<li>Ffmpeg</li>
-<li>Alternatestreamview</li>
-<li>Dsfok-tools</li>
-<li>Snow</li>
-</ul>
-<h4 id="4-2-常见的隐写术"><a href="#4-2-常见的隐写术" class="headerlink" title="4.2 常见的隐写术"></a>4.2 常见的隐写术</h4><p>从最早的图种(copy /b test.jpg+test.torrent test.jpg),<br>CTF比赛中最开始的图片隐写(JPG，PNG，GIF)<br>Word，PDF等隐写<br>音频，视频中的隐写(波形，频谱…….)<br>Exe中的病毒行为分析<br>Pcap流量包<br>磁盘文件(IMG,VMDK)<br>交换数据流(NTFS数据流)<br>HTML文件</p>
-<h3 id="5-自己的思考"><a href="#5-自己的思考" class="headerlink" title="5. 自己的思考"></a>5. 自己的思考</h3><p>想要深入学习Misc，首先需要熟练掌握一些文件格式，并能够根据相应的格式合理运用工具，如此才能掌握Misc！</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2734,7 +2879,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">128</span>
+                <span class="site-state-item-count">129</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2817,8 +2962,6 @@
       
         <div class="back-to-top">
           <i class="fa fa-arrow-up"></i>
-          
-            <span id="scrollpercent"><span>0</span>%</span>
           
         </div>
       

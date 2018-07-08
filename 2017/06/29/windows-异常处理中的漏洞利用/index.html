@@ -122,7 +122,7 @@
     root: '/',
     scheme: 'Mist',
     version: '5.1.2',
-    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":true,"onmobile":true},
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":false,"onmobile":true},
     fancybox: true,
     tabs: true,
     motion: true,
@@ -748,7 +748,7 @@ int main()
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">128</span>
+                <span class="site-state-item-count">129</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -836,7 +836,7 @@ int main()
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-S-E-H概述"><span class="nav-number">1.</span> <span class="nav-text">1. S.E.H概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-栈溢出中利用SEH"><span class="nav-number">2.</span> <span class="nav-text">2. 栈溢出中利用SEH</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-获取shellcode起始地址和SEH地址"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 获取shellcode起始地址和SEH地址</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-编写shellcode"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 编写shellcode</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-堆溢出中利用SEH"><span class="nav-number">3.</span> <span class="nav-text">3. 堆溢出中利用SEH</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Windows异常处理"><span class="nav-number">4.</span> <span class="nav-text">4. Windows异常处理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-不同级别的SEH"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 不同级别的SEH</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-线程的异常处理"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 线程的异常处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-进程的异常处理"><span class="nav-number">4.3.</span> <span class="nav-text">4.3 进程的异常处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-4-系统默认异常处理UEF"><span class="nav-number">4.4.</span> <span class="nav-text">4.4 系统默认异常处理UEF</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-5-异常处理流程总结"><span class="nav-number">4.5.</span> <span class="nav-text">4.5 异常处理流程总结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-其他异常处理机制的利用思路"><span class="nav-number">5.</span> <span class="nav-text">5. 其他异常处理机制的利用思路</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#5-1-VEH利用"><span class="nav-number">5.1.</span> <span class="nav-text">5.1 VEH利用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-2-攻击TEB中的SEH头节点"><span class="nav-number">5.2.</span> <span class="nav-text">5.2 攻击TEB中的SEH头节点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-3-攻击UEF"><span class="nav-number">5.3.</span> <span class="nav-text">5.3 攻击UEF</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-4-攻击PEB中的函数指针"><span class="nav-number">5.4.</span> <span class="nav-text">5.4 攻击PEB中的函数指针</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-S-E-H概述"><span class="nav-text">1. S.E.H概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-栈溢出中利用SEH"><span class="nav-text">2. 栈溢出中利用SEH</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-获取shellcode起始地址和SEH地址"><span class="nav-text">2.1 获取shellcode起始地址和SEH地址</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-编写shellcode"><span class="nav-text">2.2 编写shellcode</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-堆溢出中利用SEH"><span class="nav-text">3. 堆溢出中利用SEH</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Windows异常处理"><span class="nav-text">4. Windows异常处理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-不同级别的SEH"><span class="nav-text">4.1 不同级别的SEH</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-线程的异常处理"><span class="nav-text">4.2 线程的异常处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-进程的异常处理"><span class="nav-text">4.3 进程的异常处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-4-系统默认异常处理UEF"><span class="nav-text">4.4 系统默认异常处理UEF</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-5-异常处理流程总结"><span class="nav-text">4.5 异常处理流程总结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-其他异常处理机制的利用思路"><span class="nav-text">5. 其他异常处理机制的利用思路</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#5-1-VEH利用"><span class="nav-text">5.1 VEH利用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-2-攻击TEB中的SEH头节点"><span class="nav-text">5.2 攻击TEB中的SEH头节点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-3-攻击UEF"><span class="nav-text">5.3 攻击UEF</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-4-攻击PEB中的函数指针"><span class="nav-text">5.4 攻击PEB中的函数指针</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -847,8 +847,6 @@ int main()
       
         <div class="back-to-top">
           <i class="fa fa-arrow-up"></i>
-          
-            <span id="scrollpercent"><span>0</span>%</span>
           
         </div>
       

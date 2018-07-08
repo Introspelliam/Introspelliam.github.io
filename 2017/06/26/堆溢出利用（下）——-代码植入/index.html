@@ -121,7 +121,7 @@
     root: '/',
     scheme: 'Mist',
     version: '5.1.2',
-    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":true,"onmobile":true},
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":false,"onmobile":true},
     fancybox: true,
     tabs: true,
     motion: true,
@@ -707,7 +707,7 @@ CALL DWORD PTR [EBP+0X74]
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">128</span>
+                <span class="site-state-item-count">129</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -795,7 +795,7 @@ CALL DWORD PTR [EBP+0X74]
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-DWORD-SHOOT的利用方法"><span class="nav-number">1.</span> <span class="nav-text">1 DWORD SHOOT的利用方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-狙击PEB中的RtlEnterCriticalSection-的函数指针"><span class="nav-number">2.</span> <span class="nav-text">2 狙击PEB中的RtlEnterCriticalSection()的函数指针</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-实验代码如下"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 实验代码如下</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-实验步骤"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 实验步骤</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-实验细节"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 实验细节</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-堆溢出利用的注意事项"><span class="nav-number">3.</span> <span class="nav-text">3 堆溢出利用的注意事项</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-调试堆与常态堆的区别"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 调试堆与常态堆的区别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-在shellcode中修复环境"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 在shellcode中修复环境</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-定位shellcode的跳板"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 定位shellcode的跳板</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-DWORD-SHOOT的利用方法"><span class="nav-text">1 DWORD SHOOT的利用方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-狙击PEB中的RtlEnterCriticalSection-的函数指针"><span class="nav-text">2 狙击PEB中的RtlEnterCriticalSection()的函数指针</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-实验代码如下"><span class="nav-text">2.1 实验代码如下</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-实验步骤"><span class="nav-text">2.2 实验步骤</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-实验细节"><span class="nav-text">2.3 实验细节</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-堆溢出利用的注意事项"><span class="nav-text">3 堆溢出利用的注意事项</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-调试堆与常态堆的区别"><span class="nav-text">3.1 调试堆与常态堆的区别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-在shellcode中修复环境"><span class="nav-text">3.2 在shellcode中修复环境</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-定位shellcode的跳板"><span class="nav-text">3.3 定位shellcode的跳板</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -806,8 +806,6 @@ CALL DWORD PTR [EBP+0X74]
       
         <div class="back-to-top">
           <i class="fa fa-arrow-up"></i>
-          
-            <span id="scrollpercent"><span>0</span>%</span>
           
         </div>
       
