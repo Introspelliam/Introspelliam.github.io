@@ -841,6 +841,7 @@
 
   <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
   <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <script src="/js/md5.min.js"></script>
    <script type="text/javascript">
         var gitalk = new Gitalk({
           clientID: '41857e5205be9fe36c48',
@@ -848,7 +849,7 @@
           repo: 'Introspelliam.github.io',
           owner: 'Introspelliam',
           admin: ['Introspelliam'],
-          id: location.pathname,
+          id: md5(location.pathname),
           distractionFreeMode: 'true'
         })
         gitalk.render('gitalk-container')           
