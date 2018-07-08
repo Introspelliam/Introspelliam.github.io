@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="googleaf0347feb5ea0936.html" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="docker," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="上善若水" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="1、运行ubuntu等容器 后台运行系统镜像   docker run -it -d ubuntu   直接运行镜像，退出后这个镜像也停止   docker run -it ubuntu   映射端口(22端口映射出来，一般代表可以通过ssh登录)   docker run -it -p 80:80 2222:22 -d ubuntu   映射文件夹   docker run -it -v /ou">
+<meta name="keywords" content="docker">
+<meta property="og:type" content="article">
+<meta property="og:title" content="docker操作指南">
+<meta property="og:url" content="http://yoursite.com/2017/09/28/docker操作指南/index.html">
+<meta property="og:site_name" content="上善若水">
+<meta property="og:description" content="1、运行ubuntu等容器 后台运行系统镜像   docker run -it -d ubuntu   直接运行镜像，退出后这个镜像也停止   docker run -it ubuntu   映射端口(22端口映射出来，一般代表可以通过ssh登录)   docker run -it -p 80:80 2222:22 -d ubuntu   映射文件夹   docker run -it -v /ou">
+<meta property="og:updated_time" content="2018-06-13T13:54:33.170Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="docker操作指南">
+<meta name="twitter:description" content="1、运行ubuntu等容器 后台运行系统镜像   docker run -it -d ubuntu   直接运行镜像，退出后这个镜像也停止   docker run -it ubuntu   映射端口(22端口映射出来，一般代表可以通过ssh登录)   docker run -it -p 80:80 2222:22 -d ubuntu   映射文件夹   docker run -it -v /ou">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/09/28/docker操作指南/"/>
+
+
+
+
+
+  <title>docker操作指南 | 上善若水</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?663212c5ef558c27e77385b620f14823";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">上善若水</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">古之立大事者，不惟有超世之才，亦必有坚韧不拔之志！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/28/docker操作指南/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="上善若水">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">docker操作指南</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-28T00:21:40+08:00">
+                2017-09-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/虚拟化/" itemprop="url" rel="index">
+                    <span itemprop="name">虚拟化</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1、运行ubuntu等容器"><a href="#1、运行ubuntu等容器" class="headerlink" title="1、运行ubuntu等容器"></a>1、运行ubuntu等容器</h3><ul>
+<li>后台运行系统镜像</li>
+</ul>
+<blockquote>
+<p>docker run -it -d ubuntu</p>
+</blockquote>
+<ul>
+<li>直接运行镜像，退出后这个镜像也停止</li>
+</ul>
+<blockquote>
+<p>docker run -it ubuntu</p>
+</blockquote>
+<ul>
+<li>映射端口(22端口映射出来，一般代表可以通过ssh登录)</li>
+</ul>
+<blockquote>
+<p>docker run -it -p 80:80 2222:22 -d ubuntu</p>
+</blockquote>
+<ul>
+<li>映射文件夹</li>
+</ul>
+<blockquote>
+<p>docker run -it -v /outer/tmp:/inner/tmp -d ubuntu</p>
+</blockquote>
+<ul>
+<li>选择网络模式</li>
+</ul>
+<blockquote>
+<p>docker run -it --net=&quot;host&quot; -d ubuntu</p>
+</blockquote>
+<h3 id="2、操作容器"><a href="#2、操作容器" class="headerlink" title="2、操作容器"></a>2、操作容器</h3><ul>
+<li>直接运行命令</li>
+</ul>
+<blockquote>
+<p>docker exec -it Container-ID  /bin/cat flag</p>
+</blockquote>
+<ul>
+<li>attach到容器中（限制极大，多个终端同时进行操纵时，容易发生冲突）</li>
+</ul>
+<blockquote>
+<p>docker attach-it Container-ID</p>
+</blockquote>
+<ul>
+<li>进入容器中运行指令</li>
+</ul>
+<blockquote>
+<p>docker exec -it Container-ID /bin/bash</p>
+</blockquote>
+<ul>
+<li>从容器内拷贝文件到主机上</li>
+</ul>
+<blockquote>
+<p>docker cp \&lt;containerId>:/file/path/within/container /host/path/target </p>
+</blockquote>
+<ul>
+<li>从容器内拷贝文件到主机上</li>
+</ul>
+<blockquote>
+<p>docker cp /host/path/target  \&lt;containerId>:/file/path/within/container</p>
+</blockquote>
+<h3 id="3、网络模式"><a href="#3、网络模式" class="headerlink" title="3、网络模式"></a>3、网络模式</h3><p>（1）    bridge模式</p>
+<p>使用—net=bridge指定，为Docker的默认设置。这种模式是将容器用docker的网桥连接起来。</p>
+<p>作为最常规的格式，bridge模式已经可以满足Docker容器最基本的使用需求。然而其在于外界通信使用NAT协议，增加了通信的复杂性，在复杂的场景下使用会有诸多限制。</p>
+<p>（2）    host模式</p>
+<p>host模式下，容器不会拥有自己的网络命名空间。Docker容器中的进程处于宿主机的网络环境中，此时Docker容器和宿主机之间网络没有映射关系，外界可以通过该主机的IP地址、端口等进行Docker容器的访问。当然，除了network namespace外，其他内容宿主机是隔离的。host模式不用地址映射，可以直接使用宿主机的IP。但是也降低了隔离性，而且由于网络资源一直被竞争，所以可能造成网络的短暂不可用问题。</p>
+<p>（3）    container模式</p>
+<p>container模式是指新创建的容器与已有的容器共享网络信息。在此种模式下，新创建的容器与指定的容器共享IP、端口等。当然，两个容器之间除了网络信息共享外，其它内容均不可共用。由于在这种模式下，两个容器的进程使用回环网卡通信，所以通讯速率加快了。container模式的主要用于部署多个相关的应用，最好能成为一个整体。由于container模式的特点，导致了这种模式隔离性不强，可能会存在安全隐患。</p>
+<p>（4）    none模式</p>
+<p>none模式时，Docker拥有网络协议栈，但是没有对协议栈进行配置。这时，Docker容器的网卡以及IP，均为用户所配置。一般而言，当未给使用这种模式的容器进行网络配置时，用户无法正常使用容器进程，但是优点也很明显，它给用户最大的自由度来自定义容器的网络环境。</p>
+<h3 id="4、docker-CMD执行-容器内没有后台服务的概念"><a href="#4、docker-CMD执行-容器内没有后台服务的概念" class="headerlink" title="4、docker CMD执行 容器内没有后台服务的概念"></a>4、docker CMD执行 容器内没有后台服务的概念</h3><p>提到 CMD 就不得不提容器中应用在前台执行和后台执行的问题。这是初学者常出现的一个混<br>淆。</p>
+<p>Docker 不是虚拟机，容器中的应用都应该以前台执行，而不是像虚拟机、物理机里面那样，</p>
+<p>用 upstart/systemd 去启动后台服务，容器内没有后台服务的概念。</p>
+<p>一些初学者将 CMD 写为：</p>
+<blockquote>
+<p> CMD service nginx start</p>
+</blockquote>
+<p>然后发现容器执行后就立即退出了。甚至在容器内去使用 systemctl 命令结果却发现根本执</p>
+<p>行不了。这就是因为没有搞明白前台、后台的概念，没有区分容器和虚拟机的差异，依旧在</p>
+<p>以传统虚拟机的角度去理解容器。</p>
+<p>对于容器而言，其启动程序就是容器应用进程，容器就是为了主进程而存在的，主进程退</p>
+<p>出，容器就失去了存在的意义，从而退出，其它辅助进程不是它需要关心的东西。</p>
+<p>而使用 service nginx start 命令，则是希望 upstart 来以后台守护进程形式启动 nginx 服</p>
+<p>务。而刚才说了 CMD service nginx start 会被理解为 CMD [ &quot;sh&quot;, &quot;-c&quot;, &quot;service nginx</p>
+<p>start&quot;] ，因此主进程实际上是 sh 。那么当 service nginx start 命令结束后， sh 也就结</p>
+<p>束了， sh 作为主进程退出了，自然就会令容器退出。</p>
+<p>正确的做法是直接执行 nginx 可执行文件，并且要求以前台形式运行。比如：</p>
+<blockquote>
+<p>CMD [&quot;nginx&quot;, &quot;-g&quot;, &quot;daemon off;&quot;]</p>
+<p>或者:</p>
+<p>nginx -g &quot;daemon off;&quot;</p>
+</blockquote>
+<h3 id="5、解决上述问题的办法"><a href="#5、解决上述问题的办法" class="headerlink" title="5、解决上述问题的办法"></a>5、解决上述问题的办法</h3><h4 id="5-1-supervisor"><a href="#5-1-supervisor" class="headerlink" title="5.1 supervisor"></a>5.1 supervisor</h4><p>最近看了一个github项目，完美解决这类问题</p>
+<p><a href="https://github.com/nickistre/docker-lamp/tree/ubuntu-14.04" target="_blank" rel="external">https://github.com/nickistre/docker-lamp/tree/ubuntu-14.04</a></p>
+<p>主要做法是加入了supervisd。CMD中的指令一般只有一条，所以建议使用run.sh</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">RUN apt-get install -y supervisor</div><div class="line">RUN mkdir -p /var/log/supervisor</div><div class="line">ADD supervisord.conf /etc/</div><div class="line">#ADD test.conf /etc/supervisord/conf.d/</div><div class="line">CMD [&quot;supervisord&quot;, &quot;-n&quot;]</div><div class="line">#CMD [&quot;/run.sh&quot;]</div></pre></td></tr></table></figure>
+<p>改密码的方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">RUN echo &apos;root:changeme&apos; | chpasswd</div></pre></td></tr></table></figure>
+<p>而语法规则可以参考文档<a href="http://supervisord.org/configuration.html" target="_blank" rel="external">http://supervisord.org/configuration.html</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line">[supervisord]</div><div class="line">;logfile=/var/log/supervisor/supervisord-nobody.log  ; (main log file;default $CWD/supervisord.log)</div><div class="line">;logfile_maxbytes=50MB       ; (max main logfile bytes b4 rotation;default 50MB)</div><div class="line">;logfile_backups=10          ; (num of main logfile rotation backups;default 10)</div><div class="line">;loglevel=info               ; (log level;default info; others: debug,warn,trace)</div><div class="line">;pidfile=/var/run/supervisord.pid ; (supervisord pidfile;default supervisord.pid)</div><div class="line">nodaemon=true                ; (start in foreground if true;default false)</div><div class="line">;user=nobody</div><div class="line"></div><div class="line">[rpcinterface:supervisor]</div><div class="line">supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface</div><div class="line"></div><div class="line">;[unix_http_server]</div><div class="line">;file = /supervisor.sock</div><div class="line">;chmod = 0777</div><div class="line">;chown= nobody:nogroup</div><div class="line">;username = user</div><div class="line">;password = 123</div><div class="line"></div><div class="line">[inet_http_server]</div><div class="line">port = 127.0.0.1:9001</div><div class="line"></div><div class="line">[supervisorctl]</div><div class="line">;serverurl=unix:///tmp/supervisor.sock</div><div class="line">serverurl=http://127.0.0.1:9001</div><div class="line"></div><div class="line">[program:apache2]</div><div class="line">command=/bin/bash -c &quot;source /etc/apache2/envvars &amp;&amp; exec /usr/sbin/apache2 -DFOREGROUND&quot;</div><div class="line">numprocs=1</div><div class="line">autostart=true</div><div class="line"></div><div class="line"></div><div class="line">;autostart=true                 ; start at supervisord start (default: true)</div><div class="line">;autorestart=true               ; retstart at unexpected quit (default: true)</div><div class="line">;startretries=3                 ; max # of serial start failures (default 3)</div><div class="line"></div><div class="line">[program:mysql]</div><div class="line">command = /usr/bin/pidproxy /var/run/mysqld/mysqld.pid /usr/bin/mysqld_safe</div><div class="line">numprocs=1</div><div class="line">autostart=true</div></pre></td></tr></table></figure>
+<h4 id="5-2-无限循环"><a href="#5-2-无限循环" class="headerlink" title="5.2 无限循环"></a>5.2 无限循环</h4><p>main.sh</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">#!/bin/bash</div><div class="line"></div><div class="line">echo &apos;[+] Starting mysql...&apos;</div><div class="line">service mysql start</div><div class="line"></div><div class="line">echo &apos;[+] Starting apache&apos;</div><div class="line">service apache2 start</div><div class="line"></div><div class="line">while true</div><div class="line">do</div><div class="line">    tail -f /var/log/apache2/*.log</div><div class="line">    exit 0</div><div class="line">done</div></pre></td></tr></table></figure>
+<p>run.sh</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">#!/bin/bash</div><div class="line"></div><div class="line">#sshd</div><div class="line">echo &quot;=&gt; start sshd&quot;</div><div class="line">exec /usr/sbin/sshd &amp;</div><div class="line">echo &quot;=&gt; sshd started&quot;</div><div class="line"></div><div class="line">VOLUME_HOME=&quot;/var/lib/mysql&quot;</div><div class="line"></div><div class="line">sed -ri -e &quot;s/^upload_max_filesize.*/upload_max_filesize = $&#123;PHP_UPLOAD_MAX_FILESIZE&#125;/&quot; \</div><div class="line">    -e &quot;s/^post_max_size.*/post_max_size = $&#123;PHP_POST_MAX_SIZE&#125;/&quot; /etc/php5/apache2/php.ini</div><div class="line">if [[ ! -d $VOLUME_HOME/mysql ]]; then</div><div class="line">    echo &quot;=&gt; An empty or uninitialized MySQL volume is detected in $VOLUME_HOME&quot;</div><div class="line">    echo &quot;=&gt; Installing MySQL ...&quot;</div><div class="line">    mysql_install_db &gt; /dev/null 2&gt;&amp;1</div><div class="line">    echo &quot;=&gt; Done!&quot;</div><div class="line">    /create_mysql_admin_user.sh</div><div class="line">else</div><div class="line">    echo &quot;=&gt; Using an existing volume of MySQL&quot;</div><div class="line">fi</div><div class="line"></div><div class="line">exec supervisord -n</div></pre></td></tr></table></figure>
+<p>Start-apache2.sh</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">#!/bin/bash</div><div class="line">source /etc/apache2/envvars</div><div class="line">exec apache2 -D FOREGROUND</div></pre></td></tr></table></figure>
+<p>Start-mysql.sh</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">#!/bin/bash</div><div class="line">exec mysqld_safe</div></pre></td></tr></table></figure>
+<p>在脚本中，最好使用下面的这类后台指令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">exec /usr/sbin/sshd &amp;</div></pre></td></tr></table></figure>
+<p>在shell中，内建（builtin）命令exec，格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">exec [-cl] [-a name] [command [arguments]]1</div></pre></td></tr></table></figure>
+<p>exec命令，如果指定了command，它就会取代当前的shell而不是创建新的进程，所以命令执行完毕后shell也就退出了。如果设置了“-l”即login选项，在command的第0个参数前会添加符号“-”，这是login所需的。如果设置了“-c”即clear选项，command命令将在一个空的环境中执行。如果指定了“-a name”选项，name会作为第0个参数传给command。若没有指定command，可以使用重定向来影响当前的shell。重定向成功时退出状态为0，否则为1。</p>
+<p>exec后面的命令如果是多个简单命令组合而成的复合命令，只执行第一个命令，可以把这些符合命令写入shell脚本中，然后通过exec执行这个脚本，此时脚本中所有的命令都会执行。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/docker/" rel="tag"># docker</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+          <div class="wp_rating">
+            <div id="wpac-rating"></div>
+          </div>
+        
+
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/28/docker简介/" rel="next" title="docker简介">
+                <i class="fa fa-chevron-left"></i> docker简介
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/30/linux程序的常用保护机制/" rel="prev" title="linux程序的常用保护机制">
+                linux程序的常用保护机制 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/me.jpg"
+               alt="Introspelliam" />
+          <p class="site-author-name" itemprop="name">Introspelliam</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">128</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">54</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/Introspelliam" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/3008590672" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                    
+                      Weibo
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、运行ubuntu等容器"><span class="nav-number">1.</span> <span class="nav-text">1、运行ubuntu等容器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、操作容器"><span class="nav-number">2.</span> <span class="nav-text">2、操作容器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、网络模式"><span class="nav-number">3.</span> <span class="nav-text">3、网络模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4、docker-CMD执行-容器内没有后台服务的概念"><span class="nav-number">4.</span> <span class="nav-text">4、docker CMD执行 容器内没有后台服务的概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5、解决上述问题的办法"><span class="nav-number">5.</span> <span class="nav-text">5、解决上述问题的办法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#5-1-supervisor"><span class="nav-number">5.1.</span> <span class="nav-text">5.1 supervisor</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-2-无限循环"><span class="nav-number">5.2.</span> <span class="nav-text">5.2 无限循环</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Introspelliam</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  <script type="text/javascript">
+  wpac_init = window.wpac_init || [];
+  wpac_init.push({widget: 'Rating', id: ,
+    el: 'wpac-rating',
+    color: 'fc6423'
+  });
+  (function() {
+    if ('WIDGETPACK_LOADED' in window) return;
+    WIDGETPACK_LOADED = true;
+    var mc = document.createElement('script');
+    mc.type = 'text/javascript';
+    mc.async = true;
+    mc.src = '//embed.widgetpack.com/widget.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+  })();
+  </script>
+
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

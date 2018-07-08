@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="googleaf0347feb5ea0936.html" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="调试,android," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="上善若水" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="0、笔者自述说实话，对于Android逆向，我还只处在开始调试开发的阶段，但是实在是受不了Android中的流氓软件以及流氓事件，我打算进行简单的安卓逆向。刚开始的目标是去除app中的广告页（现在发现十分困难）！ 1、安卓逆向的环境安装1.1 jdk安装jdk安装实在指导很多，但是这儿还是得提醒一句，是jdk的安装，不是jre！ 参考：https://jingyan.baidu.com/artic">
+<meta name="keywords" content="调试,android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="android逆向准备工作">
+<meta property="og:url" content="http://yoursite.com/2018/02/08/android逆向准备工作/index.html">
+<meta property="og:site_name" content="上善若水">
+<meta property="og:description" content="0、笔者自述说实话，对于Android逆向，我还只处在开始调试开发的阶段，但是实在是受不了Android中的流氓软件以及流氓事件，我打算进行简单的安卓逆向。刚开始的目标是去除app中的广告页（现在发现十分困难）！ 1、安卓逆向的环境安装1.1 jdk安装jdk安装实在指导很多，但是这儿还是得提醒一句，是jdk的安装，不是jre！ 参考：https://jingyan.baidu.com/artic">
+<meta property="og:updated_time" content="2018-02-08T09:25:28.292Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="android逆向准备工作">
+<meta name="twitter:description" content="0、笔者自述说实话，对于Android逆向，我还只处在开始调试开发的阶段，但是实在是受不了Android中的流氓软件以及流氓事件，我打算进行简单的安卓逆向。刚开始的目标是去除app中的广告页（现在发现十分困难）！ 1、安卓逆向的环境安装1.1 jdk安装jdk安装实在指导很多，但是这儿还是得提醒一句，是jdk的安装，不是jre！ 参考：https://jingyan.baidu.com/artic">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/02/08/android逆向准备工作/"/>
+
+
+
+
+
+  <title>android逆向准备工作 | 上善若水</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?663212c5ef558c27e77385b620f14823";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">上善若水</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">古之立大事者，不惟有超世之才，亦必有坚韧不拔之志！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/08/android逆向准备工作/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="上善若水">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">android逆向准备工作</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-08T15:59:12+08:00">
+                2018-02-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/re/" itemprop="url" rel="index">
+                    <span itemprop="name">re</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="0、笔者自述"><a href="#0、笔者自述" class="headerlink" title="0、笔者自述"></a>0、笔者自述</h3><p>说实话，对于Android逆向，我还只处在开始调试开发的阶段，但是实在是受不了Android中的流氓软件以及流氓事件，我打算进行简单的安卓逆向。刚开始的目标是去除app中的广告页（现在发现十分困难）！</p>
+<h3 id="1、安卓逆向的环境安装"><a href="#1、安卓逆向的环境安装" class="headerlink" title="1、安卓逆向的环境安装"></a>1、安卓逆向的环境安装</h3><h4 id="1-1-jdk安装"><a href="#1-1-jdk安装" class="headerlink" title="1.1 jdk安装"></a>1.1 jdk安装</h4><p>jdk安装实在指导很多，但是这儿还是得提醒一句，是jdk的安装，不是jre！</p>
+<p>参考：<a href="https://jingyan.baidu.com/article/0202781175839b1bcc9ce529.html" target="_blank" rel="external">https://jingyan.baidu.com/article/0202781175839b1bcc9ce529.html</a></p>
+<h4 id="1-2-Android-Studio安装"><a href="#1-2-Android-Studio安装" class="headerlink" title="1.2 Android Studio安装"></a>1.2 Android Studio安装</h4><p>貌似现在很多的书籍和网上的提示都是建议用ADT，也即安装Eclipse之后再安装ADT bundle（包含SDK），这中间配置极其麻烦，并且网上很多指导建议都已经过时，毕竟Google已经取消对ADT的支持，只推荐使用Android Studio。如果你们还不死心，那你除了安装上述内容外，还需要安装原生开发包（NDK）。</p>
+<p>但是如果你安装Android Studio，这些内容都可以快速配置完毕！其包含SDK_Manager、AVD_Manager等工具。</p>
+<h4 id="1-3-模拟器的使用"><a href="#1-3-模拟器的使用" class="headerlink" title="1.3 模拟器的使用"></a>1.3 模拟器的使用</h4><p>其实我很早就使用Android Studio了，在对比了1.0和现在的3.0版本之后，我发现Android Studio最大的改进就是加快了模拟器的启动速度。这应该会让许许多多的开发者爱上原生态的开发编辑器。现在使用的模拟器最大的问题在于，“窗口标题栏”不见了，没法进行拖拽，没法直接关闭，我真的要疯了！</p>
+<p>所以我在网上搜了好多，最后决定使用Genymotion和夜神模拟器！</p>
+<h5 id="1-3-1-Genymotion的安装与配置"><a href="#1-3-1-Genymotion的安装与配置" class="headerlink" title="1.3.1 Genymotion的安装与配置"></a>1.3.1 Genymotion的安装与配置</h5><p>Genymotion支持多种版本的手机，所以比较适用于开发。但是，它并不值得夸奖。</p>
+<p>不知道你们在安装Genymotion的时候，是否会出现登录错误、下载贼慢等稀奇古怪的问题，这些问题曾耽搁了我半天的时间。当然，最让人头疼的问题是：</p>
+<p><strong>问题a：</strong>Genymotion基于Virtualbox平台，但是从Genymotion中启动模拟器时出现了&quot;Unable to start the Virtual Device...&quot;错误，最后我锁定的问题是virtualbox版本不太稳定，换了一个，重启了电脑；</p>
+<p><strong>问题b：</strong>我成功的启动了Genymotion中的模拟器，但是我随便拖个应用进去都安装不上，提示“An error occured while deploying the file. This probably means that the app contains ARM native code and your Genymotion device cannot run ARM instructions. You should either build your native code to x86 or install an ARM translation tool in your device. ”错误，其实这是因为没有<a href="/others/files/Genymotion-ARM-Translation.zip">Genymotion-ARM-Translation.zip</a> 。这就需要我们打开模拟器，将此zip文件拖入模拟器中，一直点击yes，最后就可用了。</p>
+<p><strong>问题c：</strong> 虽然有些应用已经可以在Genymotion的模拟器中运行了，但是还是有不少应用运行不了，如微信、知乎等。网上有说换个低版本sdk的模拟器就可以，实测了几个，还是会有这类问题。比较玄学，没法做答！</p>
+<p><strong>问题d：</strong>既然我们使用的是Android Studio进行开发，那我们如何让其发现这个模拟器呢？首先在Android Studio-&gt;File-&gt;Settings-&gt;Plugins中找到genymotion插件，安装之后并重启。然后点击Android Studio-&gt;View-&gt;ToolBar，你会在工具栏中看到一个红色的Genymotion管理工具图标，现在基本上没问题了。</p>
+<p><strong>问题e：</strong>如何在Genymotion模拟器中运行工程？只需要点击绿色的run图标，并在Edit Configuration中选定Target为&quot;Open Select Deployment Target Dialog&quot;，接着点击run，选择genymotion中的模拟器（此模拟器在运行工程之前就已打开）。</p>
+<p>你可以看到，genymotion的配置与安装问题多多，而且解决的还不全面，基本上每次配置都要花费一两个小时，有点得不偿失，所以我十分建议使用夜神模拟器。</p>
+<h5 id="1-3-2-夜神模拟器的安装与配置"><a href="#1-3-2-夜神模拟器的安装与配置" class="headerlink" title="1.3.2 夜神模拟器的安装与配置"></a>1.3.2 夜神模拟器的安装与配置</h5><p>夜神模拟器安装基本上没有问题，所以这儿只讲配置问题。</p>
+<p>（1）运行夜神模拟器，</p>
+<p>（2）打开命令行窗口，</p>
+<p>（3）打开到夜神安装目录（如cd D:\Program Files (x86)\NOX\Nox\bin），</p>
+<p>（4）执行命令：nox_adb.exe connect 127.0.0.1:62001，连接模拟器，</p>
+<p>（5）若Android Studio连接不上夜神，重启模拟器即可。</p>
+<p>这五步就能让Android Studio连上夜神模拟器，而且运行速度很快。</p>
+<p>但是我们发现，貌似没法用android-sdk\platform-tool\adb devices发现这个模拟器，这就给测试造成了一定困难。由于版本不同，目前运行服务器端的adb（夜神）版本，比客户端的版本（SDK）低，所以系统就把当前运行的服务给杀掉了。</p>
+<p><strong>解决方案：</strong></p>
+<ul>
+<li>1、关掉AS和夜神模拟器。同时去任务管理器里看下，adb.exe以及nox_adb.exe这2个进程有没有在运行？有的话就结束掉。</li>
+<li>2、找到SDK的目录和夜神模拟器的目录，将SDK目录下的adb.exe文件，复制到夜神模拟器的目录下，因为夜神模拟器目录下原本的adb文件名字叫做nox_adb.exe，因此复制过去之后也得改名为nox_adb.exe。</li>
+<li>3、这样就将AS目录下的adb文件和模拟器目录下的adb文件完全同步了，版本号也一致了。</li>
+</ul>
+<h3 id="2、入门级操作"><a href="#2、入门级操作" class="headerlink" title="2、入门级操作"></a>2、入门级操作</h3><h4 id="2-1-AVD操作"><a href="#2-1-AVD操作" class="headerlink" title="2.1 AVD操作"></a>2.1 AVD操作</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">#可使用的系统镜像列表</div><div class="line">android-sdk/tools/android list targets</div><div class="line"></div><div class="line">#创建AVD</div><div class="line">android-sdk/tools/android create avd -n [name of your new avd]</div><div class="line">android-sdk/tools/android create avd -n [avd设备名] -t [镜像id] -c [大小][K|M]</div><div class="line"></div><div class="line">#运行AVD</div><div class="line">android-sdk/tools/emulator -avd [avd的名字]</div><div class="line">android-sdk/tools/emulator -avd [avd的名字] -partition-size [size in MBs]</div></pre></td></tr></table></figure>
+<h4 id="2-2-ADB调试"><a href="#2-2-ADB调试" class="headerlink" title="2.2 ADB调试"></a>2.2 ADB调试</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">#运行AVD</div><div class="line">android-sdk/tools/emulator -avd [avd的名字]</div><div class="line"></div><div class="line">####使用Android连接桥(ADB)与AVD交互####</div><div class="line">#获取所有连接的android设备</div><div class="line">android-sdk/platform-tools/adb devices</div><div class="line"></div><div class="line"># 连接到android设备</div><div class="line">android-sdk/platform-tools/adb shell （当只有一个设备时）</div><div class="line">android-sdk/platform-tools/adb shell -s [指定设备] (当有多个设备时)</div><div class="line">此时，我们进入了android设备的后台，可以用常用的linux操作进行</div></pre></td></tr></table></figure>
+<h4 id="2-3-从AVD中复制出-入文件"><a href="#2-3-从AVD中复制出-入文件" class="headerlink" title="2.3 从AVD中复制出/入文件"></a>2.3 从AVD中复制出/入文件</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">#从avd中复制出文件</div><div class="line">android-sdk/platform-tools/adb &#123;参数&#125; pull [要复制的文件路径] [存放复制出来的文件的本地路径]</div><div class="line"></div><div class="line">#把文件拷贝至avd中</div><div class="line">android-sdk/platform-tools/adb &#123;参数&#125; push [要复制的文件在本地的路径] [该文件在avd中的存放路径]</div></pre></td></tr></table></figure>
+<h4 id="2-4-通过ADB在AVD中安装app"><a href="#2-4-通过ADB在AVD中安装app" class="headerlink" title="2.4 通过ADB在AVD中安装app"></a>2.4 通过ADB在AVD中安装app</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"># 安装计算机中的apk</div><div class="line">adb &#123;参数&#125; install [apk的存放路径]</div><div class="line"></div><div class="line"># 使用指定设备的命令，缩小要安装APK的设备范围</div><div class="line">adb &#123; -e | -d | -p &#125; install [apk的存放路径]</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/调试/" rel="tag"># 调试</a>
+          
+            <a href="/tags/android/" rel="tag"># android</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+          <div class="wp_rating">
+            <div id="wpac-rating"></div>
+          </div>
+        
+
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/09/反弹Shell/" rel="next" title="反弹Shell">
+                <i class="fa fa-chevron-left"></i> 反弹Shell
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/03/12/cygwin常见配置/" rel="prev" title="cygwin常见配置">
+                cygwin常见配置 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/me.jpg"
+               alt="Introspelliam" />
+          <p class="site-author-name" itemprop="name">Introspelliam</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">128</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">54</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/Introspelliam" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/3008590672" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                    
+                      Weibo
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#0、笔者自述"><span class="nav-number">1.</span> <span class="nav-text">0、笔者自述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1、安卓逆向的环境安装"><span class="nav-number">2.</span> <span class="nav-text">1、安卓逆向的环境安装</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-jdk安装"><span class="nav-number">2.1.</span> <span class="nav-text">1.1 jdk安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-Android-Studio安装"><span class="nav-number">2.2.</span> <span class="nav-text">1.2 Android Studio安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-模拟器的使用"><span class="nav-number">2.3.</span> <span class="nav-text">1.3 模拟器的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-3-1-Genymotion的安装与配置"><span class="nav-number">2.3.1.</span> <span class="nav-text">1.3.1 Genymotion的安装与配置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-3-2-夜神模拟器的安装与配置"><span class="nav-number">2.3.2.</span> <span class="nav-text">1.3.2 夜神模拟器的安装与配置</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、入门级操作"><span class="nav-number">3.</span> <span class="nav-text">2、入门级操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-AVD操作"><span class="nav-number">3.1.</span> <span class="nav-text">2.1 AVD操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-ADB调试"><span class="nav-number">3.2.</span> <span class="nav-text">2.2 ADB调试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-从AVD中复制出-入文件"><span class="nav-number">3.3.</span> <span class="nav-text">2.3 从AVD中复制出/入文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-4-通过ADB在AVD中安装app"><span class="nav-number">3.4.</span> <span class="nav-text">2.4 通过ADB在AVD中安装app</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Introspelliam</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  <script type="text/javascript">
+  wpac_init = window.wpac_init || [];
+  wpac_init.push({widget: 'Rating', id: ,
+    el: 'wpac-rating',
+    color: 'fc6423'
+  });
+  (function() {
+    if ('WIDGETPACK_LOADED' in window) return;
+    WIDGETPACK_LOADED = true;
+    var mc = document.createElement('script');
+    mc.type = 'text/javascript';
+    mc.async = true;
+    mc.src = '//embed.widgetpack.com/widget.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+  })();
+  </script>
+
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

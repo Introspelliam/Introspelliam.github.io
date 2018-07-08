@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="googleaf0347feb5ea0936.html" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="javascript," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="上善若水" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="javascript作为一种普适性的脚本语言，广泛应用于网页端、移动端。而本文将要讲述的是javascript的调试。 调试工具javascript内置命令调试javascript作为一种脚本语言，内置了大量的输出函数。这里主要讲述的是alert/prompt/confirm、console.log、document.write。 其实上面的&amp;quot;、&amp;quot;已经为我们分好类的。  弹框式">
+<meta name="keywords" content="javascript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="javascript的调试">
+<meta property="og:url" content="http://yoursite.com/2017/11/13/javascript的调试/index.html">
+<meta property="og:site_name" content="上善若水">
+<meta property="og:description" content="javascript作为一种普适性的脚本语言，广泛应用于网页端、移动端。而本文将要讲述的是javascript的调试。 调试工具javascript内置命令调试javascript作为一种脚本语言，内置了大量的输出函数。这里主要讲述的是alert/prompt/confirm、console.log、document.write。 其实上面的&amp;quot;、&amp;quot;已经为我们分好类的。  弹框式">
+<meta property="og:updated_time" content="2017-11-13T15:38:31.867Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="javascript的调试">
+<meta name="twitter:description" content="javascript作为一种普适性的脚本语言，广泛应用于网页端、移动端。而本文将要讲述的是javascript的调试。 调试工具javascript内置命令调试javascript作为一种脚本语言，内置了大量的输出函数。这里主要讲述的是alert/prompt/confirm、console.log、document.write。 其实上面的&amp;quot;、&amp;quot;已经为我们分好类的。  弹框式">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/11/13/javascript的调试/"/>
+
+
+
+
+
+  <title>javascript的调试 | 上善若水</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?663212c5ef558c27e77385b620f14823";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">上善若水</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">古之立大事者，不惟有超世之才，亦必有坚韧不拔之志！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/11/13/javascript的调试/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="上善若水">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">javascript的调试</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-13T17:36:16+08:00">
+                2017-11-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/code/" itemprop="url" rel="index">
+                    <span itemprop="name">code</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>javascript作为一种普适性的脚本语言，广泛应用于网页端、移动端。而本文将要讲述的是javascript的调试。</p>
+<h3 id="调试工具"><a href="#调试工具" class="headerlink" title="调试工具"></a>调试工具</h3><h4 id="javascript内置命令调试"><a href="#javascript内置命令调试" class="headerlink" title="javascript内置命令调试"></a>javascript内置命令调试</h4><p>javascript作为一种脚本语言，内置了大量的输出函数。这里主要讲述的是alert/prompt/confirm、console.log、document.write。</p>
+<p>其实上面的&quot;、&quot;已经为我们分好类的。</p>
+<ol>
+<li>弹框式输出</li>
+<li>console命令框输出</li>
+<li>网页内输出</li>
+</ol>
+<p><strong>弹框式输出</strong></p>
+<p>优点：可以作为IO中断</p>
+<p>缺点：由于是中断操作，频繁的确定会比较麻烦。弹框中所能容纳的字符数有限</p>
+<p><strong>console命令框输出</strong></p>
+<p>优点：输出内容无限制</p>
+<p>缺点：不能产生中断，较长的代码调试起来相对而言较麻烦</p>
+<p><strong>网页内输出</strong></p>
+<p>优点：由于是在网页内部输出，所以内容样式可以自定义。输出内容也没有限制</p>
+<p>缺点：不能产生中断，较长的代码调试起来相对而言较麻烦</p>
+<p><strong>辅助工具</strong></p>
+<p>由于输出的内容多样化，很多时候我们需要的字符串类型，这时候不妨使用toString函数，以此来方便查看输出结果！</p>
+<h4 id="Visual-Studio-Code"><a href="#Visual-Studio-Code" class="headerlink" title="Visual Studio Code"></a>Visual Studio Code</h4><p>vsc是最近我所使用的文本编辑器，以前一直使用sublime作为文本编辑的工具。visual studio code是一款轻量级的IDE，可进行多种脚本语言的调试与编写！而且vsc支持windows、mac、linux，是一款不可多得的调试软件。具体操作步骤就不再赘述，因为与vs基本一致！</p>
+<p>优点：支持多种脚本语言的编译调试</p>
+<p>缺点：由于visual studio code使用nodejs作为底层调试器，所以不支持弹框式输出以及I网页内输出等方式。这也就意味着，很多在浏览器中能够实现的编写方式在这里很有可能编译不通</p>
+<h4 id="Chrome开发者模式-推荐"><a href="#Chrome开发者模式-推荐" class="headerlink" title="Chrome开发者模式(推荐)"></a>Chrome开发者模式<font color="#f00">(推荐)</font></h4><p>chrome的开发者模式中，sources选项栏中支持了调试。其右上角给出了调试工具、断点信息、监听器信息等等，总而言之功能十分强大。</p>
+<p>优点：chrome开发者模式进行调试，能够解决大部分js静态分析问题，功能齐全，支持几乎全部的js命令</p>
+<p>缺点：现如今有许多网页在做开发的时候，进行了反调试功能。这个时候，chrome的开发者模式进行调试可能效果不明显。但是我们可以配合<font color="#f00"><a href="https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?utm_source=chrome-ntp-icon" target="_blank" rel="external">Tampermonkey</a></font> 进行脚本设置，封闭/变相禁用反调试功能。</p>
+<p>范例：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="built_in">window</span>._setTimeout = <span class="built_in">window</span>.setTimeout;</div><div class="line">    <span class="built_in">window</span>.setTimeout = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;&#125;;</div><div class="line">&#125;)();</div></pre></td></tr></table></figure>
+<p>由于在执行网页中的js代码之前，先调用了上述代码。所以setTimeout函数都给更改了，这就导致了反调试的重要一环被截断，这会在后面的章节进行讲述。</p>
+<h3 id="综合范例"><a href="#综合范例" class="headerlink" title="综合范例"></a>综合范例</h3><p>可以说这儿的范例是从网上摘抄的，所以大家擦亮的自己的眼睛，防止被误导。</p>
+<h4 id="缘起"><a href="#缘起" class="headerlink" title="缘起"></a>缘起</h4><p>最近在研究 PopUnder 的实现方案，通过 Google 搜索 <code>js popunder</code> 出来的第一页中有个网站 <code>popunderjs.com</code>，当时看了下，这是个提供 popunder 解决方案的一家公司，而且再翻了几页，发现市面上能解决这个问题的，只有2家公司，可见这个市场基本是属于垄断型的。<br>popunderjs 原来在 github 上是有开源代码的，但后来估计作者发现这个需求巨大的商业价值，索性不开源了，直接收费。所以现在要研究它的实现方案，只能上官网扒它源码了。</p>
+<p>这是它的示例页：<code>http://code.ptcong.com/demos/bjp/demo.html</code><br>分别加载了几个重要文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">http://code.ptcong.com/demos/bjp/script.js?0.3687041198903791</div><div class="line">http://code.ptcong.com/demos/bjp/license.demo.js?0.31109710863616447</div></pre></td></tr></table></figure>
+<h4 id="文件结构"><a href="#文件结构" class="headerlink" title="文件结构"></a>文件结构</h4><p>script.js 是功能主体，实现了 popunder 的所有功能以及定义了多个 API 方法<br>license.demo.js 是授权文件，有这个文件你才能顺利调用 script.js 里的方法</p>
+<h4 id="防止被逆向"><a href="#防止被逆向" class="headerlink" title="防止被逆向"></a>防止被逆向</h4><p>这么具有商业价值的代码，就这么公开地给你们用，肯定要考虑好被逆向的问题。我们来看看它是怎么反逆向的。<br>首先，打开控制台，发现2个问题：</p>
+<ol>
+<li>控制台所有内容都被反复清空，只输出了这么一句话：<code>Console was cleared script.js?0.5309098417125133:1</code></li>
+<li>无法断点调试，因为一旦启用断点调试功能，就会被定向到一个匿名函数 <code>(function() {debugger})</code></li>
+</ol>
+<p>也就是说，常用的断点调试方法已经无法使用了，我们只能看看源代码，看能不能理解它的逻辑了。但是，它源代码是这样的：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> a = <span class="keyword">typeof</span> <span class="built_in">window</span> === S[<span class="number">0</span>] &amp;&amp; <span class="keyword">typeof</span> <span class="built_in">window</span>[S[<span class="number">1</span>]] !== S[<span class="number">2</span>] ? <span class="built_in">window</span> : global;</div><div class="line"><span class="keyword">try</span> &#123;</div><div class="line">    a[S[<span class="number">3</span>]](S[<span class="number">4</span>]);</div><div class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;&#125;</div><div class="line">    ;</div><div class="line">&#125; <span class="keyword">catch</span> (a) &#123;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">        (<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;&#125;</div><div class="line">        [S[<span class="number">11</span>]](S[<span class="number">12</span>])());</div><div class="line">        <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;&#125;</div><div class="line">        ;</div><div class="line">    &#125; <span class="keyword">catch</span> (a) &#123;</div><div class="line">        <span class="keyword">if</span> (<span class="regexp">/TypeError/</span>[S[<span class="number">15</span>]](a + S[<span class="number">16</span>])) &#123;</div><div class="line">            <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;&#125;</div><div class="line">            ;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可见源代码是根本不可能阅读的，所以还是得想办法破掉它的反逆向措施。</p>
+<h4 id="利用工具巧妙破解反逆向"><a href="#利用工具巧妙破解反逆向" class="headerlink" title="利用工具巧妙破解反逆向"></a>利用工具巧妙破解反逆向</h4><p>首先在断点调试模式一步步查看它都执行了哪些操作，突然就发现了这么一段代码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    (<span class="function"><span class="keyword">function</span> <span class="title">a</span>(<span class="params"></span>) </span>&#123;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            (<span class="function"><span class="keyword">function</span> <span class="title">b</span>(<span class="params">i</span>) </span>&#123;</div><div class="line">                <span class="keyword">if</span> ((<span class="string">''</span> + (i / i)).length !== <span class="number">1</span> || i % <span class="number">20</span> === <span class="number">0</span>) &#123;</div><div class="line">                    (<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;&#125;</div><div class="line">                    ).constructor(<span class="string">'debugger'</span>)();</div><div class="line">                &#125; <span class="keyword">else</span> &#123;</div><div class="line">                    <span class="keyword">debugger</span> ;</div><div class="line">                &#125;</div><div class="line">                b(++i);</div><div class="line">            &#125;</div><div class="line">            )(<span class="number">0</span>);</div><div class="line">        &#125; <span class="keyword">catch</span> (e) &#123;</div><div class="line">            setTimeout(a, <span class="number">5000</span>);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    )()</div><div class="line">&#125;</div><div class="line">)();</div></pre></td></tr></table></figure>
+<p>这段代码主要有2部分，一是通过 try {} 块内的 b() 函数来判断是否打开了控制台，如果是的话就进行自我调用，反复进入 debugger 这个断点，从而达到干扰我们调试的目的。如果没有打开控制台，那调用 debugger 就会抛出异常，这时就在 catch {} 块内设置定时器，5秒后再调用一下 b() 函数。</p>
+<p>这么说来其实一切的一切都始于 setTimeout 这个函数（因为 b() 函数全是闭包调用，无法从外界破掉），所以只要在 setTimeout 被调用的时候，不让它执行就可以破解掉这个死循环了。</p>
+<p>所以我们只需要简单地覆盖掉 setTimeout 就可以了……比如：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="built_in">window</span>._setTimeout = <span class="built_in">window</span>.setTimeout;</div><div class="line">    <span class="built_in">window</span>.setTimeout = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;&#125;;</div><div class="line">&#125;)();</div></pre></td></tr></table></figure>
+<p>但是！这个操作无法在控制台里面做！因为当你打开控制台的时候，你就必然会被吸入到 b() 函数的死循环中。这时再来覆盖 setTimeout 已经没有意义了。</p>
+<p>这时我们的工具 TamperMonkey 就上场了，把代码写到 TM 的脚本里，就算不打开控制台也能执行了。</p>
+<font color="#f00">TM 脚本写好之后，刷新页面，等它完全加载完，再打开控制台，这时 debugger 已经不会再出现了！<strong>接下来就轮到控制台刷新代码了</strong></font>
+
+<p>通过 <code>Console was cleared</code> 右侧的链接点进去定位到具体的代码，点击 <code>{}</code> 美化一下被压缩过的代码，发现其实就是用 setInterval 反复调用 console.clear() 清空控制台并输出了 <code>&lt;div&gt;Console was cleared&lt;/div&gt;</code> 信息，但是注意了，不能直接覆盖 setInterval 因为这个函数在其他地方也有重要的用途。</p>
+<p>所以我们可以通过覆盖 console.clear() 函数和过滤 log 信息来阻止它的清屏行为。</p>
+<p>同样写入到 TamperMonkey 的脚本中，代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">window.console.clear = function() &#123;&#125;;</div><div class="line">window.console._log = window.console.log;</div><div class="line">window.console.log = function (e) &#123;</div><div class="line">    if (e[&apos;nodeName&apos;] &amp;&amp; e[&apos;nodeName&apos;] == &apos;DIV&apos;) &#123;</div><div class="line">        return ;</div><div class="line">    &#125;</div><div class="line">    return window.console.error.apply(window.console._log, arguments);</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>之所以用 error 来输出信息，是为了查看它的调用栈，对理解程序逻辑有帮助。</p>
+<hr>
+<p>基本上，做完这些的工作之后，这段代码就可以跟普通程序一样正常调试了。但还有个问题，它主要代码是经常混淆加密的，所以调试起来很有难度。下面简单讲讲过程。</p>
+<h4 id="混淆加密方法一：隐藏方法调用，降低可读性"><a href="#混淆加密方法一：隐藏方法调用，降低可读性" class="headerlink" title="混淆加密方法一：隐藏方法调用，降低可读性"></a>混淆加密方法一：隐藏方法调用，降低可读性</h4><p>从 license.demo.js 可以看到开头有一段代码是这样的：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> zBCa = <span class="function"><span class="keyword">function</span> <span class="title">T</span>(<span class="params">f</span>) </span>&#123;</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> U = <span class="number">0</span>, V = <span class="number">0</span>, W, X, Y = (X = <span class="built_in">decodeURI</span>(<span class="string">"+TR4W%17%7F@%17.....省略若干"</span>),</div><div class="line">    W = <span class="string">''</span>,</div><div class="line">    <span class="string">'D68Q4cYfvoqAveD2D8Kb0jTsQCf2uvgs'</span>); U &lt; X.length; U++,</div><div class="line">    V++) &#123;</div><div class="line">        <span class="keyword">if</span> (V === Y.length) &#123;</div><div class="line">            V = <span class="number">0</span>;</div><div class="line">        &#125;</div><div class="line">        W += <span class="built_in">String</span>[<span class="string">"fromCharCode"</span>](X[<span class="string">"charCodeAt"</span>](U) ^ Y[<span class="string">"charCodeAt"</span>](V));</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">var</span> S = W.split(<span class="string">"&amp;&amp;"</span>);</div></pre></td></tr></table></figure>
+<p>通过跟踪执行，可以发现 S 变量的内容其实是本程序所有要用到的类名、函数名的集合，类似于 <code>var S = [&#39;console&#39;, &#39;clear&#39;, &#39;console&#39;, &#39;log&#39;]</code>。如果要调用 console.clear() 和 console.log() 函数的话，就这样</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> a = <span class="built_in">window</span>;</div><div class="line">a[S[<span class="number">0</span>]][S[<span class="number">1</span>]]();</div><div class="line">a[S[<span class="number">2</span>]][S[<span class="number">3</span>]]();</div></pre></td></tr></table></figure>
+<h4 id="混淆加密方法二：将函数定义加入到证书验证流程"><a href="#混淆加密方法二：将函数定义加入到证书验证流程" class="headerlink" title="混淆加密方法二：将函数定义加入到证书验证流程"></a>混淆加密方法二：将函数定义加入到证书验证流程</h4><p>license.demo.js 中有多处这样的代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">a[&apos;RegExp&apos;](&apos;/R[\S]&#123;4&#125;p.c\wn[\D]&#123;5&#125;t\wr/&apos;,&apos;g&apos;)[&apos;test&apos;](T + &apos;&apos;)</div></pre></td></tr></table></figure>
+<p>这里的 a 代表 window，T 代表某个函数，<code>T + &#39;&#39;</code> 的作用是把 T 函数的定义转成字符串，所以这段代码的意思其实是，验证 T 函数的定义中是否包含某些字符。</p>
+<p>每次成功的验证，都会返回一个特定的值，这些个特定的值就是解密核心证书的参数。</p>
+<p>可能是因为我重新整理了代码格式，所以在重新运行的时候，这个证书一直运行不成功，所以后来就放弃了通过证书来突破的方案。</p>
+<h4 id="逆向思路：输出所有函数调用和参数"><a href="#逆向思路：输出所有函数调用和参数" class="headerlink" title="逆向思路：输出所有函数调用和参数"></a>逆向思路：输出所有函数调用和参数</h4><p>通过断点调试，我们可以发现，想一步一步深入地搞清楚这整个程序的逻辑，是十分困难，因为它大部分函数之间都是相互调用的关系，只是参数的不同，结果就不同。</p>
+<p>所以我后来想了个办法，就是只查看它的系统函数的调用，通过对调用顺序的研究，也可以大致知道它执行了哪些操作。</p>
+<p>要想输出所有系统函数的调用，需要解决以下问题：</p>
+<ol>
+<li>覆盖所有内置变量及类的函数，我们既要覆盖 <code>window.console.clear()</code> 这样的依附在实例上的函数，也要覆盖依附在类定义上的函数，如 <code>window.HTMLAnchorElement.__proto__.click()</code></li>
+<li>需要正确区分内置函数和自定义函数</li>
+</ol>
+<p>经过搜索后，找到了区分内置函数的代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">// Used to resolve the internal `[[Class]]` of values</div><div class="line">var toString = Object.prototype.toString;</div><div class="line"></div><div class="line">// Used to resolve the decompiled source of functions</div><div class="line">var fnToString = Function.prototype.toString;</div><div class="line"></div><div class="line">// Used to detect host constructors (Safari &gt; 4; really typed array specific)</div><div class="line">var reHostCtor = /^\[object .+?Constructor\]$/;</div><div class="line"></div><div class="line">// Compile a regexp using a common native method as a template.</div><div class="line">// We chose `Object#toString` because there&apos;s a good chance it is not being mucked with.</div><div class="line">var reNative = RegExp(&apos;^&apos; +</div><div class="line">  // Coerce `Object#toString` to a string</div><div class="line">  String(toString)</div><div class="line">  // Escape any special regexp characters</div><div class="line">  .replace(/[.*+?^$&#123;&#125;()|[\]\/\\]/g, &apos;\\$&amp;&apos;)</div><div class="line">  // Replace mentions of `toString` with `.*?` to keep the template generic.</div><div class="line">  // Replace thing like `for ...` to support environments like Rhino which add extra info</div><div class="line">  // such as method arity.</div><div class="line">  .replace(/toString|(function).*?(?=\\\()| for .+?(?=\\\])/g, &apos;$1.*?&apos;) + &apos;$&apos;</div><div class="line">);</div><div class="line"></div><div class="line">function isNative(value) &#123;</div><div class="line">  var type = typeof value;</div><div class="line">  return type == &apos;function&apos;</div><div class="line">    // Use `Function#toString` to bypass the value&apos;s own `toString` method</div><div class="line">    // and avoid being faked out.</div><div class="line">    ? reNative.test(fnToString.call(value))</div><div class="line">    // Fallback to a host object check because some environments will represent</div><div class="line">    // things like typed arrays as DOM methods which may not conform to the</div><div class="line">    // normal native pattern.</div><div class="line">    : (value &amp;&amp; type == &apos;object&apos; &amp;&amp; reHostCtor.test(toString.call(value))) || false;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>然后结合网上的资料，写出了递归覆盖内置函数的代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">function wrapit(e) &#123;</div><div class="line">    if (e.__proto__) &#123;</div><div class="line">        wrapit(e.__proto__);</div><div class="line">    &#125;</div><div class="line">    for (var a in e) &#123;</div><div class="line">        try &#123;</div><div class="line">            e[a];</div><div class="line">        &#125; catch (e) &#123;</div><div class="line">            // pass</div><div class="line">            continue;</div><div class="line">        &#125;</div><div class="line">        var prop = e[a];</div><div class="line">        if (!prop || prop._w) continue;</div><div class="line"></div><div class="line">        prop = e[a];</div><div class="line">        if (typeof prop == &apos;function&apos; &amp;&amp; isNative(prop)) &#123;</div><div class="line">            e[a] = (function (name, func) &#123;</div><div class="line">                return function () &#123;</div><div class="line">                    var args = [].splice.call(arguments,0); // convert arguments to array</div><div class="line">                    if (false &amp;&amp; name == &apos;getElementsByTagName&apos; &amp;&amp; args[0] == &apos;iframe&apos;) &#123;</div><div class="line">                    &#125; else &#123;</div><div class="line">                        console.error((new Date).toISOString(), [this], name, args);</div><div class="line">                    &#125;</div><div class="line">                    if (name == &apos;querySelectorAll&apos;) &#123;</div><div class="line">                        //alert(&apos;querySelectorAll&apos;);</div><div class="line">                    &#125;</div><div class="line">                    return func.apply(this, args);</div><div class="line">                &#125;;</div><div class="line">            &#125;)(a, prop);</div><div class="line">            e[a]._w = true;</div><div class="line">        &#125;;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>使用的时候只需要：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">wrapit(window);</div><div class="line">wrapit(document);</div></pre></td></tr></table></figure>
+<p>然后模拟一下正常的操作，触发 PopUnder 就可以看到它的调用过程了。</p>
+<hr>
+<p>参考资料：</p>
+<p><a href="https://blog.nettitude.com/uk/beginners-guide-obfuscation" target="_blank" rel="external">A Beginners’ Guide to Obfuscation</a><br><a href="https://stackoverflow.com/questions/6598945/detect-if-function-is-native-to-browser" target="_blank" rel="external">Detect if function is native to browser</a><br><a href="https://davidwalsh.name/detect-native-function" target="_blank" rel="external">Detect if a Function is Native Code with JavaScript</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/javascript/" rel="tag"># javascript</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+          <div class="wp_rating">
+            <div id="wpac-rating"></div>
+          </div>
+        
+
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/11/12/CTF比赛中关于javascript的总结/" rel="next" title="CTF比赛中关于javascript的总结">
+                <i class="fa fa-chevron-left"></i> CTF比赛中关于javascript的总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/11/14/JavaScript反混淆与混淆/" rel="prev" title="JavaScript反混淆与混淆">
+                JavaScript反混淆与混淆 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/me.jpg"
+               alt="Introspelliam" />
+          <p class="site-author-name" itemprop="name">Introspelliam</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">128</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">54</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/Introspelliam" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/3008590672" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                    
+                      Weibo
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#调试工具"><span class="nav-number">1.</span> <span class="nav-text">调试工具</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#javascript内置命令调试"><span class="nav-number">1.1.</span> <span class="nav-text">javascript内置命令调试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Visual-Studio-Code"><span class="nav-number">1.2.</span> <span class="nav-text">Visual Studio Code</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Chrome开发者模式-推荐"><span class="nav-number">1.3.</span> <span class="nav-text">Chrome开发者模式(推荐)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#综合范例"><span class="nav-number">2.</span> <span class="nav-text">综合范例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#缘起"><span class="nav-number">2.1.</span> <span class="nav-text">缘起</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#文件结构"><span class="nav-number">2.2.</span> <span class="nav-text">文件结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#防止被逆向"><span class="nav-number">2.3.</span> <span class="nav-text">防止被逆向</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#利用工具巧妙破解反逆向"><span class="nav-number">2.4.</span> <span class="nav-text">利用工具巧妙破解反逆向</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#混淆加密方法一：隐藏方法调用，降低可读性"><span class="nav-number">2.5.</span> <span class="nav-text">混淆加密方法一：隐藏方法调用，降低可读性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#混淆加密方法二：将函数定义加入到证书验证流程"><span class="nav-number">2.6.</span> <span class="nav-text">混淆加密方法二：将函数定义加入到证书验证流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#逆向思路：输出所有函数调用和参数"><span class="nav-number">2.7.</span> <span class="nav-text">逆向思路：输出所有函数调用和参数</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Introspelliam</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  <script type="text/javascript">
+  wpac_init = window.wpac_init || [];
+  wpac_init.push({widget: 'Rating', id: ,
+    el: 'wpac-rating',
+    color: 'fc6423'
+  });
+  (function() {
+    if ('WIDGETPACK_LOADED' in window) return;
+    WIDGETPACK_LOADED = true;
+    var mc = document.createElement('script');
+    mc.type = 'text/javascript';
+    mc.async = true;
+    mc.src = '//embed.widgetpack.com/widget.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+  })();
+  </script>
+
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

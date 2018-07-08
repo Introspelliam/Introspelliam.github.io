@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="googleaf0347feb5ea0936.html" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="调试,gdb," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="上善若水" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="1. 调试的快捷键peda带有的功能，直接输入命令，其就会给予提示（如果不是这样，基本上也是该命令就可以不带参数）。这儿就不多做介绍  1.1 基础的调试快捷键 s step，si步入 n 执行下一条指令  ni步入 b 在某处下断点，可以用  b * adrress b function_name info b  查看断点信息 delete 1删除第一个断点   c 继续 r 执行 disas">
+<meta name="keywords" content="调试,gdb">
+<meta property="og:type" content="article">
+<meta property="og:title" content="gdb的调试与使用">
+<meta property="og:url" content="http://yoursite.com/2017/08/03/gdb的调试与使用/index.html">
+<meta property="og:site_name" content="上善若水">
+<meta property="og:description" content="1. 调试的快捷键peda带有的功能，直接输入命令，其就会给予提示（如果不是这样，基本上也是该命令就可以不带参数）。这儿就不多做介绍  1.1 基础的调试快捷键 s step，si步入 n 执行下一条指令  ni步入 b 在某处下断点，可以用  b * adrress b function_name info b  查看断点信息 delete 1删除第一个断点   c 继续 r 执行 disas">
+<meta property="og:updated_time" content="2018-04-08T02:06:00.398Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="gdb的调试与使用">
+<meta name="twitter:description" content="1. 调试的快捷键peda带有的功能，直接输入命令，其就会给予提示（如果不是这样，基本上也是该命令就可以不带参数）。这儿就不多做介绍  1.1 基础的调试快捷键 s step，si步入 n 执行下一条指令  ni步入 b 在某处下断点，可以用  b * adrress b function_name info b  查看断点信息 delete 1删除第一个断点   c 继续 r 执行 disas">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/08/03/gdb的调试与使用/"/>
+
+
+
+
+
+  <title>gdb的调试与使用 | 上善若水</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?663212c5ef558c27e77385b620f14823";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">上善若水</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">古之立大事者，不惟有超世之才，亦必有坚韧不拔之志！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/03/gdb的调试与使用/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="上善若水">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">gdb的调试与使用</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-03T22:22:50+08:00">
+                2017-08-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/pwn/" itemprop="url" rel="index">
+                    <span itemprop="name">pwn</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-调试的快捷键"><a href="#1-调试的快捷键" class="headerlink" title="1. 调试的快捷键"></a>1. 调试的快捷键</h3><font color="#f00">peda带有的功能，直接输入命令，其就会给予提示（如果不是这样，基本上也是该命令就可以不带参数）。这儿就不多做介绍</font>
+
+<h4 id="1-1-基础的调试快捷键"><a href="#1-1-基础的调试快捷键" class="headerlink" title="1.1 基础的调试快捷键"></a>1.1 基础的调试快捷键</h4><ul>
+<li>s step，si步入</li>
+<li>n 执行下一条指令  ni步入</li>
+<li>b 在某处下断点，可以用 <ul>
+<li>b * adrress</li>
+<li>b function_name</li>
+<li>info b  查看断点信息</li>
+<li>delete 1删除第一个断点</li>
+</ul>
+</li>
+<li>c 继续</li>
+<li>r 执行</li>
+<li>disas addr 查看addr处前后的反汇编代码</li>
+</ul>
+<h4 id="1-2-显示数据"><a href="#1-2-显示数据" class="headerlink" title="1.2 显示数据"></a>1.2 显示数据</h4><ul>
+<li>p 系列<ul>
+<li>p system/main  显示某个函数地址<ul>
+<li>p $esp    显示寄存器</li>
+</ul>
+</li>
+<li>p/x  p/a p/b p/s。。。</li>
+<li>p 0xff - 0xea   <font color="#f00">计算器</font></li>
+<li>print &amp;VarName 查看变量地址</li>
+<li>p * 0xffffebac   查看某个地址处的值</li>
+</ul>
+</li>
+<li>x系列<ul>
+<li>x/xw addr 显示某个地址处开始的16进制内容，如果有符号表会加载符号表</li>
+<li>x/x $esp 查看esp寄存器中的值</li>
+<li>x/s addr 查看addr处的字符串</li>
+<li>x/b addr 查看addr处的字符</li>
+<li>x/i  addr 查看addr处的反汇编结果</li>
+</ul>
+</li>
+<li>info系列<ul>
+<li>info register $ebp  查看寄存器ebp中的内容 (简写为 i r ebp)</li>
+<li>i r eflags 查看状态寄存器</li>
+<li>i r ss        查看段寄存器</li>
+<li>i b            查看断点信息</li>
+<li>i functions  查看所有的函数</li>
+</ul>
+</li>
+<li>disas addr 查看addr处前后的反汇编代码</li>
+<li>stack 20   查看栈内20个值</li>
+<li>show args  查看参数</li>
+<li>vmmap 查看映射状况 <font color="#f00">peda带有</font></li>
+<li>readelf 查看elf文件中各个段的起始地址  <font color="#f00">peda带有</font></li>
+<li>parseheap 显示堆状况  <font color="#f00">peda带有</font></li>
+</ul>
+<h4 id="1-3-查找数据"><a href="#1-3-查找数据" class="headerlink" title="1.3 查找数据"></a>1.3 查找数据</h4><ul>
+<li>find 查找字符串    <font color="#f00">peda带有</font></li>
+<li>searchmem 查找字符串  <font color="#f00">peda带有</font></li>
+<li>ropsearch &quot;xor eax,eax;ret&quot;  0x08048080 0x08050000   查找某段的rop  <font color="#f00">peda带有</font></li>
+<li>ropgadget  提供多个pop|ret可行结果  <font color="#f00">peda带有</font></li>
+</ul>
+<h4 id="1-4-修改数据"><a href="#1-4-修改数据" class="headerlink" title="1.4 修改数据"></a>1.4 修改数据</h4><ul>
+<li>set $esp=0x110  修改寄存器的值</li>
+<li>set *0xf7ff3234=0x08042334 修改内存的值</li>
+<li>set args &quot;asdasg&quot; &quot;afdasgasg&quot; &quot;agasdsa&quot;  分别给参数1,2,3赋值</li>
+<li>set args &quot;`python -c &#39;print &quot;1234\x7f\xde&quot;&#39;`&quot;    这个参数中用python脚本重写了一下，避免有些字符无法正确设置</li>
+<li>r &quot;arg1&quot; &quot;arg2&quot; &quot;arg3&quot;   设置参数</li>
+<li>run `$(perl -e &#39;print &quot;A&quot;x20&#39;)`</li>
+</ul>
+<h4 id="1-1-peda插件"><a href="#1-1-peda插件" class="headerlink" title="1.1 peda插件"></a>1.1 peda插件</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">Enhance the display of gdb: colorize and display disassembly codes, registers, memory information during debugging.</div><div class="line">Add commands to support debugging and exploit development (for a full list of commands use peda help):</div><div class="line">aslr -- Show/set ASLR setting of GDB</div><div class="line">checksec -- Check for various security options of binary</div><div class="line">dumpargs -- Display arguments passed to a function when stopped at a call instruction</div><div class="line">dumprop -- Dump all ROP gadgets in specific memory range</div><div class="line">elfheader -- Get headers information from debugged ELF file</div><div class="line">elfsymbol -- Get non-debugging symbol information from an ELF file</div><div class="line">lookup -- Search for all addresses/references to addresses which belong to a memory range</div><div class="line">patch -- Patch memory start at an address with string/hexstring/int</div><div class="line">pattern -- Generate, search, or write a cyclic pattern to memory</div><div class="line">procinfo -- Display various info from /proc/pid/</div><div class="line">pshow -- Show various PEDA options and other settings</div><div class="line">pset -- Set various PEDA options and other settings</div><div class="line">readelf -- Get headers information from an ELF file</div><div class="line">ropgadget -- Get common ROP gadgets of binary or library</div><div class="line">ropsearch -- Search for ROP gadgets in memory</div><div class="line">searchmem|find -- Search for a pattern in memory; support regex search</div><div class="line">shellcode -- Generate or download common shellcodes.</div><div class="line">skeleton -- Generate python exploit code template</div><div class="line">vmmap -- Get virtual mapping address ranges of section(s) in debugged process</div><div class="line">xormem -- XOR a memory region with a key</div><div class="line">Installation</div></pre></td></tr></table></figure>
+<p><strong>vmmap：查看当前程序映射的内存块</strong><br><strong>dumprop：</strong></p>
+<h3 id="2-查找某个plt、got、plt-2"><a href="#2-查找某个plt、got、plt-2" class="headerlink" title="2. 查找某个plt、got、plt_2"></a>2. 查找某个plt、got、plt_2</h3><ul>
+<li>plt 可以直接使用pwntools中的ELF(elf).symbols(function_name)</li>
+<li>got 可以直接使用pwntools中的ELF(elf).got(function_name)</li>
+<li>plt_2 可以直接使用pwntools中的ELF(lib).symbols(function_name)</li>
+</ul>
+<h3 id="3-查找程序所动态链接的库"><a href="#3-查找程序所动态链接的库" class="headerlink" title="3. 查找程序所动态链接的库"></a>3. 查找程序所动态链接的库</h3><ul>
+<li><p>file pwn3</p>
+<ul>
+<li>pwn3: ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux.so.2, for GNU/Linux 2.6.24, BuildID[sha1]=916959406d0c545f6971223c8e06bff1ed9ae74d, not stripped</li>
+</ul>
+</li>
+<li><p>checksec pwn3</p>
+<ul>
+<li>[*] &#39;/root/Desktop/Pwnable/fmt/normal/fmt_string_write_got/pwn3&#39;<br>Arch:     i386-32-little<br>RELRO:    Partial RELRO<br>Stack:    No canary found<br>NX:       NX enabled<br>PIE:      No PIE (0x8048000)</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>ldd pwn3<ul>
+<li>linux-gate.so.1 (0xf77ad000)<br>libc.so.6 =&gt; /lib32/libc.so.6 (0xf75d2000)<br>/lib/ld-linux.so.2 (0x56601000)</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-编译32位可执行文件"><a href="#4-编译32位可执行文件" class="headerlink" title="4. 编译32位可执行文件"></a>4. 编译32位可执行文件</h3><ul>
+<li><p>gcc -m32 test.c -o test</p>
+<ul>
+<li>一般而言此时的目标文件为32位，且不能生成调试信息</li>
+</ul>
+</li>
+<li><p>gcc -m32 -g test.c -o test</p>
+<ul>
+<li><p>生成的目标文件是32位，且可以利用操作系统的“原生格式（native format）”生成调试</p>
+<p>信息。GDB 可以直接利用这个信息，其它调试器也可以使用这个调试信息</p>
+</li>
+</ul>
+</li>
+<li><p>其它保护状态的开启，请参考<a href="/2017/09/30/linux程序的常用保护机制/"><em>linux程序的常用保护机制</em></a></p>
+</li>
+</ul>
+<h3 id="5-开启PIE之后的调试"><a href="#5-开启PIE之后的调试" class="headerlink" title="5. 开启PIE之后的调试"></a>5. 开启PIE之后的调试</h3><p>开启PIE之后，地址会一直在变，这十分不利于gdb的调试，所以这时候应该在本地关闭ASLR</p>
+<p>常用的方法是：echo 0 &gt; /proc/sys/kernel/randomize_va_space</p>
+<p>开启的方式是：echo 2 &gt; /proc/sys/kernel/randomize_va_space</p>
+<h3 id="6-运行时查看文件执行"><a href="#6-运行时查看文件执行" class="headerlink" title="6. 运行时查看文件执行"></a>6. 运行时查看文件执行</h3><p>做了一道题，在你不执行的时候，只能找到相对地址，但是下断点需要实际的执行地址。若关闭PIE，那么每次的执行地址将会一致，这个时候就需要找到执行的开始地址。peda的常用指令中有vmmap，可以找到实际地址。</p>
+<p>这道题很让人苦恼的是，如果gdb中执行run，那么将陷入循环而不能使用vmmap，若强制结束，最后vmmap会报错。这个时候，就有另外的一些办法：</p>
+<ul>
+<li>执行./pwn &amp;，这个时候会将pwn程序放入后台，而且你能快速知道这个程序的PID，这个时候cat /proc/pwn的PID/maps，就能找到对应的执行时地址。之后kill -9 pwn的PID</li>
+<li>编写一个小脚本，任意放置一个断点，并开启gdb调试，这个时候断点会崩溃，但是gdb-peda中使用vmmap仍能找到对应地址</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/调试/" rel="tag"># 调试</a>
+          
+            <a href="/tags/gdb/" rel="tag"># gdb</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+          <div class="wp_rating">
+            <div id="wpac-rating"></div>
+          </div>
+        
+
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/08/03/XMAN之旅-逆向基础（下）/" rel="next" title="XMAN之旅_逆向基础（下）">
+                <i class="fa fa-chevron-left"></i> XMAN之旅_逆向基础（下）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/03/got、plt表介绍/" rel="prev" title="got、plt表介绍">
+                got、plt表介绍 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/me.jpg"
+               alt="Introspelliam" />
+          <p class="site-author-name" itemprop="name">Introspelliam</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">128</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">54</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/Introspelliam" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/3008590672" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                    
+                      Weibo
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-调试的快捷键"><span class="nav-number">1.</span> <span class="nav-text">1. 调试的快捷键</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-基础的调试快捷键"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 基础的调试快捷键</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-显示数据"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 显示数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-查找数据"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 查找数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-4-修改数据"><span class="nav-number">1.4.</span> <span class="nav-text">1.4 修改数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-peda插件"><span class="nav-number">1.5.</span> <span class="nav-text">1.1 peda插件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-查找某个plt、got、plt-2"><span class="nav-number">2.</span> <span class="nav-text">2. 查找某个plt、got、plt_2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-查找程序所动态链接的库"><span class="nav-number">3.</span> <span class="nav-text">3. 查找程序所动态链接的库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-编译32位可执行文件"><span class="nav-number">4.</span> <span class="nav-text">4. 编译32位可执行文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-开启PIE之后的调试"><span class="nav-number">5.</span> <span class="nav-text">5. 开启PIE之后的调试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-运行时查看文件执行"><span class="nav-number">6.</span> <span class="nav-text">6. 运行时查看文件执行</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Introspelliam</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  <script type="text/javascript">
+  wpac_init = window.wpac_init || [];
+  wpac_init.push({widget: 'Rating', id: ,
+    el: 'wpac-rating',
+    color: 'fc6423'
+  });
+  (function() {
+    if ('WIDGETPACK_LOADED' in window) return;
+    WIDGETPACK_LOADED = true;
+    var mc = document.createElement('script');
+    mc.type = 'text/javascript';
+    mc.async = true;
+    mc.src = '//embed.widgetpack.com/widget.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+  })();
+  </script>
+
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

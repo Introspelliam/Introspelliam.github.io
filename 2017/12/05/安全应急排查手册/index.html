@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="googleaf0347feb5ea0936.html" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="运营," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="上善若水" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="1 事件分类常见的安全事件： Web入侵：挂马、篡改、Webshell 系统入侵：系统异常、RDP爆破、SSH爆破、主机漏洞 病毒木马：远控、后门、勒索软件 信息泄漏：拖裤、数据库登录（弱口令） 网络流量：频繁发包、批量请求、DDOS攻击 2 排查思路一个常规的入侵事件后的系统排查思路：  文件分析 a) 文件日期、新增文件、可疑/异常文件、最近使用文件、浏览器下载文件 b) Webshell 排">
+<meta name="keywords" content="运营">
+<meta property="og:type" content="article">
+<meta property="og:title" content="安全应急排查手册">
+<meta property="og:url" content="http://yoursite.com/2017/12/05/安全应急排查手册/index.html">
+<meta property="og:site_name" content="上善若水">
+<meta property="og:description" content="1 事件分类常见的安全事件： Web入侵：挂马、篡改、Webshell 系统入侵：系统异常、RDP爆破、SSH爆破、主机漏洞 病毒木马：远控、后门、勒索软件 信息泄漏：拖裤、数据库登录（弱口令） 网络流量：频繁发包、批量请求、DDOS攻击 2 排查思路一个常规的入侵事件后的系统排查思路：  文件分析 a) 文件日期、新增文件、可疑/异常文件、最近使用文件、浏览器下载文件 b) Webshell 排">
+<meta property="og:image" content="http://yoursite.com/images/2017-12-05/59376b994b3f9.jfif">
+<meta property="og:image" content="http://yoursite.com/images/2017-12-05/59376b9c7bbd0.jfif">
+<meta property="og:image" content="http://yoursite.com/images/2017-12-05/59376ba136b5f.jfif">
+<meta property="og:image" content="http://yoursite.com/images/2017-12-05/59376ba5c8763.jfif">
+<meta property="og:image" content="http://yoursite.com/images/2017-12-05/59376ba9a532c.jfif">
+<meta property="og:image" content="http://yoursite.com/images/2017-12-05/59376f9f9746d.jfif">
+<meta property="og:image" content="http://yoursite.com/images/2017-12-05/59376fa56d8e4.jfif">
+<meta property="og:image" content="http://yoursite.com/images/2017-12-05/59376faa2f97f.jfif">
+<meta property="og:image" content="http://yoursite.com/images/2017-12-05/59376fb0379ff.jfif">
+<meta property="og:image" content="http://yoursite.com/images/2017-12-05/59376fbbc7f15.jfif">
+<meta property="og:image" content="http://yoursite.com/images/2017-12-05/59377238ecb67.jfif">
+<meta property="og:image" content="http://yoursite.com/images/2017-12-05/593bbbe0e794b.jfif">
+<meta property="og:image" content="http://yoursite.com/images/2017-12-05/593bbbe2645b0.jfif">
+<meta property="og:image" content="http://yoursite.com/images/2017-12-05/593bbbef9bcc6.jfif">
+<meta property="og:image" content="http://yoursite.com/images/2017-12-05/593bbf42e08fe.jfif">
+<meta property="og:image" content="http://yoursite.com/images/2017-12-05/593bbf4517f29.jfif">
+<meta property="og:image" content="http://yoursite.com/images/2017-12-05/593bbf46aa511.jfif">
+<meta property="og:image" content="http://yoursite.com/images/2017-12-05/593bbf4887412.jfif">
+<meta property="og:image" content="http://yoursite.com/images/2017-12-05/593bbf4a0a82f.jfif">
+<meta property="og:image" content="http://yoursite.com/images/2017-12-05/593bbf4b7ee3c.jfif">
+<meta property="og:image" content="http://yoursite.com/images/2017-12-05/593bbf4d37506.jfif">
+<meta property="og:image" content="http://yoursite.com/images/2017-12-05/593bbf4f07d58.jfif">
+<meta property="og:image" content="http://yoursite.com/images/2017-12-05/593bbf5120b95.jfif">
+<meta property="og:updated_time" content="2017-12-05T10:53:58.574Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="安全应急排查手册">
+<meta name="twitter:description" content="1 事件分类常见的安全事件： Web入侵：挂马、篡改、Webshell 系统入侵：系统异常、RDP爆破、SSH爆破、主机漏洞 病毒木马：远控、后门、勒索软件 信息泄漏：拖裤、数据库登录（弱口令） 网络流量：频繁发包、批量请求、DDOS攻击 2 排查思路一个常规的入侵事件后的系统排查思路：  文件分析 a) 文件日期、新增文件、可疑/异常文件、最近使用文件、浏览器下载文件 b) Webshell 排">
+<meta name="twitter:image" content="http://yoursite.com/images/2017-12-05/59376b994b3f9.jfif">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/12/05/安全应急排查手册/"/>
+
+
+
+
+
+  <title>安全应急排查手册 | 上善若水</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?663212c5ef558c27e77385b620f14823";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">上善若水</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">古之立大事者，不惟有超世之才，亦必有坚韧不拔之志！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/05/安全应急排查手册/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="上善若水">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">安全应急排查手册</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-05T17:37:58+08:00">
+                2017-12-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web/" itemprop="url" rel="index">
+                    <span itemprop="name">web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="1-事件分类"><a href="#1-事件分类" class="headerlink" title="1 事件分类"></a>1 事件分类</h2><p>常见的安全事件：</p>
+<p>Web入侵：挂马、篡改、Webshell</p>
+<p>系统入侵：系统异常、RDP爆破、SSH爆破、主机漏洞</p>
+<p>病毒木马：远控、后门、勒索软件</p>
+<p>信息泄漏：拖裤、数据库登录（弱口令）</p>
+<p>网络流量：频繁发包、批量请求、DDOS攻击</p>
+<h2 id="2-排查思路"><a href="#2-排查思路" class="headerlink" title="2 排查思路"></a>2 排查思路</h2><p>一个常规的入侵事件后的系统排查思路：</p>
+<p><img src="/images/2017-12-05/59376b994b3f9.jfif" alt=""></p>
+<h3 id="文件分析"><a href="#文件分析" class="headerlink" title="文件分析"></a>文件分析</h3><blockquote>
+<p>a) 文件日期、新增文件、可疑/异常文件、最近使用文件、浏览器下载文件</p>
+<p>b) Webshell 排查与分析</p>
+<p>c) 核心应用关联目录文件分析</p>
+</blockquote>
+<h3 id="进程分析"><a href="#进程分析" class="headerlink" title="进程分析"></a>进程分析</h3><blockquote>
+<p>a) 当前活动进程 &amp; 远程连接</p>
+<p>b) 启动进程&amp;计划任务</p>
+<p>c) 进程工具分析</p>
+<p>​      i. Windows:Pchunter</p>
+<p>​      ii. Linux: Chkrootkit&amp;Rkhunter</p>
+</blockquote>
+<h3 id="系统信息"><a href="#系统信息" class="headerlink" title="系统信息"></a>系统信息</h3><blockquote>
+<p>a) 环境变量</p>
+<p>b) 帐号信息</p>
+<p>c) History</p>
+<p>d) 系统配置文件</p>
+</blockquote>
+<h3 id="日志分析"><a href="#日志分析" class="headerlink" title="日志分析"></a>日志分析</h3><blockquote>
+<p>a) 操作系统日志</p>
+<p>​      i. Windows: 事件查看器（eventvwr）</p>
+<p>​      ii. Linux: /var/log/</p>
+<p>b) 应用日志分析</p>
+<p>​      i. Access.log</p>
+<p>​      ii. Error.log</p>
+</blockquote>
+<h3 id="3-分析排查"><a href="#3-分析排查" class="headerlink" title="3 分析排查"></a>3 分析排查</h3><h4 id="3-1-Linux系列分析排查"><a href="#3-1-Linux系列分析排查" class="headerlink" title="3.1 Linux系列分析排查"></a>3.1 Linux系列分析排查</h4><h5 id="3-1-1-文件分析"><a href="#3-1-1-文件分析" class="headerlink" title="3.1.1 文件分析"></a>3.1.1 文件分析</h5><p>敏感目录的文件分析（类/tmp目录，命令目录/usr/bin /usr/sbin）</p>
+<p>  例如:</p>
+<p>  查看tmp目录下的文件： ls –alt /tmp/</p>
+<p>  查看开机启动项内容：ls -alt /etc/init.d/</p>
+<p>  查看指定目录下文件时间的排序：ls  -alt  | head -n 10</p>
+<p>  针对可疑文件可以使用stat进行创建修改时间、访问时间的详细查看，若修改时间距离事件日期接近，有   线性关联，说明可能被篡改或者其他。</p>
+<p><img src="/images/2017-12-05/59376b9c7bbd0.jfif" alt=""></p>
+<p>新增文件分析</p>
+<p>  例如要查找24小时内被修改的JSP文件： find ./ -mtime 0 -name &quot;*.jsp&quot;</p>
+<p>  （最后一次修改发生在距离当前时间n24小时至(n+1)24 小时）</p>
+<p>  查找72小时内新增的文件find / -ctime -2</p>
+<p>  PS：-ctime 内容未改变权限改变时候也可以查出</p>
+<p> 根据确定时间去反推变更的文件</p>
+<p>  ls -al /tmp | grep &quot;Feb 27&quot;</p>
+<p>特殊权限的文件</p>
+<p>  查找777的权限的文件   find  /  *.jsp  -perm 4777  </p>
+<p>隐藏的文件（以 &quot;.&quot;开头的具有隐藏属性的文件）</p>
+<p>在文件分析过程中，手工排查频率较高的命令是 find grep ls 核心目的是为了关联推理出可疑文件。</p>
+<h5 id="3-1-2-进程命令"><a href="#3-1-2-进程命令" class="headerlink" title="3.1.2 进程命令"></a>3.1.2 进程命令</h5><p>使用netstat 网络连接命令，分析可疑端口、可疑IP、可疑PID及程序进程</p>
+<p>   netstat –antlp | more</p>
+<p><img src="/images/2017-12-05/59376ba136b5f.jfif" alt=""></p>
+<p>使用ps命令，分析进程</p>
+<p>ps aux | grep pid | grep –v grep </p>
+<p><img src="/images/2017-12-05/59376ba5c8763.jfif" alt=""></p>
+<p>将netstat与ps 结合，可参考vinc牛的案例：</p>
+<p><img src="/images/2017-12-05/59376ba9a532c.jfif" alt=""></p>
+<p>（可以使用lsof -i:1677 查看指定端口对应的程序）</p>
+<p>使用ls 以及 stat 查看系统命令是否被替换。</p>
+<p>两种思路：第一种查看命令目录最近的时间排序，第二种根据确定时间去匹配。</p>
+<p>  ls -alt /usr/bin   | head -10</p>
+<p>  ls -al /bin /usr/bin /usr/sbin/ /sbin/ | grep &quot;Jan 15&quot;</p>
+<p><img src="/images/2017-12-05/59376f9f9746d.jfif" alt=""></p>
+<p>PS：如果日期数字&lt;10，中间需要两个空格。比如1月1日，grep “Jan  1”</p>
+<p>隐藏进程查看</p>
+<p>ps -ef | awk &#39;{print}&#39; | sort -n | uniq &gt;1<br>ls /proc | sort -n |uniq &gt;2<br>diff 1 2</p>
+<h5 id="3-1-3-系统信息"><a href="#3-1-3-系统信息" class="headerlink" title="3.1.3 系统信息"></a>3.1.3 系统信息</h5><p>history (cat /root/.bash_history)<br>/etc/passwd<br>crontab  /etc/cron*<br>rc.local  /etc/init.d chkconfig<br>last<br>$PATH<br>strings</p>
+<p>查看分析history (cat /root/.bash_history)，曾经的命令操作痕迹，以便进一步排查溯源。运气好有可能通过记录关联到如下信息：</p>
+<p>   a) wget 远程某主机（域名&amp;IP）的远控文件；</p>
+<p>   b) 尝试连接内网某主机（ssh scp），便于分析攻击者意图;</p>
+<p>   c) 打包某敏感数据或代码，tar zip 类命令</p>
+<p>   d) 对系统进行配置，包括命令修改、远控木马类，可找到攻击者关联信息…</p>
+<p>查看分析用户相关分析</p>
+<p>  a) useradd userdel 的命令时间变化（stat），以及是否包含可疑信息</p>
+<p>  b) cat /etc/passwd 分析可疑帐号，可登录帐号</p>
+<p>  查看UID为0的帐号：awk -F: &#39;{if($3==0)print $1}&#39; /etc/passwd</p>
+<p>  查看能够登录的帐号：cat /etc/passwd  | grep -E &quot;/bin/bash$&quot;</p>
+<p>  PS：UID为0的帐号也不一定都是可疑帐号，Freebsd默认存在toor帐号，且uid为0.（toor 在BSD官网解释为root替代帐号，属于可信帐号）</p>
+<p><img src="/images/2017-12-05/59376fa56d8e4.jfif" alt=""></p>
+<p>查看分析任务计划</p>
+<p>   a) 通过crontabl –l 查看当前的任务计划有哪些，是否有后门木马程序启动相关信息；</p>
+<p>   b) 查看etc目录任务计划相关文件，ls /etc/cron*</p>
+<p>查看linux 开机启动程序</p>
+<p>   a) 查看rc.local文件（/etc/init.d/rc.local     /etc/rc.local）</p>
+<p>   b) ls –alt /etc/init.d/</p>
+<p>   c) chkconfig</p>
+<p>查看系统用户登录信息</p>
+<p>   a) 使用lastlog命令，系统中所有用户最近一次登录信息。</p>
+<p>   b) 使用lastb命令，用于显示用户错误的登录列表</p>
+<p>   c) 使用last命令，用于显示用户最近登录信息（数据源为/var/log/wtmp，var/log/btmp）</p>
+<p>​       utmp文件中保存的是当前正在本系统中的用户的信息。</p>
+<p>​       wtmp文件中保存的是登录过本系统的用户的信息。</p>
+<p>​       /var/log/wtmp 文件结构和/var/run/utmp 文件结构一样，都是引用/usr/include/bits/utmp.h 中的struct utmp</p>
+<p><img src="/images/2017-12-05/59376faa2f97f.jfif" alt="干货 | 黑客入侵？这里有详细的应急排查手册！"></p>
+<p>系统路径分析</p>
+<p>   a) echo $PATH 分析有无敏感可疑信息</p>
+<p>指定信息检索</p>
+<p>   a) strings命令在对象文件或二进制文件中查找可打印的字符串</p>
+<p>   b) 分析sshd 文件，是否包括IP信息strings /usr/bin/.sshd | egrep &#39;[1-9]{1,3}.[1-9]{1,3}.&#39;</p>
+<p>   PS：此正则不严谨，但匹配IP已够用</p>
+<p>   c) 根据关键字匹配命令内是否包含信息（如IP地址、时间信息、远控信息、木马特征、代号名称）</p>
+<p>查看ssh相关目录有无可疑的公钥存在。</p>
+<p>   a) Redis（6379） 未授权恶意入侵，即可直接通过redis到目标主机导入公钥。</p>
+<p>   b) 目录： /etc/ssh    ./.ssh/</p>
+<h5 id="3-1-4-后门排查"><a href="#3-1-4-后门排查" class="headerlink" title="3.1.4 后门排查"></a>3.1.4 后门排查</h5><p>除以上文件、进程、系统 分析外，推荐工具：</p>
+<p>​    chkrootkit  rkhunter（<a href="http://www.chkrootkit.org" target="_blank" rel="external">www.chkrootkit.org</a>   rkhunter.sourceforge.net）</p>
+<p>Ø chkrootkit</p>
+<blockquote>
+<p>(迭代更新了20年)主要功能：</p>
+<p>检测是否被植入后门、木马、rootkit</p>
+<p>检测系统命令是否正常</p>
+<p>检测登录日志</p>
+<p>详细参考README</p>
+</blockquote>
+<p><img src="/images/2017-12-05/59376fb0379ff.jfif" alt=""></p>
+<p>Ø rkhunter主要功能：</p>
+<blockquote>
+<p>系统命令（Binary）检测，包括Md5 校验</p>
+<p>Rootkit检测</p>
+<p>本机敏感目录、系统配置、服务及套间异常检测</p>
+<p>三方应用版本检测</p>
+</blockquote>
+<p><img src="/images/2017-12-05/59376fbbc7f15.jfif" alt=""></p>
+<p>Ø RPM check检查</p>
+<p>系统完整性也可以通过rpm自带的-Va来校验检查所有的rpm软件包,有哪些被篡改了,防止rpm也被替换,上传一个安全干净稳定版本rpm二进制到服务器上进行检查</p>
+<p>./rpm -Va &gt; rpm.log</p>
+<p>如果一切均校验正常将不会产生任何输出。如果有不一致的地方，就会显示出来。输出格式是8位长字符串,  c 用以指配置文件, 接着是文件名. 8位字符的每一个 用以表示文件与RPM数据库中一种属性的比较结果 。 . (点) 表示测试通过。.下面的字符表示对RPM软件包进行的某种测试失败：</p>
+<p>5 MD5 校验码<br>S 文件尺寸<br>L 符号连接<br>T 文件修改日期<br>D 设备<br>U 用户<br>G 用户组<br>M 模式e (包括权限和文件类型)</p>
+<p>借用sobug文章案例：如下图可知ps, pstree, netstat, sshd等等系统关键进程被篡改了</p>
+<p><img src="/images/2017-12-05/59377238ecb67.jfif" alt=""></p>
+<p>Ø Webshell查找</p>
+<p>​    Webshell的排查可以通过文件、流量、日志三种方式进行分析，基于文件的命名特征和内容特征，相对操作性较高，在入侵后应急过程中频率也比较高。</p>
+<p>可根据webshell特征进行命令查找，简单的可使用(当然会存在漏报和误报)</p>
+<p>find /var/www/ -name &quot;<em>.php&quot; |xargs egrep &#39;assert|phpspy|c99sh|milw0rm|eval|(gunerpress|(base64_decoolcode|spider_bc|shell_exec|passthru|(\$\_\POST[|eval (str_rot13|.chr(|\${\&quot;\_P|eval(\$\_R|file_put_contents(.\</em>\$\_|base64_decode&#39;</p>
+<p>Webshell的排查可以通过</p>
+<p>Github上存在各种版本的webshell查杀脚本，当然都有自己的特点，可使用河马shell查杀（shellpub.com）</p>
+<p>综上所述，通过chkrootkit 、rkhunter、RPM check、Webshell Check 等手段得出以下应对措施：</p>
+<p>根据进程、连接等信息关联的程序，查看木马活动信息。</p>
+<p>假如系统的命令（例如netstat ls 等）被替换，为了进一步排查，需要下载一新的或者从其他未感染的主机拷贝新的命令。</p>
+<p>发现可疑可执行的木马文件，不要急于删除，先打包备份一份。</p>
+<p>发现可疑的文本木马文件，使用文本工具对其内容进行分析，包括回连IP地址、加密方式、关键字（以便扩大整个目录的文件特征提取）等。</p>
+<p>3.1.5 日志分析</p>
+<p>​    日志文件 /var/log/message       包括整体系统信息 /var/log/auth.log        包含系统授权信息，包括用户登录和使用的权限机制等 /var/log/userlog         记录所有等级用户信息的日志。 /var/log/cron           记录crontab命令是否被正确的执行 /var/log/xferlog(vsftpd.log)记录Linux FTP日志 /var/log/lastlog         记录登录的用户，可以使用命令lastlog查看 /var/log/secure         记录大多数应用输入的账号与密码，登录成功与否 var/log/wtmp　　      记录登录系统成功的账户信息，等同于命令last var/log/faillog　　      记录登录系统不成功的账号信息，一般会被黑客删除   </p>
+<p>1.日志查看分析，grep,sed,sort,awk综合运用</p>
+<p>2.基于时间的日志管理：</p>
+<p>   /var/log/wtmp</p>
+<p>   /var/run/utmp</p>
+<p>   /var/log/lastlog(lastlog)</p>
+<p>   /var/log/btmp(lastb)</p>
+<p>3.登录日志可以关注Accepted、Failed password 、invalid特殊关键字</p>
+<p>4.登录相关命令</p>
+<p>​     lastlog 记录最近几次成功登录的事件和最后一次不成功的登录    who 命令查询utmp文件并报告当前登录的每个用户。Who的缺省输出包括用户名、终端类型、登录日期及远程主机    w 命令查询utmp文件并显示当前系统中每个用户和它所运行的进程信息    users 用单独的一行打印出当前登录的用户，每个显示的用户名对应一个登录会话。如果一个用户有不止一个登录会话，那他的用户名把显示相同的次数    last 命令往回搜索wtmp来显示自从文件第一次创建以来登录过的用户    finger 命令用来查找并显示用户信息，系统管理员通过使用该命令可以知道某个时候到底有多少用户在使用这台Linux主机。   </p>
+<p>5.几个语句<br>​       定位有多少IP在爆破主机的root帐号    grep &quot;Failed password for root&quot; /var/log/auth.log | awk &#39;{print $11}&#39; | sort | uniq -c | sort -nr | more    登录成功的IP有哪些    grep &quot;Accepted &quot; /var/log/auth.log | awk &#39;{print $11}&#39; | sort | uniq -c | sort -nr | more      tail -400f demo.log #监控最后400行日志文件的变化 等价与 tail -n 400 -f （-f参数是实时）      less demo.log #查看日志文件，支持上下滚屏，查找功能      uniq -c demo.log  #标记该行重复的数量，不重复值为1    grep -c &#39;ERROR&#39; demo.log   #输出文件demo.log中查找所有包行ERROR的行的数量   </p>
+<p>3.1.6 相关处置</p>
+<p>kill -9</p>
+<p>chattr –i</p>
+<p>rm </p>
+<p>setfacl</p>
+<p>ssh </p>
+<p>chmod</p>
+<p>3.2 Windows系列分析排查</p>
+<p>3.2.1 文件分析</p>
+<p>1.开机启动有无异常文件</p>
+<p>2.各个盘下的temp(tmp)相关目录下查看有无异常文件</p>
+<p>3.浏览器浏览痕迹、浏览器下载文件、浏览器cookie信息</p>
+<p>4.查看文件时间，创建时间、修改时间、访问时间。对应linux的ctime mtime atime，通过对文件右键属性即可看到详细的时间（也可以通过dir /tc 1.aspx 来查看创建时间），黑客通过菜刀类工具改变的是修改时间。所以如果修改时间在创建时间之前明显是可疑文件。</p>
+<p>5.查看用户recent相关文件，通过分析最近打开分析可疑文件</p>
+<p>   a) C:\Documents and Settings\Administrator\Recent</p>
+<p>   b) C:\Documents and Settings\Default User\Recent</p>
+<p>   c) 开始,运行   %UserProfile%\Recent</p>
+<p>6.根据文件夹内文件列表时间进行排序，查找可疑文件。当然也可以搜索指定日期范围的文件及文件件</p>
+<p>Server 2008 R2系列</p>
+<p><img src="/images/2017-12-05/593bbbe0e794b.jfif" alt=""></p>
+<p>Win10 系列</p>
+<p><img src="/images/2017-12-05/593bbbe2645b0.jfif" alt=""></p>
+<p>7.关键字匹配，通过确定后的入侵时间，以及webshell或js文件的关键字（比如博彩类），可以在IIS 日志中进行过滤匹配，比如经常使用:</p>
+<p>8.</p>
+<p>知道是上传目录，在web log 中查看指定时间范围包括上传文件夹的访问请求<br>   findstr /s /m /I “UploadFiles” <em>.log<br>   某次博彩事件中的六合彩信息是six.js<br>   findstr /s /m /I “six.js” </em>.aspx<br>   根据shell名关键字去搜索D盘spy相关的文件有哪些<br>   for /r d:\ %i in (<em>spy</em>.aspx) do @echo %i<br>   <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">##### 3.2.2 进程命令</div><div class="line"></div><div class="line">1.netstat -ano 查看目前的网络连接，定位可疑的ESTABLISHED</div><div class="line"></div><div class="line">2.根据netstat 定位出的pid，再通过tasklist命令进行进程定位</div><div class="line"></div><div class="line">![](/images/2017-12-05/593bbbe4131e9.jfif)</div><div class="line"></div><div class="line">3.通过tasklist命令查看可疑程序</div><div class="line"></div><div class="line">##### 3.2.3 系统信息</div><div class="line"></div><div class="line">1.使用set命令查看变量的设置</div><div class="line"></div><div class="line">2.Windows 的计划任务；</div><div class="line"></div><div class="line">3.Windows 的帐号信息，如隐藏帐号等</div><div class="line"></div><div class="line">4.配套的注册表信息检索查看，SAM文件以及远控软件类</div><div class="line"></div><div class="line">5.查看systeminfo 信息，系统版本以及补丁信息</div><div class="line"></div><div class="line">   例如系统的远程命令执行漏洞MS08-067、MS09-001、MS17-010（永恒之蓝）…</div><div class="line"></div><div class="line">   若进行漏洞比对，建议使用Windows-Exploit-Suggester </div><div class="line"></div><div class="line">   https://github.com/GDSSecurity/Windows-Exploit-Suggester/</div><div class="line"></div><div class="line">3.2.4 后门排查</div><div class="line"></div><div class="line">PC Hunter是一个Windows系统信息查看软件</div><div class="line"></div><div class="line">http://www.xuetr.com/</div><div class="line"></div><div class="line">功能列表如下：</div><div class="line"></div><div class="line">1.进程、线程、进程模块、进程窗口、进程内存信息查看，杀进程、杀线程、卸载模块等功能</div><div class="line">2.内核驱动模块查看，支持内核驱动模块的内存拷贝</div><div class="line">3.SSDT、Shadow SSDT、FSD、KBD、TCPIP、Classpnp、Atapi、Acpi、SCSI、IDT、GDT信息查看，并能检测和恢复ssdt hook和inline hook</div><div class="line">4.CreateProcess、CreateThread、LoadImage、CmpCallback、BugCheckCallback、Shutdown、Lego等Notify Routine信息查看，并支持对这些Notify Routine的删除</div><div class="line">5.端口信息查看，目前不支持2000系统</div><div class="line">6.查看消息钩子</div><div class="line">7.内核模块的iat、eat、inline hook、patches检测和恢复</div><div class="line">8.磁盘、卷、键盘、网络层等过滤驱动检测，并支持删除</div><div class="line">9.注册表编辑</div><div class="line">10.进程iat、eat、inline hook、patches检测和恢复</div><div class="line">11.文件系统查看，支持基本的文件操作</div><div class="line">12.查看（编辑）IE插件、SPI、启动项、服务、Host文件、映像劫持、文件关联、系统防火墙规则、IME</div><div class="line">13.ObjectType Hook检测和恢复</div><div class="line">14.DPC定时器检测和删除</div><div class="line">15.MBR Rootkit检测和修复</div><div class="line">16.内核对象劫持检测</div><div class="line">17.WorkerThread枚举</div><div class="line">18.Ndis中一些回调信息枚举</div><div class="line">19.硬件调试寄存器、调试相关API检测</div><div class="line">20.枚举SFilter/Fltmgr的回调</div><div class="line"></div><div class="line">PS：最简单的使用方法，根据颜色去辨识——可疑进程，隐藏服务、被挂钩函数：红色，然后根据程序右键功能去定位具体的程序和移除功能。根据可疑的进程名等进行互联网信息检索然后统一清除并关联注册表。</div><div class="line"></div><div class="line">![](/images/2017-12-05/593bbbe631c6a.jfif)</div><div class="line"></div><div class="line">Webshell 排查</div><div class="line"></div><div class="line">1.可以使用hm</div><div class="line"></div><div class="line">![](/images/2017-12-05/593bbbe892ce1.jfif)</div><div class="line"></div><div class="line">2.也可以使用盾类（D盾、暗组盾），如果可以把web目录导出，可以在自己虚拟机进行分析</div><div class="line"></div><div class="line">##### 3.2.5 日志分析</div><div class="line"></div><div class="line">1.打开事件管理器（开始—管理工具—事件查看/开始运行eventvwr）</div><div class="line"></div><div class="line">2.主要分析安全日志，可以借助自带的筛选功能</div><div class="line"></div><div class="line">![](/images/2017-12-05/593bbbea5fc7c.jfif)</div><div class="line"></div><div class="line">![](/images/2017-12-05/593bbbec097aa.jfif)</div><div class="line"></div><div class="line">![](/images/2017-12-05/593bbbedcf394.jfif)</div><div class="line"></div><div class="line">3.可以把日志导出为文本格式，然后使用notepad++ 打开，使用正则模式去匹配远程登录过的IP地址，在界定事件日期范围的基础，可以提高效率正则是：</div><div class="line"></div><div class="line"> 4.  ((?:(?:25[0-5]|2[0-4]\d|((1\d&#123;2&#125;)|([1-9]?\d))).)&#123;3&#125;(?:25[0-5]|2[0-4]\d|((1\d&#123;2&#125;)|([1-9]?\d))))</div></pre></td></tr></table></figure></p>
+<p><img src="/images/2017-12-05/593bbbef9bcc6.jfif" alt=""></p>
+<p>强大的日志分析工具Log Parser</p>
+<p><img src="/images/2017-12-05/593bbf42e08fe.jfif" alt=""></p>
+<p>#分析IIS日志<br>LogParser.exe &quot;select top 10 time, c-ip,cs-uri-stem, sc-status, time-taken from C:\Users\sm0nk\Desktop\iis.log&quot; -o:datagrid</p>
+<p><img src="/images/2017-12-05/593bbf4517f29.jfif" alt=""></p>
+<p>有了这些我们就可以对windows日志进行分析了 比如我们分析域控日志的时候，想要查询账户登陆过程中，用户正确，密码错误的情况，我们需要统计出源IP，时间，用户名时，我们可以这么写（当然也可以结合一些统计函数，分组统计等等）：<br>LogParser.exe -i:EVT &quot;SELECT TimeGenerated,EXTRACT\_TOKEN(Strings,0,&#39;|&#39;) AS USERNAME,EXTRACT\_TOKEN(Strings,2,&#39;|&#39;) AS SERVICE\_NAME,EXTRACT\_TOKEN(Strings,5,&#39;|&#39;) AS Client_IP FROM &#39;e:\logparser\xx.evtx&#39; WHERE EventID=675&quot;</p>
+<p><img src="/images/2017-12-05/593bbf46aa511.jfif" alt=""></p>
+<p>事件ID是很好的索引</p>
+<p>Windows server 2008系列参考event ID：<br>4624 - 帐户已成功登录<br>4625 - 帐户登录失败<br>4648 - 试图使用明确的凭证登录（例如远程桌面）</p>
+<p>3.2.6 相关处置</p>
+<p>1.通过网络连接锁定的可疑进程，进行定位恶意程序后删除(taskkill)</p>
+<p>2.木马查杀，可配合pchunter 进行进一步专业分析，使用工具功能进行强制停止以及删除</p>
+<p>3.最后清理后，统一查看网络连接、进程、内核钩子等是否正常。</p>
+<p>3.3 应用类</p>
+<p>Apache、tomcat、Nginx、IIS</p>
+<p>无论任何web服务器其实日志需要关注的东西是一致的，即access_log和error_log。一般在确定ip地址后，通过:</p>
+<p>find . access_log |grep xargs ip攻击地址</p>
+<p>find . access_log| grep xargs 木马文件名</p>
+<p>页面访问排名前十的IP<br>cat access.log | cut -f1 -d &quot; &quot; | sort | uniq -c | sort -k 1 -r | head -10<br>页面访问排名前十的URL<br>cat access.log | cut -f4 -d &quot; &quot; | sort | uniq -c | sort -k 1 -r | head -10<br>查看最耗时的页面<br>cat access.log | sort -k 2 -n -r | head 10</p>
+<p>在对WEB日志进行安全分析时，可以按照下面两种思路展开，逐步深入，还原整个攻击过程。</p>
+<p>1.首先确定受到攻击、入侵的时间范围，以此为线索，查找这个时间范围内可疑的日志，进一步排查，最终确定攻击者，还原攻击过程。</p>
+<p><img src="/images/2017-12-05/593bbf4887412.jfif" alt=""></p>
+<p>2.一般攻击者在入侵网站后，通常会上传一个后门文件，以方便自己以后访问。我们也可以以该文件为线索来展开分析。</p>
+<p><img src="/images/2017-12-05/593bbf4a0a82f.jfif" alt=""></p>
+<p>4 应急总结</p>
+<p>1.核心思路是“顺藤摸瓜”</p>
+<p>2.碎片信息的关联分析</p>
+<p>3.时间范围的界定以及关键操作时间点串联</p>
+<p>4.Web入侵类，shell定位很重要</p>
+<p>5.假设与求证</p>
+<p>6.攻击画像与路线确认</p>
+<p>5 渗透反辅</p>
+<p>1.密码读取</p>
+<p>   a) Windows: Mimikatz</p>
+<p>   b) Linux: mimipenguin</p>
+<p>2.帐号信息</p>
+<p>   a) 操作系统帐号</p>
+<p>   b) 数据库帐号</p>
+<p>   c) 应用帐号信息</p>
+<p>3.敏感信息</p>
+<p>   a) 配置信息</p>
+<p>   b) 数据库信息</p>
+<p>   c) 服务端口信息</p>
+<p>   d) 指纹信息</p>
+<p>4.滚雪球式线性拓展</p>
+<p>   a) 密码口令类拓展（远控）</p>
+<p>   b) 典型漏洞批量利用</p>
+<p>5.常见的入侵方式Getshell方法</p>
+<p>   a) WEB入侵</p>
+<p>​       i. 典型漏洞：注入Getshell , 上传Getshell，命令执行Getshell，文件包含Getshell，代码执行Getshell，编辑器getshell，后台管理Getshell，数据库操作Getshell</p>
+<p>​       ii. 容器相关：Tomcat、Axis2、WebLogic等中间件弱口令上传war包等，Websphere、weblogic、jboss反序列化，Struts2代码执行漏洞，Spring命令执行漏洞</p>
+<p>   b) 系统入侵</p>
+<p>​       i. SSH 破解后登录操作</p>
+<p>​       ii. RDP 破解后登录操作</p>
+<p>​       iii. MSSQL破解后远控操作</p>
+<p>​       iv. SMB远程命令执行（MS08-067、MS17-010、CVE-2017-7494）</p>
+<p>   c) 典型应用</p>
+<p>​       i. Mail暴力破解后信息挖掘及漏洞利用</p>
+<p>​       ii. VPN暴力破解后绕过边界</p>
+<p>​       iii. Redis 未授权访问或弱口令可导ssh公钥或命令执行</p>
+<p>​       iv. Rsync 未授权访问类</p>
+<p>​       v. Mongodb未授权访问类</p>
+<p>​       vi. Elasticsearch命令执行漏洞</p>
+<p>​       vii. Memcache未授权访问漏洞</p>
+<p>​       viii. 服务相关口令（mysql ldap zebra squid vnc smb）</p>
+<p>6 资源参考</p>
+<p><a href="https://www.waitalone.cn/linux-find-webshell.html" target="_blank" rel="external">https://www.waitalone.cn/linux-find-webshell.html</a></p>
+<p><a href="http://vinc.top/category/yjxy/" target="_blank" rel="external">http://vinc.top/category/yjxy/</a></p>
+<p><a href="http://www.shellpub.com/" target="_blank" rel="external">http://www.shellpub.com/</a></p>
+<p><a href="http://linux.vbird.org/linux_security/0420rkhunter.php" target="_blank" rel="external">http://linux.vbird.org/linux_security/0420rkhunter.php</a></p>
+<p><a href="https://cisofy.com/download/lynis/" target="_blank" rel="external">https://cisofy.com/download/lynis/</a></p>
+<p><a href="https://sobug.com/article/detail/27?from=message&amp;isappinstalled=1" target="_blank" rel="external">https://sobug.com/article/detail/27?from=message&amp;isappinstalled=1</a></p>
+<p><a href="http://www.freebuf.com/articles/web/23358.html" target="_blank" rel="external">http://www.freebuf.com/articles/web/23358.html</a></p>
+<p><a href="https://www.microsoft.com/en-us/download/details.aspx?id=24659" target="_blank" rel="external">https://www.microsoft.com/en-us/download/details.aspx?id=24659</a></p>
+<p><a href="http://www.cnblogs.com/downmoon/archive/2009/09/02/1558409.html" target="_blank" rel="external">http://www.cnblogs.com/downmoon/archive/2009/09/02/1558409.html</a></p>
+<p><a href="http://wooyun.jozxing.cc/static/drops/tips-7462.html" target="_blank" rel="external">http://wooyun.jozxing.cc/static/drops/tips-7462.html</a></p>
+<p><a href="http://bobao.360.cn/learning/detail/3830.html" target="_blank" rel="external">http://bobao.360.cn/learning/detail/3830.html</a></p>
+<p><a href="https://yq.aliyun.com/ziliao/65679" target="_blank" rel="external">https://yq.aliyun.com/ziliao/65679</a></p>
+<p><a href="http://secsky.sinaapp.com/188.html" target="_blank" rel="external">http://secsky.sinaapp.com/188.html</a></p>
+<p><a href="http://blog.sina.com.cn/s/blog_d7058b150102wu07.html" target="_blank" rel="external">http://blog.sina.com.cn/s/blog_d7058b150102wu07.html</a></p>
+<p><a href="http://www.sleuthkit.org/autopsy/" target="_blank" rel="external">http://www.sleuthkit.org/autopsy/</a></p>
+<p>7 FAQ</p>
+<p>1.应急需求有哪些分类：</p>
+<p>   a) 被谁入侵了？ 关联 攻击IP 攻击者信息</p>
+<p>   b) 怎么入侵的？ 关联 入侵时间轴、漏洞信息</p>
+<p>   c) 为什么被入侵？ 关联 行业特性、数据信息、漏洞信息</p>
+<p>   d) 数据是否被窃取？ 关联 日志审计</p>
+<p>   e) 怎么办？ 关联 隔离、排查分析、删马（解密）、加固、新运营</p>
+<p>2.关于windows的日志工具（log parser）有无图形界面版？</p>
+<p>   Log Parser Lizard 是一款用Vc++.net写的logParser增强工具。主要有以下特点：</p>
+<p>   a) 封装了logParser命令，带图形界面，大大降低了LogParser的使用难度。</p>
+<p>   b) 集成了几个开源工具，如log4net等。可以对IIS logs\EventLogs\active directory\log4net\File Systems\T-SQL进行方便的查询。</p>
+<p>   c) 集成了Infragistics.UltraChart.Core.v4.3、Infragistics.Excel.v4.3.dll等，使查询结果可以方便的以图表或E.  XCEL格式展示。</p>
+<p>   d) 集成了常见的查询命令，范围包含六大模块:IIS</p>
+<p>   e) 可以将查询过的命令保存下来，方便再次使用。</p>
+<p><img src="/images/2017-12-05/593bbf4b7ee3c.jfif" alt=""></p>
+<p>   PS:软件是比较老的，对新系统兼容性不好，还是建议微软原生态log parser</p>
+<p>3.在linux日志中，有无黑客入侵后的操作命令的统计\</p>
+<p>   a) 可以根据history信息进行溯源分析，但一般可能会被清除</p>
+<p>   b) 还有方法是需要结合accton 和 lastcomm</p>
+<p><img src="/images/2017-12-05/593bbf4d37506.jfif" alt=""></p>
+<p>\4.  3.2.3 提到了Windows-Exploit-Suggester，有无linux版？</p>
+<p>Linux_Exploit_Suggester <a href="https://github.com/PenturaLabs/Linux_Exploit_Suggester" target="_blank" rel="external">https://github.com/PenturaLabs/Linux_Exploit_Suggester</a></p>
+<p><img src="/images/2017-12-05/593bbf4f07d58.jfif" alt=""></p>
+<p>5.有无linux自动化信息收集的脚本工具？</p>
+<p>LinEnum  <a href="https://github.com/rebootuser/LinEnum" target="_blank" rel="external">https://github.com/rebootuser/LinEnum</a></p>
+<p>6.</p>
+<p><img src="/images/2017-12-05/593bbf5120b95.jfif" alt=""></p>
+<p>7.有无综合的取证分析工具</p>
+<p>Autopsy 是sleuthkit提供的平台工具，Windows 和 Linux磁盘映像静态分析、恢复被删文件、时间线分析，网络浏览历史，关键字搜索和邮件分析等功能</p>
+<p><a href="http://www.sleuthkit.org/autopsy/" target="_blank" rel="external">http://www.sleuthkit.org/autopsy/</a></p>
+<p>8.关于业务逻辑的排查方法说明</p>
+<p>新型业务安全中安全事件，例如撞库、薅羊毛、支付、逻辑校验等敏感环节，未在本文体现，所以后续有必要针对业务侧的应急排查方法归纳。</p>
+<p>雷锋网再次声明：本文作者sm0nk@猎户攻防实验室，雷锋网宅客频道授权转载，先知技术社区拥有全部内容版权。媒体或商业转载必须获得授权，违者必追究法律责任。</p>
+<p>雷锋网版权文章，未经授权禁止转载。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/运营/" rel="tag"># 运营</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+          <div class="wp_rating">
+            <div id="wpac-rating"></div>
+          </div>
+        
+
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/05/python静态编译/" rel="next" title="python静态编译">
+                <i class="fa fa-chevron-left"></i> python静态编译
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/06/windows使用双网卡/" rel="prev" title="windows使用双网卡">
+                windows使用双网卡 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/me.jpg"
+               alt="Introspelliam" />
+          <p class="site-author-name" itemprop="name">Introspelliam</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">128</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">54</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/Introspelliam" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/3008590672" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                    
+                      Weibo
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-事件分类"><span class="nav-number">1.</span> <span class="nav-text">1 事件分类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-排查思路"><span class="nav-number">2.</span> <span class="nav-text">2 排查思路</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#文件分析"><span class="nav-number">2.1.</span> <span class="nav-text">文件分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#进程分析"><span class="nav-number">2.2.</span> <span class="nav-text">进程分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#系统信息"><span class="nav-number">2.3.</span> <span class="nav-text">系统信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#日志分析"><span class="nav-number">2.4.</span> <span class="nav-text">日志分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-分析排查"><span class="nav-number">2.5.</span> <span class="nav-text">3 分析排查</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-Linux系列分析排查"><span class="nav-number">2.5.1.</span> <span class="nav-text">3.1 Linux系列分析排查</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#3-1-1-文件分析"><span class="nav-number">2.5.1.1.</span> <span class="nav-text">3.1.1 文件分析</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-1-2-进程命令"><span class="nav-number">2.5.1.2.</span> <span class="nav-text">3.1.2 进程命令</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-1-3-系统信息"><span class="nav-number">2.5.1.3.</span> <span class="nav-text">3.1.3 系统信息</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-1-4-后门排查"><span class="nav-number">2.5.1.4.</span> <span class="nav-text">3.1.4 后门排查</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Introspelliam</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  <script type="text/javascript">
+  wpac_init = window.wpac_init || [];
+  wpac_init.push({widget: 'Rating', id: ,
+    el: 'wpac-rating',
+    color: 'fc6423'
+  });
+  (function() {
+    if ('WIDGETPACK_LOADED' in window) return;
+    WIDGETPACK_LOADED = true;
+    var mc = document.createElement('script');
+    mc.type = 'text/javascript';
+    mc.async = true;
+    mc.src = '//embed.widgetpack.com/widget.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+  })();
+  </script>
+
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

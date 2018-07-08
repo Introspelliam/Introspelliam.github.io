@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="googleaf0347feb5ea0936.html" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="heap," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="上善若水" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="malloc源码分析—_int_malloc根据上一章的分析，malloc会调用__libc_malloc分配内存，__libc_malloc会调用malloc_hook_ini 进行初始化，然后回调__libc_malloc函数，这时候会执行_int_malloc开始分配内存，定义在malloc.c中，因为非常长，这里分段来看， _int_malloc第一部分123456789101112131">
+<meta name="keywords" content="heap">
+<meta property="og:type" content="article">
+<meta property="og:title" content="malloc源码分析——2">
+<meta property="og:url" content="http://yoursite.com/2018/05/21/malloc源码分析——2/index.html">
+<meta property="og:site_name" content="上善若水">
+<meta property="og:description" content="malloc源码分析—_int_malloc根据上一章的分析，malloc会调用__libc_malloc分配内存，__libc_malloc会调用malloc_hook_ini 进行初始化，然后回调__libc_malloc函数，这时候会执行_int_malloc开始分配内存，定义在malloc.c中，因为非常长，这里分段来看， _int_malloc第一部分123456789101112131">
+<meta property="og:updated_time" content="2018-05-21T06:50:32.140Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="malloc源码分析——2">
+<meta name="twitter:description" content="malloc源码分析—_int_malloc根据上一章的分析，malloc会调用__libc_malloc分配内存，__libc_malloc会调用malloc_hook_ini 进行初始化，然后回调__libc_malloc函数，这时候会执行_int_malloc开始分配内存，定义在malloc.c中，因为非常长，这里分段来看， _int_malloc第一部分123456789101112131">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/05/21/malloc源码分析——2/"/>
+
+
+
+
+
+  <title>malloc源码分析——2 | 上善若水</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?663212c5ef558c27e77385b620f14823";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">上善若水</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">古之立大事者，不惟有超世之才，亦必有坚韧不拔之志！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/21/malloc源码分析——2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="上善若水">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">malloc源码分析——2</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-21T14:39:08+08:00">
+                2018-05-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/pwn/" itemprop="url" rel="index">
+                    <span itemprop="name">pwn</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="malloc源码分析—-int-malloc"><a href="#malloc源码分析—-int-malloc" class="headerlink" title="malloc源码分析—_int_malloc"></a>malloc源码分析—_int_malloc</h1><p>根据上一章的分析，malloc会调用<code>__libc_malloc</code>分配内存，<code>__libc_malloc</code>会调用<code>malloc_hook_ini</code> 进行初始化，然后回调<code>__libc_malloc</code>函数，这时候会执行<code>_int_malloc</code>开始分配内存，定义在malloc.c中，因为非常长，这里分段来看，</p>
+<h2 id="int-malloc第一部分"><a href="#int-malloc第一部分" class="headerlink" title="_int_malloc第一部分"></a>_int_malloc第一部分</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">static void * _int_malloc(mstate av, size_t bytes) &#123;</div><div class="line">    INTERNAL_SIZE_T nb;</div><div class="line">    unsigned int idx;</div><div class="line">    mbinptr bin;</div><div class="line"></div><div class="line">    mchunkptr victim;</div><div class="line">    INTERNAL_SIZE_T size;</div><div class="line">    int victim_index;</div><div class="line"></div><div class="line">    mchunkptr remainder;</div><div class="line">    unsigned long remainder_size;</div><div class="line"></div><div class="line">    unsigned int block;</div><div class="line">    unsigned int bit;</div><div class="line">    unsigned int map;</div><div class="line"></div><div class="line">    mchunkptr fwd;</div><div class="line">    mchunkptr bck;</div><div class="line"></div><div class="line">    const char *errstr = NULL;</div><div class="line"></div><div class="line">    checked_request2size(bytes, nb);</div><div class="line"></div><div class="line">    if (__glibc_unlikely(av == NULL)) &#123;</div><div class="line">        void *p = sysmalloc(nb, av);</div><div class="line">        if (p != NULL)</div><div class="line">            alloc_perturb(p, bytes);</div><div class="line">        return p;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    ...</div></pre></td></tr></table></figure>
+<p>首先调用<code>checked_request2size</code>将需要分配的内存大小bytes转换为chunk的大小。<code>checked_request2size</code>是个宏定义，主要调用request2size进行计算，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">#define request2size(req)                                         \</div><div class="line">  (((req) + SIZE_SZ + MALLOC_ALIGN_MASK &lt; MINSIZE)  ?             \</div><div class="line">   MINSIZE :                                                      \</div><div class="line">   ((req) + SIZE_SZ + MALLOC_ALIGN_MASK) &amp; ~MALLOC_ALIGN_MASK)</div></pre></td></tr></table></figure>
+<p>为了说明request2size，首先看一下ptmalloc中关于chunk的定义，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">struct malloc_chunk &#123;</div><div class="line"></div><div class="line">    INTERNAL_SIZE_T prev_size;</div><div class="line">    INTERNAL_SIZE_T size;</div><div class="line"></div><div class="line">    struct malloc_chunk* fd; </div><div class="line">    struct malloc_chunk* bk;</div><div class="line"></div><div class="line">    struct malloc_chunk* fd_nextsize; /* double links -- used only if free. */</div><div class="line">    struct malloc_chunk* bk_nextsize;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>当一个chunk为空闲时，至少要有<code>prev_size</code>、<code>size</code>、<code>fd</code>和<code>bk</code>四个参数，因此MINSIZE就代表了这四个参数需要占用的内存大小；而当一个chunk被使用时，<code>prev_size</code>可能会被前一个chunk用来存储，<code>fd</code>和<code>bk</code>也会被当作内存存储数据，因此当chunk被使用时，只剩下了<code>size</code>参数需要设置，<code>request2size</code>中的<code>SIZE_SZ</code>就是<code>INTERNAL_SIZE_T</code>类型的大小，因此至少需要<code>req+SIZE_SZ</code>的内存大小。<code>MALLOC_ALIGN_MASK</code>用来对齐，因此request2size就计算出了所需的chunk的大小。</p>
+<p>传入的参数av是在上一章<code>__libc_malloc</code>中调用<code>arena_get</code>获得的分配去指针，如果为null，就表示没有分配区可用，这时候就直接调用<code>sysmalloc</code>通过mmap获取chunk。</p>
+<h2 id="sysmalloc"><a href="#sysmalloc" class="headerlink" title="sysmalloc"></a>sysmalloc</h2><p><code>sysmalloc</code>的代码很长，但只有前面一小部分是这里需要分析的，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div></pre></td><td class="code"><pre><div class="line">static void * sysmalloc(INTERNAL_SIZE_T nb, mstate av) &#123;</div><div class="line">    mchunkptr old_top;</div><div class="line">    INTERNAL_SIZE_T old_size;</div><div class="line">    char *old_end;</div><div class="line"></div><div class="line">    long size;</div><div class="line">    char *brk;</div><div class="line"></div><div class="line">    long correction;</div><div class="line">    char *snd_brk;</div><div class="line"></div><div class="line">    INTERNAL_SIZE_T front_misalign;</div><div class="line">    INTERNAL_SIZE_T end_misalign;</div><div class="line">    char *aligned_brk;</div><div class="line"></div><div class="line">    mchunkptr p;</div><div class="line">    mchunkptr remainder;</div><div class="line">    unsigned long remainder_size;</div><div class="line"></div><div class="line">    size_t pagesize = GLRO(dl_pagesize);</div><div class="line">    bool tried_mmap = false;</div><div class="line"></div><div class="line">    if (av == NULL</div><div class="line">            || ((unsigned long) (nb) &gt;= (unsigned long) (mp_.mmap_threshold)</div><div class="line">                    &amp;&amp; (mp_.n_mmaps &lt; mp_.n_mmaps_max))) &#123;</div><div class="line">        char *mm;</div><div class="line"></div><div class="line">        try_mmap:</div><div class="line">        if (MALLOC_ALIGNMENT == 2 * SIZE_SZ)</div><div class="line">            size = ALIGN_UP(nb + SIZE_SZ, pagesize);</div><div class="line">        else</div><div class="line">            size = ALIGN_UP(nb + SIZE_SZ + MALLOC_ALIGN_MASK, pagesize);</div><div class="line">        tried_mmap = true;</div><div class="line"></div><div class="line">        if ((unsigned long) (size) &gt; (unsigned long) (nb)) &#123;</div><div class="line">            mm = (char *) (MMAP(0, size, PROT_READ | PROT_WRITE, 0));</div><div class="line"></div><div class="line">            if (mm != MAP_FAILED) &#123;</div><div class="line"></div><div class="line">                if (MALLOC_ALIGNMENT == 2 * SIZE_SZ) &#123;</div><div class="line">                    assert(</div><div class="line">                            ((INTERNAL_SIZE_T) chunk2mem (mm) &amp; MALLOC_ALIGN_MASK) == 0);</div><div class="line">                    front_misalign = 0;</div><div class="line">                &#125; else</div><div class="line">                    front_misalign = (INTERNAL_SIZE_T) chunk2mem(</div><div class="line">                            mm) &amp; MALLOC_ALIGN_MASK;</div><div class="line">                if (front_misalign &gt; 0) &#123;</div><div class="line">                    correction = MALLOC_ALIGNMENT - front_misalign;</div><div class="line">                    p = (mchunkptr) (mm + correction);</div><div class="line">                    p-&gt;prev_size = correction;</div><div class="line">                    set_head(p, (size - correction) | IS_MMAPPED);</div><div class="line">                &#125; else &#123;</div><div class="line">                    p = (mchunkptr) mm;</div><div class="line">                    set_head(p, size | IS_MMAPPED);</div><div class="line">                &#125;</div><div class="line"></div><div class="line">                int new = atomic_exchange_and_add(&amp;mp_.n_mmaps, 1) + 1;</div><div class="line">                atomic_max(&amp;mp_.max_n_mmaps, new);</div><div class="line"></div><div class="line">                unsigned long sum;</div><div class="line">                sum = atomic_exchange_and_add(&amp;mp_.mmapped_mem, size) + size;</div><div class="line">                atomic_max(&amp;mp_.max_mmapped_mem, sum);</div><div class="line"></div><div class="line">                check_chunk (av, p);</div><div class="line"></div><div class="line">                return chunk2mem(p);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    if (av == NULL)</div><div class="line">        return 0;</div><div class="line"></div><div class="line">    ...</div></pre></td></tr></table></figure>
+<p>首先，可以直接通过mmap分配chunk有两个前提条件，一是需要分配的内存大小大于实用mmap进行分配的阀值<code>mp_.mmap_threshold</code>，二是通过<code>mp_.n_mmaps</code>判断系统还可以有可以使用mmap分配的空间。<br>下面就要计算需要分配多少内存，在前面已经通过<code>request2size</code>计算了需要分配的内存大小，这里为什么还要计算呢？这是因为通过使用mmap直接分配的chunk不需要添加到链表中，因此不存在前后关系，当一个chunk被使用时，不能借用后一个chunk的<code>prev_size</code>字段，这里需要把该字段的长度SIZE_SZ加上。并且这里假设<code>MALLOC_ALIGNMENT == 2 * SIZE_SZ</code>。<br>接下来判断需要分配的内存大小是否会溢出，然后就调用<code>MMAP</code>分配内存，<code>MMAP</code>是一个宏定义，最后就是通过系统调用来分配内存，后面来看这个函数。<br>再往下就是通过<code>set_head</code>在chunk中的size参数里设置标志位，因为chunk是按8字节对齐的，而size标识chunk占用的字节数，所以最后三位是没有用的，ptmalloc将这三位用来作为标志位，这里便是设置其中一个标志位，用来标识该chunk是直接通过mmap分配的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">#define set_head(p, s)       ((p)-&gt;size = (s))</div></pre></td></tr></table></figure>
+<p>设置完标志位后，接下来就是设置全局变量<code>_mp</code>，将<code>mp_.n_mmaps</code>加1，表示当前进程通过mmap分配的chunk个数，对应的<code>mp_.max_n_mmaps</code>表示最大chunk个数。<code>mp_.mmapped_mem</code>标识已经通过mmap分配的内存大小，<code>mp_.max_mmapped_mem</code>对应可分配内存的最大值。其中，<code>atomic_exchange_and_add</code>b表示原子加，<code>atomic_max</code>则是原子取最大值。<br>最后，通过chunk2mem返回chunk中内存的起始指针。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">#define chunk2mem(p)   ((void*)((char*)(p) + 2*SIZE_SZ))</div></pre></td></tr></table></figure>
+<p>这里也可以知道，当chunk被使用时，用户是从结构体中的变量fd开始使用内存的。回到_int_malloc函数中，假设通过sysmalloc分配成功，接下来就需要调用alloc_perturb对刚刚分配的内存进行初始化，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">static void alloc_perturb(char *p, size_t n) &#123;</div><div class="line">    if (__glibc_unlikely(perturb_byte))</div><div class="line">        memset(p, perturb_byte ^ 0xff, n);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>刚函数没有什么实际意义，所以不管它。</p>
+<h2 id="MMAP"><a href="#MMAP" class="headerlink" title="MMAP"></a>MMAP</h2><p>为了方便分析，这里贴一段调用MMAP的代码，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mm = (char *) (MMAP(0, size, PROT_READ | PROT_WRITE, 0));</div></pre></td></tr></table></figure>
+<p>MMAP在glibc中为宏定义，其定义很长，这里简单将它改写，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">#define INTERNAL_SYSCALL_MAIN_6(name, err, arg1, arg2, arg3,        \</div><div class="line">                arg4, arg5, arg6)           \</div><div class="line">  struct libc_do_syscall_args _xv =                 \</div><div class="line">    &#123;                                   \</div><div class="line">      (int) (0),                            \</div><div class="line">      (int) (-1),                           \</div><div class="line">      (int) (0)                         \</div><div class="line">    &#125;;                                  \</div><div class="line">    asm volatile (                          \</div><div class="line">    &quot;movl %1, %%eax\n\t&quot;                        \</div><div class="line">    &quot;call __libc_do_syscall&quot;                        \</div><div class="line">    : &quot;=a&quot; (resultvar)                          \</div><div class="line">    : &quot;i&quot; (__NR_mmap2), &quot;c&quot; (size), &quot;d&quot; (PROT_READ | PROT_WRITE), &quot;S&quot; (MAP_ANONYMOUS|MAP_PRIVATE), &quot;D&quot; (&amp;_xv) \</div><div class="line">    : &quot;memory&quot;, &quot;cc&quot;)</div></pre></td></tr></table></figure>
+<p><code>__libc_do_syscall</code>是一段汇编代码，最后就是系统调用啦，这里就进入了linux内核中的代码，在arch/x86/entry/syscalls/syscall_32.tbl中有如下定义，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">192 i386    mmap2           sys_mmap_pgoff</div></pre></td></tr></table></figure>
+<p>因此，MMAP最后调用linux内核中的<code>sys_mmap_pgoff</code>函数，定义在mm/mmap.c中，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">SYSCALL_DEFINE6(mmap_pgoff, unsigned long, addr, unsigned long, len,</div><div class="line">        unsigned long, prot, unsigned long, flags,</div><div class="line">        unsigned long, fd, unsigned long, pgoff)&#123;</div><div class="line"></div><div class="line">    struct file *file = NULL;</div><div class="line">    unsigned long retval = -EBADF;</div><div class="line"></div><div class="line">    if (!(flags &amp; MAP_ANONYMOUS)) &#123;</div><div class="line"></div><div class="line">        ...</div><div class="line"></div><div class="line">    &#125; else if (flags &amp; MAP_HUGETLB) &#123;</div><div class="line"></div><div class="line">        ...</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    flags &amp;= ~(MAP_EXECUTABLE | MAP_DENYWRITE);</div><div class="line"></div><div class="line">    retval = vm_mmap_pgoff(file, addr, len, prot, flags, pgoff);</div><div class="line">    return retval;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>SYSCALL_DEFINE6</code>是个宏定义，就是将系统调用号和函数联系起来，这里其实就是定义了<code>sys_mmap_pgoff</code>函数。根据前面传入的flags，这里直接跳过判断，因此下面主要就是执行<code>vm_mmap_pgoff</code>函数，定义在mm/utils.c中，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">unsigned long vm_mmap_pgoff(struct file *file, unsigned long addr,</div><div class="line">    unsigned long len, unsigned long prot,</div><div class="line">    unsigned long flag, unsigned long pgoff)</div><div class="line">&#123;</div><div class="line">    unsigned long ret;</div><div class="line">    struct mm_struct *mm = current-&gt;mm;</div><div class="line">    unsigned long populate;</div><div class="line"></div><div class="line">    ret = security_mmap_file(file, prot, flag);</div><div class="line">    if (!ret) &#123;</div><div class="line">        down_write(&amp;mm-&gt;mmap_sem);</div><div class="line">        ret = do_mmap_pgoff(file, addr, len, prot, flag, pgoff,</div><div class="line">                    &amp;populate);</div><div class="line">        up_write(&amp;mm-&gt;mmap_sem);</div><div class="line">        if (populate)</div><div class="line">            mm_populate(ret, populate);</div><div class="line">    &#125;</div><div class="line">    return ret;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里首先获得进程的<code>mm_struct</code>结构，该结构保存了虚拟内存和物理内存的映射关系，<code>security_mmap_file</code>和linux安全有关，这里不关心，因此调用<code>do_mmap_pgoff</code>执行主要的mmap内容，前后加了信号量。<code>do_mmap_pgoff</code>定义在mm/mmap.c中，这里省略了很多不关键的代码，</p>
+<h2 id="do-mmap-pgoff"><a href="#do-mmap-pgoff" class="headerlink" title="do_mmap_pgoff"></a>do_mmap_pgoff</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line">unsigned long do_mmap_pgoff(struct file *file, unsigned long addr,</div><div class="line">            unsigned long len, unsigned long prot,</div><div class="line">            unsigned long flags, unsigned long pgoff,</div><div class="line">            unsigned long *populate)&#123;</div><div class="line"></div><div class="line">    struct mm_struct *mm = current-&gt;mm;</div><div class="line">    vm_flags_t vm_flags;</div><div class="line">    *populate = 0;</div><div class="line"></div><div class="line">    if (!(flags &amp; MAP_FIXED))</div><div class="line">        addr = round_hint_to_min(addr);</div><div class="line">    len = PAGE_ALIGN(len);</div><div class="line"></div><div class="line">    addr = get_unmapped_area(file, addr, len, pgoff, flags);</div><div class="line">    vm_flags = calc_vm_prot_bits(prot) | calc_vm_flag_bits(flags) |</div><div class="line">            mm-&gt;def_flags | VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC;</div><div class="line"></div><div class="line">    if (file) &#123;</div><div class="line"></div><div class="line">        ...</div><div class="line"></div><div class="line">    &#125; else &#123;</div><div class="line">        switch (flags &amp; MAP_TYPE) &#123;</div><div class="line">        case MAP_SHARED:</div><div class="line">            ...</div><div class="line">            break;</div><div class="line">        case MAP_PRIVATE:</div><div class="line">            pgoff = addr &gt;&gt; PAGE_SHIFT;</div><div class="line">            break;</div><div class="line">        default:</div><div class="line">            return -EINVAL;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    addr = mmap_region(file, addr, len, vm_flags, pgoff);</div><div class="line">    return addr;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>传入的flags没有<code>MAP_FIXED</code>，表是映射的地址不固定（这里传入的<code>addr</code>为0），由内核分配。接下来通过调用<code>round_hint_to_min</code>和<code>PAGE_ALIGN</code>对地址和长度进行页对齐，并且检查地址是否溢出或者太小。<br>下面调用<code>get_unmapped_area</code>在进程的用户空间里查找已经分配的虚拟内存。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">unsigned long get_unmapped_area(struct file *file, unsigned long addr, unsigned long len, unsigned long pgoff, unsigned long flags)&#123;</div><div class="line"></div><div class="line">    unsigned long (*get_area)(struct file *, unsigned long,</div><div class="line">                  unsigned long, unsigned long, unsigned long);</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">    get_area = current-&gt;mm-&gt;get_unmapped_area;</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">    addr = get_area(file, addr, len, pgoff, flags);</div><div class="line">    if (IS_ERR_VALUE(addr))</div><div class="line">        return addr;</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">    return addr;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里首先获取<code>get_area</code>函数指针用来查找用户空间中已经分配的虚拟内存，这里根据mmap的方向可以获取到<code>arch_get_unmapped_area_topdown</code>或者<code>arch_get_unmapped_area</code>两个函数指针，其<code>arch_get_unmapped_area_topdown</code>对应的mmap方向是从高地址往低地址方向扩展的，本章还是分析传统的从低地址往高地址拓展对应的<code>arch_get_unmapped_area</code>函数，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">unsigned long</div><div class="line">arch_get_unmapped_area(struct file *filp, unsigned long addr,</div><div class="line">        unsigned long len, unsigned long pgoff, unsigned long flags)&#123;</div><div class="line"></div><div class="line">    struct mm_struct *mm = current-&gt;mm;</div><div class="line">    struct vm_area_struct *vma;</div><div class="line">    struct vm_unmapped_area_info info;</div><div class="line">    unsigned long begin, end;</div><div class="line"></div><div class="line">    if (flags &amp; MAP_FIXED)</div><div class="line">        return addr;</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">    if (addr) &#123;</div><div class="line">        addr = PAGE_ALIGN(addr);</div><div class="line">        vma = find_vma(mm, addr);</div><div class="line">        if (end - len &gt;= addr &amp;&amp;</div><div class="line">            (!vma || addr + len &lt;= vma-&gt;vm_start))</div><div class="line">            return addr;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>首先，如果是固定地址映射，直接返回addr地址。本章分析的不是这种情况，省略的代码和一些随机映射有关，这里省略了不分析。这样就进入了底下的if语句里，对地址对齐后，就调用find_vma查找addr地址开始已经分配出去的虚拟内存vma，最后addr到addr+len这个地址范围内没有虚拟内存，就将地址返回。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">struct vm_area_struct *find_vma(struct mm_struct *mm, unsigned long addr)</div><div class="line">&#123;</div><div class="line">    struct rb_node *rb_node;</div><div class="line">    struct vm_area_struct *vma;</div><div class="line"></div><div class="line">    vma = vmacache_find(mm, addr);</div><div class="line">    if (likely(vma))</div><div class="line">        return vma;</div><div class="line"></div><div class="line">    rb_node = mm-&gt;mm_rb.rb_node;</div><div class="line">    vma = NULL;</div><div class="line"></div><div class="line">    while (rb_node) &#123;</div><div class="line">        struct vm_area_struct *tmp;</div><div class="line"></div><div class="line">        tmp = rb_entry(rb_node, struct vm_area_struct, vm_rb);</div><div class="line"></div><div class="line">        if (tmp-&gt;vm_end &gt; addr) &#123;</div><div class="line">            vma = tmp;</div><div class="line">            if (tmp-&gt;vm_start &lt;= addr)</div><div class="line">                break;</div><div class="line">            rb_node = rb_node-&gt;rb_left;</div><div class="line">        &#125; else</div><div class="line">            rb_node = rb_node-&gt;rb_right;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    if (vma)</div><div class="line">        vmacache_update(addr, vma);</div><div class="line">    return vma;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里就不往下继续看代码的，简单来说，进程已经分配的虚拟内存保存在一个红黑树中，红黑树简单的作用就是防止一个树结构不平衡，出现某个左子树严重大于右子树的情况。为了加快查找的速度，这里设立了缓存。通过观察while结构，这里就是查找第一个结束地址大于addr的已经分配的虚拟内存，然后返回。</p>
+<p>回到<code>do_mmap_pgoff</code>中，<code>calc_vm_prot_bits</code>和<code>calc_vm_flag_bits</code>用来将prot和flags中的标志位转化为vm的标志位，例如prot中的<code>PROT_READ</code>转化为<code>VM_READ</code>，flags中的<code>MAP_GROWSDOWN</code>转化为<code>VM_GROWSDOWN</code>。根据前面prot和flags中的值，这里转化后，<code>vm_flags</code>为<code>VM_READ|VM_WRITE|mm-&gt;def_flags | VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC</code>。最后就调用mmap_region构造一个vma用来保存刚刚获得的虚拟内存。</p>
+<h2 id="mmap-region"><a href="#mmap-region" class="headerlink" title="mmap_region"></a>mmap_region</h2><p>为了方便分析和查看，这里对mmap_region代码做了适当的删除和改写，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div></pre></td><td class="code"><pre><div class="line">unsigned long mmap_region(struct file *file, unsigned long addr,</div><div class="line">        unsigned long len, vm_flags_t vm_flags, unsigned long pgoff)</div><div class="line">&#123;</div><div class="line">    struct mm_struct *mm = current-&gt;mm;</div><div class="line">    struct vm_area_struct *vma, *prev;</div><div class="line">    int error;</div><div class="line">    struct rb_node **rb_link, *rb_parent;</div><div class="line">    unsigned long charged = 0;</div><div class="line"></div><div class="line">    if (!may_expand_vm(mm, len &gt;&gt; PAGE_SHIFT)) &#123;</div><div class="line"></div><div class="line">        ...</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    error = -ENOMEM;</div><div class="line">    while (find_vma_links(mm, addr, addr + len, &amp;prev, &amp;rb_link,</div><div class="line">                  &amp;rb_parent)) &#123;</div><div class="line">        if (do_munmap(mm, addr, len))</div><div class="line">            return -ENOMEM;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    vm_flags |= VM_ACCOUNT;</div><div class="line"></div><div class="line">    vma = vma_merge(mm, prev, addr, addr + len, vm_flags, NULL, file, pgoff,</div><div class="line">            NULL);</div><div class="line">    if (vma)</div><div class="line">        goto out;</div><div class="line"></div><div class="line">    vma = kmem_cache_zalloc(vm_area_cachep, GFP_KERNEL);</div><div class="line">    vma-&gt;vm_mm = mm;</div><div class="line">    vma-&gt;vm_start = addr;</div><div class="line">    vma-&gt;vm_end = addr + len;</div><div class="line">    vma-&gt;vm_flags = vm_flags;</div><div class="line">    vma-&gt;vm_page_prot = vm_get_page_prot(vm_flags);</div><div class="line">    vma-&gt;vm_pgoff = pgoff;</div><div class="line">    INIT_LIST_HEAD(&amp;vma-&gt;anon_vma_chain);</div><div class="line"></div><div class="line">    vma_link(mm, vma, prev, rb_link, rb_parent);</div><div class="line">out:</div><div class="line"></div><div class="line">    vm_stat_account(mm, vm_flags, file, len &gt;&gt; PAGE_SHIFT);</div><div class="line">    if (vm_flags &amp; VM_LOCKED) &#123;</div><div class="line">        if (!((vm_flags &amp; VM_SPECIAL) || is_vm_hugetlb_page(vma) ||</div><div class="line">                    vma == get_gate_vma(current-&gt;mm)))</div><div class="line">            mm-&gt;locked_vm += (len &gt;&gt; PAGE_SHIFT);</div><div class="line">        else</div><div class="line">            vma-&gt;vm_flags &amp;= ~VM_LOCKED;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    if (file)</div><div class="line">        uprobe_mmap(vma);</div><div class="line"></div><div class="line">    vma-&gt;vm_flags |= VM_SOFTDIRTY;</div><div class="line"></div><div class="line">    vma_set_page_prot(vma);</div><div class="line"></div><div class="line">    return addr;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>may_expand_vm</code>用于判断加上即将分配的虚拟内存，是否超过了系统的限制，如果超过了就需要进行相应的操作或者返回错误，这里假设不会超过系统限制，不管它。<br><code>find_vma_links</code>的定义如下，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">static int find_vma_links(struct mm_struct *mm, unsigned long addr,</div><div class="line">        unsigned long end, struct vm_area_struct **pprev,</div><div class="line">        struct rb_node ***rb_link, struct rb_node **rb_parent)&#123;</div><div class="line"></div><div class="line">    struct rb_node **__rb_link, *__rb_parent, *rb_prev;</div><div class="line"></div><div class="line">    __rb_link = &amp;mm-&gt;mm_rb.rb_node;</div><div class="line">    rb_prev = __rb_parent = NULL;</div><div class="line"></div><div class="line">    while (*__rb_link) &#123;</div><div class="line">        struct vm_area_struct *vma_tmp;</div><div class="line"></div><div class="line">        __rb_parent = *__rb_link;</div><div class="line">        vma_tmp = rb_entry(__rb_parent, struct vm_area_struct, vm_rb);</div><div class="line"></div><div class="line">        if (vma_tmp-&gt;vm_end &gt; addr) &#123;</div><div class="line">            if (vma_tmp-&gt;vm_start &lt; end)</div><div class="line">                return -ENOMEM;</div><div class="line">            __rb_link = &amp;__rb_parent-&gt;rb_left;</div><div class="line">        &#125; else &#123;</div><div class="line">            rb_prev = __rb_parent;</div><div class="line">            __rb_link = &amp;__rb_parent-&gt;rb_right;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    *pprev = NULL;</div><div class="line">    if (rb_prev)</div><div class="line">        *pprev = rb_entry(rb_prev, struct vm_area_struct, vm_rb);</div><div class="line">    *rb_link = __rb_link;</div><div class="line">    *rb_parent = __rb_parent;</div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>该函数做了两件事，第一件事是重新检查一遍即将分配的虚拟内存是否已经被使用，主要是其他进程可能在这期间分配了该虚拟内存，第二件事是确定即将插入红黑树中的位置，保存在<code>prev</code>、<code>rb_link</code>和<code>rb_parent</code>中。<code>prev</code>保存了虚拟内存结束地址小于即将分配的虚拟内存开始地址的红黑树节点，<code>rb_link</code>一般为null，<code>rb_parent</code>简单说就是保存了离即将分配的虚拟内存开始地址最近的红黑树节点。</p>
+<p>再往下通过vma_merge函数查看是否有虚拟空间可以合并，如果有则合并并返回。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div></pre></td><td class="code"><pre><div class="line">struct vm_area_struct *vma_merge(struct mm_struct *mm,</div><div class="line">            struct vm_area_struct *prev, unsigned long addr,</div><div class="line">            unsigned long end, unsigned long vm_flags,</div><div class="line">            struct anon_vma *anon_vma, struct file *file,</div><div class="line">            pgoff_t pgoff, struct mempolicy *policy)&#123;</div><div class="line"></div><div class="line">    pgoff_t pglen = (end - addr) &gt;&gt; PAGE_SHIFT;</div><div class="line">    struct vm_area_struct *area, *next;</div><div class="line">    int err;</div><div class="line"></div><div class="line">    if (vm_flags &amp; VM_SPECIAL)</div><div class="line">        return NULL;</div><div class="line"></div><div class="line">    if (prev)</div><div class="line">        next = prev-&gt;vm_next;</div><div class="line">    else</div><div class="line">        next = mm-&gt;mmap;</div><div class="line">    area = next;</div><div class="line">    if (next &amp;&amp; next-&gt;vm_end == end)</div><div class="line">        next = next-&gt;vm_next;</div><div class="line"></div><div class="line">    if (prev &amp;&amp; prev-&gt;vm_end == addr &amp;&amp;</div><div class="line">            mpol_equal(vma_policy(prev), policy) &amp;&amp;</div><div class="line">            can_vma_merge_after(prev, vm_flags,</div><div class="line">                        anon_vma, file, pgoff)) &#123;</div><div class="line"></div><div class="line">        if (next &amp;&amp; end == next-&gt;vm_start &amp;&amp;</div><div class="line">                mpol_equal(policy, vma_policy(next)) &amp;&amp;</div><div class="line">                can_vma_merge_before(next, vm_flags,</div><div class="line">                    anon_vma, file, pgoff+pglen) &amp;&amp;</div><div class="line">                is_mergeable_anon_vma(prev-&gt;anon_vma,</div><div class="line">                              next-&gt;anon_vma, NULL)) &#123;</div><div class="line"></div><div class="line">            err = vma_adjust(prev, prev-&gt;vm_start,</div><div class="line">                next-&gt;vm_end, prev-&gt;vm_pgoff, NULL);</div><div class="line">        &#125; else</div><div class="line">            err = vma_adjust(prev, prev-&gt;vm_start,</div><div class="line">                end, prev-&gt;vm_pgoff, NULL);</div><div class="line">        if (err)</div><div class="line">            return NULL;</div><div class="line">        khugepaged_enter_vma_merge(prev, vm_flags);</div><div class="line">        return prev;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    if (next &amp;&amp; end == next-&gt;vm_start &amp;&amp;</div><div class="line">            mpol_equal(policy, vma_policy(next)) &amp;&amp;</div><div class="line">            can_vma_merge_before(next, vm_flags,</div><div class="line">                    anon_vma, file, pgoff+pglen)) &#123;</div><div class="line">        if (prev &amp;&amp; addr &lt; prev-&gt;vm_end)</div><div class="line">            err = vma_adjust(prev, prev-&gt;vm_start,</div><div class="line">                addr, prev-&gt;vm_pgoff, NULL);</div><div class="line">        else                    </div><div class="line">            err = vma_adjust(area, addr, next-&gt;vm_end,</div><div class="line">                next-&gt;vm_pgoff - pglen, NULL);</div><div class="line">        if (err)</div><div class="line">            return NULL;</div><div class="line">        khugepaged_enter_vma_merge(area, vm_flags);</div><div class="line">        return area;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    return NULL;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里就不详细分析这个函数了，主要通过<code>prev-&gt;vm_end == addr</code>判断即将分配的虚拟内存能否往前合并，通过<code>end == next-&gt;vm_start</code>判断即将分配的虚拟内存能否往后合并。其中，合并函数为<code>vma_adjust</code>。再往下就不分析了。</p>
+<p>回到函数中，假设不能合并，就要通过slab构造一个<code>vm_area_struct</code>结构体，并设置相应的信息，slab是linux内核中分配小块内存的框架。然后通过<code>vma_link</code>插入到进程的红黑树中，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">static void vma_link(struct mm_struct *mm, struct vm_area_struct *vma,</div><div class="line">            struct vm_area_struct *prev, struct rb_node **rb_link,</div><div class="line">            struct rb_node *rb_parent)&#123;</div><div class="line"></div><div class="line">    __vma_link(mm, vma, prev, rb_link, rb_parent);</div><div class="line">    mm-&gt;map_count++;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>__vma_link</code>执行实际的插入操作，就是一些红黑树的操作，不往下看了。</p>
+<p>回到<code>mmap_region</code>中，最后通过<code>vma_set_page_prot</code>继续设置一些标志位，然后就返回分配到的虚拟内存的起始地址addr了，该返回值一直向上返回，然后退出系统调用，返回到glibc中。<br>到这里简单总结一下MMAP，其实质就是通过mmap在进程的内存管理结构中的红黑树中分配一块没有使用的虚拟内存。</p>
+<p>下一章继续往下分析glibc中的<code>_int_malloc</code>函数。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/heap/" rel="tag"># heap</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+          <div class="wp_rating">
+            <div id="wpac-rating"></div>
+          </div>
+        
+
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/05/21/malloc源码分析——1/" rel="next" title="malloc源码分析——1">
+                <i class="fa fa-chevron-left"></i> malloc源码分析——1
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/05/21/malloc源码分析——3/" rel="prev" title="malloc源码分析——3">
+                malloc源码分析——3 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/me.jpg"
+               alt="Introspelliam" />
+          <p class="site-author-name" itemprop="name">Introspelliam</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">128</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">54</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/Introspelliam" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/3008590672" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                    
+                      Weibo
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#malloc源码分析—-int-malloc"><span class="nav-number">1.</span> <span class="nav-text">malloc源码分析—_int_malloc</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#int-malloc第一部分"><span class="nav-number">1.1.</span> <span class="nav-text">_int_malloc第一部分</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sysmalloc"><span class="nav-number">1.2.</span> <span class="nav-text">sysmalloc</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MMAP"><span class="nav-number">1.3.</span> <span class="nav-text">MMAP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#do-mmap-pgoff"><span class="nav-number">1.4.</span> <span class="nav-text">do_mmap_pgoff</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mmap-region"><span class="nav-number">1.5.</span> <span class="nav-text">mmap_region</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Introspelliam</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  <script type="text/javascript">
+  wpac_init = window.wpac_init || [];
+  wpac_init.push({widget: 'Rating', id: ,
+    el: 'wpac-rating',
+    color: 'fc6423'
+  });
+  (function() {
+    if ('WIDGETPACK_LOADED' in window) return;
+    WIDGETPACK_LOADED = true;
+    var mc = document.createElement('script');
+    mc.type = 'text/javascript';
+    mc.async = true;
+    mc.src = '//embed.widgetpack.com/widget.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+  })();
+  </script>
+
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>
