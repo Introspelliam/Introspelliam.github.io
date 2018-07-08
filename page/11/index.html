@@ -333,6 +333,197 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/14/内存随机化保护-ASLR-简介/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="上善若水">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/07/14/内存随机化保护-ASLR-简介/" itemprop="url">内存随机化保护(ASLR)简介</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-14T16:39:22+08:00">
+                2017-07-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全技术/" itemprop="url" rel="index">
+                    <span itemprop="name">安全技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>ASLR(Address Space Layout Randomization)技术就是通过加载程序的时候不再使用固定的基址加载，从而干扰shellcode定位的一种保护机制。</p>
+<p>支持ASLR的程序在其PE头中会设置IMAGE_DLL_CHARACTERISTICS_DYNAMIC_BASE标识来说明其支持ASLR。从VS 2005 SP1开始加入/dynamicbase链接选项来帮我们完成这个任务。本书使用VS 2008(VS 9.0)中，通过Project-&gt;project Properties-&gt;Configuration Properties-&gt;Linker-&gt;Advanced-&gt;Randomized Base Address选项对/dynamicbase链接选项进行设置。</p>
+<p>ASLR一般分为映像随机化、堆栈随机化、PEB与TEB随机化</p>
+<h3 id="1-映像随机化"><a href="#1-映像随机化" class="headerlink" title="1. 映像随机化"></a>1. 映像随机化</h3><p>映像随机化是在PE文件映射到内存时，对其加载的虚拟地址进行随机化处理，这个地址在系统启动时确定，系统重启后该地址会变化。</p>
+<p>以IE为例<br><img src="/images/2017-07-14/aslr_image.jpg" alt="对比"></p>
+<p>系统中设置了映像随机化的开关，用户可以通过设置注册表中的HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management\MoveImages的键值来设定映像随机化的工作模式</p>
+<ul>
+<li>0： 映像随机化被禁用</li>
+<li>-1： 强制对可随机化的映像进行处理，无论是否设置IMAGE_DLL_CHARACTERISTICS_DYNAMIC_BASE标识</li>
+<li>其他值：正常工作模式，只对具有随机化处理标识的映像进行处理</li>
+</ul>
+<h3 id="2-堆栈随机化"><a href="#2-堆栈随机化" class="headerlink" title="2. 堆栈随机化"></a>2. 堆栈随机化</h3><p>在运行时随机的选择堆栈的基址，与映像基址随机化不同的是堆栈的基址不是在系统启动的时候确定的，而是在打开程序的时候确定的</p>
+<pre><code>
+int _tmain(int argc, _TCHAR* argv[])
+{
+    char * heap = (char *)malloc(100);
+    char stack[100];
+    printf("Address of heap:%#0.4x\nAddress of stack %#0.4x", heap, stack);
+    getchar();
+    return 0;
+}
+</code></pre>
+
+<p>使用win xp和win vista进行对比，如下：<br>win xp两次运行的结果：<br><img src="/images/2017-07-14/win_xp_heap_stack.jpg" alt="win_xp两次运行的结果"><br>win vista两次运行的结果：<br><img src="/images/2017-07-14/win_vista_heap_stack.jpg" alt="win_vista两次运行的结果"></p>
+<h3 id="3-PEB与TEB"><a href="#3-PEB与TEB" class="headerlink" title="3. PEB与TEB"></a>3. PEB与TEB</h3><p>PEB与TEB随机化在win xp sp2就引入了，不再使用固定的PEB基址0x7FFDF00和TEB基址0x7FFDE00</p>
+<font color="#f00">获取当前进程的TEB和PEB很简单，TEB存放在FS:0和FS:[0x18]处，PEB存放在TEB偏移0x30处的位置。获取TEB、PEB的方法如下：</font>
+
+<pre><code>
+int _tmain(int argc, _TCHAR* argv[])
+{
+    unsigned int teb;
+    unsigned int peb;
+    __asm{
+        mov eax, FS:[0x18]
+        mov teb, eax
+        mov eax, dword ptr [eax + 0x30]
+        mov peb, eax
+    }
+    printf("PEB:%#x\nTEB:%#x", peb, teb);
+    getchar();
+    return 0;
+}
+</code></pre>
+
+<p>PEB、TEB随机化测试:<br><img src="/images/2017-07-14/aslr_teb_peb.jpg" alt="PEB、TEB随机化"></p>
+<h3 id="4-ASLR存在的缺陷"><a href="#4-ASLR存在的缺陷" class="headerlink" title="4. ASLR存在的缺陷"></a>4. ASLR存在的缺陷</h3><ol>
+<li>映像随机化测试时各模块的入口点（Entry那列）地址的低位2个字节时不变的，也就是说映像随机化只是对加载基址的前2字节做了随机处理</li>
+<li>堆栈随机化可以防止精准攻击，但是使用JMP ESP跳板、浏览器攻击中的heap spray等技术是不需要精准跳转</li>
+<li>PEB与TEB的随机化的程度较差，而且即使做到完全随机，依然可以使用其他方法获取当前进程的PEB与TEB</li>
+</ol>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/12/攻击DEP的方法-下/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -3657,204 +3848,6 @@ for row in rows:
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/02/python用模块zlib压缩与解压字符串和文件的方法/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/07/02/python用模块zlib压缩与解压字符串和文件的方法/" itemprop="url">python用模块zlib压缩与解压字符串和文件的方法</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-02T17:20:22+08:00">
-                2017-07-02
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/misc/" itemprop="url" rel="index">
-                    <span itemprop="name">misc</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>python中zlib模块是用来压缩或者解压缩数据，以便保存和传输。它是其他压缩工具的基础。下面来一起看看python用模块zlib压缩与解压字符串和文件的方法。话不多说，直接来看示例代码。</p>
-<h3 id="1-压缩与解压字符串"><a href="#1-压缩与解压字符串" class="headerlink" title="1. 压缩与解压字符串"></a>1. 压缩与解压字符串</h3><pre><code>
-import zlib
-message = 'abcd1234'
-compressed = zlib.compress(message)
-decompressed = zlib.decompress(compressed)
-
-print 'original:', repr(message)
-print 'compressed:', repr(compressed)
-print 'decompressed:', repr(decompressed)
-</code></pre>
-
-<p><b>结果</b></p>
-<pre><code>
-original: 'abcd1234'
-compressed: 'x\x9cKLJN1426\x01\x00\x0b\xf8\x02U'
-decompressed: 'abcd1234'
-</code></pre>
-
-<h3 id="2-压缩与解压文件"><a href="#2-压缩与解压文件" class="headerlink" title="2. 压缩与解压文件"></a>2. 压缩与解压文件</h3><pre><code>
-import zlib
-def compress(infile, dst, level=9):
-    infile = open(infile, 'rb')
-    dst = open(dst, 'wb')
-    compress = zlib.compressobj(level)
-    data = infile.read(1024)
-    while data:
-        dst.write(compress.compress(data))
-        data = infile.read(1024)
-    dst.write(compress.flush())
-
-def decompress(infile, dst):
-    infile = open(infile, 'rb')
-    dst = open(dst, 'wb')
-    decompress = zlib.decompressobj()
-    data = infile.read(1024)
-    while data:
-        dst.write(decompress.decompress(data))
-        data = infile.read(1024)
-    dst.write(decompress.flush())
-
-if __name__ == "__main__":
-    compress('in.txt', 'out.txt')
-    decompress('out.txt', 'out_decompress.txt')
-</code></pre>
-
-<h3 id="3-问题——处理对象过大异常"><a href="#3-问题——处理对象过大异常" class="headerlink" title="3. 问题——处理对象过大异常"></a>3. 问题——处理对象过大异常</h3><pre><code>
->>> import zlib
->>> a = '123'
->>> b = zlib.compress(a)
->>> b
-'x\x9c342\x06\x00\x01-\x00\x97'
->>> a = 'a' * 1024 * 1024 * 1024 * 10
->>> b = zlib.compress(a)
-Traceback (most recent call last):
- File "&lt;stdin&gt;", line 1, in &lt;module&gt;
-OverflowError: size does not fit in an int
-</code></pre>
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -3909,7 +3902,7 @@ OverflowError: size does not fit in an int
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">132</span>
+                <span class="site-state-item-count">133</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

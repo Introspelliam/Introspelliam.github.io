@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2018-07-08T18:07:39.918Z</updated>
+  <updated>2018-07-08T18:59:04.137Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -14,6 +14,44 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>NexT主题中集成gitalk评论系统</title>
+    <link href="http://yoursite.com/2018/07/09/NexT%E4%B8%BB%E9%A2%98%E4%B8%AD%E9%9B%86%E6%88%90gitalk%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/"/>
+    <id>http://yoursite.com/2018/07/09/NexT主题中集成gitalk评论系统/</id>
+    <published>2018-07-08T18:53:26.000Z</published>
+    <updated>2018-07-08T18:59:04.137Z</updated>
+    
+    <content type="html"><![CDATA[<p>本文记录NexT主题中添加gitalk评论系统的步骤。<br>gitalk：一个基于 Github Issue 和 Preact 开发的评论插件<br>详情Demo可见：<a href="https://gitalk.github.io/" target="_blank" rel="external">https://gitalk.github.io/</a></p>
+<h1 id="1-Register-Application"><a href="#1-Register-Application" class="headerlink" title="1. Register Application"></a>1. Register Application</h1><p>在GitHub上注册新应用，链接：<a href="https://github.com/settings/applications/new" target="_blank" rel="external">https://github.com/settings/applications/new</a><br><img src="/images/2018-07-09/p22o24.md.png" alt="app"><br>参数说明：<br>Application name： # 应用名称，随意Introspelliam.github.io<br>Homepage URL： # 网站URL，如<code>https://Introspelliam.github.io</code><br>Application description # 描述，随意<br>Authorization callback URL：# 网站URL，<code>https://Introspelliam.github.io</code></p>
+<p>点击注册后，页面跳转如下，其中<code>Client ID</code>和<code>Client Secret</code>在后面的配置中需要用到，到时复制粘贴即可：<br><img src="/images/2018-07-09/p25Ubj.md.png" alt="client"></p>
+<h1 id="2-gitalk-swig"><a href="#2-gitalk-swig" class="headerlink" title="2. gitalk.swig"></a>2. gitalk.swig</h1><p>新建<code>/layout/_third-party/comments/gitalk.swig</code>文件，并添加内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">&#123;% if page.comments &amp;&amp; theme.gitalk.enable %&#125;</div><div class="line">  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/gitalk/dist/gitalk.css&quot;&gt;</div><div class="line"></div><div class="line">  &lt;script src=&quot;https://unpkg.com/gitalk/dist/gitalk.min.js&quot;&gt;&lt;/script&gt;</div><div class="line">   &lt;script type=&quot;text/javascript&quot;&gt;</div><div class="line">        var gitalk = new Gitalk(&#123;</div><div class="line">          clientID: &apos;&#123;&#123; theme.gitalk.ClientID &#125;&#125;&apos;,</div><div class="line">          clientSecret: &apos;&#123;&#123; theme.gitalk.ClientSecret &#125;&#125;&apos;,</div><div class="line">          repo: &apos;&#123;&#123; theme.gitalk.repo &#125;&#125;&apos;,</div><div class="line">          owner: &apos;&#123;&#123; theme.gitalk.githubID &#125;&#125;&apos;,</div><div class="line">          admin: [&apos;&#123;&#123; theme.gitalk.adminUser &#125;&#125;&apos;],</div><div class="line">          id: location.pathname,</div><div class="line">          distractionFreeMode: &apos;&#123;&#123; theme.gitalk.distractionFreeMode &#125;&#125;&apos;</div><div class="line">        &#125;)</div><div class="line">        gitalk.render(&apos;gitalk-container&apos;)           </div><div class="line">       &lt;/script&gt;</div><div class="line">&#123;% endif %&#125;</div></pre></td></tr></table></figure>
+<h1 id="3-comments-swig"><a href="#3-comments-swig" class="headerlink" title="3. comments.swig"></a>3. comments.swig</h1><p>修改<code>/layout/_partials/comments.swig</code>，添加内容如下，与前面的<code>elseif</code>同一级别上：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&#123;% elseif theme.gitalk.enable %&#125;</div><div class="line"> &lt;div id=&quot;gitalk-container&quot;&gt;&lt;/div&gt;</div></pre></td></tr></table></figure>
+<h1 id="4-index-swig"><a href="#4-index-swig" class="headerlink" title="4. index.swig"></a>4. index.swig</h1><p>修改<code>layout/_third-party/comments/index.swig</code>，在最后一行添加内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&#123;% include &apos;gitalk.swig&apos; %&#125;</div></pre></td></tr></table></figure>
+<h1 id="5-gitalk-styl"><a href="#5-gitalk-styl" class="headerlink" title="5. gitalk.styl"></a>5. gitalk.styl</h1><p>新建<code>/source/css/_common/components/third-party/gitalk.styl</code>文件，添加内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">.gt-header a, .gt-comments a, .gt-popup a</div><div class="line">  border-bottom: none;</div><div class="line">.gt-container .gt-popup .gt-action.is--active:before</div><div class="line">  top: 0.7em;</div></pre></td></tr></table></figure>
+<h1 id="6-third-party-styl"><a href="#6-third-party-styl" class="headerlink" title="6. third-party.styl"></a>6. third-party.styl</h1><p>修改<code>/source/css/_common/components/third-party/third-party.styl</code>，在最后一行上添加内容，引入样式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">@import &quot;gitalk&quot;;</div></pre></td></tr></table></figure>
+<h1 id="7-config-yml"><a href="#7-config-yml" class="headerlink" title="7. _config.yml"></a>7. _config.yml</h1><p>在主题配置文件<code>next/_config.yml</code>中添加如下内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">gitalk:</div><div class="line">  enable: true</div><div class="line">  githubID: github帐号  # 例：Introspelliam   </div><div class="line">  repo: 仓库名称   # 例：Introspelliam.github.io</div><div class="line">  ClientID: Client ID</div><div class="line">  ClientSecret: Client Secret</div><div class="line">  adminUser: github帐号 #指定可初始化评论账户</div><div class="line">  distractionFreeMode: true</div></pre></td></tr></table></figure>
+<p>以上就是NexT中添加gitalk评论的配置，博客上传到GitHub上后，打开页面进入某一博客内容下，就可看到评论处。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;本文记录NexT主题中添加gitalk评论系统的步骤。&lt;br&gt;gitalk：一个基于 Github Issue 和 Preact 开发的评论插件&lt;br&gt;详情Demo可见：&lt;a href=&quot;https://gitalk.github.io/&quot; target=&quot;_blank&quot; 
+    
+    </summary>
+    
+      <category term="Hexo搭建博客网站" scheme="http://yoursite.com/categories/Hexo%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99/"/>
+    
+    
+      <category term="hexo" scheme="http://yoursite.com/tags/hexo/"/>
+    
+  </entry>
   
   <entry>
     <title>test3</title>
@@ -1862,56 +1900,6 @@
     
     
       <category term="spn" scheme="http://yoursite.com/tags/spn/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>RSA Least-Significant-Bit Oracle Attack</title>
-    <link href="http://yoursite.com/2018/03/27/RSA-Least-Significant-Bit-Oracle-Attack/"/>
-    <id>http://yoursite.com/2018/03/27/RSA-Least-Significant-Bit-Oracle-Attack/</id>
-    <published>2018-03-27T09:18:35.000Z</published>
-    <updated>2018-03-27T11:34:02.228Z</updated>
-    
-    <content type="html"><![CDATA[<p>此攻击方式是从<a href="https://crypto.stackexchange.com/questions/11053/rsa-least-significant-bit-oracle-attack" target="_blank" rel="external">rsa-least-significant-bit-oracle-attack</a> 看到的，刚好用于Backdoor CTF的一道密码学的题目！</p>
-<h3 id="0x1-问题描述"><a href="#0x1-问题描述" class="headerlink" title="0x1 问题描述"></a>0x1 问题描述</h3><p>假如用户知道公钥中$N,e,c$，并且可以任意构造密文$c_1$，返回此密文解密后$p_1$的末尾某些比特位的性质（记为函数$f$），求原始明文信息！</p>
-<p>最简单的函数$f$ 是表示 $p_1$ 的奇偶性。</p>
-<h3 id="0x2-原理"><a href="#0x2-原理" class="headerlink" title="0x2 原理"></a>0x2 原理</h3><p>攻击者得到密文$C=P^e(mod\ n)$ ，将其乘以$2^e(mod\ N)$, 并作为密文发送出去，若返回$f(2P)$</p>
-<blockquote>
-<p>如果$f(2P)$ 返回的最后一位是0，那么$2P&lt;N$，即$P&lt;N/2$</p>
-<p>如果$f(2P)$ 返回的最后一位是1，那么$2P&gt;N$，即 $P&gt;N/2$</p>
-</blockquote>
-<p>接着我们来看看$2P$ 和 $4P$</p>
-<blockquote>
-<p>如果返回的是（偶，偶），那么有 $P&lt;N/4$</p>
-<p>如果返回的是（偶，奇），那么有$N/4&lt;P&lt;N/2$</p>
-<p>如果返回的是（偶，奇），那么有$N/2&lt;P&lt;3N/4$</p>
-<p>如果返回的是（奇，奇），那么有$3N/4&lt;P&lt;N$</p>
-</blockquote>
-<p>从这里基本上就可以找到规律了，如果我们循环下去，基本上就可以得到P所处在的空间。当次数不断叠加，最终所处在的空间将会十分的小，于是就可以解出对应的解！</p>
-<h3 id="0x3-方法"><a href="#0x3-方法" class="headerlink" title="0x3 方法"></a>0x3 方法</h3><p>$P\in[0,P]$ 也即$LB=0$， $UB=N$</p>
-<p>使用$log_2\ N$ 次可以根据密文$C$ 求解出明文$P$</p>
-<p>$C&#39;=(2^e\ mod\ N)*C$</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">if (Oracle(C&apos;) == even)</div><div class="line">    UB = (UB + LB)/2;</div><div class="line">else</div><div class="line">    LB = (UB + LB)/2;</div></pre></td></tr></table></figure>
-<h3 id="0x4-实例"><a href="#0x4-实例" class="headerlink" title="0x4 实例"></a>0x4 实例</h3><p>Backdoor CTF 2018 题目 BIT-LEAKER</p>
-<p>service.py</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/python -u</span></div><div class="line"><span class="keyword">from</span> Crypto.Util.number <span class="keyword">import</span> *</div><div class="line"><span class="keyword">from</span> Crypto.PublicKey <span class="keyword">import</span> RSA</div><div class="line"><span class="keyword">import</span> random</div><div class="line"><span class="comment">#from SECRET import flag</span></div><div class="line">flag = <span class="string">"CTF&#123;this_is_my_test_flag&#125;"</span></div><div class="line">m = bytes_to_long(flag)</div><div class="line"></div><div class="line">key = RSA.generate(<span class="number">1024</span>)</div><div class="line"></div><div class="line">c = pow(m, key.e, key.n)</div><div class="line">print(<span class="string">"Welcome to BACKDOORCTF17\n"</span>)</div><div class="line">print(<span class="string">"PublicKey:\n"</span>)</div><div class="line">print(<span class="string">"N = "</span> + str(key.n) + <span class="string">"\n"</span>)</div><div class="line">print(<span class="string">"e = "</span> + str(key.e) + <span class="string">"\n"</span>)</div><div class="line">print(<span class="string">"c = "</span> + str(c) + <span class="string">"\n"</span>)</div><div class="line"></div><div class="line"><span class="keyword">while</span> <span class="keyword">True</span>:</div><div class="line">    <span class="keyword">try</span>:</div><div class="line">        temp_c = int(raw_input(<span class="string">"temp_c = "</span>))</div><div class="line">        temp_m = pow(temp_c, key.d, key.n)</div><div class="line">    <span class="keyword">except</span>:</div><div class="line">        <span class="keyword">break</span></div><div class="line">    l = str(((temp_m&amp;<span class="number">5</span>) * random.randint(<span class="number">1</span>,<span class="number">10000</span>))%(<span class="number">2</span>*(random.randint(<span class="number">1</span>,<span class="number">10000</span>))))</div><div class="line">    <span class="keyword">print</span> <span class="string">"l = "</span>+l</div></pre></td></tr></table></figure>
-<p>solve.py</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div></pre></td><td class="code"><pre><div class="line"># -*- coding: utf-8 -*-</div><div class="line">#/usr/bin/env python</div><div class="line"></div><div class="line">from pwn import *</div><div class="line">import libnum</div><div class="line">import Crypto</div><div class="line">import re</div><div class="line">from binascii import hexlify,unhexlify</div><div class="line"></div><div class="line">if len(sys.argv)&gt;1:</div><div class="line">    p=remote(&quot;127.0.0.1&quot;,2334)</div><div class="line">else:</div><div class="line">    p=remote(&apos;127.0.0.1&apos;,2333)</div><div class="line"></div><div class="line">#context.log_level = &apos;debug&apos;</div><div class="line"></div><div class="line">def oracle(c):</div><div class="line">    l = []</div><div class="line">    for i in range(20):</div><div class="line">        p.sendline(str(c))</div><div class="line">        s = p.recvuntil(&quot;temp_c&quot;)</div><div class="line">        l.append(int(re.findall(&quot;l\s*=\s*([0-9]*)&quot;,s)[0]))</div><div class="line">    flag0 = 0</div><div class="line">    flag2 = 0</div><div class="line">    for i in range(20):</div><div class="line">        if l[i]%2 != 0:</div><div class="line">            flag0 = 1</div><div class="line">        if l[i] &gt; 10000:</div><div class="line">            flag2 = 1</div><div class="line">    return [flag2,flag0]</div><div class="line"></div><div class="line"></div><div class="line">def main():</div><div class="line">    ss = p.recvuntil(&quot;temp_c&quot;)</div><div class="line">    N = int(re.findall(&quot;N\s*=\s*(\d+)&quot;,ss)[0])</div><div class="line">    e = int(re.findall(&quot;e\s*=\s*(\d+)&quot;,ss)[0])</div><div class="line">    c = int(re.findall(&quot;c\s*=\s*(\d+)&quot;,ss)[0])</div><div class="line">    size = libnum.len_in_bits(N)</div><div class="line">    print &quot;N=&quot;,N</div><div class="line">    print &quot;e=&quot;,e</div><div class="line">    print &quot;c=&quot;,c</div><div class="line">    c = (pow(2,e,N)*c)%N</div><div class="line">    LB = 0</div><div class="line">    UB = N</div><div class="line">    i = 1</div><div class="line">    while LB!=UB:</div><div class="line">        flag = oracle(c)</div><div class="line">        print i,flag</div><div class="line">        if flag[1]%2==0:</div><div class="line">            UB = (LB+UB)/2</div><div class="line">        else:</div><div class="line">            LB = (LB+UB)/2</div><div class="line">        c = (pow(2,e,N)*c)%N</div><div class="line">        i += 1</div><div class="line">    print LB</div><div class="line">    print UB</div><div class="line">    for i in range(-128,128,0):</div><div class="line">        LB += i</div><div class="line">        if pow(LB,e,N)==C:</div><div class="line">            print unhexlify(hex(LB)[2:-1])</div><div class="line">            exit(0)</div><div class="line"></div><div class="line">if __name__ == &apos;__main__&apos;:</div><div class="line">    main()</div><div class="line">    p.interactive()</div></pre></td></tr></table></figure>
-<p>这道题有个问题，就是远程比较慢，所以可能需要很长时间！</p>
-<p>另外就是算法的正确度不能保证，所以可能需要中途断开，多跑几次！</p>
-<p>还有就是这个算法因为都是整除运算，导致的最终结果可能有一定误差！</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;此攻击方式是从&lt;a href=&quot;https://crypto.stackexchange.com/questions/11053/rsa-least-significant-bit-oracle-attack&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;
-    
-    </summary>
-    
-      <category term="crypto" scheme="http://yoursite.com/categories/crypto/"/>
-    
-    
-      <category term="rsa" scheme="http://yoursite.com/tags/rsa/"/>
     
   </entry>
   
