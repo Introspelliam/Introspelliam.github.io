@@ -161,8 +161,8 @@
         <category>pwn</category>
       </categories>
       <tags>
-        <tag>ida</tag>
         <tag>调试</tag>
+        <tag>ida</tag>
       </tags>
   </entry>
   <entry>
@@ -657,8 +657,8 @@
         <category>tool</category>
       </categories>
       <tags>
-        <tag>ida</tag>
         <tag>调试</tag>
+        <tag>ida</tag>
       </tags>
   </entry>
   <entry>
@@ -761,8 +761,8 @@
         <category>code</category>
       </categories>
       <tags>
-        <tag>python</tag>
         <tag>c++</tag>
+        <tag>python</tag>
       </tags>
   </entry>
   <entry>
@@ -828,8 +828,8 @@
         <category>pwn</category>
       </categories>
       <tags>
-        <tag>mips</tag>
         <tag>xman</tag>
+        <tag>mips</tag>
       </tags>
   </entry>
   <entry>
@@ -960,8 +960,8 @@
       </categories>
       <tags>
         <tag>调试</tag>
-        <tag>汇编</tag>
         <tag>xman</tag>
+        <tag>汇编</tag>
       </tags>
   </entry>
   <entry>
@@ -973,8 +973,8 @@
       </categories>
       <tags>
         <tag>调试</tag>
-        <tag>汇编</tag>
         <tag>xman</tag>
+        <tag>汇编</tag>
       </tags>
   </entry>
   <entry>
@@ -1267,8 +1267,8 @@
         <category>安全技术</category>
       </categories>
       <tags>
-        <tag>shellcode</tag>
         <tag>stack</tag>
+        <tag>shellcode</tag>
       </tags>
   </entry>
   <entry>

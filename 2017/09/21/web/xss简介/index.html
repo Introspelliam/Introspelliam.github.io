@@ -451,7 +451,7 @@
 <h3 id="3、利用工具"><a href="#3、利用工具" class="headerlink" title="3、利用工具"></a>3、利用工具</h3><h4 id="3-1-xss接收工具"><a href="#3-1-xss接收工具" class="headerlink" title="3.1 xss接收工具"></a>3.1 xss接收工具</h4><p>谈到xss的利用工具，这里不得不提到火日大神，其在github上的工具<a href="https://github.com/firesunCN/BlueLotus_XSSReceiver" target="_blank" rel="external">https://github.com/firesunCN/BlueLotus_XSSReceiver</a></p>
 <p>这个工具是ctf中xss应用的经典工具</p>
 <p><strong>另外一个工具就是nc</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">$</span> nc -l -p 8080</div><div class="line">GET /1.jpg HTTP/1.1</div><div class="line">Host: 10.254.20.127:8080</div><div class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:55.0) Gecko/20100101 Firefox/55.0</div><div class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8</div><div class="line">Accept-Language: zh,zh-CN;q=0.5</div><div class="line">Accept-Encoding: gzip, deflate</div><div class="line">Connection: keep-alive</div><div class="line">Upgrade-Insecure-Requests: 1</div></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">$</span><span class="bash"> nc -l -p 8080</span></div><div class="line">GET /1.jpg HTTP/1.1</div><div class="line">Host: 10.254.20.127:8080</div><div class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:55.0) Gecko/20100101 Firefox/55.0</div><div class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8</div><div class="line">Accept-Language: zh,zh-CN;q=0.5</div><div class="line">Accept-Encoding: gzip, deflate</div><div class="line">Connection: keep-alive</div><div class="line">Upgrade-Insecure-Requests: 1</div></pre></td></tr></table></figure>
 <p>当外界请求<a href="http://10.254.20.127:8080/1.jpg的时候，就会出现上面的信息。" target="_blank" rel="external">http://10.254.20.127:8080/1.jpg的时候，就会出现上面的信息。</a></p>
 <h4 id="3-2-xss检测工具"><a href="#3-2-xss检测工具" class="headerlink" title="3.2 xss检测工具"></a>3.2 xss检测工具</h4><p>xss检测工具很多，现在xsser、xssf</p>
 <p>说真的，两个检测工具不怎么好用，还不如手工呢！</p>
@@ -609,7 +609,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-count">12</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -620,7 +620,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">56</span>
+                <span class="site-state-item-count">55</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

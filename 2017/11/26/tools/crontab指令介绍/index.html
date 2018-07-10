@@ -435,7 +435,7 @@
 <p>Linux下的任务调度分为两类，系统任务调度和用户任务调度。</p>
 <p>系统任务调度：系统周期性所要执行的工作，比如写缓存数据到硬盘、日志清理等。在/etc目录下有一个crontab文件，这个就是系统任务调度的配置文件。</p>
 <p>/etc/crontab文件包括下面几行：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">[root@localhost ~]# cat /etc/crontab </div><div class="line">SHELL=/bin/bash</div><div class="line">PATH=/sbin:/bin:/usr/sbin:/usr/bin</div><div class="line">MAILTO=""</div><div class="line">HOME=/</div><div class="line"><span class="meta">#</span> run-parts</div><div class="line">51 * * * * root run-parts /etc/cron.hourly</div><div class="line">24 7 * * * root run-parts /etc/cron.daily</div><div class="line">22 4 * * 0 root run-parts /etc/cron.weekly</div><div class="line">42 4 1 * * root run-parts /etc/cron.monthly</div></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">[root@localhost ~]# cat /etc/crontab </div><div class="line">SHELL=/bin/bash</div><div class="line">PATH=/sbin:/bin:/usr/sbin:/usr/bin</div><div class="line">MAILTO=""</div><div class="line">HOME=/</div><div class="line"><span class="meta">#</span><span class="bash"> run-parts</span></div><div class="line">51 * * * * root run-parts /etc/cron.hourly</div><div class="line">24 7 * * * root run-parts /etc/cron.daily</div><div class="line">22 4 * * 0 root run-parts /etc/cron.weekly</div><div class="line">42 4 1 * * root run-parts /etc/cron.monthly</div></pre></td></tr></table></figure>
 <p>前四行是用来配置crond任务运行的环境变量，第一行SHELL变量指定了系统要使用哪个shell，这里是bash，第二行PATH变量指定了系统执行命令的路径，第三行MAILTO变量指定了crond的任务执行信息将通过电子邮件发送给root用户，如果MAILTO变量的值为空，则表示不发送任务执行信息给用户，第四行的HOME变量指定了在执行命令或者脚本时使用的主目录。第六至九行表示的含义将在下个小节详细讲述。这里不在多说。</p>
 <p>用户任务调度：用户定期要执行的工作，比如用户数据备份、定时邮件提醒等。用户可以使用 crontab 工具来定制自己的计划任务。所有用户定义的crontab 文件都被保存在 /var/spool/cron目录中。其文件名与用户名一致。</p>
 <p>使用者权限文件：</p>
@@ -737,7 +737,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-count">12</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -748,7 +748,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">56</span>
+                <span class="site-state-item-count">55</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

