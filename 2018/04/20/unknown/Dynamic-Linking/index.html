@@ -1,0 +1,1963 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next mist" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="googleaf0347feb5ea0936.html" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="编译," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Introspelliam" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="本文参考http://www.sco.com/developers/gabi/latest/ch5.dynamic.html 程序解释器（Program Interpreter）可执行程序在动态链接的过程中会有 PT_INTERP 程序段。exec(BA_OS)过程中，系统通过PT_INTERP获取路径名并且创建最初的解释器解释的文件段镜像。这就是说，程序不使用可执行文件原始的段镜像，而是另外创建">
+<meta name="keywords" content="编译">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Dynamic Linking">
+<meta property="og:url" content="http://yoursite.com/2018/04/20/unknown/Dynamic-Linking/index.html">
+<meta property="og:site_name" content="Introspelliam">
+<meta property="og:description" content="本文参考http://www.sco.com/developers/gabi/latest/ch5.dynamic.html 程序解释器（Program Interpreter）可执行程序在动态链接的过程中会有 PT_INTERP 程序段。exec(BA_OS)过程中，系统通过PT_INTERP获取路径名并且创建最初的解释器解释的文件段镜像。这就是说，程序不使用可执行文件原始的段镜像，而是另外创建">
+<meta property="og:image" content="http://yoursite.com/images/2018-04-21/init_example.gif">
+<meta property="og:updated_time" content="2018-07-09T11:41:14.948Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Dynamic Linking">
+<meta name="twitter:description" content="本文参考http://www.sco.com/developers/gabi/latest/ch5.dynamic.html 程序解释器（Program Interpreter）可执行程序在动态链接的过程中会有 PT_INTERP 程序段。exec(BA_OS)过程中，系统通过PT_INTERP获取路径名并且创建最初的解释器解释的文件段镜像。这就是说，程序不使用可执行文件原始的段镜像，而是另外创建">
+<meta name="twitter:image" content="http://yoursite.com/images/2018-04-21/init_example.gif">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"right","display":"always","offset":0,"offset_float":0,"b2t":true,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: false,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/04/20/unknown/Dynamic-Linking/"/>
+
+
+
+
+
+  <title>Dynamic Linking | Introspelliam</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?663212c5ef558c27e77385b620f14823";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Introspelliam</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Just do what works for you, because there will always be someone who thinks differently.</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/20/unknown/Dynamic-Linking/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Introspelliam">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Dynamic Linking</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-20T22:26:26+08:00">
+                2018-04-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/pwn/" itemprop="url" rel="index">
+                    <span itemprop="name">pwn</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="本文参考"><a href="#本文参考" class="headerlink" title="本文参考"></a>本文参考</h3><p><a href="http://www.sco.com/developers/gabi/latest/ch5.dynamic.html" target="_blank" rel="external">http://www.sco.com/developers/gabi/latest/ch5.dynamic.html</a></p>
+<h3 id="程序解释器（Program-Interpreter）"><a href="#程序解释器（Program-Interpreter）" class="headerlink" title="程序解释器（Program Interpreter）"></a>程序解释器（Program Interpreter）</h3><p>可执行程序在动态链接的过程中会有 <code>PT_INTERP</code> 程序段。exec(BA_OS)过程中，系统通过<code>PT_INTERP</code>获取路径名并且创建最初的解释器解释的文件段镜像。这就是说，程序不使用可执行文件原始的段镜像，而是另外创建一块内存给解释器。然后，解释器获得程序的控制权并提供相应的运行环境。</p>
+<p>解释器获得控制权有两种方式：</p>
+<ol>
+<li>利用文件描述符去读取或者映射可执行文件的段到内存中。</li>
+<li>系统依赖可执行文件的格式，加载可执行文件到内存</li>
+</ol>
+<p>由于文件描述符可能存在异常，因此解释器的初始进程状态需要与可执行文件接收的内容相匹配。 解释器可以不需要另外的解释器来解释，也即可以自解释；解释器可以是共享对象或可执行文件。</p>
+<ul>
+<li>共享对象：正常情况下是位置独立加载的，地址可能因进程而异; 系统会在mmap(KE_OS)和相关服务使用的动态段区域中创建段。因此，共享对象解释器通常不会与原始可执行文件的原始段地址冲突。</li>
+<li>可执行文件：可能加载在固定地址处; 如果是这样，系统将使用程序头表中的虚拟地址创建其段。 因此，可执行文件解释器的虚拟地址可能与第一个可执行文件发生冲突; 解释器需要负责解决冲突。</li>
+</ul>
+<h3 id="动态链接器（Dynamic-Linker）"><a href="#动态链接器（Dynamic-Linker）" class="headerlink" title="动态链接器（Dynamic Linker）"></a>动态链接器（Dynamic Linker）</h3><p>当动态链接编译可执行文件，链接器将会在程序头加入<code>PT_INTERP</code>，以告诉系统用动态链接器作为程序解释器。</p>
+<p><em>提供动态连接器的系统位置是特定于处理器的。</em></p>
+<p>exec(BA_OS)和动态链接共同创建了程序的过程映像，过程如下：</p>
+<ul>
+<li>将可执行文件的内存段加入过程映像</li>
+<li>将共享对象的内存段加入过程映像</li>
+<li>对可执行文件及其共享对象执行重定向</li>
+<li>如果文件描述符被交给动态链接器，就关闭用于读取可执行文件的文件描述符</li>
+</ul>
+<h3 id="Program-Interpreter"><a href="#Program-Interpreter" class="headerlink" title="Program Interpreter"></a>Program Interpreter</h3><p>An executable file that participates in dynamic linking shall have one <code>PT_INTERP</code> program header element. During <code>exec</code>(BA_OS), the system retrieves a path name from the <code>PT_INTERP</code> segment and creates the initial process image from the interpreter file&#39;s segments. That is, instead of using the original executable file&#39;s segment images, the system composes a memory image for the interpreter. It then is the interpreter&#39;s responsibility to receive control from the system and provide an environment for the application program.</p>
+<p>As &#39;&#39;Process Initialization&#39;&#39; in Chapter 3 of the processor supplement mentions, the interpreter receives control in one of two ways. First, it may receive a file descriptor to read the executable file, positioned at the beginning. It can use this file descriptor to read and/or map the executable file&#39;s segments into memory. Second, depending on the executable file format, the system may load the executable file into memory instead of giving the interpreter an open file descriptor. With the possible exception of the file descriptor, the interpreter&#39;s initial process state matches what the executable file would have received. The interpreter itself may not require a second interpreter. An interpreter may be either a shared object or an executable file.</p>
+<ul>
+<li>A shared object (the normal case) is loaded as position-independent, with addresses that may vary from one process to another; the system creates its segments in the dynamic segment area used by mmap(KE_OS) and related services [See <code></code>Virtual Address Space&#39;&#39; in Chapter 3 of the processor supplement]. Consequently, a shared object interpreter typically will not conflict with the original executable file&#39;s original segment addresses.</li>
+<li>An executable file may be loaded at fixed addresses; if so, the system creates its segments using the virtual addresses from the program header table. Consequently, an executable file interpreter&#39;s virtual addresses may collide with the first executable file; the interpreter is responsible for resolving conflicts.</li>
+</ul>
+<h3 id="Dynamic-Linker"><a href="#Dynamic-Linker" class="headerlink" title="Dynamic Linker"></a>Dynamic Linker</h3><p>When building an executable file that uses dynamic linking, the link editor adds a program header element of type <code>PT_INTERP</code>  to an executable file, telling the system to invoke the dynamic linker as the program interpreter.</p>
+<hr>
+<p> The locations of the system provided dynamic linkers are processor specific.</p>
+<hr>
+<p><code>Exec</code>(BA_OS) and the dynamic linker cooperate to create the process image for the program, which entails the following actions:</p>
+<ul>
+<li>Adding the executable file&#39;s memory segments to the process image;</li>
+<li>Adding shared object memory segments to the process image;</li>
+<li>Performing relocations for the executable file and its shared objects;</li>
+<li>Closing the file descriptor that was used to read the executable file, if one was given to the dynamic linker;</li>
+<li>Transferring control to the program, making it look as if the program had received control directly from<code>exec</code>(BA_OS).</li>
+</ul>
+<p>The link editor also constructs various data that assist the dynamic linker for executable and shared object files. As shown above in <a href="http://www.sco.com/developers/gabi/latest/ch5.pheader.html" target="_blank" rel="external">&#39;&#39;&#39;Program Header&#39;&#39;</a>, this data resides in loadable segments, making them available during execution. (Once again, recall the exact segment contents are processor-specific. See the processor supplement for complete information).</p>
+<ul>
+<li>A <code>.dynamic</code>section with type <code>SHT_DYNAMIC</code>holds various data. The structure residing at the beginning of the section holds the addresses of other dynamic linking information.</li>
+<li>The <code>.hash</code>section with type <code>SHT_HASH</code>holds a symbol hash table.</li>
+<li>The <code>.got</code> and <code>.plt</code> sections with type <code>SHT_PROGBITS</code> hold two separate tables: the global offset table and the procedure linkage table. Chapter 3 discusses how programs use the global offset table for position-independent code. Sections below explain how the dynamic linker uses and changes the tables to create memory images for object files.</li>
+</ul>
+<p>Because every ABI-conforming program imports the basic system services from a shared object library [See &#39;&#39;System Library&#39;&#39; in Chapter 6], the dynamic linker participates in every ABI-conforming program execution.</p>
+<p>As &#39;&#39;Program Loading&#39;&#39; explains in the processor supplement, shared objects may occupy virtual memory addresses that are different from the addresses recorded in the file&#39;s program header table. The dynamic linker relocates the memory image, updating absolute addresses before the application gains control. Although the absolute address values would be correct if the library were loaded at the addresses specified in the program header table, this normally is not the case.</p>
+<p>If the process environment [see <code>exec</code>(BA_OS)] contains a variable named <code>LD_BIND_NOW</code> with a non-null value, the dynamic linker processes all relocations before transferring control to the program. For example, all the following environment entries would specify this behavior.</p>
+<ul>
+<li>LD_BIND_NOW=1</li>
+<li>LD_BIND_NOW=on</li>
+<li>LD_BIND_NOW=off</li>
+</ul>
+<p>Otherwise, <code>LD_BIND_NOW</code> either does not occur in the environment or has a null value. The dynamic linker is permitted to evaluate procedure linkage table entries lazily, thus avoiding symbol resolution and relocation overhead for functions that are not called. See &#39;&#39;Procedure Linkage Table&#39;&#39; in this chapter of the processor supplement for more information.</p>
+<h3 id="Dynamic-Section"><a href="#Dynamic-Section" class="headerlink" title="Dynamic Section"></a>Dynamic Section</h3><p>If an object file participates in dynamic linking, its program header table will have an element of type<code>PT_DYNAMIC</code>. This &#39;&#39;segment&#39;&#39; contains the <code>.dynamic</code> section. A special symbol, <code>_DYNAMIC</code>, labels the section, which contains an array of the following structures.</p>
+<hr>
+<p>Figure 5-9: Dynamic Structure</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">typedef struct &#123;</div><div class="line">	Elf32_Sword	d_tag;</div><div class="line">   	union &#123;</div><div class="line">   		Elf32_Word	d_val;</div><div class="line">   		Elf32_Addr	d_ptr;</div><div class="line">	&#125; d_un;</div><div class="line">&#125; Elf32_Dyn;</div><div class="line"></div><div class="line">extern Elf32_Dyn	_DYNAMIC[];</div><div class="line"></div><div class="line">typedef struct &#123;</div><div class="line">	Elf64_Sxword	d_tag;</div><div class="line">   	union &#123;</div><div class="line">   		Elf64_Xword	d_val;</div><div class="line">   		Elf64_Addr	d_ptr;</div><div class="line">	&#125; d_un;</div><div class="line">&#125; Elf64_Dyn;</div><div class="line"></div><div class="line">extern Elf64_Dyn	_DYNAMIC[];</div></pre></td></tr></table></figure>
+<hr>
+<p>For each object with this type, <code>d_tag</code> controls the interpretation of <code>d_un</code>.</p>
+<ul>
+<li><p><code>d_val</code></p>
+<p>These objects represent integer values with various interpretations.</p>
+</li>
+<li><p><code>d_ptr</code></p>
+<p>These objects represent program virtual addresses. As mentioned previously, a file&#39;s virtual addresses might not match the memory virtual addresses during execution. When interpreting addresses contained in the dynamic structure, the dynamic linker computes actual addresses, based on the original file value and the memory base address. For consistency, files do <em>not</em> contain relocation  entries to &quot; correct&#39;&#39; addresses in the dynamic structure.   </p>
+</li>
+</ul>
+<p>To make it simpler for tools to interpret the contents of dynamic section entries, the value of each tag, except for those in two special compatibility ranges, will determine the interpretation of the <code>d_un</code> union. A tag whose value is an even number indicates a dynamic section entry that uses <code>d_ptr</code>. <strong>A tag whose value is an odd number indicates a dynamic section entry that uses <code>d_val</code> or that uses neither <code>d_ptr</code> nor <code>d_val</code></strong>. Tags whose values are less than the special value <code>DT_ENCODING</code> and tags whose values fall between <code>DT_HIOS</code> and <code>DT_LOPROC</code> do not follow these rules.</p>
+<p>The following table summarizes the tag requirements for executable and shared object files. If a tag is marked &quot;mandatory&#39;&#39;, the dynamic linking array for an ABI-conforming file must have an entry of that type. Likewise, &quot;optional&#39;&#39; means an entry for the tag may appear but is not required.</p>
+<hr>
+<p>Figure 5-10: Dynamic Array Tags <code>d_tag</code></p>
+<table>
+<thead>
+<tr>
+<th><strong>Name</strong></th>
+<th><strong>Value</strong></th>
+<th><code>d_un</code></th>
+<th><strong>Executable</strong></th>
+<th><strong>Shared Object</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DT_NULL</code></td>
+<td><code>0</code></td>
+<td>ignored</td>
+<td>mandatory</td>
+<td>mandatory</td>
+</tr>
+<tr>
+<td><code>DT_NEEDED</code></td>
+<td><code>1</code></td>
+<td><code>d_val</code></td>
+<td>optional</td>
+<td>optional</td>
+</tr>
+<tr>
+<td><code>DT_PLTRELSZ</code></td>
+<td><code>2</code></td>
+<td><code>d_val</code></td>
+<td>optional</td>
+<td>optional</td>
+</tr>
+<tr>
+<td><code>DT_PLTGOT</code></td>
+<td><code>3</code></td>
+<td><code>d_ptr</code></td>
+<td>optional</td>
+<td>optional</td>
+</tr>
+<tr>
+<td><code>DT_HASH</code></td>
+<td><code>4</code></td>
+<td><code>d_ptr</code></td>
+<td>mandatory</td>
+<td>mandatory</td>
+</tr>
+<tr>
+<td><code>DT_STRTAB</code></td>
+<td><code>5</code></td>
+<td><code>d_ptr</code></td>
+<td>mandatory</td>
+<td>mandatory</td>
+</tr>
+<tr>
+<td><code>DT_SYMTAB</code></td>
+<td><code>6</code></td>
+<td><code>d_ptr</code></td>
+<td>mandatory</td>
+<td>mandatory</td>
+</tr>
+<tr>
+<td><code>DT_RELA</code></td>
+<td><code>7</code></td>
+<td><code>d_ptr</code></td>
+<td>mandatory</td>
+<td>optional</td>
+</tr>
+<tr>
+<td><code>DT_RELASZ</code></td>
+<td><code>8</code></td>
+<td><code>d_val</code></td>
+<td>mandatory</td>
+<td>optional</td>
+</tr>
+<tr>
+<td><code>DT_RELAENT</code></td>
+<td><code>9</code></td>
+<td><code>d_val</code></td>
+<td>mandatory</td>
+<td>optional</td>
+</tr>
+<tr>
+<td><code>DT_STRSZ</code></td>
+<td><code>10</code></td>
+<td><code>d_val</code></td>
+<td>mandatory</td>
+<td>mandatory</td>
+</tr>
+<tr>
+<td><code>DT_SYMENT</code></td>
+<td><code>11</code></td>
+<td><code>d_val</code></td>
+<td>mandatory</td>
+<td>mandatory</td>
+</tr>
+<tr>
+<td><code>DT_INIT</code></td>
+<td><code>12</code></td>
+<td><code>d_ptr</code></td>
+<td>optional</td>
+<td>optional</td>
+</tr>
+<tr>
+<td><code>DT_FINI</code></td>
+<td><code>13</code></td>
+<td><code>d_ptr</code></td>
+<td>optional</td>
+<td>optional</td>
+</tr>
+<tr>
+<td><code>DT_SONAME</code></td>
+<td><code>14</code></td>
+<td><code>d_val</code></td>
+<td>ignored</td>
+<td>optional</td>
+</tr>
+<tr>
+<td><code>DT_RPATH*</code></td>
+<td><code>15</code></td>
+<td><code>d_val</code></td>
+<td>optional</td>
+<td>ignored</td>
+</tr>
+<tr>
+<td><code>DT_SYMBOLIC*</code></td>
+<td><code>16</code></td>
+<td>ignored</td>
+<td>ignored</td>
+<td>optional</td>
+</tr>
+<tr>
+<td><code>DT_REL</code></td>
+<td><code>17</code></td>
+<td><code>d_ptr</code></td>
+<td>mandatory</td>
+<td>optional</td>
+</tr>
+<tr>
+<td><code>DT_RELSZ</code></td>
+<td><code>18</code></td>
+<td><code>d_val</code></td>
+<td>mandatory</td>
+<td>optional</td>
+</tr>
+<tr>
+<td><code>DT_RELENT</code></td>
+<td><code>19</code></td>
+<td><code>d_val</code></td>
+<td>mandatory</td>
+<td>optional</td>
+</tr>
+<tr>
+<td><code>DT_PLTREL</code></td>
+<td><code>20</code></td>
+<td><code>d_val</code></td>
+<td>optional</td>
+<td>optional</td>
+</tr>
+<tr>
+<td><code>DT_DEBUG</code></td>
+<td><code>21</code></td>
+<td><code>d_ptr</code></td>
+<td>optional</td>
+<td>ignored</td>
+</tr>
+<tr>
+<td><code>DT_TEXTREL*</code></td>
+<td><code>22</code></td>
+<td>ignored</td>
+<td>optional</td>
+<td>optional</td>
+</tr>
+<tr>
+<td><code>DT_JMPREL</code></td>
+<td><code>23</code></td>
+<td><code>d_ptr</code></td>
+<td>optional</td>
+<td>optional</td>
+</tr>
+<tr>
+<td><code>DT_BIND_NOW*</code></td>
+<td><code>24</code></td>
+<td>ignored</td>
+<td>optional</td>
+<td>optional</td>
+</tr>
+<tr>
+<td><code>DT_INIT_ARRAY</code></td>
+<td><code>25</code></td>
+<td><code>d_ptr</code></td>
+<td>optional</td>
+<td>optional</td>
+</tr>
+<tr>
+<td><code>DT_FINI_ARRAY</code></td>
+<td><code>26</code></td>
+<td><code>d_ptr</code></td>
+<td>optional</td>
+<td>optional</td>
+</tr>
+<tr>
+<td><code>DT_INIT_ARRAYSZ</code></td>
+<td><code>27</code></td>
+<td><code>d_val</code></td>
+<td>optional</td>
+<td>optional</td>
+</tr>
+<tr>
+<td><code>DT_FINI_ARRAYSZ</code></td>
+<td><code>28</code></td>
+<td><code>d_val</code></td>
+<td>optional</td>
+<td>optional</td>
+</tr>
+<tr>
+<td><code>DT_RUNPATH</code></td>
+<td><code>29</code></td>
+<td><code>d_val</code></td>
+<td>optional</td>
+<td>optional</td>
+</tr>
+<tr>
+<td><code>DT_FLAGS</code></td>
+<td><code>30</code></td>
+<td><code>d_val</code></td>
+<td>optional</td>
+<td>optional</td>
+</tr>
+<tr>
+<td><code>DT_ENCODING</code></td>
+<td><code>32</code></td>
+<td>unspecified</td>
+<td>unspecified</td>
+<td>unspecified</td>
+</tr>
+<tr>
+<td><code>DT_PREINIT_ARRAY</code></td>
+<td><code>32</code></td>
+<td><code>d_ptr</code></td>
+<td>optional</td>
+<td>ignored</td>
+</tr>
+<tr>
+<td><code>DT_PREINIT_ARRAYSZ</code></td>
+<td><code>33</code></td>
+<td><code>d_val</code></td>
+<td>optional</td>
+<td>ignored</td>
+</tr>
+<tr>
+<td><code>DT_SYMTAB_SHNDX</code></td>
+<td><code>34</code></td>
+<td><code>d_ptr</code></td>
+<td>optional</td>
+<td>optional</td>
+</tr>
+<tr>
+<td><code>DT_LOOS</code></td>
+<td><code>0x6000000D</code></td>
+<td>unspecified</td>
+<td>unspecified</td>
+<td>unspecified</td>
+</tr>
+<tr>
+<td><code>DT_HIOS</code></td>
+<td><code>0x6ffff000</code></td>
+<td>unspecified</td>
+<td>unspecified</td>
+<td>unspecified</td>
+</tr>
+<tr>
+<td><code>DT_LOPROC</code></td>
+<td><code>0x70000000</code></td>
+<td>unspecified</td>
+<td>unspecified</td>
+<td>unspecified</td>
+</tr>
+<tr>
+<td><code>DT_HIPROC</code></td>
+<td><code>0x7fffffff</code></td>
+<td>unspecified</td>
+<td>unspecified</td>
+<td>unspecified</td>
+</tr>
+</tbody>
+</table>
+<p>* Signifies an entry that is at level 2.</p>
+<hr>
+<ul>
+<li><p><code>DT_NULL</code></p>
+<p>An entry with a <code>DT_NULL</code> tag marks the end of the <code>_DYNAMIC</code> array.</p>
+</li>
+<li><p><code>DT_NEEDED</code></p>
+<p>This element holds the string table offset of a null-terminated string, giving the name of a needed library. The offset is an index into the table recorded in the <code>DT_STRTAB</code> code. See <a href="http://www.sco.com/developers/gabi/latest/ch5.dynamic.html#shobj_dependencies" target="_blank" rel="external">&quot;Shared Object Dependencies&#39;&#39;</a> for more information about these names. The dynamic array may contain multiple entries with this type. These entries&#39; relative order is significant, though their relation to entries of other types is not.</p>
+</li>
+<li><p><code>DT_PLTRELSZ</code></p>
+<p>This element holds the total size, in bytes, of the relocation entries associated with the procedure linkage table. If an entry of type <code>DT_JMPREL</code> is present, a <code>DT_PLTRELSZ</code> must accompany it.</p>
+</li>
+<li><p><code>DT_PLTGOT</code></p>
+<p>This element holds an address associated with the procedure linkage table and/or the global offset table. See this section in the processor supplement for details.</p>
+</li>
+<li><p><code>DT_HASH</code></p>
+<p>This element holds the address of the symbol hash table, described in <a href="http://www.sco.com/developers/gabi/latest/ch5.dynamic.html#hash" target="_blank" rel="external">&quot;Hash Table&#39;&#39;</a>. This hash table refers to the symbol table referenced by the <code>DT_SYMTAB</code> element.</p>
+</li>
+<li><p><code>DT_STRTAB</code></p>
+<p>This element holds the address of the string table, described in Chapter 4. Symbol names, library names, and other strings reside in this table.</p>
+</li>
+<li><p><code>DT_SYMTAB</code></p>
+<p>This element holds the address of the symbol table, described in the first part of this chapter, with <code>Elf32_Sym</code> entries for the 32-bit class of files and <code>Elf64_Sym</code> entries for the 64-bit class of files.</p>
+</li>
+<li><p><code>DT_RELA</code></p>
+<p>This element holds the address of a relocation table, described in Chapter 4. Entries in the table have explicit addends, such as <code>Elf32_Rela</code> for the 32-bit file class or <code>Elf64_Rela</code> for the 64-bit file class. An object file may have multiple relocation sections. When building the relocation table for an executable or shared object file, the link editor catenates those sections to form a single table. Although the sections remain independent in the object file, the dynamic linker sees a single table. When the dynamic linker creates the process image for an executable file or adds a shared object to the process image, it reads the relocation table and performs the associated actions. If this element is present, the dynamic structure must also have <code>DT_RELASZ</code> and <code>DT_RELAENT</code> elements. When relocation is “mandatory&#39;&#39; for a file, either <code>DT_RELA</code> or <code>DT_REL</code> may occur (both are permitted but not required).</p>
+</li>
+<li><p><code>DT_RELASZ</code></p>
+<p>This element holds the total size, in bytes, of the <code>DT_RELA</code> relocation table.</p>
+</li>
+<li><p><code>DT_RELAENT</code></p>
+<p>This element holds the size, in bytes, of the <code>DT_RELA</code> relocation entry.</p>
+</li>
+<li><p><code>DT_STRSZ</code></p>
+<p>This element holds the size, in bytes, of the string table.</p>
+</li>
+<li><p><code>DT_SYMENT</code></p>
+<p>This element holds the size, in bytes, of a symbol table entry.</p>
+</li>
+<li><p><code>DT_INIT</code></p>
+<p>This element holds the address of the initialization function, discussed in <a href="http://www.sco.com/developers/gabi/latest/ch5.dynamic.html#init_fini" target="_blank" rel="external">“Initialization and Termination Functions&#39;&#39;</a> below.</p>
+</li>
+<li><p><code>DT_FINI</code></p>
+<p>This element holds the address of the termination function, discussed in <a href="http://www.sco.com/developers/gabi/latest/ch5.dynamic.html#init_fini" target="_blank" rel="external">“Initialization and Termination Functions&#39;&#39;</a> below. </p>
+</li>
+<li><p><code>DT_SONAME</code></p>
+<p>This element holds the string table offset of a null-terminated string, giving the name of the shared object. The offset is an index into the table recorded in the <code>DT_STRTAB</code> entry. See <a href="http://www.sco.com/developers/gabi/latest/ch5.dynamic.html#shobj_dependencies" target="_blank" rel="external">“Shared Object Dependencies&#39;&#39;</a> below for more information about these names. </p>
+</li>
+<li><p><code>DT_RPATH</code></p>
+<p>This element holds the string table offset of a null-terminated search library search path string discussed in <a href="http://www.sco.com/developers/gabi/latest/ch5.dynamic.html#shobj_dependencies" target="_blank" rel="external">”Shared Object Dependencies&#39;&#39;</a>. The offset is an index into the table recorded in the <code>DT_STRTAB</code> entry. This entry is at level 2. Its use has been superseded by <a href="http://www.sco.com/developers/gabi/latest/ch5.dynamic.html#dt_runpath" target="_blank" rel="external"><code>DT_RUNPATH</code></a>. </p>
+</li>
+<li><p><code>DT_SYMBOLIC</code></p>
+<p>This element&#39;s presence in a shared object library alters the dynamic linker&#39;s symbol resolution algorithm for references within the library. Instead of starting a symbol search with the executable file, the dynamic linker starts from the shared object itself. If the shared object fails to supply the referenced symbol, the dynamic linker then searches the executable file and other shared objects as usual. This entry is at level 2. Its use has been superseded by the <a href="http://www.sco.com/developers/gabi/latest/ch5.dynamic.html#df_symbolic" target="_blank" rel="external"><code>DF_SYMBOLIC</code></a> flag.</p>
+</li>
+<li><p><code>DT_REL</code></p>
+<p>This element is similar to <code>DT_RELA</code>, except its table has implicit addends, such as <code>Elf32_Rel</code> for the 32-bit file class or <code>Elf64_Rel</code> for the 64-bit file class. If this element is present, the dynamic structure must also have<code>DT_RELSZ</code> and <code>DT_RELENT</code> elements.</p>
+</li>
+<li><p><code>DT_RELSZ</code></p>
+<p>This element holds the total size, in bytes, of the <code>DT_REL</code> relocation table.</p>
+</li>
+<li><p><code>DT_RELENT</code></p>
+<p>This element holds the size, in bytes, of the <code>DT_REL</code> relocation entry.</p>
+</li>
+<li><p><code>DT_PLTREL</code></p>
+<p>This member specifies the type of relocation entry to which the procedure linkage table refers. The <code>d_val</code>member holds <code>DT_REL</code> or <code>DT_RELA</code>, as appropriate. All relocations in a procedure linkage table must use the same relocation.</p>
+</li>
+<li><p><code>DT_DEBUG</code></p>
+<p>This member is used for debugging. Its contents are not specified for the ABI; programs that access this entry are not ABI-conforming.</p>
+</li>
+<li><p><code>DT_TEXTREL</code></p>
+<p>This member&#39;s absence signifies that no relocation entry should cause a modification to a non-writable segment, as specified by the segment permissions in the program header table. If this member is present, one or more relocation entries might request modifications to a non-writable segment, and the dynamic linker can prepare accordingly. This entry is at level 2. Its use has been superseded by the <a href="http://www.sco.com/developers/gabi/latest/ch5.dynamic.html#df_textrel" target="_blank" rel="external"><code>DF_TEXTREL</code></a> flag.</p>
+</li>
+<li><p><code>DT_JMPREL</code></p>
+<p>If present, this entry&#39;s <code>d_ptr</code> member holds the address of relocation entries associated solely with the procedure linkage table. Separating these relocation entries lets the dynamic linker ignore them during process initialization, if lazy binding is enabled. If this entry is present, the related entries of types<code>DT_PLTRELSZ</code> and <code>DT_PLTREL</code> must also be present.</p>
+</li>
+<li><p><code>DT_BIND_NOW</code></p>
+<p>If present in a shared object or executable, this entry instructs the dynamic linker to process all relocations for the object containing this entry before transferring control to the program. The presence of this entry takes precedence over a directive to use lazy binding for this object when specified through the environment or via <code>dlopen</code>(BA_LIB). This entry is at level 2. Its use has been superseded by the <a href="http://www.sco.com/developers/gabi/latest/ch5.dynamic.html#df_bind_now" target="_blank" rel="external"><code>DF_BIND_NOW</code></a> flag.</p>
+</li>
+<li><p><code>DT_INIT_ARRAY</code></p>
+<p>This element holds the address of the array of pointers to initialization functions, discussed in<a href="http://www.sco.com/developers/gabi/latest/ch5.dynamic.html#init_fini" target="_blank" rel="external"><code></code>Initialization and Termination Functions&#39;&#39;</a> below.</p>
+</li>
+<li><p><code>DT_FINI_ARRAY</code></p>
+<p>This element holds the address of the array of pointers to termination functions, discussed in<a href="http://www.sco.com/developers/gabi/latest/ch5.dynamic.html#init_fini" target="_blank" rel="external"><code></code>Initialization and Termination Functions&#39;&#39;</a> below.</p>
+</li>
+<li><p><code>DT_INIT_ARRAYSZ</code></p>
+<p>This element holds the size in bytes of the array of initialization functions pointed to by the <code>DT_INIT_ARRAY</code>entry. If an object has a <code>DT_INIT_ARRAY</code> entry, it must also have a <code>DT_INIT_ARRAYSZ</code> entry.</p>
+</li>
+<li><p><code>DT_FINI_ARRAYSZ</code></p>
+<p>This element holds the size in bytes of the array of termination functions pointed to by the <code>DT_FINI_ARRAY</code>entry. If an object has a <code>DT_FINI_ARRAY</code> entry, it must also have a <code>DT_FINI_ARRAYSZ</code> entry.</p>
+</li>
+<li><p><code>DT_RUNPATH</code></p>
+<p>This element holds the string table offset of a null-terminated library search path string discussed in <a href="http://www.sco.com/developers/gabi/latest/ch5.dynamic.html#shobj_dependencies" target="_blank" rel="external">”Shared Object Dependencies&#39;&#39;</a>. The offset is an index into the table recorded in the <code>DT_STRTAB</code> entry.</p>
+</li>
+<li><p><code>DT_FLAGS</code></p>
+<p>This element holds flag values specific to the object being loaded. Each flag value will have the name <code>DF_</code><em>flag_name</em>. Defined values and their meanings are described <a href="http://www.sco.com/developers/gabi/latest/ch5.dynamic.html#df_flags" target="_blank" rel="external">below</a>. All other values are reserved.</p>
+</li>
+<li><p><code>DT_PREINIT_ARRAY</code></p>
+<p>This element holds the address of the array of pointers to pre-initialization functions, discussed in <a href="http://www.sco.com/developers/gabi/latest/ch5.dynamic.html#init_fini" target="_blank" rel="external">“Initialization and Termination Functions&#39;&#39;</a> below. The <code>DT_PREINIT_ARRAY</code> table is processed only in an executable file; it is ignored if contained in a shared object. </p>
+</li>
+<li><p><code>DT_PREINIT_ARRAYSZ</code></p>
+<p>This element holds the size in bytes of the array of pre-initialization functions pointed to by the <code>DT_PREINIT_ARRAY</code> entry. If an object has a <code>DT_PREINIT_ARRAY</code> entry, it must also have a <code>DT_PREINIT_ARRAYSZ</code> entry. As with <code>DT_PREINIT_ARRAY</code>, this entry is ignored if it appears in a shared object.</p>
+</li>
+<li><p><code>DT_SYMTAB_SHNDX</code></p>
+<p>This element holds the address of the <code>SHT_SYMTAB_SHNDX</code> section associated with the dynamic symbol table referenced by the <code>DT_SYMTAB</code> element.</p>
+</li>
+<li><p><code>DT_ENCODING</code></p>
+<p>Values greater than or equal to <code>DT_ENCODING</code> and less than <code>DT_LOOS</code> follow the rules for the interpretation of the <code>d_un</code> union described <a href="http://www.sco.com/developers/gabi/latest/ch5.dynamic.html#tag_encodings" target="_blank" rel="external">above</a>.</p>
+</li>
+<li><p><code>DT_LOOS</code> through <code>DT_HIOS</code></p>
+<p>Values in this inclusive range are reserved for operating system-specific semantics. All such values follow the rules for the interpretation of the <code>d_un</code> union described <a href="http://www.sco.com/developers/gabi/latest/ch5.dynamic.html#tag_encodings" target="_blank" rel="external">above</a>.</p>
+</li>
+<li><p><code>DT_LOPROC</code> through <code>DT_HIPROC</code></p>
+<p>Values in this inclusive range are reserved for processor-specific semantics. If meanings are specified, the processor supplement explains them. All such values follow the rules for the interpretation of the <code>d_un</code>union described <a href="http://www.sco.com/developers/gabi/latest/ch5.dynamic.html#tag_encodings" target="_blank" rel="external">above</a>.</p>
+</li>
+</ul>
+<p>Except for the <code>DT_NULL</code> element at the end of the array, and the relative order of <code>DT_NEEDED</code> elements, entries may appear in any order. Tag values not appearing in the table are reserved.</p>
+<hr>
+<p>Figure 5-11: <code>DT_FLAGS</code> values</p>
+<table>
+<thead>
+<tr>
+<th><strong>Name</strong></th>
+<th><strong>Value</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DF_ORIGIN</code></td>
+<td><code>0x1</code></td>
+</tr>
+<tr>
+<td><code>DF_SYMBOLIC</code></td>
+<td><code>0x2</code></td>
+</tr>
+<tr>
+<td><code>DF_TEXTREL</code></td>
+<td><code>0x4</code></td>
+</tr>
+<tr>
+<td><code>DF_BIND_NOW</code></td>
+<td><code>0x8</code></td>
+</tr>
+<tr>
+<td><code>DF_STATIC_TLS</code></td>
+<td><code>0x10</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<ul>
+<li><p><code>DF_ORIGIN</code></p>
+<p>This flag signifies that the object being loaded may make reference to the <code>$ORIGIN</code> substitution string (see <a href="http://www.sco.com/developers/gabi/latest/ch5.dynamic.html#substitution" target="_blank" rel="external">&quot;Substitution Sequences&#39;&#39;</a>). The dynamic linker must determine the pathname of the object containing this entry when the object is loaded. </p>
+</li>
+<li><p><code>DF_SYMBOLIC</code></p>
+<p>If this flag is set in a shared object library, the dynamic linker&#39;s symbol resolution algorithm for references within the library is changed. Instead of starting a symbol search with the executable file, the dynamic linker starts from the shared object itself. If the shared object fails to supply the referenced symbol, the dynamic linker then searches the executable file and other shared objects as usual.</p>
+</li>
+<li><p><code>DF_TEXTREL</code></p>
+<p>If this flag is not set, no relocation entry should cause a modification to a non-writable segment, as specified by the segment permissions in the program header table. If this flag is set, one or more relocation entries might request modifications to a non-writable segment, and the dynamic linker can prepare accordingly.</p>
+</li>
+<li><p><code>DF_BIND_NOW</code></p>
+<p>If set in a shared object or executable, this flag instructs the dynamic linker to process all relocations for the object containing this entry before transferring control to the program. The presence of this entry takes precedence over a directive to use lazy binding for this object when specified through the environment or via <code>dlopen</code>(BA_LIB).</p>
+</li>
+<li><p><code>DF_STATIC_TLS</code></p>
+<p>If set in a shared object or executable, this flag instructs the dynamic linker to reject attempts to load this file dynamically. It indicates that the shared object or executable contains code using a <em>static thread-local storage</em> scheme. Implementations need not support any form of thread-local storage.</p>
+</li>
+</ul>
+<h3 id="Shared-Object-Dependencies"><a href="#Shared-Object-Dependencies" class="headerlink" title="Shared Object Dependencies"></a>Shared Object Dependencies</h3><p>When the link editor processes an archive library, it extracts library members and copies them into the output object file. These statically linked services are available during execution without involving the dynamic linker. Shared objects also provide services, and the dynamic linker must attach the proper shared object files to the process image for execution.</p>
+<p>When the dynamic linker creates the memory segments for an object file, the dependencies (recorded in<code>DT_NEEDED</code> entries of the dynamic structure) tell what shared objects are needed to supply the program&#39;s services. By repeatedly connecting referenced shared objects and their dependencies, the dynamic linker builds a complete process image. When resolving symbolic references, the dynamic linker examines the symbol tables with a breadth-first search. That is, it first looks at the symbol table of the executable program itself, then at the symbol tables of the <code>DT_NEEDED</code> entries (in order), and then at the second level <code>DT_NEEDED</code> entries, and so on. Shared object files must be readable by the process; other permissions are not required.</p>
+<hr>
+<p> Even when a shared object is referenced multiple times in the dependency list, the dynamic linker will connect the object only once to the process.</p>
+<hr>
+<p>Names in the dependency list are copies either of the <code>DT_SONAME</code> strings or the path names of the shared objects used to build the object file. For example, if the link editor builds an executable file using one shared object with a <code>DT_SONAME</code> entry of <code>lib1</code> and another shared object library with the path name <code>/usr/lib/lib2</code>, the executable file will contain <code>lib1</code> and <code>/usr/lib/lib2</code> in its dependency list.</p>
+<p>If a shared object name has one or more slash (<code>/</code>) characters anywhere in the name, such as <code>/usr/lib/lib2</code> or <code>directory/file</code>, the dynamic linker uses that string directly as the path name. If the name has no slashes, such as <code>lib1</code>, three facilities specify shared object path searching.</p>
+<hr>
+<ul>
+<li><ul>
+<li><p>The dynamic array tag DT_RUNPATH gives a string that holds a list of directories, separated by colons (:). For example, the string <code>/home/dir/lib:/home/dir2/lib:</code> tells the dynamic linker to search first the directory <code>/home/dir/lib</code> , then <code>/home/dir2/lib</code>, and then the current directory to find dependencies.</p>
+<p>The set of directories specified by a given <code>DT_RUNPATH</code> entry is used to find only the immediate dependencies of the executable or shared object containing the <code>DT_RUNPATH</code> entry. That is, it is used only for those dependencies contained in the <code>DT_NEEDED</code> entries of the dynamic structure containing the <code>DT_RUNPATH</code> entry, itself. One object&#39;s <code>DT_RUNPATH</code> entry does not affect the search for any other object&#39;s dependencies.</p>
+</li>
+<li><p>A variable called  <code>LD_LIBRARY_PATH</code>in the process environment [see exec(BA_OS)] may hold a list of directories as above, optionally followed by a semicolon (;) and another directory list. The following values would be equivalent to the previous example:</p>
+<ul>
+<li><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">LD_LIBRARY_PATH=/home/dir/usr/lib:/home/dir2/usr/lib:</div></pre></td></tr></table></figure>
+</li>
+<li><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">LD_LIBRARY_PATH=/home/dir/usr/lib;/home/dir2/usr/lib:</div></pre></td></tr></table></figure>
+</li>
+<li><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">LD_LIBRARY_PATH=/home/dir/usr/lib:/home/dir2/usr/lib:;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>Although some programs (such as the link editor) treat the lists before and after the semicolon differently, the dynamic linker does not. Nevertheless, the dynamic linker accepts the semicolon notation, with the semantics described previously.</p>
+<p>All <code>LD_LIBRARY_PATH</code> directories are searched before those from <code>DT_RUNPATH</code>.</p>
+</li>
+<li><p>Finally, if the other two groups of directories fail to locate the desired library, the dynamic linker searches the default directories, <code>/usr/lib</code> or such other directories as may be specified by the ABI supplement for a given processor.</p>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<ul>
+<li>When the dynamic linker is searching for shared objects, it is not a fatal error if an ELF file with the wrong attributes is encountered in the search. Instead, the dynamic linker shall exhaust the search of all paths before determining that a matching object could not be found. For this determination, the relevant attributes are contained in the following ELF header fields: <code>e_ident[EI_DATA]</code>, <code>e_ident[EI_CLASS]</code>,<code>e_ident[EI_OSABI]</code>, <code>e_ident[EI_ABIVERSION]</code>, <code>e_machine</code>, <code>e_type</code>, <code>e_flags</code> and <code>e_version</code>.</li>
+</ul>
+<hr>
+<ul>
+<li>For security, the dynamic linker ignores <code>LD_LIBRARY_PATH</code> for set-user and set-group ID programs. It does, however, search <code>DT_RUNPATH</code>  directories and the default directories. The same restriction may be applied to processes that have more than minimal privileges on systems with installed extended security mechanisms.</li>
+</ul>
+<hr>
+<ul>
+<li><p>A fourth search facility, the dynamic array tag  <code>DT_RPATH</code>, has been moved to level 2 in the ABI. It provides a colon-separated list of directories to search. Directories specified by <code>DT_RPATH</code> are searched before directories specified by <code>LD_LIBRARY_PATH</code></p>
+</li>
+<li><p>If both <code>DT_RPATH</code> and <code>DT_RUNPATH</code> entries appear in a single object&#39;s dynamic array, the dynamic linker processes only the <code>DT_RUNPATH</code> entry.</p>
+</li>
+</ul>
+<hr>
+<ul>
+<li><h3 id="Substitution-Sequences"><a href="#Substitution-Sequences" class="headerlink" title="Substitution Sequences"></a>Substitution Sequences</h3></li>
+<li><p>Within a string provided by dynamic array entries with the <code>DT_NEEDED</code> or <code>DT_RUNPATH</code> tags and in pathnames passed as parameters to the <code>dlopen()</code> routine, a dollar sign ($) introduces a substitution sequence. This sequence consists of the dollar sign immediately followed by either the longest name sequence or a name contained within left and right braces ({) and (}). A name is a sequence of bytes that start with either a letter or an underscore followed by zero or more letters, digits or underscores. If a dollar sign is not immediately followed by a name or a brace-enclosed name, the behavior of the dynamic linker is unspecified.</p>
+</li>
+<li><p>If the name is ”ORIGIN“, then the substitution sequence is replaced by the dynamic linker with the absolute pathname of the directory in which the object containing the substitution sequence originated. Moreover, the pathname will contain no symbolic links or use of  ”.&quot; or &quot;..&quot; components. Otherwise (when the name is not &quot;<code>ORIGIN</code>&#39;&#39;) the behavior of the dynamic linker is unspecified.</p>
+</li>
+<li><p>When the dynamic linker loads an object that uses <code>$ORIGIN</code>, it must calculate the pathname of the directory containing the object. Because this calculation can be computationally expensive, implementations may want to avoid the calculation for objects that do not use <code>$ORIGIN</code>. If an object calls <code>dlopen()</code> with a string containing <code>$ORIGIN</code> and does not use <code>$ORIGIN</code> in one if its dynamic array entries, the dynamic linker may not have calculated the pathname for the object until the <code>dlopen()</code> actually occurs. Since the application may have changed its current working directory before the <code>dlopen()</code> call, the calculation may not yield the correct result. To avoid this possibility, an object may signal its intention to reference <code>$ORIGIN</code> by setting the <a href="http://www.sco.com/developers/gabi/latest/ch5.dynamic.html#df_flags" target="_blank" rel="external"><code>DF_ORIGIN</code> flag</a>. An implementation may reject an attempt to use <code>$ORIGIN</code>within a <code>dlopen()</code> call from an object that did not set the <code>DF_ORIGIN</code> flag and did not use <code>$ORIGIN</code> within its dynamic array.</p>
+</li>
+</ul>
+<hr>
+<ul>
+<li>For security, the dynamic linker does not allow use of <code>$ORIGIN</code> substitution sequences for set-user and set-group ID programs. For such sequences that appear within strings specified by   <code>DT_RUNPATH</code> dynamic array entries, the specific search path containing the <code>$ORIGIN</code> sequence is ignored (though other search paths in the same string are processed). <code>$ORIGIN</code> sequences within a  <code>DT_NEEDED</code> entry or path passed as a parameter to  <code>dlopen()</code> are treated as errors. The same restrictions may be applied to processes that have more than minimal privileges on systems with installed extended security mechanisms.</li>
+</ul>
+<hr>
+<ul>
+<li><h3 id="Global-Offset-Table"><a href="#Global-Offset-Table" class="headerlink" title="Global Offset Table"></a>Global Offset Table</h3></li>
+</ul>
+<hr>
+<ul>
+<li>This section requires processor-specific information. The System V Application Binary Interface supplement for the desired processor describes the details.</li>
+</ul>
+<hr>
+<ul>
+<li><h3 id="Procedure-Linkage-Table"><a href="#Procedure-Linkage-Table" class="headerlink" title="Procedure Linkage Table"></a>Procedure Linkage Table</h3></li>
+</ul>
+<hr>
+<ul>
+<li>This section requires processor-specific information. The System V Application Binary Interface supplement for the desired processor describes the details.</li>
+</ul>
+<hr>
+<ul>
+<li><h3 id="Hash-Table"><a href="#Hash-Table" class="headerlink" title="Hash Table"></a>Hash Table</h3></li>
+<li><p>A hash table of    <code>Elf32_Word</code> objects supports symbol table access. The same table layout is used for both the 32-bit and 64-bit file class. Labels appear below to help explain the hash table organization, but they are not part of the specification.</p>
+</li>
+</ul>
+<hr>
+<ul>
+<li><p>Figure 5-12: Symbol Hash Table</p>
+</li>
+<li><p>| <code>nbucket</code>                         |<br>| --------------------------------- |<br>| <code>nchain</code>                          |<br>| <code>bucket[0]. . .bucket[nbucket-1]</code> |<br>| <code>chain[0]. . .chain[nchain-1]</code>    |</p>
+</li>
+</ul>
+<hr>
+<ul>
+<li>The <code>bucket</code> array contains <code>nbucket</code> entries, and the <code>chain</code> array contains <code>nchain</code> entries; indexes start at 0. Both <code>bucket</code> and <code>chain</code> hold symbol table indexes. Chain table entries parallel the symbol table. The number of symbol table entries should equal <code>nchain</code>; so symbol table indexes also select chain table entries. A hashing function (shown below) accepts a symbol name and returns a value that may be used to compute a <code>bucket</code> index. Consequently, if the hashing function returns the value <em>x</em> for some name, <code>bucket[</code><em>x</em><code>%nbucket]</code> gives an index, <em>y</em>, into both the symbol table and the chain table. If the symbol table entry is not the one desired, <code>chain[</code><em>y</em><code>]</code> gives the next symbol table entry with the same hash value. One can follow the <code>chain</code> links until either the selected symbol table entry holds the desired name or the <code>chain</code>entry contains the value <code>STN_UNDEF</code>.</li>
+</ul>
+<hr>
+<ul>
+<li><p>Figure 5-13: Hashing Function</p>
+</li>
+<li><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">unsigned long</div><div class="line">elf_hash(const unsigned char *name)</div><div class="line">&#123;</div><div class="line">	unsigned long	h = 0, g;</div><div class="line">	while (*name)</div><div class="line">	&#123;</div><div class="line">		h = (h &lt;&lt; 4) + *name++;</div><div class="line">		if (g = h &amp; 0xf0000000)</div><div class="line">			h ^= g &gt;&gt; 24;</div><div class="line">		h &amp;= ~g;</div><div class="line">	&#125;</div><div class="line">	return h;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<hr>
+<ul>
+<li><h3 id="Initialization-and-Termination-Functions"><a href="#Initialization-and-Termination-Functions" class="headerlink" title="Initialization and Termination Functions"></a>Initialization and Termination Functions</h3></li>
+<li><p>After the dynamic linker has built the process image and performed the relocations, each shared object and the executable file get the opportunity to execute some initialization functions. All shared object initializations happen before the executable file gains control.</p>
+</li>
+<li><p>Before the initialization functions for any object A is called, the initialization functions for any other objects that object A depends on are called. For these purposes, an object A depends on another object B, if B appears in A&#39;s list of needed objects (recorded in the <code>DT_NEEDED</code> entries of the dynamic structure). The order of initialization for circular dependencies is undefined.</p>
+</li>
+<li><p>The initialization of objects occurs by recursing through the needed entries of each object. The initialization functions for an object are invoked after the needed entries for that object have been processed. The order of processing among the entries of a particular list of needed objects is unspecified.</p>
+</li>
+</ul>
+<hr>
+<ul>
+<li>Each processor supplement may optionally further restrict the algorithm used to determine the order of initialization. Any such restriction, however, may not conflict with the rules described by this specification.</li>
+</ul>
+<hr>
+<ul>
+<li>The following example illustrates two of the possible correct orderings which can be generated for the example NEEDED lists. In this example the <em>a.out</em> is dependent on <code>b</code>, <code>d</code>, and <code>e</code>. <code>b</code> is dependent on <code>d</code> and <code>f</code>, while <code>d</code> is dependent on <code>e</code> and <code>g</code>. From this information a dependency graph can be drawn. The above algorithm on initialization will then allow the following specified initialization orderings among others.</li>
+</ul>
+<hr>
+<ul>
+<li><p>Figure 5-14: Initialization Ordering Example</p>
+</li>
+<li><p>​</p>
+</li>
+<li><p><img src="/images/2018-04-21/init_example.gif" alt="img"></p>
+</li>
+<li><p>​</p>
+</li>
+</ul>
+<hr>
+<ul>
+<li><p>Similarly, shared objects and executable files may have termination functions, which are executed with the <code>atexit</code>(BA_OS) mechanism after the base process begins its termination sequence. The termination functions for any object A must be called before the termination functions for any other objects that object A depends on. For these purposes, an object A depends on another object B, if B appears in A&#39;s list of needed objects (recorded in the <code>DT_NEEDED</code> entries of the dynamic structure). The order of termination for circular dependencies is undefined.</p>
+</li>
+<li><p>Finally, an executable file may have pre-initialization functions. These functions are executed after the dynamic linker has built the process image and performed relocations but before any shared object initialization functions. Pre-initialization functions are not permitted in shared objects.</p>
+</li>
+</ul>
+<hr>
+<ul>
+<li>Complete initialization of system libraries may not have occurred when pre-initializations are executed, so some features of the system may not be available to pre-initialization code. In general, use of pre-initialization code can be considered portable only if it has no dependencies on system libraries.</li>
+</ul>
+<hr>
+<ul>
+<li><p>The dynamic linker ensures that it will not execute any initialization, pre-initialization, or termination functions more than once.</p>
+</li>
+<li><p>Shared objects designate their initialization and termination code in one of two ways. First, they may specify the address of a function to execute via the <code>DT_INIT</code> and <code>DT_FINI</code> entries in the dynamic structure, described in <a href="http://www.sco.com/developers/gabi/latest/ch5.dynamic.html#dynamic_section" target="_blank" rel="external">&quot;Dynamic Section&#39;&#39;</a> above.</p>
+</li>
+</ul>
+<hr>
+<ul>
+<li>Note that the address of a function need not be the same as a pointer to a function as defined by the processor supplement.</li>
+</ul>
+<hr>
+<ul>
+<li>Shared objects may also (or instead) specify the address and size of an array of function pointers. Each element of this array is a pointer to a function to be executed by the dynamic linker. Each array element is the size of a pointer in the programming model followed by the object containing the array. The address of the array of initialization function pointers is specified by the <code>DT_INIT_ARRAY</code> entry in the dynamic structure. Similarly, the address of the array of pre-initialization functions is specified by <code>DT_PREINIT_ARRAY</code>and the address of the array of termination functions is specified by <code>DT_FINI_ARRAY</code>. The size of each array is specified by the <code>DT_INIT_ARRAYSZ</code>, <code>DT_PREINIT_ARRAYSZ</code>, and <code>DT_FINI_ARRAYSZ</code> entries.</li>
+</ul>
+<hr>
+<ul>
+<li>The addresses contained in the initialization and termination arrays are function pointers as defined by the processor supplement for each processor. On some architectures, a function pointer may not contain the actual address of the function.</li>
+</ul>
+<hr>
+<ul>
+<li><p>The functions pointed to in the arrays specified by <code>DT_INIT_ARRAY</code> and by <code>DT_PREINIT_ARRAY</code> are executed by the dynamic linker in the same order in which their addresses appear in the array; those specified by <code>DT_FINI_ARRAY</code> are executed in reverse order.</p>
+</li>
+<li><p>If an object contains both <code>DT_INIT</code> and <code>DT_INIT_ARRAY</code> entries, the function referenced by the <code>DT_INIT</code> entry is processed before those referenced by the <code>DT_INIT_ARRAY</code> entry for that object. If an object contains both <code>DT_FINI</code> and <code>DT_FINI_ARRAY</code> entries, the functions referenced by the <code>DT_FINI_ARRAY</code> entry are processed before the one referenced by the <code>DT_FINI</code> entry for that object.</p>
+</li>
+</ul>
+<hr>
+<ul>
+<li>Although the atexit(BA_OS) termination processing normally will be done, it is not guaranteed to have executed upon process death. In particular, the process will not execute the termination processing if it calls <code>_exit</code>[see exit(BA_OS)] or if the process dies because it received a signal that it neither caught nor ignored.</li>
+</ul>
+<hr>
+<ul>
+<li>The processor supplement for each processor specifies whether the dynamic linker is responsible for calling the executable file&#39;s initialization function or registering the executable file&#39;s termination function with <code>atexit</code>(BA_OS). Termination functions specified by users via the <code>atexit</code>(BA_OS) mechanism must be executed before any termination functions of shared objects.</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/编译/" rel="tag"># 编译</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+          <div class="wp_rating">
+            <div id="wpac-rating"></div>
+          </div>
+        
+
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/20/pwn/blind-attack-HITB-XCTF-Quals-2018-babypwn/" rel="next" title="blind attack:HITB-XCTF Quals 2018 - babypwn">
+                <i class="fa fa-chevron-left"></i> blind attack:HITB-XCTF Quals 2018 - babypwn
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/05/21/pwn/malloc源码分析—ptmalloc/" rel="prev" title="malloc源码分析——ptmalloc">
+                malloc源码分析——ptmalloc <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="gitalk-container"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/me.jpg"
+               alt="Introspelliam" />
+          <p class="site-author-name" itemprop="name">Introspelliam</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">125</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">56</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/Introspelliam" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/3008590672" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                    
+                      Weibo
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#本文参考"><span class="nav-text">本文参考</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#程序解释器（Program-Interpreter）"><span class="nav-text">程序解释器（Program Interpreter）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#动态链接器（Dynamic-Linker）"><span class="nav-text">动态链接器（Dynamic Linker）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Program-Interpreter"><span class="nav-text">Program Interpreter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Dynamic-Linker"><span class="nav-text">Dynamic Linker</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Dynamic-Section"><span class="nav-text">Dynamic Section</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Shared-Object-Dependencies"><span class="nav-text">Shared Object Dependencies</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Substitution-Sequences"><span class="nav-text">Substitution Sequences</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Global-Offset-Table"><span class="nav-text">Global Offset Table</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Procedure-Linkage-Table"><span class="nav-text">Procedure Linkage Table</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hash-Table"><span class="nav-text">Hash Table</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Initialization-and-Termination-Functions"><span class="nav-text">Initialization and Termination Functions</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Introspelliam</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <script src="/js/md5.min.js"></script>
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '41857e5205be9fe36c48',
+          clientSecret: 'c927ea37a432eff67cdb1081658112c7409ca7ff',
+          repo: 'Introspelliam.github.io',
+          owner: 'Introspelliam',
+          admin: ['Introspelliam'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  <script type="text/javascript">
+  wpac_init = window.wpac_init || [];
+  wpac_init.push({widget: 'Rating', id: ,
+    el: 'wpac-rating',
+    color: 'fc6423'
+  });
+  (function() {
+    if ('WIDGETPACK_LOADED' in window) return;
+    WIDGETPACK_LOADED = true;
+    var mc = document.createElement('script');
+    mc.type = 'text/javascript';
+    mc.async = true;
+    mc.src = '//embed.widgetpack.com/widget.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+  })();
+  </script>
+
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

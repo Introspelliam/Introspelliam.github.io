@@ -2,10 +2,8 @@
 
 
 
-  
 
-
-<html class="theme-next mist use-motion" lang="zh-Hans">
+<html class="theme-next mist" lang="zh-Hans">
 <head>
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -85,7 +83,7 @@
 
 
 
-  <link rel="alternate" href="/atom.xml" title="上善若水" type="application/atom+xml" />
+  <link rel="alternate" href="/atom.xml" title="Introspelliam" type="application/atom+xml" />
 
 
 
@@ -99,12 +97,12 @@
 
 <meta name="description" content="Try your best!">
 <meta property="og:type" content="website">
-<meta property="og:title" content="上善若水">
+<meta property="og:title" content="Introspelliam">
 <meta property="og:url" content="http://yoursite.com/page/9/index.html">
-<meta property="og:site_name" content="上善若水">
+<meta property="og:site_name" content="Introspelliam">
 <meta property="og:description" content="Try your best!">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="上善若水">
+<meta name="twitter:title" content="Introspelliam">
 <meta name="twitter:description" content="Try your best!">
 
 
@@ -115,10 +113,10 @@
     root: '/',
     scheme: 'Mist',
     version: '5.1.2',
-    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":false,"onmobile":true},
+    sidebar: {"position":"right","display":"always","offset":0,"offset_float":0,"b2t":true,"scrollpercent":true,"onmobile":true},
     fancybox: true,
     tabs: true,
-    motion: true,
+    motion: false,
     duoshuo: {
       userId: '0',
       author: '博主'
@@ -141,7 +139,7 @@
 
 
 
-  <title>上善若水 - 古之立大事者，不惟有超世之才，亦必有坚韧不拔之志！</title>
+  <title>Introspelliam - Just do what works for you, because there will always be someone who thinks differently.</title>
   
 
 
@@ -182,12 +180,12 @@
     <div class="custom-logo-site-title">
       <a href="/"  class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">上善若水</span>
+        <span class="site-title">Introspelliam</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
       
-        <h1 class="site-subtitle" itemprop="description">古之立大事者，不惟有超世之才，亦必有坚韧不拔之志！</h1>
+        <h1 class="site-subtitle" itemprop="description">Just do what works for you, because there will always be someone who thinks differently.</h1>
       
   </div>
 
@@ -333,7 +331,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/16/XMAN之旅——MIPS/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/06/pwn/系统调用约定/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Introspelliam">
@@ -342,7 +340,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
+      <meta itemprop="name" content="Introspelliam">
     </span>
 
     
@@ -352,1423 +350,7 @@
         
           <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/08/16/XMAN之旅——MIPS/" itemprop="url">XMAN之旅——MIPS</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-16T15:10:28+08:00">
-                2017-08-16
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/xman/" itemprop="url" rel="index">
-                    <span itemprop="name">xman</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="IOT-Internet-of-Things-物联网"><a href="#IOT-Internet-of-Things-物联网" class="headerlink" title="IOT(Internet of Things) 物联网"></a>IOT(Internet of Things) 物联网</h3><p>CAN协议<br>TTP协议<br>介质访问控制模式CSMA/CD<br>GPS系统遥控<br>obd<br>定位解锁功能</p>
-<p>智能联网汽车信息安全状况</p>
-<h3 id="MIPS"><a href="#MIPS" class="headerlink" title="MIPS"></a>MIPS</h3><p>RISC架构<br>通用寄存器 32个<br>特殊寄存器 PC hI IO<br>指令定长<br>有大端和小端两种<br>指令还有地址 都是 4字节对齐的<br>数据访问严格4 字节对其<br>流水线</p>
-<p>xss(不是很严重)<br>CSRF<br>认证漏洞<br>命令注入（针对后端的lua 脚本)</p>
-<p>mips不会自动刷新<br>shellcode 被存于数据的cache中<br>cacch incoherency</p>
-<p>使用busybox 启用 reverse shell</p>
-<p>由于不能直接与cgi进行交互，可以使用 reverse shell<br>wget一个</p>
-<p>-W hexdump<br>-A 分析指令架构 寻找各种架构的函数projoque</p>
-<p>binwalk -M</p>
-<p>使用 ROP或者其他啊手段一次请求启动reverse shell<br>定位 binary 地组织，可以在同样的环境中进行调试，或者调用其他漏洞的leak</p>
-<p>MIPS的shellcode 开发</p>
-<p>ropgadget<br>使用 IDA的插件 MIPS ROP Finder(可以支持定制搜索)</p>
-<p>找可用gadget<br>向已知地址执行shellcode<br>rop执行system</p>
-<p>binutils-mips-linux-gnu<br>qemu-mipsel -L /usr/mipsel-linux-gnu/ ./pwn300</p>
-<p>qemu-mipsel<br>MIPS库环境库安装</p>
-<p>qemu-mips<br>user mode 直接运行用户程序<br>需要完整的library<br>system mode 直接模拟mips系统</p>
-<p>gdb server<br>gdb-multiarch<br>IDA debugger</p>
-<p>mips rop gadget<br>MIPS汇编语言<br>逆向工具</p>
-<p>基于 MIPS或者 ARM架构的 openwrt<br>普通用户没有 root shell<br>基于 busybox<br>libc 和一般的linux 不同 使用 uclibc(提供基本的嵌入式函数，比较小，节省内存空间)</p>
-<p>binwalk<br>firmware-mod-kit</p>
-<p>用于开发板的调试<br>输出root Image 或者之际给出系统的rootshell<br>辅助分析</p>
-<p>USB2TL<br>Tx端链接开发板Rx<br>Rx端链接开发板Tx<br>GND链接GND</p>
-<p>与UART交互</p>
-<p>GDN ground<br>TX transmit 发送引脚 3.3v<br>RX recive 接受引脚 3.3。v<br>VCC 电源 一般电压为3.3-5v</p>
-<p>openwrt<br>Embedded linux<br>VxWorks<br>uClinux<br>FreeRTOS</p>
-<p>与段 与攻击一个web站点类似(比较少，和攻击一个web差不多）<br>正对设备与网关，网关与云端之间的嗅探<br>身份伪造等<br>通过针对设备以及网关的固件你想利用漏洞获取权限 </p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/14/内容安全策略-CSP/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/08/14/内容安全策略-CSP/" itemprop="url">内容安全策略(CSP)</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-14T15:08:31+08:00">
-                2017-08-14
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/web/" itemprop="url" rel="index">
-                    <span itemprop="name">web</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>跨域脚本攻击 <a href="http://baike.baidu.com/view/2161269.htm" target="_blank" rel="external">XSS</a> 是最常见、危害最大的网页安全漏洞。</p>
-<p><img src="http://www.ruanyifeng.com/blogimg/asset/2016/bg2016091301.png" alt="img"></p>
-<p>为了防止它们，要采取很多编程措施，非常麻烦。很多人提出，能不能根本上解决问题，浏览器自动禁止外部注入恶意脚本？</p>
-<p>这就是&quot;网页安全政策&quot;（Content Security Policy，缩写 CSP）的来历。本文详细介绍如何使用 CSP 防止 XSS 攻击。</p>
-<h2 id="一、简介"><a href="#一、简介" class="headerlink" title="一、简介"></a>一、简介</h2><p>CSP 的实质就是白名单制度，开发者明确告诉客户端，哪些外部资源可以加载和执行，等同于提供白名单。它的实现和执行全部由浏览器完成，开发者只需提供配置。</p>
-<p>CSP 大大增强了网页的安全性。攻击者即使发现了漏洞，也没法注入脚本，除非还控制了一台列入了白名单的可信主机。</p>
-<p>两种方法可以启用 CSP。一种是通过 HTTP 头信息的<code>Content-Security-Policy</code>的字段。</p>
-<p><img src="http://www.ruanyifeng.com/blogimg/asset/2016/bg2016091305.jpg" alt="img"></p>
-<blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&gt; Content-Security-Policy: script-src &apos;self&apos;; object-src &apos;none&apos;;</div><div class="line">&gt; style-src cdn.example.org third-party.org; child-src https:</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
-</blockquote>
-<p>另一种是通过网页的<code>&lt;meta&gt;</code>标签。</p>
-<blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt; &lt;meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;script-src &apos;self&apos;; object-src &apos;none&apos;; style-src cdn.example.org third-party.org; child-src https:&quot;&gt;</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
-</blockquote>
-<p>上面代码中，CSP 做了如下配置。</p>
-<blockquote>
-<ul>
-<li>脚本：只信任当前域名</li>
-<li><code>&lt;object&gt;</code>标签：不信任任何URL，即不加载任何资源</li>
-<li>样式表：只信任<code>cdn.example.org</code>和<code>third-party.org</code></li>
-<li>框架（frame）：必须使用HTTPS协议加载</li>
-<li>其他资源：没有限制</li>
-</ul>
-</blockquote>
-<p>启用后，不符合 CSP 的外部资源就会被阻止加载。</p>
-<p>Chrome 的报错信息。</p>
-<p><img src="http://www.ruanyifeng.com/blogimg/asset/2016/bg2016091303.png" alt="img"></p>
-<p>Firefox 的报错信息。</p>
-<p><img src="http://www.ruanyifeng.com/blogimg/asset/2016/bg2016091306.png" alt="img"></p>
-<h2 id="二、限制选项"><a href="#二、限制选项" class="headerlink" title="二、限制选项"></a>二、限制选项</h2><p>CSP 提供了很多限制选项，涉及安全的各个方面。</p>
-<h3 id="2-1-资源加载限制"><a href="#2-1-资源加载限制" class="headerlink" title="2.1 资源加载限制"></a>2.1 资源加载限制</h3><p>以下选项限制各类资源的加载。</p>
-<blockquote>
-<ul>
-<li><strong>script-src</strong>：外部脚本</li>
-<li><strong>style-src</strong>：样式表</li>
-<li><strong>img-src</strong>：图像</li>
-<li><strong>media-src</strong>：媒体文件（音频和视频）</li>
-<li><strong>font-src</strong>：字体文件</li>
-<li><strong>object-src</strong>：插件（比如 Flash）</li>
-<li><strong>child-src</strong>：框架</li>
-<li><strong>frame-ancestors</strong>：嵌入的外部资源（比如<frame>、<iframe>、<embed>和<applet>）</applet></iframe></li>
-<li><strong>connect-src</strong>：HTTP 连接（通过 XHR、WebSockets、EventSource等）</li>
-<li><strong>worker-src</strong>：<code>worker</code>脚本</li>
-<li><strong>manifest-src</strong>：manifest 文件</li>
-</ul>
-</blockquote>
-<h3 id="2-2-default-src"><a href="#2-2-default-src" class="headerlink" title="2.2 default-src"></a>2.2 default-src</h3><p><code>default-src</code>用来设置上面各个选项的默认值。</p>
-<blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt; Content-Security-Policy: default-src &apos;self&apos;</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
-</blockquote>
-<p>上面代码限制<strong>所有的</strong>外部资源，都只能从当前域名加载。</p>
-<p>如果同时设置某个单项限制（比如<code>font-src</code>）和<code>default-src</code>，前者会覆盖后者，即字体文件会采用<code>font-src</code>的值，其他资源依然采用<code>default-src</code>的值。</p>
-<h3 id="2-3-URL-限制"><a href="#2-3-URL-限制" class="headerlink" title="2.3 URL 限制"></a>2.3 URL 限制</h3><p>有时，网页会跟其他 URL 发生联系，这时也可以加以限制。</p>
-<blockquote>
-<ul>
-<li><strong>frame-ancestors</strong>：限制嵌入框架的网页</li>
-<li><strong>base-uri</strong>：限制<code>&lt;base#href&gt;</code></li>
-<li><strong>form-action</strong>：限制<code>&lt;form#action&gt;</code></li>
-</ul>
-</blockquote>
-<h3 id="2-4-其他限制"><a href="#2-4-其他限制" class="headerlink" title="2.4 其他限制"></a>2.4 其他限制</h3><p>其他一些安全相关的功能，也放在了 CSP 里面。</p>
-<blockquote>
-<ul>
-<li><strong>block-all-mixed-content</strong>：HTTPS 网页不得加载 HTTP 资源（浏览器已经默认开启）</li>
-<li><strong>upgrade-insecure-requests</strong>：自动将网页上所有加载外部资源的 HTTP 链接换成 HTTPS 协议</li>
-<li><strong>plugin-types</strong>：限制可以使用的插件格式</li>
-<li><strong>sandbox</strong>：浏览器行为的限制，比如不能有弹出窗口等。</li>
-</ul>
-</blockquote>
-<h3 id="2-5-report-uri"><a href="#2-5-report-uri" class="headerlink" title="2.5 report-uri"></a>2.5 report-uri</h3><p>有时，我们不仅希望防止 XSS，还希望记录此类行为。<code>report-uri</code>就用来告诉浏览器，应该把注入行为报告给哪个网址。</p>
-<blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt; Content-Security-Policy: default-src &apos;self&apos;; ...; report-uri /my_amazing_csp_report_parser;</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
-</blockquote>
-<p>上面代码指定，将注入行为报告给<code>/my_amazing_csp_report_parser</code>这个 URL。</p>
-<p>浏览器会使用<code>POST</code>方法，发送一个JSON对象，下面是一个例子。</p>
-<blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">&gt; &#123;</div><div class="line">&gt;   &quot;csp-report&quot;: &#123;</div><div class="line">&gt;     &quot;document-uri&quot;: &quot;http://example.org/page.html&quot;,</div><div class="line">&gt;     &quot;referrer&quot;: &quot;http://evil.example.com/&quot;,</div><div class="line">&gt;     &quot;blocked-uri&quot;: &quot;http://evil.example.com/evil.js&quot;,</div><div class="line">&gt;     &quot;violated-directive&quot;: &quot;script-src &apos;self&apos; https://apis.google.com&quot;,</div><div class="line">&gt;     &quot;original-policy&quot;: &quot;script-src &apos;self&apos; https://apis.google.com; report-uri http://example.org/my_amazing_csp_report_parser&quot;</div><div class="line">&gt;   &#125;</div><div class="line">&gt; &#125;</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
-</blockquote>
-<p><img src="http://www.ruanyifeng.com/blogimg/asset/2016/bg2016091304.png" alt="img"></p>
-<h2 id="三、Content-Security-Policy-Report-Only"><a href="#三、Content-Security-Policy-Report-Only" class="headerlink" title="三、Content-Security-Policy-Report-Only"></a>三、Content-Security-Policy-Report-Only</h2><p>除了<code>Content-Security-Policy</code>，还有一个<code>Content-Security-Policy-Report-Only</code>字段，表示不执行限制选项，只是记录违反限制的行为。</p>
-<p>它必须与<code>report-uri</code>选项配合使用。</p>
-<blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt; Content-Security-Policy-Report-Only: default-src &apos;self&apos;; ...; report-uri /my_amazing_csp_report_parser;</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
-</blockquote>
-<h2 id="四、选项值"><a href="#四、选项值" class="headerlink" title="四、选项值"></a>四、选项值</h2><p>每个限制选项可以设置以下几种值，这些值就构成了白名单。</p>
-<blockquote>
-<ul>
-<li>主机名：<code>example.org</code>，<code>https://example.com:443</code></li>
-<li>路径名：<code>example.org/resources/js/</code></li>
-<li>通配符：<code>*.example.org</code>，<code>*://*.example.com:*</code>（表示任意协议、任意子域名、任意端口）</li>
-<li>协议名：<code>https:</code>、<code>data:</code></li>
-<li>关键字<code>&#39;self&#39;</code>：当前域名，需要加引号</li>
-<li>关键字<code>&#39;none&#39;</code>：禁止加载任何外部资源，需要加引号</li>
-</ul>
-</blockquote>
-<p>多个值也可以并列，用空格分隔。</p>
-<blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt; Content-Security-Policy: script-src &apos;self&apos; https://apis.google.com</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
-</blockquote>
-<p>如果同一个限制选项使用多次，只有第一次会生效。</p>
-<blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&gt; # 错误的写法</div><div class="line">&gt; script-src https://host1.com; script-src https://host2.com</div><div class="line">&gt;</div><div class="line">&gt; # 正确的写法</div><div class="line">&gt; script-src https://host1.com https://host2.com</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
-</blockquote>
-<p>如果不设置某个限制选项，就是默认允许任何值。</p>
-<h2 id="五、script-src-的特殊值"><a href="#五、script-src-的特殊值" class="headerlink" title="五、script-src 的特殊值"></a>五、script-src 的特殊值</h2><p>除了常规值，<code>script-src</code>还可以设置一些特殊值。注意，下面这些值都必须放在单引号里面。</p>
-<blockquote>
-<ul>
-<li><strong>&#39;unsafe-inline&#39;</strong>：允许执行页面内嵌的<code>&amp;lt;script&gt;</code>标签和事件监听函数</li>
-<li><strong>unsafe-eval</strong>：允许将字符串当作代码执行，比如使用<code>eval</code>、<code>setTimeout</code>、<code>setInterval</code>和<code>Function</code>等函数。</li>
-<li><strong>nonce值</strong>：每次HTTP回应给出一个授权token，页面内嵌脚本必须有这个token，才会执行</li>
-<li><strong>hash值</strong>：列出允许执行的脚本代码的Hash值，页面内嵌脚本的哈希值只有吻合的情况下，才能执行。</li>
-</ul>
-</blockquote>
-<p>nonce值的例子如下，服务器发送网页的时候，告诉浏览器一个随机生成的token。</p>
-<blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt; Content-Security-Policy: script-src &apos;nonce-EDNnf03nceIOfn39fn3e9h3sdfa&apos;</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
-</blockquote>
-<p>页面内嵌脚本，必须有这个token才能执行。</p>
-<blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&gt; &lt;script nonce=EDNnf03nceIOfn39fn3e9h3sdfa&gt;</div><div class="line">&gt;   // some code</div><div class="line">&gt; &lt;/script&gt;</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
-</blockquote>
-<p>hash值的例子如下，服务器给出一个允许执行的代码的hash值。</p>
-<blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt; Content-Security-Policy: script-src &apos;sha256-qznLcsROx4GACP2dm0UCKCzCG-HiZ1guq6ZZDob_Tng=&apos;</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
-</blockquote>
-<p>下面的代码就会允许执行，因为hash值相符。</p>
-<blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt; &lt;script&gt;alert(&apos;Hello, world.&apos;);&lt;/script&gt;</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
-</blockquote>
-<p>注意，计算hash值的时候，\&lt;script>标签不算在内。</p>
-<p>除了<code>script-src</code>选项，nonce值和hash值还可以用在<code>style-src</code>选项，控制页面内嵌的样式表。</p>
-<h2 id="六、注意点"><a href="#六、注意点" class="headerlink" title="六、注意点"></a>六、注意点</h2><p>（1）<code>script-src</code>和<code>object-src</code>是必设的，除非设置了<code>default-src</code>。</p>
-<p>因为攻击者只要能注入脚本，其他限制都可以规避。而<code>object-src</code>必设是因为 Flash 里面可以执行外部脚本。</p>
-<p>（2）<code>script-src</code>不能使用<code>unsafe-inline</code>关键字（除非伴随一个nonce值），也不能允许设置<code>data:</code>URL。</p>
-<p>下面是两个恶意攻击的例子。</p>
-<blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&gt; &lt;img src=&quot;x&quot; onerror=&quot;evil()&quot;&gt;</div><div class="line">&gt; &lt;script src=&quot;data:text/javascript,evil()&quot;&gt;&lt;/script&gt;</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
-</blockquote>
-<p>（3）必须特别注意 JSONP 的回调函数。</p>
-<blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&gt; &lt;script</div><div class="line">&gt; src=&quot;/path/jsonp?callback=alert(document.domain)//&quot;&gt;</div><div class="line">&gt; &lt;/script&gt;</div><div class="line">&gt;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
-</blockquote>
-<p>上面的代码中，虽然加载的脚本来自当前域名，但是通过改写回调函数，攻击者依然可以执行恶意代码。</p>
-<h2 id="七、参考链接"><a href="#七、参考链接" class="headerlink" title="七、参考链接"></a>七、参考链接</h2><ul>
-<li><a href="https://research.google.com/pubs/pub45542.html" target="_blank" rel="external">CSP Is Dead, Long Live CSP! </a>, by Lukas Weichselbaum</li>
-<li><a href="http://www.html5rocks.com/en/tutorials/security/content-security-policy/" target="_blank" rel="external">An Introduction to Content Security Policy</a>, by Mike West</li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/11/XMAN之旅——Android/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/08/11/XMAN之旅——Android/" itemprop="url">XMAN之旅——Android</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-11T08:47:57+08:00">
-                2017-08-11
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/xman/" itemprop="url" rel="index">
-                    <span itemprop="name">xman</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="1-赵帅讲android基础"><a href="#1-赵帅讲android基础" class="headerlink" title="1. 赵帅讲android基础"></a>1. 赵帅讲android基础</h3><h4 id="1-1-APK的文件结构"><a href="#1-1-APK的文件结构" class="headerlink" title="1.1 APK的文件结构"></a>1.1 APK的文件结构</h4><p><strong>重要的标签及属性</strong></p>
-<ul>
-<li>Minsdklevel</li>
-<li>Targetsdklevel</li>
-<li>android:enable</li>
-<li>android:export</li>
-<li>Android:process</li>
-<li>Browerable</li>
-</ul>
-<p><strong>jar包和apk包</strong></p>
-<h4 id="1-2-常见的基本类型"><a href="#1-2-常见的基本类型" class="headerlink" title="1.2 常见的基本类型"></a>1.2 常见的基本类型</h4><p>反编译采用的是dalvik字节码，反编译之后成为smali文件。</p>
-<p>dalvik字节码有两种类型，原始类型和引用类型。对象和数组是引用类型，其它都是原始类型。</p>
-<p>smali数据类型都是用一个字母表示，如果你熟悉Java的数据类型，你会发现表示smali数据类型的字母其实是Java基本数据类型首字母的大写，除boolean类型外，在smail中用大写的”Z”表示boolean类型。</p>
-<table>
-<thead>
-<tr>
-<th>标识</th>
-<th>类型</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>V</td>
-<td>void，只能用于返回值类型</td>
-</tr>
-<tr>
-<td>Z</td>
-<td>boolean</td>
-</tr>
-<tr>
-<td>B</td>
-<td>byte</td>
-</tr>
-<tr>
-<td>S</td>
-<td>short</td>
-</tr>
-<tr>
-<td>C</td>
-<td>char</td>
-</tr>
-<tr>
-<td>I</td>
-<td>int</td>
-</tr>
-<tr>
-<td>J</td>
-<td>long (64 bits)</td>
-</tr>
-<tr>
-<td>F</td>
-<td>float</td>
-</tr>
-<tr>
-<td>D</td>
-<td>double (64 bits)</td>
-</tr>
-<tr>
-<td>L</td>
-<td>对象类型</td>
-</tr>
-<tr>
-<td>[</td>
-<td>数据类型</td>
-</tr>
-</tbody>
-</table>
-<p>对象以Lpackage/name/ObjectName;的形式表示。前面的L表示这是一个对象类型，package/name/是该对象所在的包，ObjectName是对象的名字，“;”表示对象名称的结束。相当于java中的package.name.ObjectName。</p>
-<p><strong>类的表示形式</strong></p>
-<blockquote>
-<p>Ljava/lang/String;相当于java.lang.String</p>
-</blockquote>
-<p><strong>数组的表示形式</strong></p>
-<blockquote>
-<p>[ 表示一个整型一维数组，相当于java中的int[]<br>对于多维数组，只要增加[就行了。[[I相当于int[][]，[[[I相当于int[][][]。注意每一维的最多255个。</p>
-</blockquote>
-<p><strong>对象数组的表示</strong></p>
-<blockquote>
-<p>[Ljava/lang/String;表示一个String对象数组。</p>
-</blockquote>
-<p><strong>方法表示形式</strong></p>
-<p>方法通常必须详细的指定方法类型: 方法名，参数类型，返回类型，所有这些信息都是为虚拟机是能够找到正确的方法并执行。</p>
-<blockquote>
-<p>Lpackage/name/ObjectName;-&gt;MethodName(III)Z</p>
-</blockquote>
-<p>在上面的例子中，Lpackage/name/ObjectName;表示类，MethodName是方法名。III为参数（在此是3个整型参数），Z是返回类型（bool型）。方法的参数是一个接一个的，中间没有隔开。</p>
-<blockquote>
-<p>一个更复杂的例子：method(I[[IILjava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;</p>
-</blockquote>
-<p>在java中则为：String method(int, int[][], int, String, Object[])</p>
-<h4 id="1-3-Dalvik-Code"><a href="#1-3-Dalvik-Code" class="headerlink" title="1.3 Dalvik Code"></a>1.3 Dalvik Code</h4><p>掌握以上的字段和方法的描述,只能说我们懂了如何描述一个字段和方法,而关于方法中具体的逻辑则需要了解Dalvik中的指令集.因为Dalvik是基于寄存器的架构的,因此指令集和JVM中的指令集区别较大,反而更类似x86的中的汇编指令.</p>
-<p><a href="http://pallergabor.uw.hu/androidblog/dalvik_opcodes.html" target="_blank" rel="external">Davilk指令集大全</a></p>
-<h4 id="1-3-ELF"><a href="#1-3-ELF" class="headerlink" title="1.3 ELF"></a>1.3 ELF</h4><p>可以链接第三方库，可以解决历史代码问题，可以进行逻辑保护，一般用so文件表示。</p>
-<h4 id="1-4-常见组件"><a href="#1-4-常见组件" class="headerlink" title="1.4 常见组件"></a>1.4 常见组件</h4><p><strong><a href="http://www.cnblogs.com/shen-hua/p/5811195.html" target="_blank" rel="external">组件一：Intent</a></strong></p>
-<ul>
-<li>Action</li>
-<li>Component</li>
-<li>Category</li>
-<li>data</li>
-</ul>
-<blockquote>
-<p>Android中提供了Intent机制来协助应用间的交互与通讯，或者采用更准确的说法是，Intent不仅可用于应用程序之间，也可用于应用程序内部的activity, service和broadcast receiver之间的交互。Intent这个英语单词的本意是“目的、意向、意图”。</p>
-<p>Intent是一种运行时绑定（runtime binding)机制，它能在程序运行的过程中连接两个不同的组件。通过Intent，你的程序可以向Android表达某种请求或者意愿，Android会根据意愿的内容选择适当的组件来响应。</p>
-</blockquote>
-<p><img src="/images/2017-08-11/Intent.png" alt="组件详情"></p>
-<p><strong>组件二：Service</strong></p>
-<ul>
-<li>onStart</li>
-<li>onStartCommand</li>
-<li>Exported</li>
-<li>Android:process</li>
-</ul>
-<p><strong>组件三：Activity</strong></p>
-<p><strong>组件四：Webview</strong></p>
-<ul>
-<li>setSavePassword</li>
-<li>setJavascriptEnabled</li>
-<li>addJavascriptInterface</li>
-<li>Loadurl</li>
-</ul>
-<p><strong>组件五：PendingIntent</strong></p>
-<ul>
-<li>Notification</li>
-<li>getActivity</li>
-<li>getService</li>
-<li>getBroadcast</li>
-</ul>
-<h4 id="1-5-运行时的目录结构"><a href="#1-5-运行时的目录结构" class="headerlink" title="1.5 运行时的目录结构"></a>1.5 运行时的目录结构</h4><p>私有目录</p>
-<ul>
-<li>/data/data/packagename</li>
-</ul>
-<p>sdcard</p>
-<h4 id="1-6-工具"><a href="#1-6-工具" class="headerlink" title="1.6 工具"></a>1.6 工具</h4><p><strong>反编译工具</strong></p>
-<ul>
-<li>Dex2jar</li>
-<li>jd-gui    ——jar包反编译</li>
-<li>jadx        ——Apk反编译</li>
-<li>jeb        ——Apk解包、反汇编、反编译</li>
-</ul>
-<p><strong>其他工具</strong></p>
-<ul>
-<li>Burpsuite</li>
-<li>Akana</li>
-<li>Janus</li>
-</ul>
-<h4 id="1-7-ctf中常用的方法"><a href="#1-7-ctf中常用的方法" class="headerlink" title="1.7 ctf中常用的方法"></a>1.7 ctf中常用的方法</h4><p><strong>HOOK</strong></p>
-<ul>
-<li>代码分析</li>
-<li>目标方法筛选</li>
-<li>编写脚本</li>
-<li>运行测试</li>
-</ul>
-<p><strong>重打包</strong></p>
-<ul>
-<li>解包  apktool d</li>
-<li>修改</li>
-<li>打包  apktool b</li>
-<li>签名</li>
-</ul>
-<h4 id="1-8-工业界漏洞"><a href="#1-8-工业界漏洞" class="headerlink" title="1.8 工业界漏洞"></a>1.8 工业界漏洞</h4><p><strong>组件暴露相关信息</strong></p>
-<ul>
-<li>Enabled  =&gt; true</li>
-<li>exported  =&gt; false   (有intent-filter，默认值就是true)   关键</li>
-<li>Action =&gt; 系统Action 非系统Action</li>
-<li>Permission                                            关键</li>
-<li>ContentProvider</li>
-</ul>
-<p><strong>攻击窗口</strong></p>
-<ul>
-<li>动态注册</li>
-<li>窗口期</li>
-</ul>
-<p><strong>组件劫持</strong></p>
-<ul>
-<li>Activity劫持</li>
-<li>Receiver劫持</li>
-<li>Service劫持</li>
-<li>intent嗅探</li>
-</ul>
-<p><strong>Webview组件问题</strong></p>
-<ul>
-<li>远程代码执行</li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/11/XMAN之旅——Misc/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/08/11/XMAN之旅——Misc/" itemprop="url">XMAN之旅——Misc</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-11T00:49:22+08:00">
-                2017-08-11
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/xman/" itemprop="url" rel="index">
-                    <span itemprop="name">xman</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="1-Misc概述"><a href="#1-Misc概述" class="headerlink" title="1. Misc概述"></a>1. Misc概述</h3><p>MISC，即Miscellaneous，即安全杂项，题目或涉及流量分析、电子取证、人肉搜索、数据分析等等。</p>
-<p>MISC，中文即杂项，包括隐写，数据还原，脑洞、社会工程、与信息安全相关的大数据等。</p>
-<p>竞赛过程中解MISC时会涉及到各种脑洞，各种花式技巧，主要考察选手的快速理解、学习能力以及日常知识积累的广度、深度。</p>
-<p>MISC这一块并不像PWN\REVERSE等需要深厚的理论基础，所以我们直接从经典题目开始入手。</p>
-<h3 id="2-Misc题目类型"><a href="#2-Misc题目类型" class="headerlink" title="2. Misc题目类型"></a>2. Misc题目类型</h3><p>Misc大体上分为Encode编码转换、Steg隐写分析、Forensic数字取证以及其他类型</p>
-<h3 id="3-编码转换"><a href="#3-编码转换" class="headerlink" title="3. 编码转换"></a>3. 编码转换</h3><p>由于编码很多种，可以在网上找各种站长工具对编码进行转换，而且效率很高！</p>
-<p>常见的编码有：base64、base32、base16、ascii、unicode、url、摩斯编码、曼切斯特编码等</p>
-<h3 id="4-取证和隐写分析"><a href="#4-取证和隐写分析" class="headerlink" title="4. 取证和隐写分析"></a>4. 取证和隐写分析</h3><h4 id="4-1-常见的工具"><a href="#4-1-常见的工具" class="headerlink" title="4.1 常见的工具"></a>4.1 常见的工具</h4><p>文本编辑工具：</p>
-<ul>
-<li>010Editor</li>
-<li>UtralEdit</li>
-<li>Winhex</li>
-</ul>
-<p>隐写工具：</p>
-<ul>
-<li>StegSolver</li>
-<li>Stegdetect</li>
-<li>wbSteg4</li>
-<li>MP3Stego</li>
-<li>outguess</li>
-<li>stepic</li>
-<li>steghide</li>
-</ul>
-<p>其他工具：</p>
-<ul>
-<li>7zcracker</li>
-<li>archpr</li>
-<li>tweakpng</li>
-<li>audacity</li>
-<li>binwalk</li>
-<li>foremost</li>
-<li>Ffmpeg</li>
-<li>Alternatestreamview</li>
-<li>Dsfok-tools</li>
-<li>Snow</li>
-</ul>
-<h4 id="4-2-常见的隐写术"><a href="#4-2-常见的隐写术" class="headerlink" title="4.2 常见的隐写术"></a>4.2 常见的隐写术</h4><p>从最早的图种(copy /b test.jpg+test.torrent test.jpg),<br>CTF比赛中最开始的图片隐写(JPG，PNG，GIF)<br>Word，PDF等隐写<br>音频，视频中的隐写(波形，频谱…….)<br>Exe中的病毒行为分析<br>Pcap流量包<br>磁盘文件(IMG,VMDK)<br>交换数据流(NTFS数据流)<br>HTML文件</p>
-<h3 id="5-自己的思考"><a href="#5-自己的思考" class="headerlink" title="5. 自己的思考"></a>5. 自己的思考</h3><p>想要深入学习Misc，首先需要熟练掌握一些文件格式，并能够根据相应的格式合理运用工具，如此才能掌握Misc！</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/07/SROP攻击/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/08/07/SROP攻击/" itemprop="url">SROP攻击</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-07T10:57:29+08:00">
-                2017-08-07
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/07/linux下system-execve-execl-函数使用详解/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/08/07/linux下system-execve-execl-函数使用详解/" itemprop="url">linux下system()/execve()/execl()函数使用详解</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-07T10:08:23+08:00">
-                2017-08-07
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/pwn/" itemprop="url" rel="index">
-                    <span itemprop="name">pwn</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>本节详细可参考<br><a href="http://www.cnblogs.com/akira90/archive/2012/12/05/2802809.html" target="_blank" rel="external">http://www.cnblogs.com/akira90/archive/2012/12/05/2802809.html</a></p>
-<h3 id="1-execve函数"><a href="#1-execve函数" class="headerlink" title="1. execve函数"></a>1. execve函数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div></pre></td><td class="code"><pre><div class="line"> 相关函数： fork，execl，execle，execlp，execv，execvp</div><div class="line"></div><div class="line"> 表头文件： #include unistd.h</div><div class="line"></div><div class="line"> 定义函数： int execve(const char * filename,char * const argv[ ],char * const envp[ ]);</div><div class="line"></div><div class="line"> 函数说明： execve()用来执行参数filename字符串所代表的文件路径，第二个参数系利用数组指针来传递给执行文件，最后一个参数则为传递给执行文件的新环境变量数组。</div><div class="line"></div><div class="line"> 返回值：   如果执行成功则函数不会返回，执行失败则直接返回-1，失败原因存于errno 中。</div><div class="line"></div><div class="line"> 错误代码:</div><div class="line"></div><div class="line"> EACCES</div><div class="line"></div><div class="line">1. 欲执行的文件不具有用户可执行的权限。</div><div class="line">2. 欲执行的文件所属的文件系统是以noexec 方式挂上。</div><div class="line">3. 欲执行的文件或script翻译器非一般文件。</div><div class="line"></div><div class="line"> EPERM</div><div class="line"></div><div class="line">1.进程处于被追踪模式，执行者并不具有root权限，欲执行的文件具有SUID 或SGID 位。</div><div class="line"></div><div class="line">2.欲执行的文件所属的文件系统是以nosuid方式挂上，欲执行的文件具有SUID 或SGID 位元，但执行者并不具有root权限。</div><div class="line"></div><div class="line">E2BIG 参数数组过大</div><div class="line"></div><div class="line"> ENOEXEC 无法判断欲执行文件的执行文件格式，有可能是格式错误或无法在此平台执行。</div><div class="line"></div><div class="line"> EFAULT 参数filename所指的字符串地址超出可存取空间范围。</div><div class="line"></div><div class="line"> ENAMETOOLONG 参数filename所指的字符串太长。</div><div class="line"></div><div class="line"> ENOENT 参数filename字符串所指定的文件不存在。</div><div class="line"></div><div class="line"> ENOMEM 核心内存不足</div><div class="line"></div><div class="line"> ENOTDIR 参数filename字符串所包含的目录路径并非有效目录</div><div class="line"></div><div class="line"> EACCES 参数filename字符串所包含的目录路径无法存取，权限不足</div><div class="line"></div><div class="line"> ELOOP 过多的符号连接</div><div class="line"></div><div class="line"> ETXTBUSY 欲执行的文件已被其他进程打开而且正把数据写入该文件中</div><div class="line"></div><div class="line"> EIO I/O 存取错误</div><div class="line"></div><div class="line"> ENFILE 已达到系统所允许的打开文件总数。</div><div class="line"></div><div class="line"> EMFILE 已达到系统所允许单一进程所能打开的文件总数。</div><div class="line"></div><div class="line"> EINVAL 欲执行文件的ELF执行格式不只一个PT_INTERP节区</div><div class="line"></div><div class="line"> EISDIR ELF翻译器为一目录</div><div class="line"></div><div class="line"> ELIBBAD ELF翻译器有问题。</div></pre></td></tr></table></figure>
-<h3 id="2-system-函数"><a href="#2-system-函数" class="headerlink" title="2. system()函数"></a>2. system()函数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">相关函数： fork，execve，waitpid，popen</div><div class="line"></div><div class="line">表头文件： #include stdlib.h</div><div class="line"></div><div class="line">定义函数： int system(const char * string);</div><div class="line"></div><div class="line">函数说明： system()会调用fork()产生子进程，由子进程来调用/bin/sh  c string来执行参数string字符串所代表的命令，此命&gt;令执行完后随即返回原调用的进程。在调用system()期间SIGCHLD 信号会被暂时搁置，SIGINT和SIGQUIT 信号则会被忽略。</div><div class="line"></div><div class="line">返回值：</div><div class="line"></div><div class="line">    =-1:出现错误</div><div class="line">    =0:调用成功但是没有出现子进程</div><div class="line">    &gt;0:成功退出的子进程的id</div><div class="line"></div><div class="line">如果system()在调用/bin/sh时失败则返回127，其他失败原因返回-1。若参数string为空指针(NULL)，则返回非零值&gt;。 如果system()调用成功则最后会返回执行shell命令后的返回值，但是此返回值也有可能为 system()调用/bin/sh失败所返回的127，因此最好能再检查errno 来确认执行成功。</div><div class="line"></div><div class="line">附加说明： 在编写具有SUID/SGID权限的程序时请勿使用system()，system()会继承环境变量，通过环境变量可能会造成系统安全的问题。</div></pre></td></tr></table></figure>
-<h3 id="3-execl-函数"><a href="#3-execl-函数" class="headerlink" title="3. execl()函数"></a>3. execl()函数</h3><p>int execl(const char * filename,char * const argv[ ],char * const envp[ ]);</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/07/int-80h系统调用方法/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/08/07/int-80h系统调用方法/" itemprop="url">int 80h系统调用方法</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-07T09:17:48+08:00">
-                2017-08-07
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/pwn/" itemprop="url" rel="index">
-                    <span itemprop="name">pwn</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="1-int-0x80简介"><a href="#1-int-0x80简介" class="headerlink" title="1. int 0x80简介"></a>1. int 0x80简介</h3><p>先看看下面通过系统调用实现的hello world代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">.section .data</div><div class="line">msg:</div><div class="line">        .ascii &quot;Hello world!\n&quot;</div><div class="line"></div><div class="line">.section .text</div><div class="line"></div><div class="line">.globl _start</div><div class="line"></div><div class="line">_start:</div><div class="line">        movl $4, %eax</div><div class="line">        movl $1, %ebx</div><div class="line">        movl $msg, %ecx</div><div class="line">        movl $13, %edx</div><div class="line">        int $0x80</div><div class="line">        movl $1, %eax</div><div class="line">        movl $0, %ebx</div><div class="line">        int $0x80</div></pre></td></tr></table></figure></p>
-<p>系统调用是通过int 0x80来实现的，eax寄存器中为调用的功能号，ebx、ecx、edx、esi等等寄存器则依次为参数，从 /usr/include/asm/unistd.h中可以看到exit的功能号_NR_exit为1，write(_NR_write)功能号为4，因此第一个int $0x80调用之前eax寄存器值为4，ebx为文件描述符，stdout的文件描述符为1，ecx则为buffer的内存地址，edx为buffer长度。第二个int $0x80之前eax为1表示调用exit，ebx为0表示返回0。</p>
-<h3 id="2-系统调用功能号"><a href="#2-系统调用功能号" class="headerlink" title="2. 系统调用功能号"></a>2. 系统调用功能号</h3><p>这部分可以参考<a href="http://www.linfo.org/system_call_number.html" target="_blank" rel="external">System Call Number Definition</a><br>以及<a href="http://asm.sourceforge.net/syscall.html#2" target="_blank" rel="external">http://asm.sourceforge.net/syscall.html#2</a></p>
-<p>其实调用功能号放在了/usr/include/asm/unistd.h之中，打开文件发现：</p>
-<blockquote>
-<p>cat /usr/include/asm/unistd.h | less</p>
-</blockquote>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">define</span> __NR_exit                 1</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> __NR_fork                 2</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> __NR_read                 3</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> __NR_write                4</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> __NR_open                 5</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> __NR_close                6</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> __NR_waitpid              7</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> __NR_creat                8</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> __NR_link                 9</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> __NR_unlink              10</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> __NR_execve              11</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> __NR_chdir               12</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> __NR_time                13</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> __NR_mknod               14</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> __NR_chmod               15</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> __NR_lchown              16</span></div></pre></td></tr></table></figure>
-<p>总共有383条，就不细细讲述了</p>
-<h3 id="3-系统调用及参数传递过程"><a href="#3-系统调用及参数传递过程" class="headerlink" title="3. 系统调用及参数传递过程"></a>3. 系统调用及参数传递过程</h3><p>这部分具体可以参考：<br><a href="http://blog.chinaunix.net/uid-10386087-id-2958669.html" target="_blank" rel="external">系统调用及参数传递过程</a><br><a href="http://blog.chinaunix.net/uid-10386087-id-2958670.html" target="_blank" rel="external">深入理解Linux的系统调用</a></p>
-<p>我们以x86为例说明：<br>由于陷入指令是一条特殊指令，而且依赖与操作系统实现的平台，如在x86中，这条指令是int 0x80，这显然不是用户在编程时应该使用的语句，因为这将使得用户程序难于移植。所以在操作系统的上层需要实现一个对应的系统调用库，每个系统调用都在该库中包含了一个入口点（如我们看到的fork, open, close等等），这些函数对程序员是可见的，而这些库函数的工作是以对应系统调用号作为参数，执行陷入指令int 0x80，以陷入核心执行真正的系统调用处理函数。当一个进程调用一个特定的系统调用库的入口点，正如同它调用任何函数一样，对于库函数也要创建一个栈帧。而当进程执行陷入指令时，它将处理机状态转换到核心态，并且在核心栈执行核心代码。</p>
-<p>这里给出一个示例（linux/include/asm/unistd.h）：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">define</span> _syscallN(type, name, type1, arg1, type2, arg2, . . . ) \</span></div><div class="line">type name(type1 arg1,type2 arg2) \</div><div class="line">&#123; \</div><div class="line">long __res; \</div><div class="line">__asm__ volatile (<span class="meta-string">"int $0x80"</span> \</div><div class="line">: <span class="meta-string">"=a"</span> (__res) \</div><div class="line">: <span class="meta-string">"0"</span> (__NR_##name),<span class="meta-string">"b"</span> ((long)(arg1)),<span class="meta-string">"c"</span> ((long)(arg2))); \</div><div class="line">. . . . . .</div><div class="line">__syscall_return(type,__res); \</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>在执行一个系统调用库中定义的系统调用入口函数时，实际执行的是类似如上的一段代码。这里牵涉到一些gcc的嵌入式汇编语言，不做详细的介绍，只简单说明其意义：<br>其中\_\<em>NR\</em>##name是系统调用号，如name == ioctl，则为\_\_NR\_ioctl，它将被放在寄存器eax中作为参数传递给中断0x80的处理函数。而系统调用的其它参数arg1, arg2, …则依次被放入ebx, ecx, . . .等通用寄存器中，并作为系统调用处理函数的参数，这些参数是怎样传入核心的将会在后面介绍。</p>
-<font color="#f00"><strong>注意该调用是从左至右依次传参，与普通函数的由右往左依次传参不同</strong></font>
-
-<h3 id="4-实例介绍"><a href="#4-实例介绍" class="headerlink" title="4. 实例介绍"></a>4. 实例介绍</h3><h4 id="4-1-sys-execve（x86）"><a href="#4-1-sys-execve（x86）" class="headerlink" title="4.1 sys_execve（x86）"></a>4.1 sys_execve（x86）</h4><p>从<a href="/2017/08/06/系统调用约定/">系统调用约定</a> 一文中我们可以找到sys_execve系统调用的内容</p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th></th>
-<th>eax</th>
-<th>ebx</th>
-<th>ecx</th>
-<th>edx</th>
-<th>esi</th>
-<th>edi</th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>11</td>
-<td><a href="http://www.kernel.org/doc/man-pages/online/pages/man2/execve.2.html" target="_blank" rel="external">sys_execve</a></td>
-<td>0x0b</td>
-<td>char __user *</td>
-<td>char <strong>user *</strong>user *</td>
-<td>char <strong>user *</strong>user *</td>
-<td><a href="http://lxr.free-electrons.com/source/arch/alpha/include/asm/ptrace.h?v=2.6.35#L19" target="_blank" rel="external">struct pt_regs *</a></td>
-<td>-</td>
-<td><a href="http://lxr.free-electrons.com/source/arch/alpha/kernel/entry.S?v=2.6.35#L925" target="_blank" rel="external">arch/alpha/kernel/entry.S:925</a></td>
-</tr>
-</tbody>
-</table>
-<p>从此处可以知道sys_execve的系统调用约定</p>
-<p>从<a href="http://www.cnblogs.com/wanghetao/archive/2011/11/06/2238310.html" target="_blank" rel="external">Linux中pt_regs结构体</a> 可以得到pt_regs的结构介绍</p>
-<p>在<a href="http://man7.org/linux/man-pages/man2/execve.2.html" target="_blank" rel="external">http://man7.org/linux/man-pages/man2/execve.2.html</a> 中有给出execve的定义</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">#include &lt;unistd.h&gt;</div><div class="line">int execve(const char *filename, char *const argv[], char *const envp[]);</div></pre></td></tr></table></figure>
-<p>ebx是执行文件路径，ecx是命令行参数，edx是环境变量</p>
-<p>很多时候ecx=0，edx=0。但是有时候若有参数，可以设置ecx</p>
-<p>范例shellcode:</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">xor    %eax,%eax</div><div class="line">push   %eax</div><div class="line">push   $<span class="number">0x68732f2f</span></div><div class="line">push   $<span class="number">0x6e69622f</span></div><div class="line">mov    %esp,%ebx</div><div class="line">push   %eax</div><div class="line">push   %ebx</div><div class="line">mov    %esp,%ecx</div><div class="line">mov    $<span class="number">0xb</span>,%al</div><div class="line"><span class="keyword">int</span>    $<span class="number">0x80</span></div><div class="line"></div><div class="line">********************************</div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></div><div class="line"> </div><div class="line"><span class="keyword">char</span> *shellcode = <span class="string">"\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69"</span></div><div class="line">		  <span class="string">"\x6e\x89\xe3\x50\x53\x89\xe1\xb0\x0b\xcd\x80"</span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></div><div class="line">&#123;</div><div class="line"><span class="built_in">fprintf</span>(<span class="built_in">stdout</span>,<span class="string">"Length: %d\n"</span>,<span class="built_in">strlen</span>(shellcode));</div><div class="line">(*(<span class="keyword">void</span>(*)()) shellcode)();</div><div class="line"><span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/06/系统调用约定/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/08/06/系统调用约定/" itemprop="url">系统调用约定</a></h2>
+                <a class="post-title-link" href="/2017/08/06/pwn/系统调用约定/" itemprop="url">系统调用约定</a></h2>
         
 
         <div class="post-meta">
@@ -1803,8 +385,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/re/" itemprop="url" rel="index">
-                    <span itemprop="name">re</span>
+                  <a href="/categories/pwn/" itemprop="url" rel="index">
+                    <span itemprop="name">pwn</span>
                   </a>
                 </span>
 
@@ -1844,8 +426,19 @@
           
             <h3 id="1、windows-64位调用约定"><a href="#1、windows-64位调用约定" class="headerlink" title="1、windows 64位调用约定"></a>1、windows 64位调用约定</h3><p>windows64 位的调用很是奇怪，因为它不是通过栈来传参，而是通过寄存器来传参！</p>
 <p>最为常见的是，当参数只有一个的时候，一般是选用rcx来传递参数！</p>
-<h3 id="2、Linux-64位调用约定"><a href="#2、Linux-64位调用约定" class="headerlink" title="2、Linux 64位调用约定"></a>2、Linux 64位调用约定</h3><p>其实32位系统调用，我们在<a href="/2017/08/07/int-80h系统调用方法/">int-80h系统调用方法</a>已经有过讲述。现在，我们将要讨论的是64位的系统调用。不过在此之前，我们需要知道linux的两个有关系统调用的重要文件unistd\_32.h和unistd\_64.h，这两个文件定义了系统调用号！</p>
-<h4 id="2-1-每种调用号需要传递哪些参数"><a href="#2-1-每种调用号需要传递哪些参数" class="headerlink" title="2.1 每种调用号需要传递哪些参数"></a>2.1 每种调用号需要传递哪些参数</h4><p>在linux系统中某个程序执行时进行的系统调用可以通过strace命令来查看，solaris中对应的命令为dtrace，而mac os x中可以通过类似的dtruss命令来查看。当进程已经处于 D 状态（uninterruptible sleep）时，strace 也帮不上忙。这时候可以通过:</p>
+<h3 id="2、Linux-32位调用约定"><a href="#2、Linux-32位调用约定" class="headerlink" title="2、Linux 32位调用约定"></a>2、Linux 32位调用约定</h3><p>Linux 32位的系统调用时通过int 80h来实现的，eax寄存器中为调用的功能号，ebx、ecx、edx、esi等等寄存器则依次为参数。下面我们来看看hello world程序：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">.section .data</div><div class="line">msg:</div><div class="line">        .ascii &quot;Hello world!\n&quot;</div><div class="line"></div><div class="line">.section .text</div><div class="line"></div><div class="line">.globl _start</div><div class="line"></div><div class="line">_start:</div><div class="line">        movl $4, %eax</div><div class="line">        movl $1, %ebx</div><div class="line">        movl $msg, %ecx</div><div class="line">        movl $13, %edx</div><div class="line">        int $0x80</div><div class="line">        movl $1, %eax</div><div class="line">        movl $0, %ebx</div><div class="line">        int $0x80</div></pre></td></tr></table></figure>
+<p>从 /usr/include/asm/unistd.h中可以看到exit的功能号_NR_exit为1，write(_NR_write)功能号为4，因此第一个int 0x80调用之前eax寄存器值为4，ebx为文件描述符，stdout的文件描述符为1，ecx则为buffer的内存地址，edx为buffer长度。第二个int 0x80之前eax为1表示调用exit，ebx为0表示返回0。</p>
+<p>系统调用功能好可以参考<a href="http://www.linfo.org/system_call_number.html" target="_blank" rel="external">System Call Number Definition</a><br>以及<a href="http://asm.sourceforge.net/syscall.html#2" target="_blank" rel="external">http://asm.sourceforge.net/syscall.html#2</a><br>或者<font color="#f00"> <a href="http://syscalls.kernelgrok.com/" target="_blank" rel="external">http://syscalls.kernelgrok.com/</a> 查找(推荐!)</font></p>
+<h4 id="2-1-系统调用及参数传递过程"><a href="#2-1-系统调用及参数传递过程" class="headerlink" title="2.1 系统调用及参数传递过程"></a>2.1 系统调用及参数传递过程</h4><p>这部分具体可以参考：<br><a href="http://blog.chinaunix.net/uid-10386087-id-2958669.html" target="_blank" rel="external">系统调用及参数传递过程</a><br><a href="http://blog.chinaunix.net/uid-10386087-id-2958670.html" target="_blank" rel="external">深入理解Linux的系统调用</a></p>
+<p>我们以x86为例说明：<br>由于陷入指令是一条特殊指令，而且依赖与操作系统实现的平台，如在x86中，这条指令是int 0x80，这显然不是用户在编程时应该使用的语句，因为这将使得用户程序难于移植。所以在操作系统的上层需要实现一个对应的系统调用库，每个系统调用都在该库中包含了一个入口点（如我们看到的fork, open, close等等），这些函数对程序员是可见的，而这些库函数的工作是以对应系统调用号作为参数，执行陷入指令int 0x80，以陷入核心执行真正的系统调用处理函数。当一个进程调用一个特定的系统调用库的入口点，正如同它调用任何函数一样，对于库函数也要创建一个栈帧。而当进程执行陷入指令时，它将处理机状态转换到核心态，并且在核心栈执行核心代码。</p>
+<p>这里给出一个示例（linux/include/asm/unistd.h）：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">define</span> _syscallN(type, name, type1, arg1, type2, arg2, . . . ) \</span></div><div class="line">type name(type1 arg1,type2 arg2) \</div><div class="line">&#123; \</div><div class="line">long __res; \</div><div class="line">__asm__ volatile (<span class="meta-string">"int $0x80"</span> \</div><div class="line">: <span class="meta-string">"=a"</span> (__res) \</div><div class="line">: <span class="meta-string">"0"</span> (__NR_##name),<span class="meta-string">"b"</span> ((long)(arg1)),<span class="meta-string">"c"</span> ((long)(arg2))); \</div><div class="line">. . . . . .</div><div class="line">__syscall_return(type,__res); \</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在执行一个系统调用库中定义的系统调用入口函数时，实际执行的是类似如上的一段代码。这里牵涉到一些gcc的嵌入式汇编语言，不做详细的介绍，只简单说明其意义：<br>其中\_\<em>NR\</em>##name是系统调用号，如name == ioctl，则为\_\_NR\_ioctl，它将被放在寄存器eax中作为参数传递给中断0x80的处理函数。而系统调用的其它参数arg1, arg2, …则依次被放入ebx, ecx, . . .等通用寄存器中，并作为系统调用处理函数的参数，这些参数是怎样传入核心的将会在后面介绍。</p>
+<font color="#f00"><strong>注意该调用是从左至右依次传参，与普通函数的由右往左依次传参不同</strong></font>
+
+<h3 id="3、Linux-64位调用约定"><a href="#3、Linux-64位调用约定" class="headerlink" title="3、Linux 64位调用约定"></a>3、Linux 64位调用约定</h3><p>现在，我们将要讨论的是64位的系统调用。不过在此之前，我们需要知道linux的两个有关系统调用的重要文件unistd\_32.h和unistd\_64.h，这两个文件定义了系统调用号！</p>
+<h4 id="3-1-每种调用号需要传递哪些参数"><a href="#3-1-每种调用号需要传递哪些参数" class="headerlink" title="3.1 每种调用号需要传递哪些参数"></a>3.1 每种调用号需要传递哪些参数</h4><p>在linux系统中某个程序执行时进行的系统调用可以通过strace命令来查看，solaris中对应的命令为dtrace，而mac os x中可以通过类似的dtruss命令来查看。当进程已经处于 D 状态（uninterruptible sleep）时，strace 也帮不上忙。这时候可以通过:</p>
 <blockquote>
 <p>cat /proc/<pid>/syscall</pid></p>
 </blockquote>
@@ -1856,7 +449,7 @@
 <p>For example, to find the read system call:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">illusion:/usr/src/linux-source-3.19$ grep -rA3 &apos;SYSCALL_DEFINE.\?(read,&apos; *</div><div class="line">fs/read_write.c:SYSCALL_DEFINE3(read, unsigned int, fd, char __user *, buf, size_t, count)</div><div class="line">fs/read_write.c-&#123;</div><div class="line">fs/read_write.c-        struct file *file;</div><div class="line">fs/read_write.c-        ssize_t ret = -EBADF;</div></pre></td></tr></table></figure>
 <p>也可以在以下网址中查找：<br><a href="http://blog.rchapman.org/posts/Linux_System_Call_Table_for_x86_64/" target="_blank" rel="external">http://blog.rchapman.org/posts/Linux_System_Call_Table_for_x86_64/</a></p>
-<h4 id="2-2-调用如何传递参数以及结果如何返回"><a href="#2-2-调用如何传递参数以及结果如何返回" class="headerlink" title="2.2 调用如何传递参数以及结果如何返回"></a>2.2 调用如何传递参数以及结果如何返回</h4><p>在64位linux中，一般来说系统调用的参数统统放在寄存器中，最多可以用到6个寄存器；如果多余6个参数的系统调用怎么传递参数？这个还不清楚，有的文档说64位系统调用的参数最多不会超过6个；还有的文档说超过6个参数的话，其余参数全部通过堆栈来传递。超过6个参数的系统调用，本猫没有实际碰到，也不知到底该怎么办！?就这个问题，有兴趣的童鞋可以和本猫单独切磋讨论。</p>
+<h4 id="3-2-调用如何传递参数以及结果如何返回"><a href="#3-2-调用如何传递参数以及结果如何返回" class="headerlink" title="3.2 调用如何传递参数以及结果如何返回"></a>3.2 调用如何传递参数以及结果如何返回</h4><p>在64位linux中，一般来说系统调用的参数统统放在寄存器中，最多可以用到6个寄存器；如果多余6个参数的系统调用怎么传递参数？这个还不清楚，有的文档说64位系统调用的参数最多不会超过6个；还有的文档说超过6个参数的话，其余参数全部通过堆栈来传递。超过6个参数的系统调用，本猫没有实际碰到，也不知到底该怎么办！?就这个问题，有兴趣的童鞋可以和本猫单独切磋讨论。</p>
 <p>具体调用规则如下： </p>
 <ol>
 <li><p>用户模式的系统调用依次传递的寄存器为: </p>
@@ -1884,7 +477,7 @@
 <p>Only values of class INTEGER or class MEMORY are passed to the kernel</p>
 </blockquote>
 <p>有的童鞋可能要问了，要是浮点数怎么传递给接口！？有参数是浮点数的系统调用吗？这个还真不清楚，不过参数是浮点数的C标准库函数的调用那是大大的有，这个等到在另一篇博文[64汇编调用C标准库函数]中再详细给大家解答。</p>
-<h3 id="3、Linux系统调用实例"><a href="#3、Linux系统调用实例" class="headerlink" title="3、Linux系统调用实例"></a>3、Linux系统调用实例</h3><p>代码的功能很简单，显示一行文本，然后退出。我们使用了syscall中的write和exit调用，查一下前面的调用号和参数，我们初步总结如下：</p>
+<h3 id="4、Linux系统调用实例"><a href="#4、Linux系统调用实例" class="headerlink" title="4、Linux系统调用实例"></a>4、Linux系统调用实例</h3><p>代码的功能很简单，显示一行文本，然后退出。我们使用了syscall中的write和exit调用，查一下前面的调用号和参数，我们初步总结如下：</p>
 <p>write(即sys_write)调用号为1，需传递3个参数</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">unsigned int fd</div><div class="line">const char *buf</div><div class="line">size_t count</div></pre></td></tr></table></figure>
 <p>exit(sys_exit)调用号为60，只需传递一个错误码</p>
@@ -1909,7 +502,8 @@
 <p>提到mmap我们不得不提到munmap，用猜大家也知道该调用的含义吧： </p>
 <p>munmap(sys_munmap) 调用号为11,需传递2个参数:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">unsigned long start</div><div class="line">size_t len</div></pre></td></tr></table></figure>
-<h3 id="4、附录"><a href="#4、附录" class="headerlink" title="4、附录"></a>4、附录</h3><h4 id="4-1-32系统调用表"><a href="#4-1-32系统调用表" class="headerlink" title="4.1 32系统调用表"></a>4.1 32系统调用表</h4><table>
+<h3 id="5、函数查询"><a href="#5、函数查询" class="headerlink" title="5、函数查询"></a>5、函数查询</h3><p>例如execve的函数查询<a href="http://man7.org/linux/man-pages/man2/execve.2.html" target="_blank" rel="external">http://man7.org/linux/man-pages/man2/execve.2.html</a> </p>
+<h3 id="6、附录"><a href="#6、附录" class="headerlink" title="6、附录"></a>6、附录</h3><h4 id="6-1-32系统调用表"><a href="#6-1-32系统调用表" class="headerlink" title="6.1 32系统调用表"></a>6.1 32系统调用表</h4><table>
 <thead>
 <tr>
 <th>#</th>
@@ -5655,7 +4249,7 @@
 </tr>
 </tbody>
 </table>
-<h4 id="4-2-64系统调用表"><a href="#4-2-64系统调用表" class="headerlink" title="4.2 64系统调用表"></a>4.2 64系统调用表</h4><table>
+<h4 id="6-2-64系统调用表"><a href="#6-2-64系统调用表" class="headerlink" title="6.2 64系统调用表"></a>6.2 64系统调用表</h4><table>
 <thead>
 <tr>
 <th>%rax</th>
@@ -9009,7 +7603,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/05/XMAN之旅-windows-exploit-technique/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/05/pwn/XMAN之旅-windows-exploit-technique/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Introspelliam">
@@ -9018,7 +7612,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
+      <meta itemprop="name" content="Introspelliam">
     </span>
 
     
@@ -9028,7 +7622,7 @@
         
           <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/08/05/XMAN之旅-windows-exploit-technique/" itemprop="url">XMAN之旅-windows exploit technique</a></h2>
+                <a class="post-title-link" href="/2017/08/05/pwn/XMAN之旅-windows-exploit-technique/" itemprop="url">XMAN之旅-windows exploit technique</a></h2>
         
 
         <div class="post-meta">
@@ -9063,8 +7657,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/xman/" itemprop="url" rel="index">
-                    <span itemprop="name">xman</span>
+                  <a href="/categories/pwn/" itemprop="url" rel="index">
+                    <span itemprop="name">pwn</span>
                   </a>
                 </span>
 
@@ -9213,7 +7807,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/04/printf格式化漏洞/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/04/pwn/printf格式化漏洞/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Introspelliam">
@@ -9222,7 +7816,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
+      <meta itemprop="name" content="Introspelliam">
     </span>
 
     
@@ -9232,7 +7826,7 @@
         
           <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/08/04/printf格式化漏洞/" itemprop="url">printf格式化漏洞</a></h2>
+                <a class="post-title-link" href="/2017/08/04/pwn/printf格式化漏洞/" itemprop="url">printf格式化漏洞</a></h2>
         
 
         <div class="post-meta">
@@ -9306,24 +7900,25 @@
       
         
           
-            <h3 id="1-格式化字符串漏洞基本原理"><a href="#1-格式化字符串漏洞基本原理" class="headerlink" title="1. 格式化字符串漏洞基本原理"></a>1. 格式化字符串漏洞基本原理</h3><p>格式化字符串漏洞在通用漏洞类型库CWE中的编号是134，其解释为“软件使用了格式化字符串作为参数，且该格式化字符串来自外部输入”。会触发该漏洞的函数很有限，主要就是printf、sprintf、fprintf等print家族函数。介绍格式化字符串原理的文章有很多，我这里就以printf函数为例，简单回顾其中的要点。</p>
+            <h3 id="1-格式化字符串漏洞基本原理"><a href="#1-格式化字符串漏洞基本原理" class="headerlink" title="1. 格式化字符串漏洞基本原理"></a>1. 格式化字符串漏洞基本原理</h3><p>格式化字符串漏洞在通用漏洞类型库CWE中的编号是134，其解释为“软件使用了格式化字符串作为参数，且该格式化字符串来自外部输入”。会触发该漏洞的函数很有限，主要就是printf、sprintf、fprintf等print家族函数。</p>
+<p>介绍格式化字符串原理的文章有很多，我这里就以printf函数为例，简单回顾其中的要点。</p>
 <blockquote>
-<p>printf(&quot;format&quot;, arg1, arg2, ...)</p>
+<p>printf(&quot;format_string&quot;, arg1, arg2, ...)</p>
 </blockquote>
 <p>其第一个参数为格式化字符串，用来告诉程序以什么格式进行输出！然后是参数1（偏移1），参数2（偏移2），...</p>
-<p>下面是两张详细的说明图：<br><img src="/images/2017-08-04/printf_stack.png" alt="printf_stack.png"></p>
+<p>下面是详细的说明图：</p>
 <p><img src="/images/2017-08-04/printf_stack2.png" alt="printf_stack2.png"></p>
-<h3 id="2-格式化漏洞测试"><a href="#2-格式化漏洞测试" class="headerlink" title="2. 格式化漏洞测试"></a>2. 格式化漏洞测试</h3><p>写出一下printf函数</p>
-<blockquote>
-<p>printf(&quot;%8$x1234&quot;);</p>
-</blockquote>
-<p>gdb调试该程序，最后展示栈内容，得到如下图：</p>
+<h3 id="2-格式化漏洞测试"><a href="#2-格式化漏洞测试" class="headerlink" title="2. 格式化漏洞测试"></a>2. 格式化漏洞测试</h3><p>对于下面的程序</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</div><div class="line">    <span class="keyword">char</span> s[<span class="number">8</span>] = <span class="string">"%6$x1234"</span>;</div><div class="line">    <span class="built_in">printf</span>(s,<span class="number">1</span>,<span class="number">2</span>);</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>gdb调试该程序，然后展示栈内容，得到如下图：</p>
 <p><img src="/images/2017-08-04/stack_value.jpg" alt="stack_value"></p>
 <p>打印结果：</p>
 <blockquote>
-<p>12341234</p>
+<p>343332311234</p>
 </blockquote>
-<font color="#f00">说明：<br>A、8$ 表示栈空间从format string算起，偏移量为8的那个栈位置，在上图中format string对应的是地址0xffffd234，值为0x0804b438；而偏移为8的位置为0xffffd250，值为0x34333231(&quot;1234&quot;)，最终会输出的是偏移8地址上的值&quot;1234&quot;<br>B、如果将上面的format换成%8$s1234，那么就相当于打印0x34333231处的字符串。而如果此处为funA@got地址，那么输出的字符串就会是funA的执行地址<br>C、对于密码，输入“%2214x%8$hn”，其中，2214是0x8a6的10进制，而%8$hn表示将前面输出的字符数（即2214）写入偏移8处储存的栈地址所指向空间的低两字节处，即修改0x0d74为0x08a6；若用n，则%2214x需改为%4196518x，即需要输出4196518个字符，开销太大，特别是在远程攻击时，很可能导致连接断掉。<br></font>
+<p>在<a href="/2017/08/04/pwn/格式化字符串/">格式化字符串</a> 一文中，我们讲道n\$表示第n个参数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">printf(&quot;%2$d %2$#x; %1$d %1$#x&quot;,16,17) </div><div class="line">产生&quot;17 0x11; 16 0x10&quot;</div><div class="line">一般而言，格式化字符串是第0个参数！</div></pre></td></tr></table></figure>
+<font color="#f00">说明：<br>A、6\$ 表示栈空间从format string后第一个参数算起，偏移量为6的那个栈位置。<br><br>- 在上图中偏移0(格式化字符串)对应的是地址0xffffcef0，而其存放格式化串的栈地址是0xffffcf04；<br>- 偏移为6的地址为0xffffcf08，值为0x34333231(&quot;1234&quot;)<br><br>B、如果将上面的format换成%6\$s1234，那么就相当于打印地址0x34333231处的字符串。而如果此处为funA@got地址，那么输出的字符串就会是funA的funA@plt<br>C、若输入“%2214c%6\$hn”，其中，2214是0x8a6的10进制<br><br>- %2214c输出2214(0x2214)个字符<br>- %6\$hn表示将前面输出的字符数（即2214）写入到偏移8处值所指向的内容的低两字节处，即修改$[0x34333231]_{low-2bytes}=0x08a6$ 。假设[0x34333231]=0x88888888，此时就会变为0x888808a6<br>- 但是若用n来将[0x34333231]修改为0x888808a6，则%2214c需改为%2290616486c。表示输出2290616486个字符，开销太大，特别是在远程攻击时，所以很可能会导致程序崩溃或等候时间过长。<br><br></font>
 
 <h3 id="3-基本的格式化字符串参数"><a href="#3-基本的格式化字符串参数" class="headerlink" title="3.基本的格式化字符串参数"></a>3.基本的格式化字符串参数</h3><ul>
 <li>%c：输出字符，配上%n可用于向指定地址写数据。</li>
@@ -9331,7 +7926,7 @@
 <li>%x：输出16进制数据，如%i$x表示要泄漏偏移i处4字节长的16进制数据，%i$lx表示要泄漏偏移i处8字节长的16进制数据，32bit和64bit环境下一样。</li>
 <li>%p：输出16进制数据，与%x基本一样，只是附加了前缀0x，在32bit下输出4字节，在64bit下输出8字节，可通过输出字节的长度来判断目标环境是32bit还是64bit。</li>
 <li>%s：输出的内容是字符串，即将偏移处指针指向的字符串输出，如%i$s表示输出偏移i处地址所指向的字符串，在32bit和64bit环境下一样，可用于读取GOT表等信息。</li>
-<li>%n：将%n之前printf已经打印的字符个数赋值给偏移处指针所指向的地址位置，如%100x%10$n表示将0x64写入偏移10处保存的指针所指向的地址（4字节），而%$hn表示写入的地址空间为2字节，%$hhn表示写入的地址空间为1字节，%$lln表示写入的地址空间为8字节，在32bit和64bit环境下一样。有时，直接写4字节会导致程序崩溃或等候时间过长，可以通过%$hn或%$hhn来适时调整。</li>
+<li>%n：将%n之前printf已经打印的字符个数赋值给偏移处指针所指向的地址位置，如%100x%10\$n表示将0x64写入偏移10处保存的指针所指向的地址（4字节），而%\$hn表示写入的地址空间为2字节，%\$hhn表示写入的地址空间为1字节，%\$lln表示写入的地址空间为8字节，在32bit和64bit环境下一样。有时，直接写4字节会导致程序崩溃或等候时间过长，可以通过%\$hn或%\$hhn来适时调整。</li>
 <li>%n是通过格式化字符串漏洞改变程序流程的关键方式，而其他格式化字符串参数可用于读取信息或配合%n写数据</li>
 </ul>
 <font color="#f00">下面的结论是我最近的发现，是在调试逐渐加深理解的。printf(&quot;1234%n&quot;)：[偏移1]=4。也即修改的其实是栈上保存的地址中的值。如下图所示:</font>
@@ -9343,7 +7938,16 @@
 <li>覆写GOT表</li>
 <li>修改栈中保存的返回地址</li>
 </ol>
-<p>而之所以可以这样修改，全是因为字符串被保存在在了栈中。若格式化字符串<code>buf</code>存储在<strong>堆中</strong>，也就是说我们输入的内容不会出现在栈里，那就不能通过向栈中写入地址的方式进行攻击，不过可以利用栈中<strong>已有的值</strong>进行攻击。</p>
+<font color="#00f">需要注意的是，上述改写操作需要栈上保存相应地址，如果变量buf保存在栈上，我们就可以在栈上写入任意地址，并进行修改。若格式化字符串<code>buf</code>存储在<strong>堆中</strong>，也就是说我们输入的内容不会出现在栈里，那就不能通过向栈中写入地址的方式进行攻击，不过可以利用栈中<strong>已有的值</strong>进行攻击。</font>
+
+<p><strong>小技巧总结</strong></p>
+<blockquote>
+<ol>
+<li>利用%x来获取对应栈的内存，但建议使用%p，可以不用考虑位数的区别。</li>
+<li>利用%s来获取变量所对应地址的内容，只不过有零截断。</li>
+<li>利用%order\$x来获取指定参数的值，利用%order\$s来获取指定参数对应地址的内容。</li>
+</ol>
+</blockquote>
 <h3 id="4-实验测试"><a href="#4-实验测试" class="headerlink" title="4. 实验测试"></a>4. 实验测试</h3><h4 id="4-1-CCTF-pwn3"><a href="#4-1-CCTF-pwn3" class="headerlink" title="4.1 CCTF-pwn3"></a>4.1 CCTF-pwn3</h4><p>本题只有NX一个安全措施，且为32位程序。</p>
 <p>通过IDA逆向及初步调试，可以知道以下两点。</p>
 <p>用户名是“sysbdmin”字符串中每个字母的ascii码减1，即rxraclhm；</p>
@@ -9394,11 +7998,2408 @@
 
 
     
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/04/pwn/格式化字符串/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Introspelliam">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/08/04/pwn/格式化字符串/" itemprop="url">格式化字符串</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-04T19:58:27+08:00">
+                2017-08-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/pwn/" itemprop="url" rel="index">
+                    <span itemprop="name">pwn</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="1-格式化字符串定义"><a href="#1-格式化字符串定义" class="headerlink" title="1. 格式化字符串定义"></a>1. 格式化字符串定义</h3><p><strong>格式化字符串</strong>，是一些程序设计语言在格式化输出API函数中用于指定输出参数的格式与相对位置的字符串参数，例如C、C++等程序设计语言的printf类函数，其中的转换说明（conversion specification）用于把随后对应的0个或多个函数参数转换为相应的格式输出；格式化字符串中转换说明以外的其它字符原样输出。</p>
+<h3 id="2-POSIX标准下的printf函数"><a href="#2-POSIX标准下的printf函数" class="headerlink" title="2. POSIX标准下的printf函数"></a>2. POSIX标准下的printf函数</h3><h4 id="2-1-格式化占位符"><a href="#2-1-格式化占位符" class="headerlink" title="2.1 格式化占位符"></a>2.1 格式化占位符</h4><p>格式化字符串中的占位符用于指明输出的参数值如何格式化。</p>
+<p>格式化占位符（format placeholder），语法是：</p>
+<blockquote>
+<p><strong>%[parameter][flags][field width][.precision][length]type</strong></p>
+</blockquote>
+<p><strong>Parameter</strong>可以忽略或者是：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">字符</th>
+<th style="text-align:left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">n$</td>
+<td style="text-align:left"><strong><font color="#f00">n是用这个格式说明符（specifier）显示第几个参数</font></strong>；这使得参数可以输出多次，使用多个格式说明符，以不同的顺序输出。 如果任意一个占位符使用了parameter，则其他所有占位符必须也使用parameter。这是POSIX扩展，不属于ISO C。例：<br><code>printf(&quot;%2$d %2$#x; %1$d %1$#x&quot;,16,17) 产生&quot;17 0x11; 16 0x10&quot;</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Flags</strong>可为0个或多个：</p>
+<table>
+<thead>
+<tr>
+<th>字符</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>+</td>
+<td>总是表示有符号数值的&#39;+&#39;或&#39;-&#39;号，缺省情况是忽略正数的符号。仅适用于数值类型。</td>
+</tr>
+<tr>
+<td>空格</td>
+<td>使得有符号数的输出如果没有正负号或者输出0个字符，则前缀1个空格。如果空格与&#39;+&#39;同时出现，则空格说明符被忽略。</td>
+</tr>
+<tr>
+<td>-</td>
+<td>左对齐。缺省情况是右对齐。</td>
+</tr>
+<tr>
+<td>#</td>
+<td>对于&#39;g&#39;与&#39;G&#39;，不删除尾部0以表示精度。对于&#39;f&#39;, &#39;F&#39;, &#39;e&#39;, &#39;E&#39;, &#39;g&#39;, &#39;G&#39;, 总是输出小数点。对于&#39;o&#39;, &#39;x&#39;, &#39;X&#39;, 在非0数值前分别输出前缀0, 0x, and 0X表示数制。</td>
+</tr>
+<tr>
+<td>0</td>
+<td>如果width选项前缀以0，则在左侧用0填充直至达到宽度要求。例如printf(&quot;%2d&quot;, 3)输出&quot; 3&quot;，而printf(&quot;%02d&quot;, 3)输出&quot;03&quot;。如果0与-均出现，则0被忽略，即左对齐依然用空格填充。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Field Width</strong>给出显示数值的最小宽度，典型用于制表输出时填充固定宽度的表目。实际输出字符的个数不足域宽，则根据左对齐或右对齐进行填充。实际输出字符的个数超过域宽并不引起数值截断，而是显示全部。宽度值的前导0被解释为0填充标志，如上述；前导的负值被解释为其绝对值，负号解释为左对齐标志。如果域宽值为<code>*</code>，则由对应的函数参数的值为当前域宽。</p>
+<p><strong>Precision</strong>通常指明输出的<em>最大</em>长度，依赖于特定的格式化类型。对于d、i、u、x、o的整型数值，是指最小数字位数，不足的位要在左侧补0，如果超过也不截断，缺省值为1。对于a,A,e,E,f,F的浮点数值，是指小数点右边显示的数字位数，必要时四舍五入；缺省值为6。对于g,G的浮点数值，是指有效数字的最大位数。对于s的字符串类型，是指输出的字节的上限，超出限制的其它字符将被截断。如果域宽为<code>*</code>，则由对应的函数参数的值为当前域宽。如果仅给出了小数点，则域宽为0。</p>
+<p><strong>Length</strong>指出浮点型参数或整型参数的长度。此项Microsoft称为“Size”。可以忽略，或者是下述：</p>
+<table>
+<thead>
+<tr>
+<th>字符</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>hh</td>
+<td>对于整数类型，printf期待一个从char提升的int尺寸的整型参数。</td>
+</tr>
+<tr>
+<td>h</td>
+<td>对于整数类型，printf期待一个从short提升的int尺寸的整型参数。</td>
+</tr>
+<tr>
+<td>l</td>
+<td>对于整数类型，printf期待一个long尺寸的整型参数。<br>对于浮点类型，printf期待一个double尺寸的整型参数。<br>对于字符串s类型，printf期待一个wchar_t指针参数。<br>对于字符c类型，printf期待一个wint_t型的参数。</td>
+</tr>
+<tr>
+<td>ll</td>
+<td>对于整数类型，printf期待一个long long尺寸的整型参数。Microsoft也可以使用I64</td>
+</tr>
+<tr>
+<td>L</td>
+<td>对于浮点类型，printf期待一个long double尺寸的整型参数。</td>
+</tr>
+<tr>
+<td>z</td>
+<td>对于整数类型，printf期待一个size_t尺寸的整型参数。</td>
+</tr>
+<tr>
+<td>j</td>
+<td>对于整数类型，printf期待一个intmax_t尺寸的整型参数。</td>
+</tr>
+<tr>
+<td>t</td>
+<td>对于整数类型，printf期待一个ptrdiff_t尺寸的整型参数。</td>
+</tr>
+</tbody>
+</table>
+<p>此外，在ISO C99广泛接受前，还有几个平台相关的length选项：</p>
+<table>
+<thead>
+<tr>
+<th>字符</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>I</td>
+<td>对于有符号整数类型，printf期待一个ptrdiff_t尺寸的整型参数。对于无符号整数类型，printf期待一个size_t尺寸的整型参数。常见于Win32/Win64平台。</td>
+</tr>
+<tr>
+<td>I32</td>
+<td>对于整数类型，printf期待一个32位（双字）的整型参数。常见于Win32/Win64平台。</td>
+</tr>
+<tr>
+<td>I64</td>
+<td>对于整数类型，printf期待一个64位（四字）的整型参数。常见于Win32/Win64平台。</td>
+</tr>
+<tr>
+<td>q</td>
+<td>对于整数类型，printf期待一个64位（四字）的整型参数。常见于BSD平台。</td>
+</tr>
+</tbody>
+</table>
+<p>ISO C99的头文件<code>inttypes.h</code>包含了许多宏，用于平台独立的<code>printf</code>编码。例如：</p>
+<h4 id="2-2-类型"><a href="#2-2-类型" class="headerlink" title="2.2 类型"></a>2.2 类型</h4><p><strong>Type</strong>，也称转换说明（conversion specification/specifier），可以是：</p>
+<table>
+<thead>
+<tr>
+<th>字符</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>d,i</td>
+<td>有符号十进制数值int。&#39;%d&#39;与&#39;%i&#39;对于输出是同义；但对于scanf()输入二者不同，其中%i在输入值有前缀0x或0时，分别表示16进制或8进制的值。如果指定了精度，则输出的数字不足时在左侧补0。默认精度为1。精度为0且值为0，则输出为空。</td>
+</tr>
+<tr>
+<td>u</td>
+<td>十进制unsigned int。如果指定了精度，则输出的数字不足时在左侧补0。默认精度为1。精度为0且值为0，则输出为空。</td>
+</tr>
+<tr>
+<td>f,F</td>
+<td>double型输出10进制定点表示。&#39;f&#39;与&#39;F&#39;差异是表示无穷与NaN时，&#39;f&#39;输出&#39;inf&#39;, &#39;infinity&#39;与&#39;nan&#39;；&#39;F&#39;输出&#39;INF&#39;, &#39;INFINITY&#39;与&#39;NAN&#39;。小数点后的数字位数等于精度，最后一位数字四舍五入。精度默认为6。如果精度为0且没有#标记，则不出现小数点。小数点左侧至少一位数字。</td>
+</tr>
+<tr>
+<td>e,E</td>
+<td>double值，输出形式为10进制的([-]d.ddd e[+/-]ddd). E版本使用的指数符号为E（而不是e）。指数部分至少包含2位数字，如果值为0，则指数部分为00。Windows系统，指数部分至少为3位数字，例如1.5e002，也可用Microsoft版的运行时函数_set_output_format 修改。小数点前存在1位数字。小数点后的数字位数等于精度。精度默认为6。如果精度为0且没有#标记，则不出现小数点。</td>
+</tr>
+<tr>
+<td>g,G</td>
+<td>double型数值，精度定义为全部有效数字位数。当指数部分在闭区间 [-4,精度] 内，输出为定点形式；否则输出为指数浮点形式。&#39;g&#39;使用小写字母，&#39;G&#39;使用大写字母。小数点右侧的尾数0不被显示；显示小数点仅当输出的小数部分不为0。</td>
+</tr>
+<tr>
+<td>x,X</td>
+<td>16进制unsigned int。&#39;x&#39;使用小写字母；&#39;X&#39;使用大写字母。如果指定了精度，则输出的数字不足时在左侧补0。默认精度为1。精度为0且值为0，则输出为空。</td>
+</tr>
+<tr>
+<td>o</td>
+<td>8进制unsigned int。如果指定了精度，则输出的数字不足时在左侧补0。默认精度为1。精度为0且值为0，则输出为空。</td>
+</tr>
+<tr>
+<td>s</td>
+<td>如果没有用l标志，输出null结尾字符串直到精度规定的上限；如果没有指定精度，则输出所有字节。如果用了l标志，则对应函数参数指向wchar_t型的数组，输出时把每个宽字符转化为多字节字符，相当于调用wcrtomb函数。</td>
+</tr>
+<tr>
+<td>c</td>
+<td>如果没有用l标志，把int参数转为unsigned char型输出；如果用了l标志，把wint_t参数转为包含两个元素的wchart_t数组，其中第一个元素包含要输出的字符，第二个元素为null宽字符。</td>
+</tr>
+<tr>
+<td>p</td>
+<td>void *型</td>
+</tr>
+<tr>
+<td>a,A</td>
+<td>double型的16进制表示，&quot;[−]0xh.hhhh p±d&quot;。其中指数部分为10进制表示的形式。例如：1025.010输出为0x1.004000p+10。&#39;a&#39;使用小写字母，&#39;A&#39;使用大写字母。（C++11流使用hexfloat输出16进制浮点数）</td>
+</tr>
+<tr>
+<td>n</td>
+<td><font color="#f00">不输出字符，但是把已经成功输出的字符个数写入对应的整型指针参数所指的变量。</font></td>
+</tr>
+<tr>
+<td>%</td>
+<td>&#39;%&#39;字面值，不接受任何flags, width, precision or length。</td>
+</tr>
+</tbody>
+</table>
+<p>宽度与精度格式化参数可以忽略，或者直接指定，或者用星号&quot;<code>*</code>&quot;表示取对应函数参数的值。例如<code>printf(&quot;%*d&quot;, 5, 10)</code>输出&quot;<code>10</code>&quot;；<code>printf(&quot;%.*s&quot;, 3, &quot;abcdef&quot;)</code> 输出&quot;<code>abc</code>&quot;。</p>
+<font color="#f000">如果函数参数太少，不能匹配所有的格式参数说明符，或者函数参数的类型不匹配，将导致未定义（undefined）行为。过多的函数参数被忽略。许多时候，未定义的行为将导致<a href="https://zh.wikipedia.org/w/index.php?title=%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%94%BB%E5%87%BB&amp;action=edit&amp;redlink=1" target="_blank" rel="external">格式化字符串攻击</a>。</font>
+
+<p>某些编译器，如<a href="https://zh.wikipedia.org/wiki/GCC" target="_blank" rel="external">GCC</a>，会静态检查printf这一类函数的格式化参数并编译警告存在的问题（当使用编译标志<code>-Wall</code>或<code>-Wformat</code>）。GCC也会对用户自定义的printf风格函数做静态检查，如果在函数定义时使用了非标准的&quot;<code>format</code>&quot; <code>__attribute__</code>。</p>
+<h3 id="3-格式化字符串函数"><a href="#3-格式化字符串函数" class="headerlink" title="3. 格式化字符串函数"></a>3. 格式化字符串函数</h3><ul>
+<li><p>输入</p>
+<ul>
+<li>scanf</li>
+</ul>
+</li>
+<li><p>输出</p>
+<p>| 函数                     | 基本介绍                               |<br>| ------------------------ | -------------------------------------- |<br>| printf                   | 输出到stdout                           |<br>| fprintf                  | 输出到指定FILE流                       |<br>| vprintf                  | 根据参数列表格式化输出到 stdout        |<br>| vfprintf                 | 根据参数列表格式化输出到指定FILE流     |<br>| sprintf                  | 输出到字符串                           |<br>| snprintf                 | 输出指定字节数到字符串                 |<br>| vsprintf                 | 根据参数列表格式化输出到字符串         |<br>| vsnprintf                | 根据参数列表格式化输出指定字节到字符串 |<br>| setproctitle             | 设置argv                               |<br>| syslog                   | 输出日志                               |<br>| err, verr, warn, vwarn等 | 。。。                                 |</p>
+</li>
+</ul>
+<p>其实不止printf函数可以格式化字符串，printf函数的变形也可以，例如printf_chk</p>
+<p>printf_chk和printf不同的地方有两点：</p>
+<ol>
+<li>不能使用$n不连续的打印</li>
+<li>在使用%n的时候会做一系列检查</li>
+</ol>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/03/pwn/got、plt表介绍/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Introspelliam">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/08/03/pwn/got、plt表介绍/" itemprop="url">got、plt表介绍</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-03T22:31:33+08:00">
+                2017-08-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/pwn/" itemprop="url" rel="index">
+                    <span itemprop="name">pwn</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="1-GOT表和PLT表"><a href="#1-GOT表和PLT表" class="headerlink" title="1. GOT表和PLT表"></a>1. GOT表和PLT表</h3><p>GOT（Global Offset Table，全局偏移表）是Linux ELF文件中用于定位全局变量和函数的一个表。PLT（Procedure Linkage Table，过程链接表）是Linux ELF文件中用于延迟绑定的表，即函数第一次被调用的时候才进行绑定。</p>
+<h3 id="2-延迟绑定"><a href="#2-延迟绑定" class="headerlink" title="2. 延迟绑定"></a>2. 延迟绑定</h3><p>所谓延迟绑定，就是当函数第一次被调用的时候才进行绑定（包括符号查找、重定位等），如果函数从来没有用到过就不进行绑定。基于延迟绑定可以大大加快程序的启动速度，特别有利于一些引用了大量函数的程序</p>
+<h3 id="3-延迟绑定的基本原理"><a href="#3-延迟绑定的基本原理" class="headerlink" title="3. 延迟绑定的基本原理"></a>3. 延迟绑定的基本原理</h3><p>假如存在一个bar函数，这个函数在PLT中的条目为bar@plt，在GOT中的条目为bar@got，那么在第一次调用bar函数的时候，首先会跳转到PLT，伪代码如下：</p>
+<p>bar@plt:</p>
+<p>jmp bar@got</p>
+<p>patch bar@got</p>
+<p>这里会从PLT跳转到GOT，如果函数从来没有调用过，那么这时候GOT会跳转回PLT并调用patch bar@got，这一行代码的作用是将bar函数真正的地址填充到bar@got，然后跳转到bar函数真正的地址执行代码。当我们下次再调用bar函数的时候，执行路径就是先后跳转到bar@plt、bar@got、bar真正的地址。具体来看个实例：</p>
+<p>vulnerable_function函数调用了read函数，由于read函数是动态链接加载进来的只有在链接的时候才知道地址，编译时并不知道地址</p>
+<p><img src="/images/2017-08-03/1.png" alt="1"></p>
+<p>执行call _read函数会跳到plt表中寻找中：</p>
+<p><img src="/images/2017-08-03/2.png" alt="2"></p>
+<p>plt表中会继续跳入到got表中寻找</p>
+<p><img src="/images/2017-08-03/3.png" alt="3"></p>
+<p>got表中的所存的read函数的地址便是在pwn6进程中的实际地址，也就是</p>
+<p><img src="/images/2017-08-03/4.png" alt="4"></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/03/pwn/gdb的调试与使用/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Introspelliam">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/08/03/pwn/gdb的调试与使用/" itemprop="url">gdb的调试与使用</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-03T22:22:50+08:00">
+                2017-08-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/pwn/" itemprop="url" rel="index">
+                    <span itemprop="name">pwn</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="1-调试的快捷键"><a href="#1-调试的快捷键" class="headerlink" title="1. 调试的快捷键"></a>1. 调试的快捷键</h3><font color="#f00">peda带有的功能，直接输入命令，其就会给予提示（如果不是这样，基本上也是该命令就可以不带参数）。这儿就不多做介绍</font>
+
+<h4 id="1-1-基础的调试快捷键"><a href="#1-1-基础的调试快捷键" class="headerlink" title="1.1 基础的调试快捷键"></a>1.1 基础的调试快捷键</h4><ul>
+<li>s step，si步入</li>
+<li>n 执行下一条指令  ni步入</li>
+<li>b 在某处下断点，可以用 <ul>
+<li>b * adrress</li>
+<li>b function_name</li>
+<li>info b  查看断点信息</li>
+<li>delete 1删除第一个断点</li>
+</ul>
+</li>
+<li>c 继续</li>
+<li>r 执行</li>
+<li>disas addr 查看addr处前后的反汇编代码</li>
+</ul>
+<h4 id="1-2-显示数据"><a href="#1-2-显示数据" class="headerlink" title="1.2 显示数据"></a>1.2 显示数据</h4><ul>
+<li>p 系列<ul>
+<li>p system/main  显示某个函数地址<ul>
+<li>p $esp    显示寄存器</li>
+</ul>
+</li>
+<li>p/x  p/a p/b p/s。。。</li>
+<li>p 0xff - 0xea   <font color="#f00">计算器</font></li>
+<li>print &amp;VarName 查看变量地址</li>
+<li>p * 0xffffebac   查看某个地址处的值</li>
+</ul>
+</li>
+<li>x系列<ul>
+<li>x/xw addr 显示某个地址处开始的16进制内容，如果有符号表会加载符号表</li>
+<li>x/x $esp 查看esp寄存器中的值</li>
+<li>x/s addr 查看addr处的字符串</li>
+<li>x/b addr 查看addr处的字符</li>
+<li>x/i  addr 查看addr处的反汇编结果</li>
+</ul>
+</li>
+<li>info系列<ul>
+<li>info register $ebp  查看寄存器ebp中的内容 (简写为 i r ebp)</li>
+<li>i r eflags 查看状态寄存器</li>
+<li>i r ss        查看段寄存器</li>
+<li>i b            查看断点信息</li>
+<li>i functions  查看所有的函数</li>
+</ul>
+</li>
+<li>disas addr 查看addr处前后的反汇编代码</li>
+<li>stack 20   查看栈内20个值</li>
+<li>show args  查看参数</li>
+<li>vmmap 查看映射状况 <font color="#f00">peda带有</font></li>
+<li>readelf 查看elf文件中各个段的起始地址  <font color="#f00">peda带有</font></li>
+<li>parseheap 显示堆状况  <font color="#f00">peda带有</font></li>
+</ul>
+<h4 id="1-3-查找数据"><a href="#1-3-查找数据" class="headerlink" title="1.3 查找数据"></a>1.3 查找数据</h4><ul>
+<li>find 查找字符串    <font color="#f00">peda带有</font></li>
+<li>searchmem 查找字符串  <font color="#f00">peda带有</font></li>
+<li>ropsearch &quot;xor eax,eax;ret&quot;  0x08048080 0x08050000   查找某段的rop  <font color="#f00">peda带有</font></li>
+<li>ropgadget  提供多个pop|ret可行结果  <font color="#f00">peda带有</font></li>
+</ul>
+<h4 id="1-4-修改数据"><a href="#1-4-修改数据" class="headerlink" title="1.4 修改数据"></a>1.4 修改数据</h4><ul>
+<li>set $esp=0x110  修改寄存器的值</li>
+<li>set *0xf7ff3234=0x08042334 修改内存的值</li>
+<li>set args &quot;asdasg&quot; &quot;afdasgasg&quot; &quot;agasdsa&quot;  分别给参数1,2,3赋值</li>
+<li>set args &quot;`python -c &#39;print &quot;1234\x7f\xde&quot;&#39;`&quot;    这个参数中用python脚本重写了一下，避免有些字符无法正确设置</li>
+<li>r &quot;arg1&quot; &quot;arg2&quot; &quot;arg3&quot;   设置参数</li>
+<li>run `$(perl -e &#39;print &quot;A&quot;x20&#39;)`</li>
+</ul>
+<h4 id="1-1-peda插件"><a href="#1-1-peda插件" class="headerlink" title="1.1 peda插件"></a>1.1 peda插件</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">Enhance the display of gdb: colorize and display disassembly codes, registers, memory information during debugging.</div><div class="line">Add commands to support debugging and exploit development (for a full list of commands use peda help):</div><div class="line">aslr -- Show/set ASLR setting of GDB</div><div class="line">checksec -- Check for various security options of binary</div><div class="line">dumpargs -- Display arguments passed to a function when stopped at a call instruction</div><div class="line">dumprop -- Dump all ROP gadgets in specific memory range</div><div class="line">elfheader -- Get headers information from debugged ELF file</div><div class="line">elfsymbol -- Get non-debugging symbol information from an ELF file</div><div class="line">lookup -- Search for all addresses/references to addresses which belong to a memory range</div><div class="line">patch -- Patch memory start at an address with string/hexstring/int</div><div class="line">pattern -- Generate, search, or write a cyclic pattern to memory</div><div class="line">procinfo -- Display various info from /proc/pid/</div><div class="line">pshow -- Show various PEDA options and other settings</div><div class="line">pset -- Set various PEDA options and other settings</div><div class="line">readelf -- Get headers information from an ELF file</div><div class="line">ropgadget -- Get common ROP gadgets of binary or library</div><div class="line">ropsearch -- Search for ROP gadgets in memory</div><div class="line">searchmem|find -- Search for a pattern in memory; support regex search</div><div class="line">shellcode -- Generate or download common shellcodes.</div><div class="line">skeleton -- Generate python exploit code template</div><div class="line">vmmap -- Get virtual mapping address ranges of section(s) in debugged process</div><div class="line">xormem -- XOR a memory region with a key</div><div class="line">Installation</div></pre></td></tr></table></figure>
+<p><strong>vmmap：查看当前程序映射的内存块</strong><br><strong>dumprop：</strong></p>
+<h3 id="2-查找某个plt、got、plt-2"><a href="#2-查找某个plt、got、plt-2" class="headerlink" title="2. 查找某个plt、got、plt_2"></a>2. 查找某个plt、got、plt_2</h3><ul>
+<li>plt 可以直接使用pwntools中的ELF(elf).symbols(function_name)</li>
+<li>got 可以直接使用pwntools中的ELF(elf).got(function_name)</li>
+<li>plt_2 可以直接使用pwntools中的ELF(lib).symbols(function_name)</li>
+</ul>
+<h3 id="3-查找程序所动态链接的库"><a href="#3-查找程序所动态链接的库" class="headerlink" title="3. 查找程序所动态链接的库"></a>3. 查找程序所动态链接的库</h3><ul>
+<li><p>file pwn3</p>
+<ul>
+<li>pwn3: ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux.so.2, for GNU/Linux 2.6.24, BuildID[sha1]=916959406d0c545f6971223c8e06bff1ed9ae74d, not stripped</li>
+</ul>
+</li>
+<li><p>checksec pwn3</p>
+<ul>
+<li>[*] &#39;/root/Desktop/Pwnable/fmt/normal/fmt_string_write_got/pwn3&#39;<br>Arch:     i386-32-little<br>RELRO:    Partial RELRO<br>Stack:    No canary found<br>NX:       NX enabled<br>PIE:      No PIE (0x8048000)</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>ldd pwn3<ul>
+<li>linux-gate.so.1 (0xf77ad000)<br>libc.so.6 =&gt; /lib32/libc.so.6 (0xf75d2000)<br>/lib/ld-linux.so.2 (0x56601000)</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-编译32位可执行文件"><a href="#4-编译32位可执行文件" class="headerlink" title="4. 编译32位可执行文件"></a>4. 编译32位可执行文件</h3><ul>
+<li><p>gcc -m32 test.c -o test</p>
+<ul>
+<li>一般而言此时的目标文件为32位，且不能生成调试信息</li>
+</ul>
+</li>
+<li><p>gcc -m32 -g test.c -o test</p>
+<ul>
+<li><p>生成的目标文件是32位，且可以利用操作系统的“原生格式（native format）”生成调试</p>
+<p>信息。GDB 可以直接利用这个信息，其它调试器也可以使用这个调试信息</p>
+</li>
+</ul>
+</li>
+<li><p>其它保护状态的开启，请参考<a href="/2017/09/30/linux程序的常用保护机制/"><em>linux程序的常用保护机制</em></a></p>
+</li>
+</ul>
+<h3 id="5-开启PIE之后的调试"><a href="#5-开启PIE之后的调试" class="headerlink" title="5. 开启PIE之后的调试"></a>5. 开启PIE之后的调试</h3><p>开启PIE之后，地址会一直在变，这十分不利于gdb的调试，所以这时候应该在本地关闭ASLR</p>
+<p>常用的方法是：echo 0 &gt; /proc/sys/kernel/randomize_va_space</p>
+<p>开启的方式是：echo 2 &gt; /proc/sys/kernel/randomize_va_space</p>
+<h3 id="6-运行时查看文件执行"><a href="#6-运行时查看文件执行" class="headerlink" title="6. 运行时查看文件执行"></a>6. 运行时查看文件执行</h3><p>做了一道题，在你不执行的时候，只能找到相对地址，但是下断点需要实际的执行地址。若关闭PIE，那么每次的执行地址将会一致，这个时候就需要找到执行的开始地址。peda的常用指令中有vmmap，可以找到实际地址。</p>
+<p>这道题很让人苦恼的是，如果gdb中执行run，那么将陷入循环而不能使用vmmap，若强制结束，最后vmmap会报错。这个时候，就有另外的一些办法：</p>
+<ul>
+<li>执行./pwn &amp;，这个时候会将pwn程序放入后台，而且你能快速知道这个程序的PID，这个时候cat /proc/pwn的PID/maps，就能找到对应的执行时地址。之后kill -9 pwn的PID</li>
+<li>编写一个小脚本，任意放置一个断点，并开启gdb调试，这个时候断点会崩溃，但是gdb-peda中使用vmmap仍能找到对应地址</li>
+<li>另外还可以用pidof pwn快速获取对应的id</li>
+</ul>
+<h3 id="7-查看heap"><a href="#7-查看heap" class="headerlink" title="7. 查看heap"></a>7. 查看heap</h3><p>heap查看一直很麻烦，毕竟需要使用vmmap、x等指令</p>
+<p>当然若使用python from libheap import *</p>
+<p>我们可以快速使用heapls、heap等指令</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/03/re/XMAN之旅-逆向基础（下）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Introspelliam">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/08/03/re/XMAN之旅-逆向基础（下）/" itemprop="url">XMAN之旅_逆向基础（下）</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-03T00:07:08+08:00">
+                2017-08-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/re/" itemprop="url" rel="index">
+                    <span itemprop="name">re</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="三、-CTF逆向与现实逆向"><a href="#三、-CTF逆向与现实逆向" class="headerlink" title="三、 CTF逆向与现实逆向"></a>三、 CTF逆向与现实逆向</h3><ul>
+<li><p>CTF逆向特点</p>
+<ul>
+<li>代码量小</li>
+<li>结构简单<ul>
+<li>单文件</li>
+</ul>
+</li>
+<li>编码单一</li>
+<li>现代语言特性少<ul>
+<li>面向过程</li>
+</ul>
+</li>
+<li>加密壳/优化少</li>
+<li>语言常见<ul>
+<li>C/C++/ASM</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>现实逆向</p>
+<ul>
+<li>代码量巨大</li>
+<li>结构复杂<ul>
+<li>大量静态库、动态库</li>
+</ul>
+</li>
+<li>各种乱码</li>
+<li>大量现代语言特性<ul>
+<li>OO、Template</li>
+</ul>
+</li>
+<li>优化和加密壳十分常见</li>
+<li>语言可能十分神器<ul>
+<li>Go/VB/Delphi</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="四、IDA高级使用"><a href="#四、IDA高级使用" class="headerlink" title="四、IDA高级使用"></a>四、IDA高级使用</h3><h4 id="1-设置字符串编码和格式"><a href="#1-设置字符串编码和格式" class="headerlink" title="1. 设置字符串编码和格式"></a>1. 设置字符串编码和格式</h4><ul>
+<li>快捷键：<font color="#f00">Alt+A</font></li>
+<li>可以设置字符串类型<ul>
+<li>Unicode字符串 （WCS）</li>
+<li>多字节字符串 （MBS）</li>
+<li>其他</li>
+</ul>
+</li>
+<li>可以设置字符串编码<ul>
+<li>需要系统支持相应的编码</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-导入-导出数据"><a href="#2-导入-导出数据" class="headerlink" title="2. 导入/导出数据"></a>2. 导入/导出数据</h4><ul>
+<li>快捷键：<font color="#f00">Shift+E</font></li>
+<li>菜单名：<ul>
+<li>Edit -&gt; Import Data</li>
+<li>Edit -&gt; Export Data</li>
+</ul>
+</li>
+<li>操作：<ul>
+<li>选定后按快捷键</li>
+</ul>
+</li>
+<li>方便提取数据或修改idb数据库</li>
+</ul>
+<h4 id="3-选定大段数据"><a href="#3-选定大段数据" class="headerlink" title="3. 选定大段数据"></a>3. 选定大段数据</h4><ul>
+<li>快捷键： <font color="#f00">Alt+L</font></li>
+<li><ul>
+<li>菜单名：<ul>
+<li>Edit -&gt; Begin Selection</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>将标定选择起始点</li>
+<li>滚轮或按g跳转至结束位置</li>
+</ul>
+<h4 id="4-批量应用类型"><a href="#4-批量应用类型" class="headerlink" title="4. 批量应用类型"></a>4. 批量应用类型</h4><ul>
+<li>操作<ul>
+<li>设置好第一个类型</li>
+<li>利用选定大量数据的方法选定数据</li>
+<li>按*或按d弹出建立数组对话框</li>
+<li><font color="#f0f">不勾选Create as array</font>
+
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="5-设置间接跳转地址"><a href="#5-设置间接跳转地址" class="headerlink" title="5. 设置间接跳转地址"></a>5. 设置间接跳转地址</h4><ul>
+<li>快捷键：<font color="#f00">Alt+F11</font></li>
+<li>菜单名：<ul>
+<li>Edit -&gt; Plugins -&gt; Change the callee address </li>
+</ul>
+</li>
+<li>将利用动态调试获取到的调用/跳转地址填入，可以极大地帮助IDA和F5的分析（不如参数个数、调用约定等），获得更准确的结果</li>
+</ul>
+<h4 id="6-修复跳转表"><a href="#6-修复跳转表" class="headerlink" title="6. 修复跳转表"></a>6. 修复跳转表</h4><ul>
+<li>默认无快捷键，可手动设置</li>
+<li>菜单<ul>
+<li>Edit -&gt; Other -&gt; Specify switch idiom</li>
+</ul>
+</li>
+<li>当程序在PIE时可能会导致<font color="#f00">跳转表分析失败</font>，于是需要手动修复来获得更好的分析结果</li>
+</ul>
+<h4 id="7-IDAPython"><a href="#7-IDAPython" class="headerlink" title="7. IDAPython"></a>7. IDAPython</h4><ul>
+<li>IDA自带支持的脚本</li>
+<li>可以使用几乎所有IDA提供的API</li>
+<li>可以快速完成大量重复性操作</li>
+<li>可以方便的了解IDA内部的数据和结构</li>
+</ul>
+<h3 id="五、IDA-F5出错处理"><a href="#五、IDA-F5出错处理" class="headerlink" title="五、IDA F5出错处理"></a>五、IDA F5出错处理</h3><h4 id="1-positive-sp-value"><a href="#1-positive-sp-value" class="headerlink" title="1. positive sp value"></a>1. positive sp value</h4><ul>
+<li>成因：IDA会自动分析SP寄存器的变化量，由于缺少调用约定、参数个数等信息，导致分析出错</li>
+<li>解决方案<ul>
+<li>推荐：在<font color="#f00">Option -&gt; General设置显示Stack pointer</font>，然后去检查对应地址附近调用的函数的调用约定以及栈指针变化</li>
+<li>不推荐： 在对应地址处按<font color="#f00">Alt+K</font>，然后输入一个较大的负值（有风险）</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-call-analysis-failed"><a href="#2-call-analysis-failed" class="headerlink" title="2. call analysis failed"></a>2. call analysis failed</h4><ul>
+<li>成因：F5在分析调用时，未能成功解析<font color="#f00">参数位置/参数个苏</font></li>
+<li>解决方案：<ul>
+<li>对于间接调用（类似call eax等），可使用之前讲过的<font color="#f0f">设置调用地址</font>的方法解决</li>
+<li>对于直接调用，查看<font color="#f0f">调用目标的type</font>是否正确设置。<font color="#f0f">可变参数</font>是引发这种错误的主要原因之一</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-cannot-convert-to-microcode"><a href="#3-cannot-convert-to-microcode" class="headerlink" title="3. cannot convert to microcode"></a>3. cannot convert to microcode</h4><ul>
+<li>成因：部分指令无法被编译</li>
+<li>解决方案：<ul>
+<li>最常见起因是函数中<font color="#f0f">有未设置成指令的数据字节</font>，按c将其设置为指令即可</li>
+<li>其次常见的是<font color="#f0f">x86中的rep前缀</font>，比如<font color="#f0f">repxx  jmp</font>等。可以将该指令的<font color="#f0f">第一个字节(repxx前缀的对应位置)patch为0x90 (NOP)</font></li>
+</ul>
+</li>
+</ul>
+<h4 id="4-stack-frame-is-too-big"><a href="#4-stack-frame-is-too-big" class="headerlink" title="4. stack frame is too big"></a>4. stack frame is too big</h4><ul>
+<li>成因：在分析栈帧时，IDA出现异常，导致分析出错</li>
+<li>解决方案：<ul>
+<li>找到明显不合常理的stack variable offset，双击进入栈帧界面，<font color="#f0f">按u键删除对应的stack variable</font></li>
+<li>如果是去壳导致的原因，先用OD等软件脱壳</li>
+<li>可能由花指令导致，请手动或自动检查并去除花指令</li>
+</ul>
+</li>
+<li>非常罕见</li>
+</ul>
+<h4 id="5-local-variable-allocation-failed"><a href="#5-local-variable-allocation-failed" class="headerlink" title="5. local variable allocation failed"></a>5. local variable allocation failed</h4><ul>
+<li>成因： 分析函数时，有部分变量对应的区域<font color="#f0f">发生重叠</font>，多见于ARM平台出现Point、Rect等8字节、16字节、32字节结构</li>
+<li>解决方案<ul>
+<li>修改对应参数为多个int</li>
+<li>修改ida安装目录下hexrays.cfg中的HO_IGNORE_OVERLAPS</li>
+</ul>
+</li>
+</ul>
+<h4 id="6-F5结果不正确"><a href="#6-F5结果不正确" class="headerlink" title="6. F5结果不正确"></a>6. F5结果不正确</h4><ul>
+<li>成因：F5会自动删除其认为不可能到达的死代码</li>
+<li>常见起因是一个函数错误的标注为noretur函数</li>
+<li>解决方案<ul>
+<li>进到目前反编译结果，找到<font color="#f0f">最后被调用的函数(被错误分析的函数)，双击进入（迫使HexRays重新分析相应函数）</font></li>
+<li>如果上述方案不成功，那么进到被错误分析的函数，按Tab切换到反汇编界面，按Alt+P进入界面取消函数的Does not return 属性</li>
+</ul>
+</li>
+</ul>
+<h3 id="六、IDA-F5高级使用"><a href="#六、IDA-F5高级使用" class="headerlink" title="六、IDA F5高级使用"></a>六、IDA F5高级使用</h3><h4 id="1-自定义寄存器传参"><a href="#1-自定义寄存器传参" class="headerlink" title="1. 自定义寄存器传参"></a>1. 自定义寄存器传参</h4><ul>
+<li>使用IDA中的<strong>usercall和</strong>userpurge调用约定（两个下划线）</li>
+<li>设置范例<ul>
+<li>int __usercall test&lt;eax&gt; (int al &lt;ebx&gt;);</li>
+<li>&lt;&gt;中为对应值的位置</li>
+<li>第一个&lt;&gt;为返回值位置，注意返回值的位置即使不变也要填写</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-HexRays源码级调试"><a href="#2-HexRays源码级调试" class="headerlink" title="2. HexRays源码级调试"></a>2. HexRays源码级调试</h4><ul>
+<li>注意<ul>
+<li>F5中显示的变量很可能不是变量原来的值，尤其是寄存器变量，尽量在  值位置断下并查看</li>
+<li>对于优化后的代码，F5调试bug很多</li>
+<li>F5单步不太稳定，在ARM平台可能会跑飞</li>
+<li>F5的运行至指定位置功能功能不稳定</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-恢复符号"><a href="#3-恢复符号" class="headerlink" title="3. 恢复符号"></a>3. 恢复符号</h4><ul>
+<li>找到程序的旧版本<ul>
+<li>大量程序早期版本中安全意识薄弱，没有删除符号等各种信息</li>
+<li>苹果用户可以在AppAdmin中获取版本应用</li>
+</ul>
+</li>
+<li>Rizzo匹配</li>
+<li>看程序自带的String<ul>
+<li>许多程序自带大量调试信息，从而可以获取符号</li>
+</ul>
+</li>
+<li>Google搜索源码<ul>
+<li>CS、iOS都有被泄露过</li>
+<li>按获得信息搜索源码<ul>
+<li>大量程序中使用Stack Overflow、CSDN等答案</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>制作Signtature<ul>
+<li>IDA提供自动制作Signature的工具</li>
+<li>打开IDASDK68文件夹找到flair 58文件夹</li>
+</ul>
+</li>
+</ul>
+<h3 id="七、IDA-插件搞定虚表"><a href="#七、IDA-插件搞定虚表" class="headerlink" title="七、IDA 插件搞定虚表"></a>七、IDA 插件搞定虚表</h3><h4 id="1-虚表简介"><a href="#1-虚表简介" class="headerlink" title="1. 虚表简介"></a>1. 虚表简介</h4><p>虚表是业界难题，虚函数的处理会因编译器采取的ABI的不同而不同</p>
+<ul>
+<li>IDA操作的插件<ul>
+<li>HexraysCodeXplorer</li>
+<li>hexrays_tool</li>
+<li>HexRaysPyTools</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-实验样例"><a href="#2-实验样例" class="headerlink" title="2. 实验样例"></a>2. 实验样例</h4><ul>
+<li>快捷键： Shift + F</li>
+<li>菜单： 右键 -&gt; Deeo Scan Variable</li>
+<li>操作<ul>
+<li>在构造函数中执行上述操作、等待扫描完毕</li>
+<li>按Alt+F8打开Signature Builder，看到有黄色部分，然后选不正确的field点</li>
+<li>清楚所有的黄色部分后即可点击Finalize，在新弹出的窗口中修改名称</li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/02/re/XMAN之旅-逆向基础（上）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Introspelliam">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/08/02/re/XMAN之旅-逆向基础（上）/" itemprop="url">XMAN之旅_逆向基础（上）</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-02T12:43:02+08:00">
+                2017-08-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/re/" itemprop="url" rel="index">
+                    <span itemprop="name">re</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>这堂课是由Nu1L著名队员Misty所讲，内容很多，范围很广，是作为逆向的基础入门知识——实际上内容还是有点难度的。</p>
+<h3 id="一、-初级工具使用"><a href="#一、-初级工具使用" class="headerlink" title="一、 初级工具使用"></a>一、 初级工具使用</h3><p><br></p>
+<h4 id="1-二进制编辑器"><a href="#1-二进制编辑器" class="headerlink" title="1. 二进制编辑器"></a>1. 二进制编辑器</h4><p>Misty作为一位资深的逆向大佬，向我们推荐了两款好用的二进制编辑器：010Editor 和 Editplus</p>
+<p>010 Editor是文本/十六进制编辑器，还包括文件解析、计算器、文本比较等功能。其可以通过官方网站提供的脚本(Binary Template)对avi、bmp、png、exe等简单格式的文件进行解析，当然也可以根据需求来自己编写文件解析脚本。</p>
+<p>010Editor的文本解析功能，方便了我们分析文件，理清文件内容。</p>
+<p>Editplus则是Misty的二次元之心作祟，要支持各种编码，这个确实是不错的选择。</p>
+<h4 id="2-可执行文件查看"><a href="#2-可执行文件查看" class="headerlink" title="2. 可执行文件查看"></a>2. 可执行文件查看</h4><p>对于这部分，我的感触就是看书，看《加密与解密(第三版)》-看雪安全论坛</p>
+<p>PE: CFF Explorer<br>MachO: MachOView<br>ELF: IDA</p>
+<h4 id="3-格式转换工具"><a href="#3-格式转换工具" class="headerlink" title="3. 格式转换工具"></a>3. 格式转换工具</h4><p>推荐使用shellcode helper</p>
+<h4 id="4-反汇编器"><a href="#4-反汇编器" class="headerlink" title="4. 反汇编器"></a>4. 反汇编器</h4><p>推荐使用IDA<br>IDA的功能十分强大，而且其超前的意识也让它被大家广泛使用！</p>
+<ul>
+<li>界面转换<ul>
+<li>d: 设置Data（多次使用可以在1字节、2字节、4字节、8字节间转换）</li>
+<li>c: 设置Code</li>
+<li>x: Cross Reference</li>
+<li>Shift+F12：查看所有字符串</li>
+</ul>
+</li>
+<li>反编译器使用<ul>
+<li>y：设置类型（变量、函数）、设置Calling Conversion</li>
+</ul>
+</li>
+<li>其他快捷键<ul>
+<li>N：对（变量、函数）重命名</li>
+</ul>
+</li>
+</ul>
+<h4 id="5-调试器"><a href="#5-调试器" class="headerlink" title="5. 调试器"></a>5. 调试器</h4><ul>
+<li><p>命令行调试器有：</p>
+<ul>
+<li>gdb: 用于linux等多种系统中</li>
+<li>windbg：用于windows调试</li>
+</ul>
+</li>
+<li><p>图形界面调试器：</p>
+<ul>
+<li>OllyDbg：调试win32程序</li>
+<li>x64_dbg：调试win32/64程序</li>
+<li>IDA内置调试器</li>
+</ul>
+</li>
+</ul>
+<h4 id="6-搭建调试环境"><a href="#6-搭建调试环境" class="headerlink" title="6. 搭建调试环境"></a>6. 搭建调试环境</h4><p>在IDA PRO中有dbgsrv文件夹。里面放置了一些远程可执行程序。只需要在远程启用这些程序，就可以在本地远程调试。</p>
+<h4 id="6-去除软件保护"><a href="#6-去除软件保护" class="headerlink" title="6. 去除软件保护"></a>6. 去除软件保护</h4><ul>
+<li>侦壳<ul>
+<li>PEiD、ExeInfo</li>
+</ul>
+</li>
+<li>脱壳<ul>
+<li>搜索脱壳机（比较多的有upx、ASPack。对于upx，推荐使用upx shell）</li>
+<li>ESP定律快速脱壳<ul>
+<li>原理：脱壳前后位置不变</li>
+<li>适用环境：只针对压缩壳</li>
+<li>范例：<br>首先进入程序，并设置ESP处的硬件断点，如图所示<br><img src="/images/2017-08-02/first.png" alt="first"><br>然后运行至硬件断点处，发现后面有个长跳转，在其位置上设置断点<br><img src="/images/2017-08-02/second.jpg" alt="second"><br>最后运行至长跳转位置处，然后直接步进，进入程序的正式入口，选用插件OllyDump，设置起始地址和入口点修正地址，然后脱壳即可！<br><img src="/images/2017-08-02/third.jpg" alt="third"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>去除花指令<ul>
+<li>使用OllyDbg脚本</li>
+<li>手动总结特征码，然后修改</li>
+</ul>
+</li>
+<li>去除混淆<ul>
+<li>.net反混淆器 de4dot</li>
+</ul>
+</li>
+</ul>
+<h4 id="7-定位验证代码"><a href="#7-定位验证代码" class="headerlink" title="7. 定位验证代码"></a>7. 定位验证代码</h4><ul>
+<li><p>任务：</p>
+<ul>
+<li>破除保护外壳</li>
+<li>理解程序逻辑</li>
+<li>找到验证函数</li>
+<li>逆推获取flag</li>
+</ul>
+</li>
+<li><p>方法</p>
+<ul>
+<li>正向（从main开始）</li>
+<li>逆向（从输入输出函数回溯）</li>
+</ul>
+</li>
+</ul>
+<h3 id="二、-逆向方法总结"><a href="#二、-逆向方法总结" class="headerlink" title="二、 逆向方法总结"></a>二、 逆向方法总结</h3><h4 id="1-算法分析与逆向"><a href="#1-算法分析与逆向" class="headerlink" title="1. 算法分析与逆向"></a>1. 算法分析与逆向</h4><ul>
+<li>没算法（签到题）</li>
+<li>常见算法<ul>
+<li>简单异或</li>
+<li>带雪崩效应的异或（CBC）</li>
+<li>加密算法（RSA、AES）<ul>
+<li>RSA中会引用大数库函数</li>
+<li>AES如果出得简单，那么解密函数应该在程序中，否则就得理清程序逻辑</li>
+</ul>
+</li>
+<li>散列算法（MD5、SHA1）<ul>
+<li>MD5中会出现常数，所以应该会有0123456789ABCDEF这一串数</li>
+<li>SHA1中也会出现常数，google一下就能判断</li>
+</ul>
+</li>
+<li>解方程<ul>
+<li>推荐使用z3，使用时注意与python配合，十分简单</li>
+<li>python的数学运算库</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>有趣的算法<ul>
+<li>走迷宫</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-边信道攻击-side-channel-attack-简称SCA"><a href="#2-边信道攻击-side-channel-attack-简称SCA" class="headerlink" title="2. 边信道攻击(side channel attack 简称SCA)"></a>2. 边信道攻击(side channel attack 简称SCA)</h4><p>原理： 检测程序执行的行指令数、<br>应用：逐字节验证的题目</p>
+<p><b>范例：采用codegate-preliminary-2014/dodocrackme/</b></p>
+<pre><code>$ file crackme 
+crackme: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, BuildID[sha1]=92ef00b31d91a827a5aed6b0fe03fe38fe20fb4d, stripped
+$ ./crackme 
+root@localhost's password: bla
+Permission denied (password).
+$ objdump -d crackme | wc -l
+15809
+</code></pre>
+
+<p>我们使用pin进行测试得到：</p>
+<pre><code>$ pin -t inscount0 -o out -- ./crackme ; cat out
+root@localhost's password: a
+Permission denied (password).
+Count 715821
+$ pin -t inscount0 -o out -- ./crackme ; cat out
+root@localhost's password: b
+Permission denied (password).
+Count 716328
+$ pin -t inscount0 -o out -- ./crackme ; cat out
+root@localhost's password: c
+Permission denied (password).
+Count 716835
+$ bc -lq
+716328 -715821
+507
+716835 - 716328
+507
+</code></pre>
+
+<p>使用所有可见字符，最后得到的测试结果如下：</p>
+<pre><code>$ python bf.py 
+Input [!] -> [717933] delta [507]
+Input ["] -> [718440] delta [507]
+Input [#] -> [718947] delta [507]
+Input [$] -> [719454] delta [507]
+Input [%] -> [719961] delta [507]
+Input [&] -> [720468] delta [507]
+Input ['] -> [720975] delta [507]
+Input [(] -> [721482] delta [507]
+Input [)] -> [721989] delta [507]
+Input [*] -> [722496] delta [507]
+Input [+] -> [723003] delta [507]
+Input [,] -> [723510] delta [507]
+Input [-] -> [724017] delta [507]
+Input [.] -> [724524] delta [507]
+Input [/] -> [725031] delta [507]
+Input [0] -> [725538] delta [507]
+Input [1] -> [726045] delta [507]
+Input [2] -> [726552] delta [507]
+Input [3] -> [727059] delta [507]
+Input [4] -> [727566] delta [507]
+Input [5] -> [728073] delta [507]
+Input [6] -> [728580] delta [507]
+Input [7] -> [729087] delta [507]
+Input [8] -> [729594] delta [507]
+Input [9] -> [730101] delta [507]
+Input [:] -> [730608] delta [507]
+Input [;] -> [731115] delta [507]
+Input [<] -=""> [731622] delta [507]
+Input [=] -> [732129] delta [507]
+Input [>] -> [732636] delta [507]
+Input [?] -> [733143] delta [507]
+Input [@] -> [733650] delta [507]
+Input [A] -> [734157] delta [507]
+Input [B] -> [734664] delta [507]
+Input [C] -> [735171] delta [507]
+Input [D] -> [735678] delta [507]
+Input [E] -> [736185] delta [507]
+Input [F] -> [736692] delta [507]
+Input [G] -> [737199] delta [507]
+Input [H] -> [701989] delta [-35210]
+Input [I] -> [703653] delta [1664]
+Input [J] -> [704160] delta [507]
+Input [K] -> [704667] delta [507]
+Input [L] -> [705174] delta [507]
+Input [M] -> [705681] delta [507]
+Input [N] -> [706188] delta [507]
+Input [O] -> [706695] delta [507]
+Input [P] -> [707202] delta [507]
+Input [Q] -> [707709] delta [507]
+Input [R] -> [708216] delta [507]
+Input [S] -> [708723] delta [507]
+Input [T] -> [709230] delta [507]
+Input [U] -> [709737] delta [507]
+Input [V] -> [710244] delta [507]
+Input [W] -> [710751] delta [507]
+Input [X] -> [711258] delta [507]
+Input [Y] -> [711765] delta [507]
+Input [Z] -> [712272] delta [507]
+Input [[] -> [712779] delta [507]
+Input [\] -> [713286] delta [507]
+Input []] -> [713793] delta [507]
+Input [^] -> [714300] delta [507]
+Input [_] -> [714807] delta [507]
+Input [`] -> [715314] delta [507]
+Input [a] -> [715821] delta [507]
+Input [b] -> [716328] delta [507]
+Input [c] -> [716835] delta [507]
+Input [d] -> [717342] delta [507]
+Input [e] -> [717849] delta [507]
+Input [f] -> [718356] delta [507]
+Input [g] -> [718863] delta [507]
+Input [h] -> [719370] delta [507]
+Input [i] -> [719877] delta [507]
+Input [j] -> [720384] delta [507]
+Input [k] -> [720891] delta [507]
+Input [l] -> [721398] delta [507]
+Input [m] -> [721905] delta [507]
+Input [n] -> [722412] delta [507]
+Input [o] -> [722919] delta [507]
+Input [p] -> [723426] delta [507]
+Input [q] -> [723933] delta [507]
+Input [r] -> [724440] delta [507]
+Input [s] -> [724947] delta [507]
+Input [t] -> [725454] delta [507]
+Input [u] -> [725961] delta [507]
+Input [v] -> [726468] delta [507]
+Input [w] -> [726975] delta [507]
+Input [x] -> [727482] delta [507]
+Input [y] -> [727989] delta [507]
+Input [z] -> [728496] delta [507]
+Input [{] -> [729003] delta [507]
+Input [|] -> [729510] delta [507]
+Input [}] -> [730017] delta [507]
+Input [~] -> [730524] delta [507]
+</]></code></pre>
+
+<p>于是得到首字母为H</p>
+<p>我们使用下面的脚本进行测试，得到结果：</p>
+<pre><code>#!/usr/bin/python
+import os, pexpect, time
+from subprocess import Popen,PIPE
+
+pinpath="/ctf/TOOLS/pin/pin"
+
+def try_list(lst):
+    procs = {}
+    ret_dict = {}
+    for (idx, s) in enumerate(lst):
+        out_file = s.encode('hex')
+        p = Popen([pinpath, "-t", "inscount0", "-o", "tmp/" + out_file, "--", "./crackme"], stdout = PIPE, stdin = PIPE)
+        procs[s] = p
+        p.stdin.write(s + "\n")
+
+    prev = 0
+    show_delta = False
+    delta = {}
+    for (idx,s) in enumerate(lst):
+        while procs[s].poll() is None:
+            time.sleep(0.5)
+        if "denied" not in procs[s].stdout.read():
+            print "Output different for password [%s]" % s
+            exit(-1)
+        out_file = s.encode('hex')
+        output = open("tmp/" + out_file).read().split(" ")[1].strip()
+        instr_count = int(output)
+        if show_delta:
+            #print "Input [%s] -> [%s] delta [%s]" % (s, instr_count, instr_count - prev)
+            delta[s] = instr_count - prev
+        else:
+            show_delta = True
+        prev = instr_count
+
+    for (idx,s) in enumerate(lst):
+        if idx < 2:
+            continue
+        if delta[s] != delta[lst[idx-1]]:
+            return s
+
+prefix = ""
+while True:
+    lst = [prefix + chr(i) for i in range(32,127)]
+    prefix = try_list(lst)
+    print "Trying input -> %s" % prefix
+
+</code></pre>
+
+<h4 id="3-逆向小技巧"><a href="#3-逆向小技巧" class="headerlink" title="3. 逆向小技巧"></a>3. 逆向小技巧</h4><ul>
+<li>快速找main入口<ul>
+<li>寻找一个<font color="#f00">大跳转</font></li>
+</ul>
+</li>
+<li>快速定位关键位置<ul>
+<li>从Function List靠前位置开始乱翻<ul>
+<li>编译时不同源文件会被分别编译为.o，再由编译器合并</li>
+<li>编译命令行中标准库一般在最前面</li>
+</ul>
+</li>
+<li>从main函数旁边翻</li>
+</ul>
+</li>
+<li>应对MFC程序<ul>
+<li>使用xspy工具查看消息处理函数<ul>
+<li>将xspy上的放大镜拖到感兴趣的函数（如OnClick、OnCommand等</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>手动加载Signature<ul>
+<li>碰到无法自动识别库函数时<ul>
+<li>Shift+F5: View -&gt; Open Subviews -&gt; Signatures (注意要选择好Library，如果使用mfc，就应该选择vc32mfc文件)</li>
+<li>Shift+F11: View -&gt; Open Subviews -&gt; Type Libraries</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>如何得知MessageBox弹框后，程序在哪继续进行<ul>
+<li>在OD或x64dbg中找到内存布局列表<ul>
+<li>OD：<font color="#f00">Alt+M</font> -&gt; 内存</li>
+<li>x64dbg：在窗口栏点击<font color="#f00">内存布局</font></li>
+</ul>
+</li>
+<li>找到自己程序的代码段（通常是本程序的.text，按F2，<font color="#f00">设置区断点</font>）</li>
+<li>返回程序点击确定即可</li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/28/0day/文件类型漏洞挖掘与Smart-Fuzz/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Introspelliam">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/07/28/0day/文件类型漏洞挖掘与Smart-Fuzz/" itemprop="url">文件类型漏洞挖掘与Smart Fuzz</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-28T22:25:03+08:00">
+                2017-07-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全技术/" itemprop="url" rel="index">
+                    <span itemprop="name">安全技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="1-Smart-Fuzz"><a href="#1-Smart-Fuzz" class="headerlink" title="1. Smart Fuzz"></a>1. Smart Fuzz</h3><h4 id="1-1-文件格式Fuzz的基本方法"><a href="#1-1-文件格式Fuzz的基本方法" class="headerlink" title="1.1 文件格式Fuzz的基本方法"></a>1.1 文件格式Fuzz的基本方法</h4><p>不管IE还是Office，都有一个共同点，就是用文件作为程序的主要输入。从本质上讲，这些软件都是按照事先约定好的数据结构对文件中不同的数据域进行解析，以决定用什么颜色、在什么位置显示这些数据。</p>
+<p>文件格式Fuzz（File Fuzz）就是利用“畸形文件”测试软件鲁棒性的方法。</p>
+<p>File Fuzz工具的工作流程大体如下：</p>
+<ol>
+<li>以正常的文件模板为基础，按照一定规则生成一批畸形文件</li>
+<li>将畸形文件逐一送入软件进行解析，并监视软件是否会抛出异常</li>
+<li>记录软件产生的错误星系，如寄存器状态、栈状态等</li>
+<li>用日志或其他UI形式向测试人员展示异常信息，以进一步鉴定这些错误是否能被利用</li>
+</ol>
+<p><img src="/images/2017-07-28/file_fuzz.jpg" alt="File Fuzz的一般步骤"></p>
+<h4 id="1-2-Blind-Fuzz和Smart-Fuzz"><a href="#1-2-Blind-Fuzz和Smart-Fuzz" class="headerlink" title="1.2 Blind Fuzz和Smart Fuzz"></a>1.2 Blind Fuzz和Smart Fuzz</h4><p>Blind Fuzz就是“盲测”，也即在随机位置插入随机的数据以生成畸形文件。现代软件往往使用非常复杂的数据结构，而数据结构越复杂，解析逻辑越复杂，就越容易出现漏洞。复杂的数据结构有以下特征：</p>
+<ol>
+<li>拥有一批预定义的静态数据，如magic、cmd id等</li>
+<li>数据结构的内容是可以动态改变的</li>
+<li>数据结构之间是嵌套的 </li>
+<li>数据中存在多种数据关系（size of, point to, reference of, CRC）</li>
+<li>有意义的数据被编码或压缩，甚至用另一种文件形式来存储。</li>
+</ol>
+<p>对于复杂数据结构的复杂文件进行漏洞挖掘，若用Blind Fuzz，则产生测试用例的策略缺少针对性，生成大量无效测试用例，难以发现复杂解析器深层逻辑的漏洞等。</p>
+<p>Smart Fuzz的特征：</p>
+<ol>
+<li>面向逻辑（Logic Oriented Fuzzing）：目标是解析文件的程序逻辑。即明确测试“深度”以及畸形数据的测试“粒度”。</li>
+<li>面向数据类型测试（Data Type Oriented Fuzzing）<ul>
+<li>算术型，以HEX、ASCII、Unicode、Raw格式存在的各种数值</li>
+<li>指针型，Null指针、合法/非法的内存指针等</li>
+<li>字符串型，超长字符串、缺少终止符(0x00)的字符串等</li>
+<li>特殊字符，#,@,*,&lt;,&gt;,/,\,../等</li>
+</ul>
+</li>
+<li>基于样本（Sample Based Fuzzing）：首先构造合法的样本文件（模板文件），然后以这个文件为模板，每次只改动小部分数据和逻辑来生成畸形文件，这也叫做变异（Mutation）</li>
+</ol>
+<h3 id="2-用Peach挖掘文件漏洞"><a href="#2-用Peach挖掘文件漏洞" class="headerlink" title="2. 用Peach挖掘文件漏洞"></a>2. 用Peach挖掘文件漏洞</h3><h4 id="2-1-Peach-介绍与安装"><a href="#2-1-Peach-介绍与安装" class="headerlink" title="2.1 Peach 介绍与安装"></a>2.1 Peach 介绍与安装</h4><p>Peach是一款用Python写的开源Smart Fuzz工具，其支持两种文件Fuzz方法：基于生长(Generation Based)和基于变异(Mutation Based)。基于生长的Fuzz方法产生随机或启发性数据来填充给定的数据模型，从而生成畸形文件。基于变异的Fuzz方法在一个给定的样本文件基础上进行修改从而产生畸形文件。</p>
+<h4 id="2-2-XML介绍"><a href="#2-2-XML介绍" class="headerlink" title="2.2 XML介绍"></a>2.2 XML介绍</h4><p>XML即&quot;Extensible Generalized Markup Language&quot;，可扩展标记性语言；其与HTML一样都是标准通用标记性语言（Standard Generalized Markup Language, SGML）</p>
+<p>XML分为文件序言(Prolog)和文件主体两大部分。文件序言为XML第一行，告诉解析器该如何工作（例如：&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;）。其中version是XML文件所用的标准版本号，必须要有：encoding标明此XML文件的编码类型，如果是Unicode编码时则可以省略。文件主体分为以下几个部分：</p>
+<ol>
+<li>元素(Element)：&lt;title&gt; lang=&quot;cn&quot;&gt;XML&lt;/title&gt;</li>
+<li>标签(Tag)：&lt;tile&gt;</li>
+<li>属性(Attribute)：lang就是&lt;title&gt;的属性</li>
+<li>根元素(Root Element)：又称文档元素。起始标签</li>
+<li>注释(Comment)：&lt;!-- --!&gt;来注释</li>
+</ol>
+<h4 id="2-3-定义简单的Peach-Pit"><a href="#2-3-定义简单的Peach-Pit" class="headerlink" title="2.3 定义简单的Peach Pit"></a>2.3 定义简单的Peach Pit</h4><p>Peach Pit文件包括以下5个模块：</p>
+<ol>
+<li>GeneralConf</li>
+<li>DataModel</li>
+<li>StateModel</li>
+<li>Agents and Monitors</li>
+<li>Test and Run Configuration</li>
+</ol>
+<p>所有元素都包含在根元素&lt;Peach&gt;里</p>
+<pre><code>&lt;?xml version="1.0" encoding="utf-8" ?&gt;
+&lt;Peach xmlns="http://phed.org/2008/Peach" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://phed.org/2008/Peach ../peach.xsd" version="1.0"&gt;
+</code></pre>
+
+<p>上面的Peach元素的各个属性基本上是固定的，不要轻易改动</p>
+<p>一、 GeneralConf<br>GeneralConf是Peach Pit文件的第一部分，用来定义基本配置信息。包括:</p>
+<pre><code>* include: 要包含的其他Peach Pit文件
+* Import：要导入的Python库
+* PythonPath：要添加的python库路径
+</code></pre><p>在HelloWorld中，GeneralConf部分只需写入:</p>
+<pre><code>&lt;!-- Import defaults for Peach instance --&gt;
+&lt;Include ns="default" src="file:defaults.xml" /&gt;
+</code></pre>
+
+<p>二、 DataModel<br>DataModel用来定义数据模型，包括数据结构和数据关系等。一个Peach Pit文件中需要包含一个或多个数据类型。常见的有:</p>
+<pre><code>* String：属性有name, size, value, isStatic
+* Number：属性有name, size
+* Blob: 无具体数据类型，属性有name
+* Block： 用于对数据进行分组，属性有name
+</code></pre><p>HelloWorld程序中定义的:</p>
+<pre><code>&lt;!-- Create a simple data template containing a single string --&gt;
+&lt;DataModel name="HelloWorldTemplate"&gt;
+        &lt;String value="Hello World!" /&gt;
+&lt;/DataModel&gt;
+</code></pre>
+
+<p>三、StateModel<br>StateModel用于描述如何向目标程序发送/接收数据。StateModel由至少一个State组成，并且用initialState指定一个State；每个State由至少一个Action组成，Action用于定义StateModel中的各种动作，动作类型由type来指定。Action支持的动作类型包括start、stop、open、close、input、output、call等。</p>
+<p>当代码中有多个Action时，则从上往下依次执行。</p>
+<pre><code>&lt;StateModel name="State" initialState="State1" &gt;
+        &lt;State name="State1"&gt;
+                &lt;Action type="output" &gt;
+                        &lt;DataModel ref="HelloWorldTemplate"/&gt;
+                &lt;/Action&gt;
+        &lt;/State&gt;
+&lt;/StateModel&gt;
+</code></pre>
+
+<p>四、Agent<br>Agent用于定义代理和监视器，可以用来调用Windbg等调试器来检测程序运行的错误信息等，一个Peach Pit文件可以定义多个Agent，每个Agent下可以定义多个Monitor。<br>Monitor类型为debugger.WindowsDebugEngine，是调用Windbg来执行下面的&quot;notepad.exe filename&quot;命令；而若类型为process.PageHeap，则是为notepad.exe开启页堆调试(Page Heap Debug)。</p>
+<p>五、Test and Run configuration<br>Test元素用来定义一个测试的配置，包括一个StateModel和一个Publisher，以及including/execluding、Agent信息等。其中StateModel和Publisher是必须定义的，其他可选。Publisher用来定义Peach的IO连接，可以构造网络数据流(如TCP，UDP，HTTP)和文件流(如FileWriter，FileReader)等</p>
+<p>在HelloWorld程序中，需要的是将畸形数据显示到命令行，所以Publisher用的是标准输出stdout.Stdout</p>
+<pre><code>&lt;Test name="HelloWorldTest"&gt;
+        &lt;StateModel ref="State"/&gt;
+        &lt;!-- Display test cases to the console --&gt;
+        &lt;Publisher class="stdout.Stdout" /&gt;
+&lt;/Test&gt;
+</code></pre>
+
+
+<p>Run元素用来定义要运行哪些测试，包括一个或多个Test，另外还可以通过Logger元素配置日志来捕获运行结果。当然，Logger是可选的</p>
+<p>HelloWorld程序中，run配置如下：</p>
+<pre><code>&lt;!-- Configure a single run --&gt;
+&lt;Run name="DefaultRun" description="Stdout HelloWorld Run"&gt;
+
+        &lt;Test ref="HelloWorldTest" /&gt;
+
+&lt;/Run&gt;
+</code></pre>
+
+
+<h4 id="2-4-定义数据之间的依存关系"><a href="#2-4-定义数据之间的依存关系" class="headerlink" title="2.4 定义数据之间的依存关系"></a>2.4 定义数据之间的依存关系</h4><p>在Peach Pit中可以用Relation元素来表示数据长度、数据个数以及数据偏移等信息。格式如下:</p>
+<pre><code>&lt;Relation type="size" of="Data" /&gt;
+&lt;Relation type="count" of="Data" /&gt;
+&lt;Relation type="offset" of="Data" /&gt;
+</code></pre>
+
+<p>同样，数据校验值也可以通过Fixup来表示。Fixup支持的校验类型包括CRC32、MD5、SHA1、SHA256、EthernetChecksum、SspiAuthentication等，这可参考官方文档。Fixup格式如下:</p>
+<pre><code>&lt;Fixup class="FixupClass"&gt;
+    &lt;Param name="ref" value="Data" /&gt;
+&lt;/Fixup&gt;
+</code></pre>
+
+<p>FixupClass可以为checksum.Crc32Fixup、checksum.SHA256Fixup等。</p>
+<p>Crc32Fixup数据模型示例:</p>
+<table>
+<thead>
+<tr>
+<th>Offset</th>
+<th>Size</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0x00</td>
+<td>4 bytes</td>
+<td>Length of Data</td>
+</tr>
+<tr>
+<td>0x04</td>
+<td>4 bytes</td>
+<td>Type</td>
+</tr>
+<tr>
+<td>0x08</td>
+<td>Data</td>
+</tr>
+<tr>
+<td>after data</td>
+<td>4 bytes</td>
+<td>CRC of Type and Data</td>
+</tr>
+</tbody>
+</table>
+<p>上面数据模型的实现:</p>
+<pre><code>&lt;DataModel name="HelloData"&gt;
+&lt;Number name="Length" size="32"&gt;
+    &lt;Relation type="size" of="Data"/&gt;
+&lt;/Number&gt;
+&lt;Block name="TypeAndData"&gt;
+    &lt;String name="Type" size="32" /&gt;
+    &lt;Blob name="Data"/&gt;
+&lt;/Block&gt;
+&lt;Number name="CRC" size="32"&gt;
+    &lt;Fixup class="checksums.Crc32Fixup"&gt;
+        &lt;Param name="ref" value="TypeAndData" /&gt;
+    &lt;/Fixup&gt;
+&lt;/Number&gt;
+&lt;/DataModel&gt;
+</code></pre>
+
+<h4 id="2-5-用Peach-Fuzz-PNG文件"><a href="#2-5-用Peach-Fuzz-PNG文件" class="headerlink" title="2.5 用Peach Fuzz PNG文件"></a>2.5 用Peach Fuzz PNG文件</h4><p>首先看看png图片的格式，如图所示:<br><img src="/images/2017-07-28/png.jpg" alt="png文件格式"></p>
+<p>png最前面是8字节PNG签名，十六进制为89 50 4E 0D 0A 1A 0A。随后是若干个数据区块(Chunk)，包括IDHR、IDAT、IEND等。</p>
+<p>png文件Chunk格式</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Size</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Length</td>
+<td>4 bytes</td>
+<td>Length of data field</td>
+</tr>
+<tr>
+<td>Type</td>
+<td>4 bytes</td>
+<td>Chunk type code</td>
+</tr>
+<tr>
+<td>Data</td>
+<td></td>
+<td>Data Bytes</td>
+</tr>
+<tr>
+<td>CRC</td>
+<td>4 bytes</td>
+<td>CRC of type and data</td>
+</tr>
+</tbody>
+</table>
+<p>可以将Chunk的DataModel定义如下:</p>
+<pre><code>&lt;DataModel name="Chunk"&gt;
+&lt;Number name="Length" size="32" signed="false"&gt;
+    &lt;Relation type="size" of="Data"/&gt;
+&lt;/Number&gt;
+&lt;Block name="TypeAndData"&gt;
+    &lt;String name="Type" size="4" /&gt;
+    &lt;Blob name="Data" /&gt;
+&lt;/Block&gt;
+&lt;Number name="CRC" size="32"&gt;
+    &lt;Fixup class="checksums.Crc32Fixup"&gt;
+        &lt;Param name="ref" value="TypeAndData" /&gt;
+    &lt;/Fixup&gt;
+&lt;/Number&gt;
+&lt;/DataModel&gt;
+</code></pre>
+
+<p>PNG简单地认为是由一个PNG签名和若干个结构相同的Chunk组成。在Chunk数据模型之后将PNG文件的DataModel进行如下定义：</p>
+<pre><code>&lt;DataModel name="Png"&gt;
+&lt;Blob name="pngMagic" isStatic="true" valueTyp="hex" value="89 50 4E 47 0D 0A 1A 0A" /&gt;
+&lt;Block ref="Chunk" minOccurs="1" maxOccurs="1024" /&gt;
+&lt;/DataModel&gt;
+</code></pre>
+
+<p>minOccurs=&quot;1&quot; maxOccurs=&quot;1024&quot;表示该区块最少重复1次，最多重复1024次</p>
+<p>然后配置StateModel:第一步修改文件生成畸形文件；第二部需要把文件关闭；第三步需要调用适当的程序打开生成的畸形文件（这里使用pngcheck）。</p>
+<pre><code>&lt;StateModel name="TheState" initialState="Initial"&gt;
+    &lt;State name="Initial"&gt;
+        &lt;!-- Write out our png file --&gt;
+        &lt;Action type="output"&gt;
+            &lt;DataModel ref="Png" /&gt;
+            &lt;!-- This is our sample file to read in --&gt;
+            &lt;Data name="data" fileName="sample.png" /&gt;
+        &lt;/Action&gt;
+    &lt;/State&gt;
+
+    &lt;!-- Close file --&gt;
+    &lt;Action type="close"/&gt;
+
+    &lt;!-- Launch the target process --&gt;
+    &lt;Action type="call" method="D:\tweakpng.exe"&gt;
+        &lt;Param name="png file" type="in"&gt;
+            &lt;DataModel ref="Param" /&gt;
+            &lt;Data name="fileName"&gt;
+                &lt;!-- Name of Fuzzed output file --&gt;
+                &lt;Field name="Value" value="peach.png" /&gt;
+            &lt;/Data&gt;
+        &lt;/Param&gt;
+    &lt;/Action&gt;
+&lt;/StateModel&gt;
+</code></pre>
+
+<p>在call动作中我们引入了&quot;Param&quot;的数据类型，这个数据模型用来存放传达给pngcheck.exe/tweakpng.exe的参数，即畸形文件的文件名。所以&quot;Param&quot;需要包含一个名为&quot;Value&quot;的字符型静态数据。<br>所以需要在StateModel之前定义该数据模型:</p>
+<pre><code>&lt;DataModel name="Param"&gt;
+    &lt;String name="Value" isStatic="true" /&gt;
+&lt;/DataModel&gt;
+</code></pre>
+
+<p>然后在Test元素中配置Publisher信息。这里需要FileWriterLauncher，它能在写完文件后使用call动作启用一个线程。</p>
+<pre><code>&lt;Test name="TheTest"&gt;
+    &lt;StateModel ref="TheState"/&gt;
+    &lt;Publisher class="file.FileWriterLauncher"&gt;
+        &lt;Param name="filename" value="peach.png" /&gt;
+    &lt;/Publisher&gt;
+&lt;/Test&gt;
+</code></pre>
+
+<p>最后在Run信息配置中指定要运行的测试名称</p>
+<pre><code>&lt;Run name="DefaultRun"&gt;
+    &lt;Test ref="TheTest" /&gt;
+&lt;/Run&gt;
+</code></pre>
+
+<p>接下来对png_dumb.xml进行一些改动，让程序调用windows资源管理器打开畸形文件。<br>首先，在StateModel的Action中将tweakpng.exe程序替换为&quot;explorer&quot;<br>然后，在Publisher配置中将class改为file.FileWriterLauncherGui，并且为Publisher增加一个名为WindowName、值为peach.png的参数</p>
+<p>FileWriterLauncherGui与FileWriterLauncher的区别:前者用于运行带界面的GUI程序，并且在运行后会自动关闭窗口标题中含有WindowName的值的GUI窗口。</p>
+<p>为了捕获程序的异常，还需配置Agent and Monitor，调用WinDbg进行测试。</p>
+<p>首先将StateModel中最后一个Action删掉，并添加这一行</p>
+<pre><code>&lt;Action type="call" method="ScoobySnacks" /&gt;
+</code></pre>
+
+<p>然后在StateModel下面加入Agent配置</p>
+<pre><code>&lt;Agent name="LocalAgent"&gt;
+    &lt;Monitor class="debugger.WindowsDebugEngine"&gt;
+        &lt;Param name="CommandLine" value="explorer peach.png"/&gt;
+        &lt;Param name="StartOnCall" value="ScoobySnacks" /&gt;
+    &lt;/Monitor&gt;
+
+    &lt;Monitor class="process.PageHeap"&gt;
+        &lt;Param name="Executable" value="explorer" /&gt;
+    &lt;/Monitor&gt;
+&lt;/Agent&gt;
+</code></pre>
+
+<p>然后在Test配置的第一行加入:</p>
+<pre><code>&lt;Agent ref="LocalAgent" /&gt;
+</code></pre>
+
+<p>并且在Publisher的最后一行加入名为debugger，值为true的参数</p>
+<pre><code>&lt;Param name="debugger" value="true" /&gt;
+</code></pre>
+
+<p>最后在Run配置的Test元素后面加入日志配置:</p>
+<pre><code>&lt;Logger class="logger.Filesystem"&gt;
+    &lt;Param name="path" value="logs" /&gt;
+&lt;/Logger&gt;
+</code></pre>
+
+<p>重新运行Fuzzer，实验效果是Fuzzer程序启动了一个Local Peach Agent，通过该Agent控制WinDbg进行调试并捕获异常事件。</p>
+<font color="#f00"><br>本次实验其实很简单，但是环境一定得按照要求来。<br>windbg 版本为 6.8，是否是x86，抑或是amd64，得与python安装版本一致；<br>python 版本为2.5+，一定是版本2<br>peach 版本为v2.3。该版本能与windbg 6.8兼容，但是不能与6.12兼容。<br></font>
+
+<h3 id="3-010脚本"><a href="#3-010脚本" class="headerlink" title="3. 010脚本"></a>3. 010脚本</h3><h4 id="3-1-010-Editor简介"><a href="#3-1-010-Editor简介" class="headerlink" title="3.1 010 Editor简介"></a>3.1 010 Editor简介</h4><p>010 Editor是文本/十六进制编辑器，还包括文件解析、计算器、文本比较等功能。其可以通过官方网站提供的脚本(Binary Template)对avi、bmp、png、exe等简单格式的文件进行解析，当然也可以根据需求来自己编写文件解析脚本。</p>
+<p>以PNG文件解析为例：用010 Editor打开PNG文件，然后通过Templates-&gt;Open Template菜单打开PNGTemplate.bt，按F5键运行脚本，在窗口中选择该PNG文件，就可以看到解析结果。</p>
+<h4 id="3-2-010脚本编写入门"><a href="#3-2-010脚本编写入门" class="headerlink" title="3.2 010脚本编写入门"></a>3.2 010脚本编写入门</h4><p>010 Editor分析脚本与C/C++的结构体定义比较类似。但是其是一个自上而下执行的程序，可以使用if、for、while等语句。</p>
+<pre><code>char header[4];
+int numRecords;
+</code></pre>
+
+<p>意味着文件 首4个字节将会映射到字符数组header中，下4个字节则会映射到整型变量numRecords中，并最终显示在解析结果中。<br>但是也可能有这种情况：需要定义一些变量，但是这些变量并不对应着文件中的任何字节，而仅仅是程序运行中所需要的，这时可用哪个local关键字来定义变量。</p>
+<pre><code>local int i, total=0;
+int RecordCounts[5];
+for(i=0; i&lt;5; i++)
+    total += recordCounts[i];
+double records[total];
+</code></pre>
+
+<p>另外在数据的定义中，可以加上一些附加属性，如格式、颜色、注释等。附加属性用尖括号&lt;&gt;括起来。常用的属性包括：</p>
+<pre><code>&lt;format=hex|decimal|octal|binary, fgcolor=&lt;color&gt;, bgcolor=&lt;color&gt;, comment="&lt;string&gt;", open=true|false|suppress, hidden=true|false, read=&lt;function_name&gt;, write=&lt;function_name&gt; &gt;
+</code></pre>
+
+<p>实例：<br>文件格式示例如图所示:<br><img src="/images/2017-07-28/file_structure.jpg" alt="文件格式"><br>脚本如下：</p>
+<pre><code>struct FILE{
+    struct HEADER{
+        char type[4];
+        int version;
+        int numRecords;
+    } header;
+
+    struct RECORD{
+        int len;
+        char name[20];
+        if(file.header.version == 1)
+            char data[len];
+        if(file.header.version == 2)
+            byte data[len];
+    } record[file.header.numRecords];
+
+} file;
+</code></pre>
+
+<h4 id="3-3-010脚本编写提高——PNG文件解析"><a href="#3-3-010脚本编写提高——PNG文件解析" class="headerlink" title="3.3 010脚本编写提高——PNG文件解析"></a>3.3 010脚本编写提高——PNG文件解析</h4><p>首先定义PNG签名和Chunk两种结构，PNG文件签名：</p>
+<pre><code>const uint64 PNGMAGIC = 0x89504E470D0A1A0AL;
+</code></pre>
+
+<p>然后是PNG的Chunk格式:</p>
+<pre><code>typedef struct{
+    uint32 length;
+    char ctype[4];
+    ubyte data[length];
+    uint32 crc &lt;format=hex&gt;;
+} CHUNK
+</code></pre>
+
+<p>还需定义CHUNK结构体的read函数，以便在显示解析结果时能够给出每个Chunk的名字，显然ctype的值可以作为Chunk的名字。在ctype中，每个字节的第三位还分别标识了该Chunk的一些附加信息：</p>
+<table>
+<thead>
+<tr>
+<th>位置</th>
+<th>1</th>
+<th>0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>第1字节的第3位</td>
+<td>Ancillary</td>
+<td>Critical</td>
+</tr>
+<tr>
+<td>第2字节的第3位</td>
+<td>Private</td>
+<td>Public</td>
+</tr>
+<tr>
+<td>第3字节的第3位</td>
+<td>ERROR_RESERVED</td>
+<td></td>
+</tr>
+<tr>
+<td>第4字节的第3位</td>
+<td>Safe to Copy</td>
+<td>UnSafe to Copy</td>
+</tr>
+</tbody>
+</table>
+<p>说明:</p>
+<ul>
+<li>Ancillary标识该区块是辅助区块，该区块可有可无；Critical表示该区块是关键区块，这些区块是必须的</li>
+<li>Private表示该区块是不在PNG标准规格(PNG specification)区块中，属于该PNG文件私有，其名称的第二个字母是小写；Public表示该区块属于PNG标准区块，其名称的第二个字母是大写。</li>
+<li>Safe to Copy表示该区块与图像数据无关，可以随意复制到改动过的PNG文件中；Unsafe to Copy表示该区块内容与图像数据息息相关，如果对文件的Critical区块进行了增删改等操作，则该区块也需要进行相应的修改</li>
+</ul>
+<p>于是CHUNK结构定义如下函数：</p>
+<pre><code>string readCHUNK(local CHUNK &c){
+    local string s;
+    s = c.ctype + "  (";
+    s += (c.ctype[0] & 0x20) ? "Ancillary, " : "Critical, ";
+    s += (c.ctype[1] & 0x20) ? "Private, "   : "Public, ";
+    s += (c.ctype[2] & 0x20) ? "ERROR_RESERVED, " : "";
+    s += (c.ctype[3] & 0x20) ? "Safe to Copy)" : "Unsafe to Copy)";
+    return s;
+}
+</code></pre>
+
+<p>同时在定义好的CHUNK结构体后加上read属性，即把“} CHUNK;”改为:</p>
+<pre><code>} CHUNK &lt;read=readCHUNK&gt;
+</code></pre>
+
+<p>最后写入解析&quot;主函数&quot;:</p>
+<pre><code>uint64 pngid &lt;format=hex&gt;;
+
+if(pngid != PNGMAGIC){
+    Warning("Invalid PNG File: Bad Magic Number");
+    return -1;
+}
+
+while(!FEof()){
+    CHUNK chunk;
+}
+</code></pre>
+
+<p>另外，由于PNG文件是按照BigEndian格式进行存储的，所以需要在脚本的第一行加入:</p>
+<pre><code>BigEndian();
+</code></pre>
+
+<p><b>漏洞</b></p>
+<p>实验环境<br>操作系统： Win XP SP3<br>GdiPlus.dll版本： 5.1.3102.5512</p>
+<p>在之前的PNG解析结果中找到IHDR Chunk的length位置，也就是第9-12字节，通常情况下其值为13(0x0D)，现在换成0xFFFFFFF4，并将文件另存为poc.png。<br>在实验环境下打开poc.png，打开资源管理器，会发现explorer.exe的CPU占用率升至100%，使系统接近宕机状态，只有强行结束或者重启explorer.exe进程才能使系统恢复正常。</p>
+<p>实际上gdiplus.dll在处理IHDR时存在整数溢出漏洞。该漏洞的危害：</p>
+<ol>
+<li>打开poc.png或者打开poc.png所在文件夹的未打补丁的用户死机</li>
+<li>将poc.png挂载某网页上，访问该页面的未打补丁用户死机</li>
+<li>设为QQ或MSN头像，查看头像的未打补丁用户死机</li>
+</ol>
+<h4 id="3-4-PPT文件解析"><a href="#3-4-PPT文件解析" class="headerlink" title="3.4 PPT文件解析"></a>3.4 PPT文件解析</h4><p>office系列软件使用的文件格式分为两个：<br>Office97~Office2003：使用基于二进制的文件格式，文件名后缀为doc、ppt、xls等<br>Office2003及更高版本：使用基于XML的文件格式，文件名后缀为docx、pptx、xlsx等。</p>
+<p>本节以PowerPoint97~2003所用的二进制文件格式，PPT文件的解析过程从逻辑上分为如下四层：</p>
+<table>
+<thead>
+<tr>
+<th>测试深度</th>
+<th>解析逻辑</th>
+<th>数据粒度</th>
+<th>Fuzz方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Level1</td>
+<td>OLE2 解析器</td>
+<td>离散分布的512字节数据段</td>
+<td>修改OLE文件头、FAT区块、目录区块等位置的数据结构</td>
+</tr>
+<tr>
+<td>Level2</td>
+<td>PPT 记录解析器</td>
+<td>流和信息库</td>
+<td>修改流中的数据，破坏记录头和数据的关系</td>
+</tr>
+<tr>
+<td>Level3</td>
+<td>PPT 对象创建器</td>
+<td>原子和容器</td>
+<td>用负载替换原子数据</td>
+</tr>
+<tr>
+<td>Level4</td>
+<td>PPT 对象内部逻辑</td>
+<td>原子记录内部的integer、bool、string等类型数据</td>
+<td>用相关的负载修改字节数据</td>
+</tr>
+</tbody>
+</table>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/28/re/漏洞挖掘技术简介/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Introspelliam">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/07/28/re/漏洞挖掘技术简介/" itemprop="url">漏洞挖掘技术简介</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-28T13:58:56+08:00">
+                2017-07-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/re/" itemprop="url" rel="index">
+                    <span itemprop="name">re</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="1-漏洞挖掘概述"><a href="#1-漏洞挖掘概述" class="headerlink" title="1. 漏洞挖掘概述"></a>1. 漏洞挖掘概述</h3><h4 id="1-1-Fuzz测试"><a href="#1-1-Fuzz测试" class="headerlink" title="1.1 Fuzz测试"></a>1.1 Fuzz测试</h4><p>这是一种黑盒测试，与基于功能性的测试有所不同，Fuzz主要目的是&quot;crash&quot;、&quot;break&quot;、&quot;destroy&quot;。</p>
+<p>Fuzz的测试用例往往是带有攻击性的畸形数据，用以触发各种类型的漏洞。</p>
+<p>Fuzz测试的优点：很少出现误报，能够快速找到真正的漏洞<br>Fuzz测试的缺点：永远不能保证系统中已经没有漏洞</p>
+<h4 id="1-2-学术界与工业界的区别"><a href="#1-2-学术界与工业界的区别" class="headerlink" title="1.2 学术界与工业界的区别"></a>1.2 学术界与工业界的区别</h4><p>学术界偏向于<font color="#f00">对源代码进行静态分析</font>，直接在程序的逻辑上寻找漏洞。方法和理论有：(可追溯于1976年在ACM Computing Surveys上的论文Data Flow Analysis Software Reliability)</p>
+<ul>
+<li>数据流分析</li>
+<li>类型验证系统</li>
+<li>边界检验系统</li>
+<li>状态机系统等</li>
+</ul>
+<h4 id="1-3-审计源代码的工具"><a href="#1-3-审计源代码的工具" class="headerlink" title="1.3 审计源代码的工具"></a>1.3 审计源代码的工具</h4><ol>
+<li>Fortify在编译阶段扫描若干安全风险</li>
+<li>Rough Auditing Tool for Security(RATS)用于分析C/C++语言的语法树，寻找存在潜在安全问题的函数调用</li>
+<li>BEAM(Bugs Errors And Mistakes)，IBM的静态代码分析工具，使用数据楼分析的方法，分析源代码的所有可执行路径，以检测代码中潜在的bug</li>
+<li>SLAM用于检测驱动中的bug</li>
+<li>Flaw Finder用Python语言开发的代码分析工具</li>
+<li>Prexis可审计多种语言的源代码，审计的漏洞类型超过30种</li>
+</ol>
+<h3 id="2-动态测试技术"><a href="#2-动态测试技术" class="headerlink" title="2. 动态测试技术"></a>2. 动态测试技术</h3><h4 id="2-1-SPIKE"><a href="#2-1-SPIKE" class="headerlink" title="2.1 SPIKE"></a>2.1 SPIKE</h4><p>SPIKE是Protocol Fuzz(针对网络协议的模糊测试)工具<br><img src="/images/2017-07-28/block_data.jpg" alt="基于Block的数据定义方法"></p>
+<p>spike运行在linux环境下，当然对代码进行一定的修改之后就可以运行在windows上。<br>Dave Aitel实现了一套功能强大的API和数据结构用于定义数据块。SPIKE就是这样一套函数与数据结构的集合。</p>
+<p>Hello World用例：</p>
+<h4 id="2-2-beSTORM简介"><a href="#2-2-beSTORM简介" class="headerlink" title="2.2 beSTORM简介"></a>2.2 beSTORM简介</h4><p>由Beyond Security安全公司开发，运行在windows上的一款全能型安全审计程序，其利用模糊测试技术实现对网络协议的安全测试。</p>
+<h3 id="3-静态代码审计"><a href="#3-静态代码审计" class="headerlink" title="3. 静态代码审计"></a>3. 静态代码审计</h3><p>Coverity是用来提高软件质量的源代码静态分析工具。<br>Coverity使用checker模块来检测漏洞，默认情况下的checker包括：</p>
+<ol>
+<li>C checkers，内存错误、缓冲区溢出、函数的参数及返回值</li>
+<li>Concurrency checkers，线程同步、锁机制等</li>
+<li>Security checker，可信数据流的分析、字符串溢出等</li>
+</ol>
+<p>所有静态代码分析的理论和技术都面临的棘手问题：<br>如何处理程序逻辑中由动态因素引起的复杂条件分支和循环</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/8/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/10/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/page/8/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" href="/page/10/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -9448,7 +10449,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">133</span>
+                <span class="site-state-item-count">125</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -9459,7 +10460,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">16</span>
+                <span class="site-state-item-count">17</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -9470,7 +10471,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">55</span>
+                <span class="site-state-item-count">56</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -9531,6 +10532,8 @@
       
         <div class="back-to-top">
           <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
           
         </div>
       

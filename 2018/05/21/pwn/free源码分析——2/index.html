@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next mist" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="googleaf0347feb5ea0936.html" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="heap," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Introspelliam" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="1. free源码分析—_int_free根据上一章的分析可知，如果一个chunk不是由mmap分配得到，就会调用_int_free进行释放。下面来看， 123456789101112void __libc_free(void *mem) &amp;#123;    ...    p = mem2chunk(mem);    if (chunk_is_mmapped(p))&amp;#123;        ..">
+<meta name="keywords" content="heap">
+<meta property="og:type" content="article">
+<meta property="og:title" content="free源码分析——_int_free">
+<meta property="og:url" content="http://yoursite.com/2018/05/21/pwn/free源码分析——2/index.html">
+<meta property="og:site_name" content="Introspelliam">
+<meta property="og:description" content="1. free源码分析—_int_free根据上一章的分析可知，如果一个chunk不是由mmap分配得到，就会调用_int_free进行释放。下面来看， 123456789101112void __libc_free(void *mem) &amp;#123;    ...    p = mem2chunk(mem);    if (chunk_is_mmapped(p))&amp;#123;        ..">
+<meta property="og:updated_time" content="2018-07-09T13:13:12.987Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="free源码分析——_int_free">
+<meta name="twitter:description" content="1. free源码分析—_int_free根据上一章的分析可知，如果一个chunk不是由mmap分配得到，就会调用_int_free进行释放。下面来看， 123456789101112void __libc_free(void *mem) &amp;#123;    ...    p = mem2chunk(mem);    if (chunk_is_mmapped(p))&amp;#123;        ..">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"right","display":"always","offset":0,"offset_float":0,"b2t":true,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: false,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/05/21/pwn/free源码分析——2/"/>
+
+
+
+
+
+  <title>free源码分析——_int_free | Introspelliam</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?663212c5ef558c27e77385b620f14823";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Introspelliam</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Just do what works for you, because there will always be someone who thinks differently.</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/21/pwn/free源码分析——2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Introspelliam">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">free源码分析——_int_free</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-21T14:46:00+08:00">
+                2018-05-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/pwn/" itemprop="url" rel="index">
+                    <span itemprop="name">pwn</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="1-free源码分析—-int-free"><a href="#1-free源码分析—-int-free" class="headerlink" title="1. free源码分析—_int_free"></a>1. free源码分析—_int_free</h1><p>根据上一章的分析可知，如果一个chunk不是由mmap分配得到，就会调用<code>_int_free</code>进行释放。下面来看，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">void __libc_free(void *mem) &#123;</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">    p = mem2chunk(mem);</div><div class="line">    if (chunk_is_mmapped(p))&#123;</div><div class="line">        ...</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    ar_ptr = arena_for_chunk(p);</div><div class="line">    _int_free(ar_ptr, p, 0);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="1-1-int-free第一部分"><a href="#1-1-int-free第一部分" class="headerlink" title="1.1 _int_free第一部分"></a>1.1 _int_free第一部分</h2><p>首先来看<code>_int_free</code>第一部分，为了便于分析，这里省略了一些不关键的代码，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">static void _int_free(mstate av, mchunkptr p, int have_lock) &#123;</div><div class="line">    INTERNAL_SIZE_T size;</div><div class="line">    mfastbinptr *fb;</div><div class="line">    mchunkptr nextchunk;</div><div class="line">    INTERNAL_SIZE_T nextsize;</div><div class="line">    int nextinuse;</div><div class="line">    INTERNAL_SIZE_T prevsize;</div><div class="line">    mchunkptr bck;</div><div class="line">    mchunkptr fwd;</div><div class="line"></div><div class="line">    const char *errstr = NULL;</div><div class="line">    int locked = 0;</div><div class="line">    size = chunksize(p);</div><div class="line"></div><div class="line">    if (__glibc_unlikely(size &lt; MINSIZE || !aligned_OK (size))) &#123;</div><div class="line">        goto errout;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    check_inuse_chunk(av, p);</div><div class="line"></div><div class="line">    if ((unsigned long) (size) &lt;= (unsigned long) (get_max_fast ())) &#123;</div><div class="line"></div><div class="line">        free_perturb(chunk2mem(p), size - 2 * SIZE_SZ);</div><div class="line">        set_fastchunks(av);</div><div class="line">        unsigned int idx = fastbin_index(size);</div><div class="line">        fb = &amp;fastbin(av, idx);</div><div class="line"></div><div class="line">        mchunkptr old = *fb, old2;</div><div class="line">        unsigned int old_idx = ~0u;</div><div class="line">        do &#123;</div><div class="line">            if (have_lock &amp;&amp; old != NULL)</div><div class="line">                old_idx = fastbin_index(chunksize(old));</div><div class="line">            p-&gt;fd = old2 = old;</div><div class="line">        &#125; while ((old = catomic_compare_and_exchange_val_rel(fb, p, old2)) != old2);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>第一部分首先是检查<code>size</code>变量的合法性，然后比较<code>get_max_fast()</code>判断<code>size</code>是否在fastbin的范围内，如果在fastbin的管理范围内，就通过<code>set_fastchunks</code>设置分配区的标志位表示fastbin有空闲chunk，接下来根据<code>size</code>获得即将添加的chunk在fastbin中的索引<code>idx</code>，并通过该索引获得头指针<code>fb</code>，最后通过CAS操作将该chunk添加到fastbin中。这里需要注意fastbin中存放的chunk是按照单向链表组织的。</p>
+<h2 id="1-2-int-free第二部分"><a href="#1-2-int-free第二部分" class="headerlink" title="1.2 _int_free第二部分"></a>1.2 _int_free第二部分</h2><p>继续往下看，为了使整个代码结构清晰，这里保留了上一部分的if，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div></pre></td><td class="code"><pre><div class="line">static void _int_free(mstate av, mchunkptr p, int have_lock) &#123;</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">    if ((unsigned long) (size) &lt;= (unsigned long) (get_max_fast ())) &#123;</div><div class="line"></div><div class="line">        ...</div><div class="line"></div><div class="line">    &#125;</div><div class="line">    else if (!chunk_is_mmapped(p)) &#123;</div><div class="line"></div><div class="line">        nextchunk = chunk_at_offset(p, size);</div><div class="line">        nextsize = chunksize(nextchunk);</div><div class="line"></div><div class="line">        free_perturb(chunk2mem(p), size - 2 * SIZE_SZ);</div><div class="line"></div><div class="line">        if (!prev_inuse(p)) &#123;</div><div class="line">            prevsize = p-&gt;prev_size;</div><div class="line">            size += prevsize;</div><div class="line">            p = chunk_at_offset(p, -((long ) prevsize));</div><div class="line">            unlink(av, p, bck, fwd);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        if (nextchunk != av-&gt;top) &#123;</div><div class="line">            nextinuse = inuse_bit_at_offset(nextchunk, nextsize);</div><div class="line"></div><div class="line">            if (!nextinuse) &#123;</div><div class="line">                unlink(av, nextchunk, bck, fwd);</div><div class="line">                size += nextsize;</div><div class="line">            &#125; else</div><div class="line">                clear_inuse_bit_at_offset(nextchunk, 0);</div><div class="line"></div><div class="line">            bck = unsorted_chunks(av);</div><div class="line">            fwd = bck-&gt;fd;</div><div class="line">            if (__glibc_unlikely(fwd-&gt;bk != bck)) &#123;</div><div class="line">                errstr = &quot;free(): corrupted unsorted chunks&quot;;</div><div class="line">                goto errout;</div><div class="line">            &#125;</div><div class="line">            p-&gt;fd = fwd;</div><div class="line">            p-&gt;bk = bck;</div><div class="line">            if (!in_smallbin_range(size)) &#123;</div><div class="line">                p-&gt;fd_nextsize = NULL;</div><div class="line">                p-&gt;bk_nextsize = NULL;</div><div class="line">            &#125;</div><div class="line">            bck-&gt;fd = p;</div><div class="line">            fwd-&gt;bk = p;</div><div class="line"></div><div class="line">            set_head(p, size | PREV_INUSE);</div><div class="line">            set_foot(p, size);</div><div class="line"></div><div class="line">            check_free_chunk(av, p);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        else &#123;</div><div class="line">            size += nextsize;</div><div class="line">            set_head(p, size | PREV_INUSE);</div><div class="line">            av-&gt;top = p;</div><div class="line">            check_chunk(av, p);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        ...</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>如果将要释放的chunk不属于fastbin，且不是由mmap分配的，就首先获得下一个chunk的指针<code>nextchunk</code>和大小<code>nextsize</code>，如果前一个chunk空闲，就和前一个chunk合并，并通过<code>unlink</code>将该chunk从空闲链表中脱离。接下来，如果刚才前面取出的下一个chunk也为空闲，并且该chunk不是top chunk，则继续合并，否则将其设为空闲。再往下，就是取出unsortedbin的头指针，将合并后的chunk插入unsortedbin链表头部，并进行相应的设置。<br>如果下一个chunk为top chunk，就将要释放的chunk合并到top chunk中。</p>
+<h2 id="1-3-int-free第三部分"><a href="#1-3-int-free第三部分" class="headerlink" title="1.3 _int_free第三部分"></a>1.3 _int_free第三部分</h2><p>继续往下看，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line">static void _int_free(mstate av, mchunkptr p, int have_lock) &#123;</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">    if ((unsigned long) (size) &lt;= (unsigned long) (get_max_fast ())) &#123;</div><div class="line"></div><div class="line">        ...</div><div class="line"></div><div class="line">    &#125;</div><div class="line">    else if (!chunk_is_mmapped(p)) &#123;</div><div class="line"></div><div class="line">        ...</div><div class="line"></div><div class="line">        if ((unsigned long) (size) &gt;= FASTBIN_CONSOLIDATION_THRESHOLD) &#123;</div><div class="line">            if (have_fastchunks(av))</div><div class="line">                malloc_consolidate(av);</div><div class="line"></div><div class="line">            if (av == &amp;main_arena) &#123;</div><div class="line">    #ifndef MORECORE_CANNOT_TRIM</div><div class="line">                if ((unsigned long) (chunksize(av-&gt;top))</div><div class="line">                        &gt;= (unsigned long) (mp_.trim_threshold))</div><div class="line">                    systrim(mp_.top_pad, av);</div><div class="line">    #endif</div><div class="line">            &#125; else &#123;</div><div class="line">                heap_info *heap = heap_for_ptr(top(av));</div><div class="line">                heap_trim(heap, mp_.top_pad);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        if (!have_lock) &#123;</div><div class="line">            assert(locked);</div><div class="line">            (void) mutex_unlock(&amp;av-&gt;mutex);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    else &#123;</div><div class="line">        munmap_chunk(p);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>如果前面释放的chunk比较大，就需要做一些处理了。首先对fastbin中的chunk进行合并并添加到unsortedbin中。然后，如果是主分配区，并且主分配区的top chunk大于一定的值，就通过<code>systrim</code>缩小top chunk。如果是非主分配区，就获得top chunk对应的非主分配区的<code>heap_info</code>指针，调用<code>heap_trim</code>尝试缩小该heap。后面来看<code>systrim</code>和<code>heap_trim</code>这两个函数。<br>最后，说明chunk还是通过mmap分配的，就调用<code>munmap_chunk</code>释放它。<code>munmap_chunk</code>函数已经在上一章介绍了。</p>
+<h2 id="1-4-systrim"><a href="#1-4-systrim" class="headerlink" title="1.4 systrim"></a>1.4 systrim</h2><p><code>systrim</code>用于缩小主分配区的top chunk大小，下面来看，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line">static int systrim(size_t pad, mstate av) &#123;</div><div class="line">    long top_size;</div><div class="line">    long extra;</div><div class="line">    long released;</div><div class="line">    char *current_brk;</div><div class="line">    char *new_brk;</div><div class="line">    size_t pagesize;</div><div class="line">    long top_area;</div><div class="line"></div><div class="line">    pagesize = GLRO(dl_pagesize);</div><div class="line">    top_size = chunksize(av-&gt;top);</div><div class="line"></div><div class="line">    top_area = top_size - MINSIZE - 1;</div><div class="line">    if (top_area &lt;= pad)</div><div class="line">        return 0;</div><div class="line"></div><div class="line">    extra = (top_area - pad) &amp; ~(pagesize - 1);</div><div class="line"></div><div class="line">    if (extra == 0)</div><div class="line">        return 0;</div><div class="line"></div><div class="line">    current_brk = (char *) (MORECORE(0));</div><div class="line">    if (current_brk == (char *) (av-&gt;top) + top_size) &#123;</div><div class="line"></div><div class="line">        MORECORE(-extra);</div><div class="line">        void (*hook)(void) = atomic_forced_read (__after_morecore_hook);</div><div class="line">        if (__builtin_expect(hook != NULL, 0))</div><div class="line">            (*hook)();</div><div class="line">        new_brk = (char *) (MORECORE(0));</div><div class="line"></div><div class="line">        LIBC_PROBE (memory_sbrk_less, 2, new_brk, extra);</div><div class="line"></div><div class="line">        if (new_brk != (char *) MORECORE_FAILURE) &#123;</div><div class="line">            released = (long) (current_brk - new_brk);</div><div class="line"></div><div class="line">            if (released != 0) &#123;</div><div class="line">                av-&gt;system_mem -= released;</div><div class="line">                set_head(av-&gt;top, (top_size - released) | PREV_INUSE);</div><div class="line">                check_malloc_state (av);</div><div class="line">                return 1;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>首先，如果主分配区的top chunk本来就没什么空间，就直接返回，否则就将主分配区中可以缩小的大小保存在<code>extra</code>中。下面检查当前堆的<code>brk</code>指针是否和top chunk的结束地址相等，如果相等就可以通过<code>MORECORE</code>降低堆的大小，<code>MORECORE</code>是brk的系统调用，最后也是通过<code>do_munmap</code>释放虚拟内存的。<code>__after_morecore_hook</code>函数指针为空，不管它。再下来，获得释放后的堆指针保存在<code>new_brk</code>中，计算释放的虚拟内存的大小<code>released</code>，并将该信息更新到主分配区中，然后设置新top chunk的<code>size</code>。</p>
+<h2 id="1-5-heap-trim"><a href="#1-5-heap-trim" class="headerlink" title="1.5 heap_trim"></a>1.5 heap_trim</h2><p><code>heap_trim</code>用来缩小非主分配区的heap大小，下面来看，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line">static int</div><div class="line">internal_function heap_trim(heap_info *heap, size_t pad) &#123;</div><div class="line">    mstate ar_ptr = heap-&gt;ar_ptr;</div><div class="line">    unsigned long pagesz = GLRO(dl_pagesize);</div><div class="line">    mchunkptr top_chunk = top(ar_ptr), p, bck, fwd;</div><div class="line">    heap_info *prev_heap;</div><div class="line">    long new_size, top_size, top_area, extra, prev_size, misalign;</div><div class="line"></div><div class="line">    while (top_chunk == chunk_at_offset(heap, sizeof(*heap))) &#123;</div><div class="line">        prev_heap = heap-&gt;prev;</div><div class="line">        prev_size = prev_heap-&gt;size - (MINSIZE - 2 * SIZE_SZ);</div><div class="line">        p = chunk_at_offset(prev_heap, prev_size);</div><div class="line">        misalign = ((long) p) &amp; MALLOC_ALIGN_MASK;</div><div class="line">        p = chunk_at_offset(prev_heap, prev_size - misalign);</div><div class="line">        p = prev_chunk(p);</div><div class="line">        new_size = chunksize(p) + (MINSIZE - 2 * SIZE_SZ) + misalign;</div><div class="line">        if (!prev_inuse(p))</div><div class="line">            new_size += p-&gt;prev_size;</div><div class="line">        if (new_size + (HEAP_MAX_SIZE - prev_heap-&gt;size)</div><div class="line">                &lt; pad + MINSIZE + pagesz)</div><div class="line">            break;</div><div class="line">        ar_ptr-&gt;system_mem -= heap-&gt;size;</div><div class="line">        arena_mem -= heap-&gt;size;</div><div class="line">        delete_heap(heap);</div><div class="line">        heap = prev_heap;</div><div class="line">        if (!prev_inuse(p))&#123;</div><div class="line">            p = prev_chunk(p);</div><div class="line">            unlink(ar_ptr, p, bck, fwd);</div><div class="line">        &#125;</div><div class="line">        top (ar_ptr) = top_chunk = p;</div><div class="line">        set_head(top_chunk, new_size | PREV_INUSE);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    top_size = chunksize(top_chunk);</div><div class="line">    top_area = top_size - MINSIZE - 1;</div><div class="line">    if (top_area &lt; 0 || (size_t) top_area &lt;= pad)</div><div class="line">        return 0;</div><div class="line"></div><div class="line">    extra = ALIGN_DOWN(top_area - pad, pagesz);</div><div class="line">    if ((unsigned long) extra &lt; mp_.trim_threshold)</div><div class="line">        return 0;</div><div class="line"></div><div class="line">    if (shrink_heap(heap, extra) != 0)</div><div class="line">        return 0;</div><div class="line"></div><div class="line">    ar_ptr-&gt;system_mem -= extra;</div><div class="line">    arena_mem -= extra;</div><div class="line"></div><div class="line">    set_head(top_chunk, (top_size - extra) | PREV_INUSE);</div><div class="line">    return 1;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>第一个while表示，如果top chunk指针正好在<code>heap_info</code>上，则考虑删掉整个heap。这是因为此时，该heap只有一个top chunk。再删掉该heap之前，需要检查该heap的前一个heap是否有足够的空间，否则删掉该heap后，剩余的空间太小。<br>经过计算后，<code>newsize</code>保存了前一个heap高地址处的fencepost和前一个空闲chunk（如果存在）的总大小组成，如果<code>newsize</code>加上该heap还未使用的内存（<code>HEAP_MAX_SIZE - prev_heap-&gt;size</code>）太小，就<code>break</code>退出循环，取消对整个heap的释放。否则，在更新了相应的信息后，调用<code>delete_heap</code>删除整个heap，<code>delete_heap</code>是一个宏，定义如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">#define delete_heap(heap) \</div><div class="line">  do &#123;                                        \</div><div class="line">      if ((char *) (heap) + HEAP_MAX_SIZE == aligned_heap_area)           \</div><div class="line">        aligned_heap_area = NULL;                         \</div><div class="line">      __munmap ((char *) (heap), HEAP_MAX_SIZE);                  \</div><div class="line">    &#125; while (0)</div></pre></td></tr></table></figure>
+<p><code>delete_heap</code>其最终通过<code>__munmap</code>释放整个heap，大小为<code>HEAP_MAX_SIZE</code>。<br>删除掉整个heap后，如果前一个heap的fencepost的前面有一个空闲chunk，就将该空闲chunk从空闲链表中脱离，然后设置fencepost或者该空闲chunk（如果存在）的地址为新的top chunk，该top chunk的大小为前面计算的<code>new_size</code>。<br>然后返回<code>while</code>继续检查，如果新的top chunk指针又正好在<code>heap_info</code>上，就表示该heap也就只有一个chunk即top chunk，就继续释放该heap。<br>再往下，如果新的top chunk剩余空间<code>top_area</code>太小，就直接返回了。如果还有足够的空间，且<code>top_area</code>大于收缩阀值，就调用<code>shrink_heap</code>进一步将新的top chunk的大小减少<code>extra</code>。最后设置一些分配区的信息，并设置减少后的top chunk的大小为<code>top_size - extra</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">static int shrink_heap(heap_info *h, long diff) &#123;</div><div class="line">    long new_size;</div><div class="line"></div><div class="line">    new_size = (long) h-&gt;size - diff;</div><div class="line">    if (new_size &lt; (long) sizeof(*h))</div><div class="line">        return -1;</div><div class="line"></div><div class="line">    h-&gt;size = new_size;</div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里其实就是减小<code>heap_info</code>的<code>size</code>变量。</p>
+<h1 id="2-总结"><a href="#2-总结" class="headerlink" title="2. 总结"></a>2. 总结</h1><p>下面对整个<code>_int_free</code>函数做个总结。<br>首先检查将要释放的chunk是否属于fastbin，如果属于就将其添加到fastbin中。<br>然后检查该chunk是否是由mmap分配的，如果不是，就根据其下一个chunk的类型添加到unsortedbin或者合并到top chunk中。<br>接着，如果释放的chunk的大小大于一定的阀值，就需要通过<code>systrim</code>缩小主分配区的大小，或者通过<code>heap_trim</code>缩小非主分配区的大小。<br>最后如果该chunk是由mmap的分配的，通过<code>munmap_chunk</code>释放。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/heap/" rel="tag"># heap</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+          <div class="wp_rating">
+            <div id="wpac-rating"></div>
+          </div>
+        
+
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/05/21/pwn/free源码分析——1/" rel="next" title="free源码分析——__libc_free">
+                <i class="fa fa-chevron-left"></i> free源码分析——__libc_free
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/06/22/pwn/FILE文件结构介绍/" rel="prev" title="FILE文件结构介绍">
+                FILE文件结构介绍 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="gitalk-container"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/me.jpg"
+               alt="Introspelliam" />
+          <p class="site-author-name" itemprop="name">Introspelliam</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">125</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">56</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/Introspelliam" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/3008590672" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                    
+                      Weibo
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-free源码分析—-int-free"><span class="nav-text">1. free源码分析—_int_free</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-int-free第一部分"><span class="nav-text">1.1 _int_free第一部分</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-int-free第二部分"><span class="nav-text">1.2 _int_free第二部分</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-int-free第三部分"><span class="nav-text">1.3 _int_free第三部分</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-4-systrim"><span class="nav-text">1.4 systrim</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-5-heap-trim"><span class="nav-text">1.5 heap_trim</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-总结"><span class="nav-text">2. 总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Introspelliam</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <script src="/js/md5.min.js"></script>
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '41857e5205be9fe36c48',
+          clientSecret: 'c927ea37a432eff67cdb1081658112c7409ca7ff',
+          repo: 'Introspelliam.github.io',
+          owner: 'Introspelliam',
+          admin: ['Introspelliam'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  <script type="text/javascript">
+  wpac_init = window.wpac_init || [];
+  wpac_init.push({widget: 'Rating', id: ,
+    el: 'wpac-rating',
+    color: 'fc6423'
+  });
+  (function() {
+    if ('WIDGETPACK_LOADED' in window) return;
+    WIDGETPACK_LOADED = true;
+    var mc = document.createElement('script');
+    mc.type = 'text/javascript';
+    mc.async = true;
+    mc.src = '//embed.widgetpack.com/widget.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+  })();
+  </script>
+
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

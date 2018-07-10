@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next mist" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="googleaf0347feb5ea0936.html" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="heap," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Introspelliam" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="malloc源码分析—sysmalloc本章主要分析sysmalloc的代码，在《malloc源码分析—__int_malloc》中已经分析了部分sysmalloc的代码，主要用于对分配区进行初始化。本章查看余下的代码， 第一部分1234567891011121314151617181920212223242526272829303132333435363738394041424344454647">
+<meta name="keywords" content="heap">
+<meta property="og:type" content="article">
+<meta property="og:title" content="malloc源码分析——sysmalloc">
+<meta property="og:url" content="http://yoursite.com/2018/05/21/pwn/malloc源码分析—sysmalloc/index.html">
+<meta property="og:site_name" content="Introspelliam">
+<meta property="og:description" content="malloc源码分析—sysmalloc本章主要分析sysmalloc的代码，在《malloc源码分析—__int_malloc》中已经分析了部分sysmalloc的代码，主要用于对分配区进行初始化。本章查看余下的代码， 第一部分1234567891011121314151617181920212223242526272829303132333435363738394041424344454647">
+<meta property="og:updated_time" content="2018-07-09T13:12:31.544Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="malloc源码分析——sysmalloc">
+<meta name="twitter:description" content="malloc源码分析—sysmalloc本章主要分析sysmalloc的代码，在《malloc源码分析—__int_malloc》中已经分析了部分sysmalloc的代码，主要用于对分配区进行初始化。本章查看余下的代码， 第一部分1234567891011121314151617181920212223242526272829303132333435363738394041424344454647">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"right","display":"always","offset":0,"offset_float":0,"b2t":true,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: false,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/05/21/pwn/malloc源码分析—sysmalloc/"/>
+
+
+
+
+
+  <title>malloc源码分析——sysmalloc | Introspelliam</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?663212c5ef558c27e77385b620f14823";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Introspelliam</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Just do what works for you, because there will always be someone who thinks differently.</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/21/pwn/malloc源码分析—sysmalloc/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Introspelliam">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">malloc源码分析——sysmalloc</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-21T14:42:38+08:00">
+                2018-05-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/pwn/" itemprop="url" rel="index">
+                    <span itemprop="name">pwn</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="malloc源码分析—sysmalloc"><a href="#malloc源码分析—sysmalloc" class="headerlink" title="malloc源码分析—sysmalloc"></a>malloc源码分析—sysmalloc</h1><p>本章主要分析<code>sysmalloc</code>的代码，在《malloc源码分析—__int_malloc》中已经分析了部分<code>sysmalloc</code>的代码，主要用于对分配区进行初始化。本章查看余下的代码，</p>
+<h2 id="第一部分"><a href="#第一部分" class="headerlink" title="第一部分"></a>第一部分</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div></pre></td><td class="code"><pre><div class="line">static void * sysmalloc(INTERNAL_SIZE_T nb, mstate av) &#123;</div><div class="line">    mchunkptr old_top;</div><div class="line">    INTERNAL_SIZE_T old_size;</div><div class="line">    char *old_end;</div><div class="line"></div><div class="line">    long size;</div><div class="line">    char *brk;</div><div class="line"></div><div class="line">    long correction;</div><div class="line">    char *snd_brk;</div><div class="line"></div><div class="line">    INTERNAL_SIZE_T front_misalign;</div><div class="line">    INTERNAL_SIZE_T end_misalign;</div><div class="line">    char *aligned_brk;</div><div class="line"></div><div class="line">    mchunkptr p;</div><div class="line">    mchunkptr remainder;</div><div class="line">    unsigned long remainder_size;</div><div class="line"></div><div class="line">    size_t pagesize = GLRO(dl_pagesize);</div><div class="line">    bool tried_mmap = false;</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">    old_top = av-&gt;top;</div><div class="line">    old_size = chunksize(old_top);</div><div class="line">    old_end = (char *) (chunk_at_offset(old_top, old_size));</div><div class="line">    brk = snd_brk = (char *) (MORECORE_FAILURE);</div><div class="line"></div><div class="line">    if (av != &amp;main_arena) &#123;</div><div class="line">        heap_info *old_heap, *heap;</div><div class="line">        size_t old_heap_size;</div><div class="line"></div><div class="line">        old_heap = heap_for_ptr(old_top);</div><div class="line">        old_heap_size = old_heap-&gt;size;</div><div class="line">        if ((long) (MINSIZE + nb - old_size) &gt; 0</div><div class="line">                &amp;&amp; grow_heap(old_heap, MINSIZE + nb - old_size) == 0) &#123;</div><div class="line">            av-&gt;system_mem += old_heap-&gt;size - old_heap_size;</div><div class="line">            arena_mem += old_heap-&gt;size - old_heap_size;</div><div class="line">            set_head(old_top,</div><div class="line">                    (((char *) old_heap + old_heap-&gt;size) - (char *) old_top) | PREV_INUSE);</div><div class="line">        &#125; else if ((heap = new_heap(nb + (MINSIZE + sizeof(*heap)), mp_.top_pad))) &#123;</div><div class="line">            heap-&gt;ar_ptr = av;</div><div class="line">            heap-&gt;prev = old_heap;</div><div class="line">            av-&gt;system_mem += heap-&gt;size;</div><div class="line">            arena_mem += heap-&gt;size;</div><div class="line">            top (av) = chunk_at_offset(heap, sizeof(*heap));</div><div class="line">            set_head(top (av), (heap-&gt;size - sizeof (*heap)) | PREV_INUSE);</div><div class="line"></div><div class="line">            old_size = (old_size - MINSIZE ) &amp; ~MALLOC_ALIGN_MASK;</div><div class="line">            set_head(chunk_at_offset (old_top, old_size + 2 * SIZE_SZ),</div><div class="line">                    0 | PREV_INUSE);</div><div class="line">            if (old_size &gt;= MINSIZE) &#123;</div><div class="line">                set_head(chunk_at_offset (old_top, old_size),</div><div class="line">                        (2 * SIZE_SZ) | PREV_INUSE);</div><div class="line">                set_foot(chunk_at_offset (old_top, old_size), (2 * SIZE_SZ));</div><div class="line">                set_head(old_top, old_size | PREV_INUSE | NON_MAIN_ARENA);</div><div class="line">                _int_free(av, old_top, 1);</div><div class="line">            &#125; else &#123;</div><div class="line">                set_head(old_top, (old_size + 2 * SIZE_SZ) | PREV_INUSE);</div><div class="line">                set_foot(old_top, (old_size + 2 * SIZE_SZ));</div><div class="line">            &#125;</div><div class="line">        &#125; else if (!tried_mmap)</div><div class="line">            goto try_mmap;</div><div class="line">    &#125;</div><div class="line">    else&#123;</div><div class="line"></div><div class="line">        ...</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>首先，<code>old_top</code>、<code>old_size</code>和<code>old_end</code>分别保存了top chunk的指针，大小以及尾部的地址。<br>如果是非主分配区，首先通过<code>heap_for_ptr</code>获得原top chunk对应的<code>heap_info</code>指针，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">#define heap_for_ptr(ptr) \</div><div class="line">  ((heap_info *) ((unsigned long) (ptr) &amp; ~(HEAP_MAX_SIZE - 1)))</div></pre></td></tr></table></figure>
+<p>对于非主分配区，因为每个heap是按照<code>HEAP_MAX_SIZE</code>的大小分配且对齐的，而每个topchunk存在于每个heap的剩余空间（高地址处），因此通过<code>heap_for_ptr</code>就能取出<code>heap_info</code>指针，<code>heap_info</code>保存了每个heap的相关信息。获得<code>heap_info</code>指针后，就能获得该heap当前被使用的大小并将其保存在<code>old_heap_size</code>中。<br>根据《malloc源码分析—4》，进入到sysmalloc前会尝试在top chunk分配内存，因此代码执行到这里肯定失败了。所以这里只有<code>MINSIZE + nb - old_size&gt;0</code>这一种情况，即这时的top chunk空间不足了，因此首先通过<code>grow_heap</code>尝试向heap的高地址处增加heap当前使用的大小，即top chunk的大小，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">static int grow_heap(heap_info *h, long diff) &#123;</div><div class="line">    size_t pagesize = GLRO(dl_pagesize);</div><div class="line">    long new_size;</div><div class="line"></div><div class="line">    diff = ALIGN_UP(diff, pagesize);</div><div class="line">    new_size = (long) h-&gt;size + diff;</div><div class="line">    if ((unsigned long) new_size &gt; (unsigned long) HEAP_MAX_SIZE)</div><div class="line">        return -1;</div><div class="line"></div><div class="line">    if ((unsigned long) new_size &gt; h-&gt;mprotect_size) &#123;</div><div class="line">        if (__mprotect((char *) h + h-&gt;mprotect_size,</div><div class="line">                (unsigned long) new_size - h-&gt;mprotect_size,</div><div class="line">                PROT_READ | PROT_WRITE) != 0)</div><div class="line">            return -2;</div><div class="line"></div><div class="line">        h-&gt;mprotect_size = new_size;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    h-&gt;size = new_size;</div><div class="line">    LIBC_PROBE(memory_heap_more, 2, h, h-&gt;size);</div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这段代码其实最关键的是<code>h-&gt;size = new_size</code>这一样，表示重新设置heap的大小至<code>new_size</code>。<br>回到sysmalloc中，假设<code>grow_heap</code>成功，即将top chunk的大小设置为<code>MINSIZE + nb</code>，则重新设置分配区使用的内存大小，并且设置top chunk的<code>size</code>至新值（注意这里的<code>size</code>不能直接设置为<code>MINSIZE + nb</code>是因为在<code>grow_heap</code>中有对齐操作）。</p>
+<p>假设<code>grow_heap</code>失败，大部分情况下说明heap的使用大小已经接近其最大值<code>HEAP_MAX_SIZE</code>了，此时只能通过<code>new_heap</code>重新分配一个heap，注意传入的参数<code>mp_.top_pad</code>表示在分配内存时，额外多分配的内存。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div></pre></td><td class="code"><pre><div class="line">static heap_info * internal_function new_heap(size_t size, size_t top_pad) &#123;</div><div class="line">    size_t pagesize = GLRO(dl_pagesize);</div><div class="line">    char *p1, *p2;</div><div class="line">    unsigned long ul;</div><div class="line">    heap_info *h;</div><div class="line"></div><div class="line">    if (size + top_pad &lt; HEAP_MIN_SIZE)</div><div class="line">        size = HEAP_MIN_SIZE;</div><div class="line">    else if (size + top_pad &lt;= HEAP_MAX_SIZE)</div><div class="line">        size += top_pad;</div><div class="line">    else if (size &gt; HEAP_MAX_SIZE)</div><div class="line">        return 0;</div><div class="line">    else</div><div class="line">        size = HEAP_MAX_SIZE;</div><div class="line">    size = ALIGN_UP(size, pagesize);</div><div class="line"></div><div class="line">    p2 = MAP_FAILED;</div><div class="line">    if (aligned_heap_area) &#123;</div><div class="line">        p2 = (char *) MMAP(aligned_heap_area, HEAP_MAX_SIZE, PROT_NONE,</div><div class="line">                MAP_NORESERVE);</div><div class="line">        aligned_heap_area = NULL;</div><div class="line">        if (p2 != MAP_FAILED &amp;&amp; ((unsigned long) p2 &amp; (HEAP_MAX_SIZE - 1))) &#123;</div><div class="line">            __munmap(p2, HEAP_MAX_SIZE);</div><div class="line">            p2 = MAP_FAILED;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    if (p2 == MAP_FAILED) &#123;</div><div class="line">        p1 = (char *) MMAP(0, HEAP_MAX_SIZE &lt;&lt; 1, PROT_NONE, MAP_NORESERVE);</div><div class="line">        if (p1 != MAP_FAILED) &#123;</div><div class="line">            p2 = (char *) (((unsigned long) p1 + (HEAP_MAX_SIZE - 1))</div><div class="line">                    &amp; ~(HEAP_MAX_SIZE - 1));</div><div class="line">            ul = p2 - p1;</div><div class="line">            if (ul)</div><div class="line">                __munmap(p1, ul);</div><div class="line">            else</div><div class="line">                aligned_heap_area = p2 + HEAP_MAX_SIZE;</div><div class="line">            __munmap(p2 + HEAP_MAX_SIZE, HEAP_MAX_SIZE - ul);</div><div class="line">        &#125; else &#123;</div><div class="line">            p2 = (char *) MMAP(0, HEAP_MAX_SIZE, PROT_NONE, MAP_NORESERVE);</div><div class="line">            if (p2 == MAP_FAILED)</div><div class="line">                return 0;</div><div class="line"></div><div class="line">            if ((unsigned long) p2 &amp; (HEAP_MAX_SIZE - 1)) &#123;</div><div class="line">                __munmap(p2, HEAP_MAX_SIZE);</div><div class="line">                return 0;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    if (__mprotect(p2, size, PROT_READ | PROT_WRITE) != 0) &#123;</div><div class="line">        __munmap(p2, HEAP_MAX_SIZE);</div><div class="line">        return 0;</div><div class="line">    &#125;</div><div class="line">    h = (heap_info *) p2;</div><div class="line">    h-&gt;size = size;</div><div class="line">    h-&gt;mprotect_size = size;</div><div class="line">    LIBC_PROBE(memory_heap_new, 2, h, h-&gt;size);</div><div class="line">    return h;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>首先对需要分配的内存大小size做相应的调整。<code>aligned_heap_area</code>表示上一次<code>MMAP</code>分配后的结束地址，如果存在，就首先尝试从该地址分配大小为<code>HEAP_MAX_SIZE</code>的内存。<code>MMAP</code>最后是系统调用，对应的内核函数在《malloc源码分析—2》中已经介绍过了，这里只是一些标志位的区别。分配完后，会检查地址是否对齐，如果不对齐也是失败。<br>如果第一次分配失败了，就会再尝试一次，这次分配<code>HEAP_MAX_SIZE*2</code>大小的内存，并且新内存的起始地址由内核决定。因为尝试分配了<code>HEAP_MAX_SIZE*2</code>大小的内存，其中必定包含了大小为<code>HEAP_MAX_SIZE</code>且和<code>HEAP_MAX_SIZE</code>对齐的内存，因此一旦分配成功，就从中截取出这部分内存。<br>如果连第二次也分配失败了，就会通过<code>MMAP</code>进行第三次分配，这次只分配<code>HEAP_MAX_SIZE</code>大小的内存，并且起始地址由内核决定，如果又失败了就返回0。<br>如果三面三次分配内存任何一次成功，就设置相应的可读写位置，并且返回分配区的<code>heap_info</code>指针。</p>
+<p>重新回到<code>sysmalloc</code>中，假设分配成功，就会对刚刚分配得到的heap做相应的设置，其中<code>ar_ptr</code>表示所属的分配区的指针，<code>prev</code>表示上一个heap，所有的heap通过<code>prev</code>形成单向链表，然后通过<code>set_head</code>设置av分配区top chunk的<code>size</code>，这里也可以看出，对于刚分配的heap，包含了<code>heap_info</code>指针、top chunk、以及大于size的未被使用的部分。<br>再接下来就要对原来的top chunk进行最后的处理，这里假设对齐，如果原top chunk的大小不够大，就将其分割成<code>old_size + 2 * SIZE_SZ</code>和<code>2 * SIZE_SZ</code>大小；如果原top chunk的大小足够大，就将其分割成<code>old_size</code>，<code>2 * SIZE_SZ</code>和<code>2 * SIZE_SZ</code>大小，并通过<code>_int_free</code>进行释放。</p>
+<h2 id="第二部分"><a href="#第二部分" class="headerlink" title="第二部分"></a>第二部分</h2><p>继续往下看<code>sysmalloc</code>，上面一部分代码主要是针对非主分配区的操作，下面的这段代码就是针对主分配区的操作了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line">static void * sysmalloc(INTERNAL_SIZE_T nb, mstate av) &#123;</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">    if (av != &amp;main_arena) &#123;</div><div class="line"></div><div class="line">        ...</div><div class="line"></div><div class="line">    &#125;</div><div class="line">    else&#123;</div><div class="line">        size = nb + mp_.top_pad + MINSIZE;</div><div class="line">        if (contiguous(av))</div><div class="line">            size -= old_size;</div><div class="line">        size = ALIGN_UP(size, pagesize);</div><div class="line"></div><div class="line">        if (size &gt; 0) &#123;</div><div class="line">            brk = (char *) (MORECORE(size));</div><div class="line">            LIBC_PROBE (memory_sbrk_more, 2, brk, size);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        if (brk != (char *) (MORECORE_FAILURE)) &#123;</div><div class="line">            void (*hook)(void) = atomic_forced_read (__after_morecore_hook);</div><div class="line">            if (__builtin_expect (hook != NULL, 0))</div><div class="line">            (*hook)();</div><div class="line">        &#125;</div><div class="line">        else&#123;</div><div class="line">            if (contiguous (av))</div><div class="line">                size = ALIGN_UP (size + old_size, pagesize);</div><div class="line"></div><div class="line">            if ((unsigned long) (size) &lt; (unsigned long) (MMAP_AS_MORECORE_SIZE))</div><div class="line">                size = MMAP_AS_MORECORE_SIZE;</div><div class="line"></div><div class="line">            if ((unsigned long) (size) &gt; (unsigned long) (nb))&#123;</div><div class="line">                char *mbrk = (char *) (MMAP (0, size, PROT_READ | PROT_WRITE, 0));</div><div class="line"></div><div class="line">                if (mbrk != MAP_FAILED)&#123;</div><div class="line">                    brk = mbrk;</div><div class="line">                    snd_brk = brk + size;</div><div class="line">                    set_noncontiguous (av);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        ...</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>MORECORE</code>是一个宏定义，其最终是通过系统调用分配内存，定义在linux内核的mmap.c文件中，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div></pre></td><td class="code"><pre><div class="line">SYSCALL_DEFINE1(brk, unsigned long, brk)&#123;</div><div class="line"></div><div class="line">    unsigned long retval;</div><div class="line">    unsigned long newbrk, oldbrk;</div><div class="line">    struct mm_struct *mm = current-&gt;mm;</div><div class="line">    unsigned long min_brk;</div><div class="line">    bool populate;</div><div class="line"></div><div class="line">    down_write(&amp;mm-&gt;mmap_sem);</div><div class="line">    min_brk = mm-&gt;start_brk;</div><div class="line">    if (brk &lt; min_brk)</div><div class="line">        goto out;</div><div class="line"></div><div class="line">    if (check_data_rlimit(rlimit(RLIMIT_DATA), brk, mm-&gt;start_brk,</div><div class="line">                  mm-&gt;end_data, mm-&gt;start_data))</div><div class="line">        goto out;</div><div class="line"></div><div class="line">    newbrk = PAGE_ALIGN(brk);</div><div class="line">    oldbrk = PAGE_ALIGN(mm-&gt;brk);</div><div class="line">    if (oldbrk == newbrk)</div><div class="line">        goto set_brk;</div><div class="line"></div><div class="line">    if (brk &lt;= mm-&gt;brk) &#123;</div><div class="line">        if (!do_munmap(mm, newbrk, oldbrk-newbrk))</div><div class="line">            goto set_brk;</div><div class="line">        goto out;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    if (find_vma_intersection(mm, oldbrk, newbrk+PAGE_SIZE))</div><div class="line">        goto out;</div><div class="line"></div><div class="line">    if (do_brk(oldbrk, newbrk-oldbrk) != oldbrk)</div><div class="line">        goto out;</div><div class="line"></div><div class="line">set_brk:</div><div class="line">    mm-&gt;brk = brk;</div><div class="line">    populate = newbrk &gt; oldbrk &amp;&amp; (mm-&gt;def_flags &amp; VM_LOCKED) != 0;</div><div class="line">    up_write(&amp;mm-&gt;mmap_sem);</div><div class="line">    if (populate)</div><div class="line">        mm_populate(oldbrk, newbrk - oldbrk);</div><div class="line">    return brk;</div><div class="line"></div><div class="line">out:</div><div class="line">    retval = mm-&gt;brk;</div><div class="line">    up_write(&amp;mm-&gt;mmap_sem);</div><div class="line">    return retval;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>首先会对传入堆的新地址<code>brk</code>做一些检查，然后该新地址小于原本的<code>brk</code>，就需要通过<code>do_munmap</code>释放虚拟内存，以减少堆的大小；反之，就通过<code>do_brk</code>增加堆得大小。其中<code>find_vma_intersection</code>用来判断增加堆空间后，是否会占用已经被分配的虚拟内存，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">static inline struct vm_area_struct * find_vma_intersection(struct mm_struct * mm, unsigned long start_addr, unsigned long end_addr)&#123;</div><div class="line">    struct vm_area_struct * vma = find_vma(mm,start_addr);</div><div class="line"></div><div class="line">    if (vma &amp;&amp; end_addr &lt;= vma-&gt;vm_start)</div><div class="line">        vma = NULL;</div><div class="line">    return vma;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>因为是增加堆的大小，因此只需要关心<code>do_brk</code>函数，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div></pre></td><td class="code"><pre><div class="line">static unsigned long do_brk(unsigned long addr, unsigned long len)&#123;</div><div class="line"></div><div class="line">    struct mm_struct *mm = current-&gt;mm;</div><div class="line">    struct vm_area_struct *vma, *prev;</div><div class="line">    unsigned long flags;</div><div class="line">    struct rb_node **rb_link, *rb_parent;</div><div class="line">    pgoff_t pgoff = addr &gt;&gt; PAGE_SHIFT;</div><div class="line">    int error;</div><div class="line"></div><div class="line">    len = PAGE_ALIGN(len);</div><div class="line">    if (!len)</div><div class="line">        return addr;</div><div class="line"></div><div class="line">    flags = VM_DATA_DEFAULT_FLAGS | VM_ACCOUNT | mm-&gt;def_flags;</div><div class="line"></div><div class="line">    error = get_unmapped_area(NULL, addr, len, 0, MAP_FIXED);</div><div class="line">    if (error &amp; ~PAGE_MASK)</div><div class="line">        return error;</div><div class="line"></div><div class="line">    error = mlock_future_check(mm, mm-&gt;def_flags, len);</div><div class="line">    if (error)</div><div class="line">        return error;</div><div class="line"></div><div class="line">    verify_mm_writelocked(mm);</div><div class="line"></div><div class="line">    while (find_vma_links(mm, addr, addr + len, &amp;prev, &amp;rb_link,</div><div class="line">                  &amp;rb_parent)) &#123;</div><div class="line">        if (do_munmap(mm, addr, len))</div><div class="line">            return -ENOMEM;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    if (!may_expand_vm(mm, len &gt;&gt; PAGE_SHIFT))</div><div class="line">        return -ENOMEM;</div><div class="line"></div><div class="line">    if (mm-&gt;map_count &gt; sysctl_max_map_count)</div><div class="line">        return -ENOMEM;</div><div class="line"></div><div class="line">    if (security_vm_enough_memory_mm(mm, len &gt;&gt; PAGE_SHIFT))</div><div class="line">        return -ENOMEM;</div><div class="line"></div><div class="line">    vma = vma_merge(mm, prev, addr, addr + len, flags,</div><div class="line">                    NULL, NULL, pgoff, NULL);</div><div class="line">    if (vma)</div><div class="line">        goto out;</div><div class="line"></div><div class="line">    vma = kmem_cache_zalloc(vm_area_cachep, GFP_KERNEL);</div><div class="line">    if (!vma) &#123;</div><div class="line">        vm_unacct_memory(len &gt;&gt; PAGE_SHIFT);</div><div class="line">        return -ENOMEM;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    INIT_LIST_HEAD(&amp;vma-&gt;anon_vma_chain);</div><div class="line">    vma-&gt;vm_mm = mm;</div><div class="line">    vma-&gt;vm_start = addr;</div><div class="line">    vma-&gt;vm_end = addr + len;</div><div class="line">    vma-&gt;vm_pgoff = pgoff;</div><div class="line">    vma-&gt;vm_flags = flags;</div><div class="line">    vma-&gt;vm_page_prot = vm_get_page_prot(flags);</div><div class="line">    vma_link(mm, vma, prev, rb_link, rb_parent);</div><div class="line">out:</div><div class="line">    perf_event_mmap(vma);</div><div class="line">    mm-&gt;total_vm += len &gt;&gt; PAGE_SHIFT;</div><div class="line">    if (flags &amp; VM_LOCKED)</div><div class="line">        mm-&gt;locked_vm += (len &gt;&gt; PAGE_SHIFT);</div><div class="line">    vma-&gt;vm_flags |= VM_SOFTDIRTY;</div><div class="line">    return addr;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这段代码和第二章中分析的<code>mmap_region</code>函数很类似，这里简单分析如下，<code>get_unmapped_area</code>用来检查需要分配的虚拟内存地址是否已经被使用，<code>find_vma_links</code>用来查找需要插入的虚拟内存在红黑树的位置，<code>may_expand_vm</code>用来检查虚拟内存是否会超过系统的限制，<code>vma_merge</code>用来合并虚拟内存，如果不能合并，就通过slab分配一个<code>vma</code>，进行相应的设置，并通过<code>vma_link</code>插入到进程的红黑树中。</p>
+<p>从linux的代码中回来，继续看<code>sysmalloc</code>，假设分配成功，会查找是否有<code>__after_morecore_hook</code>函数并执行，这里假设该函数指针为null。<br>假设分配失败，则进入<code>else</code>部分，首先对需要分配的大小按地址对齐，并且设置分配<code>size</code>的最小值为<code>MMAP_AS_MORECORE_SIZE</code>（1MB），然后通过<code>MMAP</code>宏分配内存，该函数已经在《malloc源码分析—2》分析过了。这里注意，如果是通过mmap分配的内存，则设置分配区为不连续标志位。</p>
+<h2 id="第三部分"><a href="#第三部分" class="headerlink" title="第三部分"></a>第三部分</h2><p>继续往下看sysmalloc，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div></pre></td><td class="code"><pre><div class="line">static void * sysmalloc(INTERNAL_SIZE_T nb, mstate av) &#123;</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">    if (av != &amp;main_arena) &#123;</div><div class="line"></div><div class="line">        ...</div><div class="line"></div><div class="line">    &#125;</div><div class="line">    else&#123;</div><div class="line"></div><div class="line">        ...</div><div class="line"></div><div class="line">        if (brk != (char *) (MORECORE_FAILURE)) &#123;</div><div class="line">            if (mp_.sbrk_base == 0)</div><div class="line">                mp_.sbrk_base = brk;</div><div class="line">            av-&gt;system_mem += size;</div><div class="line"></div><div class="line">            if (brk == old_end &amp;&amp; snd_brk == (char *) (MORECORE_FAILURE))</div><div class="line">                set_head(old_top, (size + old_size) | PREV_INUSE);</div><div class="line">            else if (contiguous (av) &amp;&amp; old_size &amp;&amp; brk &lt; old_end) &#123;</div><div class="line">                malloc_printerr(3, &quot;break adjusted to free malloc space&quot;, brk, av);</div><div class="line">            &#125;</div><div class="line">            else &#123;</div><div class="line">                front_misalign = 0;</div><div class="line">                end_misalign = 0;</div><div class="line">                correction = 0;</div><div class="line">                aligned_brk = brk;</div><div class="line"></div><div class="line">                if (contiguous(av)) &#123;</div><div class="line">                    if (old_size)</div><div class="line">                        av-&gt;system_mem += brk - old_end;</div><div class="line"></div><div class="line">                    front_misalign = (INTERNAL_SIZE_T) chunk2mem(</div><div class="line">                            brk) &amp; MALLOC_ALIGN_MASK;</div><div class="line">                    if (front_misalign &gt; 0) &#123;</div><div class="line">                        correction = MALLOC_ALIGNMENT - front_misalign;</div><div class="line">                        aligned_brk += correction;</div><div class="line">                    &#125;</div><div class="line"></div><div class="line">                    correction += old_size;</div><div class="line">                    end_misalign = (INTERNAL_SIZE_T) (brk + size + correction);</div><div class="line">                    correction += (ALIGN_UP(end_misalign, pagesize)) - end_misalign;</div><div class="line"></div><div class="line">                    assert(correction &gt;= 0);</div><div class="line">                    snd_brk = (char *) (MORECORE(correction));</div><div class="line"></div><div class="line">                    if (snd_brk == (char *) (MORECORE_FAILURE)) &#123;</div><div class="line">                        correction = 0;</div><div class="line">                        snd_brk = (char *) (MORECORE(0));</div><div class="line">                    &#125; else &#123;</div><div class="line">                        void (*hook)(</div><div class="line">                        void) = atomic_forced_read (__after_morecore_hook);</div><div class="line">                        if (__builtin_expect (hook != NULL, 0))</div><div class="line">                        (*hook)();</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line"></div><div class="line">                ...</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>假设增加了主分配区的top chunk成功，则更新<code>sbrk_base</code>和分配区已分配的内存大小。<br>然后，第一个判断表示，新分配的内存地址和原来的<code>top chunk</code>连续，并且不是通过<code>MMAP</code>分配的，这时只需要更新原来top chunk的大小<code>size</code>。<br>第二个判断表示如果分配区的连续标志位置位，top chunk的大小大于0，但是分配的<code>brk</code>小于原来的top chunk结束地址，这里就判定出错了。<br>进入第三个判断表示新分配的内存地址大于原来的top chunk的结束地址，但是不连续。这种情况下，如果分配区的连续标志位置位，则表示不是通过MMAP分配的，肯定有其他线程调用了<code>brk</code>在堆上分配了内存，<code>av-&gt;system_mem += brk - old_end</code>表示将其他线程分配的内存一并计入到该分配区分配的内存大小。然后将刚刚分配的地址<code>brk</code>按<code>MALLOC_ALIGNMENT</code>对齐。<br>再往下就要处理地址不连续的问题了，因为地址不连续，就要放弃原来top chunk后面一部分的内存大小，并且将这一部分内存大小“补上”到刚刚分配的新内存后面。首先计算堆上补上内存后的结束地址并保存在<code>correction</code>中，然后调用<code>MORECORE</code>继续分配一次，将新分配内存的开始地址保存在<code>snd_brk</code>中。如果分配失败，则将<code>correction</code>设为0，并将<code>snd_brk</code>重置为原来分配的内存的结束地址，表示放弃该次补偿操作；如果分配成功，就调用<code>__after_morecore_hook</code>函数，这里假设该函数指针为<code>null</code>。</p>
+<h2 id="第四部分"><a href="#第四部分" class="headerlink" title="第四部分"></a>第四部分</h2><p>继续往下看sysmalloc，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div></pre></td><td class="code"><pre><div class="line">static void * sysmalloc(INTERNAL_SIZE_T nb, mstate av) &#123;</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">    if (av != &amp;main_arena) &#123;</div><div class="line"></div><div class="line">        ...</div><div class="line"></div><div class="line">    &#125;</div><div class="line">    else&#123;</div><div class="line"></div><div class="line">        ...</div><div class="line"></div><div class="line">        if (brk != (char *) (MORECORE_FAILURE)) &#123;</div><div class="line"></div><div class="line">            ...</div><div class="line"></div><div class="line">            if (brk == old_end &amp;&amp; snd_brk == (char *) (MORECORE_FAILURE))</div><div class="line">                ...</div><div class="line">            else if (contiguous (av) &amp;&amp; old_size &amp;&amp; brk &lt; old_end) &#123;</div><div class="line">                ...</div><div class="line">            &#125;</div><div class="line">            else &#123;</div><div class="line"></div><div class="line">                ...</div><div class="line"></div><div class="line">                if (contiguous(av)) &#123;</div><div class="line"></div><div class="line">                    ...</div><div class="line"></div><div class="line">                &#125;</div><div class="line"></div><div class="line">                else&#123;</div><div class="line">                    if (MALLOC_ALIGNMENT == 2 * SIZE_SZ)</div><div class="line">                    assert (((unsigned long) chunk2mem (brk) &amp; MALLOC_ALIGN_MASK) == 0);</div><div class="line">                    else&#123;</div><div class="line">                        front_misalign = (INTERNAL_SIZE_T) chunk2mem (brk) &amp; MALLOC_ALIGN_MASK;</div><div class="line">                        if (front_misalign &gt; 0)&#123;</div><div class="line">                            aligned_brk += MALLOC_ALIGNMENT - front_misalign;</div><div class="line">                        &#125;</div><div class="line">                    &#125;</div><div class="line"></div><div class="line">                    if (snd_brk == (char *) (MORECORE_FAILURE))&#123;</div><div class="line">                        snd_brk = (char *) (MORECORE (0));</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line"></div><div class="line">                if (snd_brk != (char *) (MORECORE_FAILURE)) &#123;</div><div class="line">                    av-&gt;top = (mchunkptr) aligned_brk;</div><div class="line">                    set_head(av-&gt;top,</div><div class="line">                            (snd_brk - aligned_brk + correction) | PREV_INUSE);</div><div class="line">                    av-&gt;system_mem += correction;</div><div class="line"></div><div class="line">                    if (old_size != 0) &#123;</div><div class="line">                        old_size = (old_size - 4 * SIZE_SZ) &amp; ~MALLOC_ALIGN_MASK;</div><div class="line">                        set_head(old_top, old_size | PREV_INUSE);</div><div class="line"></div><div class="line">                        chunk_at_offset (old_top, old_size)-&gt;size = (2 * SIZE_SZ)</div><div class="line">                                | PREV_INUSE;</div><div class="line"></div><div class="line">                        chunk_at_offset (old_top, old_size + 2 * SIZE_SZ)-&gt;size = (2</div><div class="line">                                * SIZE_SZ) | PREV_INUSE;</div><div class="line"></div><div class="line">                        if (old_size &gt;= MINSIZE) &#123;</div><div class="line">                            _int_free(av, old_top, 1);</div><div class="line">                        &#125;</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>开头的<code>else</code>表示分配区的连续标志没有置位，这时只要按照<code>MALLOC_ALIGNMENT</code>做简单的对齐就行了，如果是通过<code>brk</code>分配的内存，则通过<code>MORECORE (0)</code>得到新分配的内存的结束地址并保存在<code>snd_brk</code>中。<br>再往下进入<code>if</code>，设置分配区的top指针为经过对齐之后的起始地址<code>aligned_brk</code>，设置top chunk的大小<code>size</code>，<code>aligned_brk</code>表示对齐造成的误差，<code>correction</code>是因为要补偿原来top chunk剩余内存造成的误差，然后设置分配区已分配的内存大小。<br>因为不连续，最后<code>if</code>内是设置原top chunk的<code>fencepost</code>，将原来top chunk的剩余空间拆成两个<code>SIZE_SZ*2</code>大小的chunk，如果剩下的大小大于可分配的chunk的最小值<code>MINSIZE</code>，就通过<code>_int_free</code>释放掉整个剩余内存。</p>
+<h2 id="第五部分"><a href="#第五部分" class="headerlink" title="第五部分"></a>第五部分</h2><p>继续往下看sysmalloc最后一部分，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">static void * sysmalloc(INTERNAL_SIZE_T nb, mstate av) &#123;</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">    if ((unsigned long) av-&gt;system_mem &gt; (unsigned long) (av-&gt;max_system_mem))</div><div class="line">        av-&gt;max_system_mem = av-&gt;system_mem;</div><div class="line">    check_malloc_state (av);</div><div class="line"></div><div class="line">    p = av-&gt;top;</div><div class="line">    size = chunksize(p);</div><div class="line"></div><div class="line">    if ((unsigned long) (size) &gt;= (unsigned long) (nb + MINSIZE )) &#123;</div><div class="line">        remainder_size = size - nb;</div><div class="line">        remainder = chunk_at_offset(p, nb);</div><div class="line">        av-&gt;top = remainder;</div><div class="line">        set_head(p, nb | PREV_INUSE | (av != &amp;main_arena ? NON_MAIN_ARENA : 0));</div><div class="line">        set_head(remainder, remainder_size | PREV_INUSE);</div><div class="line">        check_malloced_chunk (av, p, nb);</div><div class="line">        return chunk2mem(p);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    __set_errno(ENOMEM);</div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里就是获得前面所有代码更新后的top chunk，然后从该top chunk中分配用户需要的大小chunk并返回，如果失败则返回0。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>简单总结一下<code>sysmalloc</code>函数，这里不包含《malloc源码分析—__int_malloc》中的代码，该代码用于初始化。首先进入<code>sysmalloc</code>函数就表示top chunk的空间不够了。<br>假设当前分配区不是主分配区，就通过<code>grow_heap</code>增加top chunk的空间，如果失败就通过<code>new_heap</code>重新分配一个heap，并将该分配区的top chunk指针指向新分配的heap的空闲内存。<br>如果当前分配区是主分配区，首先会通过<code>brk</code>在堆上分配内存以增加top chunk的空间，如果失败再通过<code>MMAP</code>分配。假设新分配内存的地址不连续，而分配区的连续标志位置位，就会继续分配内存以补偿。<br>最后，只要分配成功，就可以从被更新的top chunk分配所需的内存。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/heap/" rel="tag"># heap</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+          <div class="wp_rating">
+            <div id="wpac-rating"></div>
+          </div>
+        
+
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/05/21/pwn/malloc源码分析—_int_malloc/" rel="next" title="malloc源码分析——_int_malloc">
+                <i class="fa fa-chevron-left"></i> malloc源码分析——_int_malloc
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/05/21/pwn/free源码分析——1/" rel="prev" title="free源码分析——__libc_free">
+                free源码分析——__libc_free <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="gitalk-container"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/me.jpg"
+               alt="Introspelliam" />
+          <p class="site-author-name" itemprop="name">Introspelliam</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">125</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">56</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/Introspelliam" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/3008590672" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                    
+                      Weibo
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#malloc源码分析—sysmalloc"><span class="nav-text">malloc源码分析—sysmalloc</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一部分"><span class="nav-text">第一部分</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二部分"><span class="nav-text">第二部分</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三部分"><span class="nav-text">第三部分</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第四部分"><span class="nav-text">第四部分</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第五部分"><span class="nav-text">第五部分</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-text">总结</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Introspelliam</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <script src="/js/md5.min.js"></script>
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '41857e5205be9fe36c48',
+          clientSecret: 'c927ea37a432eff67cdb1081658112c7409ca7ff',
+          repo: 'Introspelliam.github.io',
+          owner: 'Introspelliam',
+          admin: ['Introspelliam'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  <script type="text/javascript">
+  wpac_init = window.wpac_init || [];
+  wpac_init.push({widget: 'Rating', id: ,
+    el: 'wpac-rating',
+    color: 'fc6423'
+  });
+  (function() {
+    if ('WIDGETPACK_LOADED' in window) return;
+    WIDGETPACK_LOADED = true;
+    var mc = document.createElement('script');
+    mc.type = 'text/javascript';
+    mc.async = true;
+    mc.src = '//embed.widgetpack.com/widget.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+  })();
+  </script>
+
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

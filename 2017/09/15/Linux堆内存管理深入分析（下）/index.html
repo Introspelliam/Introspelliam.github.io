@@ -2,10 +2,8 @@
 
 
 
-  
 
-
-<html class="theme-next mist use-motion" lang="zh-Hans">
+<html class="theme-next mist" lang="zh-Hans">
 <head>
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -109,7 +107,7 @@
 <meta property="og:image" content="http://yoursite.com/images/2017-09-15/420rbsdeo2o0.png">
 <meta property="og:image" content="http://yoursite.com/images/2017-09-15/420rc04q9ad0.png">
 <meta property="og:image" content="http://yoursite.com/images/2017-09-15/420rc31ppb10.jpg">
-<meta property="og:updated_time" content="2017-11-17T12:19:04.859Z">
+<meta property="og:updated_time" content="2018-07-09T11:41:14.965Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linux堆内存管理深入分析（下）">
 <meta name="twitter:description" content="0 前言回顾在上一篇文章中（链接见文章底部），详细介绍了堆内存管理中涉及到的基本概念以及相互关系，同时也着重介绍了堆中chunk分配和释放策略中使用到的隐式链表技术。通过前面的介绍，我们知道使用隐式链表来管理内存chunk总会涉及到内存的遍历，效率极低。对此glibc malloc引入了显示链表技术来提高堆内存分配和释放的效率。 所谓的显示链表就是我们在数据结构中常用的链表，而链表本质上就是将一些">
@@ -123,10 +121,10 @@
     root: '/',
     scheme: 'Mist',
     version: '5.1.2',
-    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":false,"onmobile":true},
+    sidebar: {"position":"right","display":"always","offset":0,"offset_float":0,"b2t":true,"scrollpercent":true,"onmobile":true},
     fancybox: true,
     tabs: true,
-    motion: true,
+    motion: false,
     duoshuo: {
       userId: '0',
       author: '博主'
@@ -654,7 +652,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">133</span>
+                <span class="site-state-item-count">130</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -665,7 +663,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">16</span>
+                <span class="site-state-item-count">15</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -676,7 +674,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">55</span>
+                <span class="site-state-item-count">54</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -753,6 +751,8 @@
       
         <div class="back-to-top">
           <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
           
         </div>
       

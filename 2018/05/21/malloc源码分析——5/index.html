@@ -2,10 +2,8 @@
 
 
 
-  
 
-
-<html class="theme-next mist use-motion" lang="zh-Hans">
+<html class="theme-next mist" lang="zh-Hans">
 <head>
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -106,7 +104,7 @@
 <meta property="og:url" content="http://yoursite.com/2018/05/21/malloc源码分析——5/index.html">
 <meta property="og:site_name" content="上善若水">
 <meta property="og:description" content="malloc源码分析—sysmalloc本章主要分析sysmalloc的代码，在《malloc源码分析—2》中已经分析了部分sysmalloc的代码，主要用于对分配区进行初始化。本章查看余下的代码， 第一部分123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525">
-<meta property="og:updated_time" content="2018-05-21T06:54:27.244Z">
+<meta property="og:updated_time" content="2018-07-09T11:41:14.993Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="malloc源码分析——5">
 <meta name="twitter:description" content="malloc源码分析—sysmalloc本章主要分析sysmalloc的代码，在《malloc源码分析—2》中已经分析了部分sysmalloc的代码，主要用于对分配区进行初始化。本章查看余下的代码， 第一部分123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525">
@@ -119,10 +117,10 @@
     root: '/',
     scheme: 'Mist',
     version: '5.1.2',
-    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":false,"onmobile":true},
+    sidebar: {"position":"right","display":"always","offset":0,"offset_float":0,"b2t":true,"scrollpercent":true,"onmobile":true},
     fancybox: true,
     tabs: true,
-    motion: true,
+    motion: false,
     duoshuo: {
       userId: '0',
       author: '博主'
@@ -596,7 +594,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">133</span>
+                <span class="site-state-item-count">130</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -607,7 +605,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">16</span>
+                <span class="site-state-item-count">15</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -618,7 +616,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">55</span>
+                <span class="site-state-item-count">54</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -695,6 +693,8 @@
       
         <div class="back-to-top">
           <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
           
         </div>
       

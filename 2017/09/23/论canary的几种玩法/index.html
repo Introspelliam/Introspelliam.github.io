@@ -2,10 +2,8 @@
 
 
 
-  
 
-
-<html class="theme-next mist use-motion" lang="zh-Hans">
+<html class="theme-next mist" lang="zh-Hans">
 <head>
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -116,7 +114,7 @@
 <meta property="og:image" content="http://yoursite.com/images/2017-09-23/canary_c0f71a7d08460009b1ff313dcdbf0294.png">
 <meta property="og:image" content="http://yoursite.com/images/2017-09-23/canary_a768142147ca3976598941b5c6c67161.png">
 <meta property="og:image" content="http://yoursite.com/images/2017-09-23/canary_b17d7868f95d135b35908e74805b7282.png">
-<meta property="og:updated_time" content="2017-09-23T15:14:52.560Z">
+<meta property="og:updated_time" content="2018-07-09T11:41:14.947Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="论canary的几种玩法">
 <meta name="twitter:description" content="此文摘抄于veritas501的博文 http://veritas501.space/2017/04/28/%E8%AE%BAcanary%E7%9A%84%E5%87%A0%E7%A7%8D%E7%8E%A9%E6%B3%95/ 里面讨论了我所知的几种关于canary的玩法，我目前不知道的就等我以后什么时候知道了再补充吧。  先说说canarycanary直译就是金丝雀，为什么是叫金丝雀？ 17">
@@ -130,10 +128,10 @@
     root: '/',
     scheme: 'Mist',
     version: '5.1.2',
-    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":false,"onmobile":true},
+    sidebar: {"position":"right","display":"always","offset":0,"offset_float":0,"b2t":true,"scrollpercent":true,"onmobile":true},
     fancybox: true,
     tabs: true,
-    motion: true,
+    motion: false,
     duoshuo: {
       userId: '0',
       author: '博主'
@@ -675,7 +673,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">133</span>
+                <span class="site-state-item-count">130</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -686,7 +684,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">16</span>
+                <span class="site-state-item-count">15</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -697,7 +695,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">55</span>
+                <span class="site-state-item-count">54</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -774,6 +772,8 @@
       
         <div class="back-to-top">
           <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
           
         </div>
       

@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next mist" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="googleaf0347feb5ea0936.html" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="xss," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Introspelliam" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="这篇文章摘抄与LoRexxar的的博客https://lorexxar.cn/2017/05/12/xss-bot2/ bot是什么？原意是robot的意思，也指一个在没有人工干预下在因特网上搜索信息的程序。这里的xss bot指的是：将攻击者提供的攻击代码在服务器上模拟执行的程序。 因此xss bot应该具有较强的稳定性！ xss在近几年的ctf形式中，越来越受到了人们的重视，但是出xss的题目">
+<meta name="keywords" content="xss">
+<meta property="og:type" content="article">
+<meta property="og:title" content="xss bot介绍">
+<meta property="og:url" content="http://yoursite.com/2017/09/21/web/xss-bot介绍/index.html">
+<meta property="og:site_name" content="Introspelliam">
+<meta property="og:description" content="这篇文章摘抄与LoRexxar的的博客https://lorexxar.cn/2017/05/12/xss-bot2/ bot是什么？原意是robot的意思，也指一个在没有人工干预下在因特网上搜索信息的程序。这里的xss bot指的是：将攻击者提供的攻击代码在服务器上模拟执行的程序。 因此xss bot应该具有较强的稳定性！ xss在近几年的ctf形式中，越来越受到了人们的重视，但是出xss的题目">
+<meta property="og:image" content="http://yoursite.com/images/2017-09-21/image_1bepoa4nsjb91ipsli170tclt9.png">
+<meta property="og:updated_time" content="2018-07-10T07:54:21.636Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="xss bot介绍">
+<meta name="twitter:description" content="这篇文章摘抄与LoRexxar的的博客https://lorexxar.cn/2017/05/12/xss-bot2/ bot是什么？原意是robot的意思，也指一个在没有人工干预下在因特网上搜索信息的程序。这里的xss bot指的是：将攻击者提供的攻击代码在服务器上模拟执行的程序。 因此xss bot应该具有较强的稳定性！ xss在近几年的ctf形式中，越来越受到了人们的重视，但是出xss的题目">
+<meta name="twitter:image" content="http://yoursite.com/images/2017-09-21/image_1bepoa4nsjb91ipsli170tclt9.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"right","display":"always","offset":0,"offset_float":0,"b2t":true,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: false,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/09/21/web/xss-bot介绍/"/>
+
+
+
+
+
+  <title>xss bot介绍 | Introspelliam</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?663212c5ef558c27e77385b620f14823";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Introspelliam</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Just do what works for you, because there will always be someone who thinks differently.</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/21/web/xss-bot介绍/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Introspelliam">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">xss bot介绍</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-21T17:22:02+08:00">
+                2017-09-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web/" itemprop="url" rel="index">
+                    <span itemprop="name">web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>这篇文章摘抄与LoRexxar的的博客<a href="https://lorexxar.cn/2017/05/12/xss-bot2/" target="_blank" rel="external">https://lorexxar.cn/2017/05/12/xss-bot2/</a></p>
+<p>bot是什么？原意是robot的意思，也指一个在没有人工干预下在因特网上搜索信息的程序。这里的xss bot指的是：将攻击者提供的攻击代码在服务器上模拟执行的程序。</p>
+<p>因此xss bot应该具有较强的稳定性！</p>
+<p>xss在近几年的ctf形式中，越来越受到了人们的重视，但是出xss的题目最重要的可能就是xss bot的问题了，一个合格的xss bot要稳定还能避免搅屎。</p>
+<p>下面我们就来看看一个xss bot是怎么完成的。</p>
+<h1 id="1-bot之前"><a href="#1-bot之前" class="headerlink" title="1. bot之前"></a>1. bot之前</h1><p>一般来说，对于xss bot来说，最重要的是要bot能够执行js，事情的本质是我们需要一个浏览器内核来解析js，这里我们一般会用<code>selenium+webdriver</code>。</p>
+<p>而webdriver一般有3种chrome webdriver、firefox webdriver、phantomjs。</p>
+<h2 id="1-1-selenium"><a href="#1-1-selenium" class="headerlink" title="1.1 selenium"></a>1.1 selenium</h2><p>selenium是用来控制webdriver的接口的，网上搜到的大部分脚本大部门都是java控制的，下面我的所有脚本都使用python操作selenium，下面有份不太完整的文档。</p>
+<p><a href="http://www.seleniumhq.org/docs/03_webdriver.jsp" target="_blank" rel="external">http://www.seleniumhq.org/docs/03_webdriver.jsp</a></p>
+<p>只要在python文件前引入selenium模块。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">import selenium</div><div class="line">from selenium import webdriver  </div><div class="line">from selenium.webdriver.common.keys import Keys  </div><div class="line">from selenium.common.exceptions import WebDriverException</div></pre></td></tr></table></figure>
+<h2 id="1-2-chrome-webdriver"><a href="#1-2-chrome-webdriver" class="headerlink" title="1.2 chrome webdriver"></a>1.2 chrome webdriver</h2><p>如果我们想要使用chrome webdriver，除了安装chrome浏览器本身，还需要安装webdriver。</p>
+<p><a href="https://sites.google.com/a/chromium.org/chromedriver/downloads" target="_blank" rel="external">https://sites.google.com/a/chromium.org/chromedriver/downloads</a></p>
+<p>由于webdriver版本众多，api和语法也有所不同，这里推荐最新版chrome+最新版webdriver。</p>
+<p>因为环境相异，所以我们可能需要在脚本里设置chrome webdriver的路径</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">#!/usr/bin/env python</div><div class="line"># -*- coding:utf-8 -*-</div><div class="line">import selenium</div><div class="line">from selenium import webdriver  </div><div class="line">from selenium.webdriver.common.keys import Keys  </div><div class="line">from selenium.common.exceptions import WebDriverException</div><div class="line">import os </div><div class="line"></div><div class="line">chromedriver = &quot;C:\Users\Administrator\AppData\Local\Google\Chrome\Application\chromedriver.exe&quot;  </div><div class="line">os.environ[&quot;webdriver.chrome.driver&quot;] = chromedriver  </div><div class="line">browser = webdriver.Chrome(chromedriver)  </div><div class="line">url = &quot;http://xxxx&quot;  	</div><div class="line">browser.get(url)</div><div class="line">browser.quit()</div></pre></td></tr></table></figure>
+<h2 id="1-3-firefox-webdriver"><a href="#1-3-firefox-webdriver" class="headerlink" title="1.3 firefox webdriver"></a>1.3 firefox webdriver</h2><p>firefox和chrome相同，需要一个geckodriver来支持，和chrome类似。</p>
+<p><a href="https://github.com/mozilla/geckodriver/releases/" target="_blank" rel="external">https://github.com/mozilla/geckodriver/releases/</a></p>
+<p>在linux下，需要添加映射到/bin/</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">chmod +x geckodriver</div></pre></td></tr></table></figure>
+<p>在windows下，需要添加geckodriver到环境变量中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">#!/usr/bin/env python</div><div class="line"># -*- coding:utf-8 -*-</div><div class="line">import selenium</div><div class="line">from selenium import webdriver  </div><div class="line">from selenium.webdriver.common.keys import Keys  </div><div class="line">from selenium.common.exceptions import WebDriverException</div><div class="line"></div><div class="line">browser = webdriver.Firefox()</div><div class="line"></div><div class="line">url = &quot;http://xxxx&quot;  	</div><div class="line">browser.get(url)</div><div class="line">browser.quit()</div></pre></td></tr></table></figure>
+<h2 id="1-4-phantomjs"><a href="#1-4-phantomjs" class="headerlink" title="1.4 phantomjs"></a>1.4 phantomjs</h2><p>phantomjs和别的浏览器本质上没什么区别，差不多也是类似于浏览器的内核，优势其实是多平台支持，而且不需要浏览器支持，所以一般爬虫用的比较多。</p>
+<p>下载地址<br><a href="http://phantomjs.org/download.html" target="_blank" rel="external">http://phantomjs.org/download.html</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">#!/usr/bin/env python</div><div class="line"># -*- coding:utf-8 -*-</div><div class="line">import selenium</div><div class="line">from selenium import webdriver</div><div class="line">from selenium.common.exceptions import WebDriverException</div><div class="line"></div><div class="line">phantomjs_path = &quot;sssssssss/phantomjs&quot;</div><div class="line">driver = webdriver.PhantomJS(executable_path=phantomjs_path)</div><div class="line"></div><div class="line">url = &quot;http://xxxx&quot;  	</div><div class="line">browser.get(url)</div><div class="line">browser.quit()</div></pre></td></tr></table></figure>
+<h1 id="2-bot的背后"><a href="#2-bot的背后" class="headerlink" title="2. bot的背后"></a>2. bot的背后</h1><p>比起爬虫来不一样，因为一个爬虫只要打开一次获取数据就好了，但是作为xss bot必须周期性的打开页面，执行攻击者的相应payload，既然bot的持续时间一般是24小时-48小时，那bot就不可能时时刻刻都有人盯着，也就必须放在服务器上，我们来研究一下不同的webdriver在服务器的差异。</p>
+<p>chrome和firefox的webdriver都有一个特点，就是需要桌面，如果执行脚本的服务器上不包含桌面，那么我就需要别的方法来构造一个虚拟的桌面。</p>
+<p>如果在windows服务器上，windows服务器最大的特点就是自带桌面，我们一般通过rdp管理，所以windows服务器上跑xss bot的话不需要做专门的处理。</p>
+<p>如果在linux服务器上，我们一般通过ssh管理linux服务器，那么我就需要一段神秘代码来执行xss bot脚本，这是一段火日聚聚教我的代码。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">from pyvirtualdisplay import Display</div><div class="line"></div><div class="line">display = Display(visible=0, size=(800,800))</div><div class="line">display.start()</div></pre></td></tr></table></figure>
+<p>在phantomjs的webdriver下，就不会有这样的问题，因为phantomjs本身就是多平台的，只是很多时候xss bot需要保证浏览器的特性，这种时候，我们往往不会使用phantomjs作为xss bot的首选。</p>
+<h1 id="3-完成bot"><a href="#3-完成bot" class="headerlink" title="3. 完成bot"></a>3. 完成bot</h1><p>上面我们着重讲了各种webdriver，下面我就来针对不同的xss题目来谈谈。</p>
+<h2 id="3-1-report-bug型xss"><a href="#3-1-report-bug型xss" class="headerlink" title="3.1 report bug型xss"></a>3.1 report bug型xss</h2><p>一般来说，xss题目最常见的就是report bug或者是留言型xss，后台接口唯一，攻击者向目标发送信息，bot需要访问页面执行js。</p>
+<p>在ctf比赛中，处理方式五花八门，这里我推荐1种解决办法。</p>
+<p>在攻击者页面提供测试接口和攻击接口，然后攻击者接口设置验证码，避免攻击者无意义的刷payload。（具体可以见0ctf的处理方式）</p>
+<p>为了避免干扰，最好将攻击者攻击数据存入数据库，添加标志位以判断数据是否被访问过，题目专门添加功能用作check数据库内是否存在未访问数据（最好添加此功能在题目中，因为bot有可能不在题目服务器，远程数据库连接是个危险的行为！！）</p>
+<p>判断存在时，bot开启webdriver访问相应的页面（通过添加cookie或者ip check的方式判断访问来源），相应的页面从数据库取出数据，bot访问完成后关闭。</p>
+<p>大致流程如下：</p>
+<p><img src="/images/2017-09-21/image_1bepoa4nsjb91ipsli170tclt9.png" alt="image_1bepoa4nsjb91ipsli170tclt9.png-31.8kB"></p>
+<p>我这里贴上bot部分的代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/env python</span></div><div class="line"><span class="comment"># -*- coding:utf-8 -*-</span></div><div class="line"></div><div class="line"><span class="keyword">import</span> selenium</div><div class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver  </div><div class="line"><span class="keyword">from</span> selenium.webdriver.common.keys <span class="keyword">import</span> Keys  </div><div class="line"><span class="keyword">from</span> selenium.common.exceptions <span class="keyword">import</span> WebDriverException</div><div class="line"><span class="keyword">import</span> os </div><div class="line"><span class="keyword">import</span> time </div><div class="line"><span class="keyword">import</span> requests</div><div class="line"></div><div class="line"><span class="keyword">from</span> pyvirtualdisplay <span class="keyword">import</span> Display</div><div class="line"></div><div class="line">display = Display(visible=<span class="number">0</span>, size=(<span class="number">800</span>,<span class="number">800</span>))</div><div class="line">display.start()</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"><span class="keyword">while</span> <span class="number">1</span>:</div><div class="line">	<span class="keyword">try</span>:</div><div class="line">		s = requests.Session()</div><div class="line">		url = <span class="string">'http://xxx/checksql.php'</span></div><div class="line">		r = s.get(url)</div><div class="line"></div><div class="line">		<span class="keyword">if</span> <span class="string">"存在"</span> <span class="keyword">in</span> r.text:</div><div class="line"></div><div class="line">			<span class="keyword">try</span>:</div><div class="line">				chromedriver = <span class="string">"C:\Users\Administrator\AppData\Local\Google\Chrome\Application\chromedriver.exe"</span>  </div><div class="line">				os.environ[<span class="string">"webdriver.chrome.driver"</span>] = chromedriver  </div><div class="line">				browser = webdriver.Chrome(chromedriver) </div><div class="line">				</div><div class="line">				browser.set_page_load_timeout(<span class="number">10</span>)</div><div class="line">				browser.set_script_timeout(<span class="number">10</span>)</div><div class="line"></div><div class="line"></div><div class="line">				url = <span class="string">"http://xxxxxx/admin_321321321.php"</span>  	</div><div class="line">				browser.get(url)</div><div class="line">				browser.add_cookie(&#123;<span class="string">'name'</span>: <span class="string">'admin'</span>,</div><div class="line">				 <span class="string">'value'</span> : <span class="string">'arandomstring'</span>,</div><div class="line">				 <span class="string">'path'</span> : <span class="string">'/'</span>&#125;)</div><div class="line"></div><div class="line"></div><div class="line">				browser.get(url)</div><div class="line">				<span class="keyword">while</span> <span class="number">1</span>:</div><div class="line">					<span class="keyword">try</span>:</div><div class="line">						browser.switch_to_alert().accept()</div><div class="line">					<span class="keyword">except</span> selenium.common.exceptions.NoAlertPresentException:</div><div class="line">						<span class="keyword">break</span></div><div class="line">				<span class="keyword">print</span> browser.title</div><div class="line">				<span class="keyword">print</span> time.strftime(<span class="string">"%Y-%m-%d %X"</span>, time.localtime())</div><div class="line">				time.sleep(<span class="number">10</span>)</div><div class="line">				browser.quit()</div><div class="line">				time.sleep(<span class="number">1</span>)</div><div class="line"></div><div class="line">			<span class="keyword">except</span> Exception <span class="keyword">as</span> e: </div><div class="line">				<span class="keyword">print</span> <span class="string">"[error] "</span>+str(e)</div><div class="line">				browser.quit()</div><div class="line"></div><div class="line">		<span class="keyword">else</span>:</div><div class="line">			<span class="keyword">print</span> time.strftime(<span class="string">"%Y-%m-%d %X"</span>, time.localtime())</div><div class="line">			<span class="keyword">print</span> <span class="string">"[info] no unread messages"</span></div><div class="line">			exit(<span class="number">0</span>)</div><div class="line"></div><div class="line">	<span class="keyword">except</span> Exception <span class="keyword">as</span> e: </div><div class="line">		<span class="keyword">print</span> <span class="string">"[error] "</span>+str(e)</div></pre></td></tr></table></figure>
+<p>上面的代码配合crontab应该可以很好的应付这类xss的各种问题</p>
+<h2 id="3-2-聊天类的交互式xss"><a href="#3-2-聊天类的交互式xss" class="headerlink" title="3.2 聊天类的交互式xss"></a>3.2 聊天类的交互式xss</h2><p>这类xss最明显的特点    就是admin用户和别的用户并没有区别，也就是说bot想要打开被攻击者注入的页面，也必须经过登录，服务端设置session来登录，那么上面的办法就行不通了，最好的办法就是模拟登录。</p>
+<p>这类xss最大的问题其实就是信息的隔离方式，如果聊天的交互方式本身就是显示在同一页面上的话，很显然的问题就是，如果有一个攻击者试图干扰bot的运行，他只要再每个round发送<code>&lt;xmp&gt;</code>就可以导致js无法执行，这是个我到现在还没想明白的问题。先分享现在我使用的bot</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/env python</span></div><div class="line"><span class="comment"># -*- coding:utf-8 -*-</span></div><div class="line"></div><div class="line"><span class="keyword">import</span> selenium</div><div class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver  </div><div class="line"><span class="keyword">from</span> selenium.webdriver.common.keys <span class="keyword">import</span> Keys  </div><div class="line"><span class="keyword">from</span> selenium.common.exceptions <span class="keyword">import</span> WebDriverException</div><div class="line"><span class="keyword">import</span> os </div><div class="line"><span class="keyword">import</span> time </div><div class="line"><span class="keyword">import</span> requests</div><div class="line"></div><div class="line"><span class="keyword">from</span> pyvirtualdisplay <span class="keyword">import</span> Display</div><div class="line"></div><div class="line">display = Display(visible=<span class="number">0</span>, size=(<span class="number">800</span>,<span class="number">800</span>))</div><div class="line">display.start()</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"><span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">2</span>):</div><div class="line"></div><div class="line">	<span class="keyword">try</span>:</div><div class="line">		browser = webdriver.Firefox()</div><div class="line">		browser.set_page_load_timeout(<span class="number">10</span>)</div><div class="line">		browser.set_script_timeout(<span class="number">10</span>)</div><div class="line"></div><div class="line"></div><div class="line">		url = <span class="string">"http://52.80.63.91/login.php"</span>  	</div><div class="line">		browser.get(url)</div><div class="line"></div><div class="line">		elem = browser.find_element_by_name(<span class="string">"user"</span>)</div><div class="line">		elem.clear()</div><div class="line">		elem.send_keys(<span class="string">'admin'</span>)</div><div class="line">		elem = browser.find_element_by_name(<span class="string">"pass"</span>)</div><div class="line">		elem.clear()</div><div class="line">		elem.send_keys(<span class="string">'admmin332indadmin33213'</span>)</div><div class="line">		elem = browser.find_element_by_name(<span class="string">"login"</span>)</div><div class="line">		elem.click()</div><div class="line"></div><div class="line">		<span class="keyword">print</span> <span class="string">"login success"</span></div><div class="line">	</div><div class="line">		browser.add_cookie(&#123;<span class="string">'name'</span>: <span class="string">'admin'</span>,</div><div class="line">		 <span class="string">'value'</span> : <span class="string">'arandomstring'</span>,</div><div class="line">		 <span class="string">'path'</span> : <span class="string">'/adminshigesha233e3333/'</span>&#125;)</div><div class="line"></div><div class="line">		<span class="keyword">while</span> <span class="number">1</span>:</div><div class="line">			<span class="keyword">try</span>:</div><div class="line">				browser.switch_to_alert().accept()</div><div class="line"></div><div class="line">			<span class="keyword">except</span> selenium.common.exceptions.NoAlertPresentException:</div><div class="line">				<span class="keyword">break</span></div><div class="line"></div><div class="line">		<span class="keyword">print</span> browser.title</div><div class="line">		<span class="keyword">print</span> time.strftime(<span class="string">"%Y-%m-%d %X"</span>, time.localtime())</div><div class="line">		time.sleep(<span class="number">10</span>)</div><div class="line">		browser.quit()</div><div class="line">		time.sleep(<span class="number">1</span>)</div><div class="line">	<span class="keyword">except</span> Exception <span class="keyword">as</span> e: </div><div class="line">		<span class="keyword">print</span> <span class="string">"[ERROR] "</span>+str(e)</div><div class="line">		<span class="comment">#important</span></div><div class="line">		browser.quit()</div><div class="line"></div><div class="line"></div><div class="line">url2 = <span class="string">'http://xxxx/cl33e3ar5ql.php'</span></div><div class="line">r = s.get(url2)</div><div class="line"></div><div class="line"><span class="keyword">print</span> r.text</div><div class="line"><span class="keyword">print</span> time.strftime(<span class="string">"%Y-%m-%d %X"</span>, time.localtime())</div></pre></td></tr></table></figure>
+<p>上面的代码通过setkey模拟登录，然后设置后台的cookie，每次payload执行2次，然后清理掉admin除预留信息以外的所有payload，避免恶意payload导致的所有payload无效。</p>
+<p>配合crontab可以保证bot的持久性，如果不放心bot的稳定性，还可以在脚本执行结束后，执行命令kill掉所有的firefox残留进程。</p>
+<p>到此为止，一个完整的xss bot就完成了，虽然可能不是最完美的解决方案，希望会有更好的解决办法:&gt;</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/xss/" rel="tag"># xss</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+          <div class="wp_rating">
+            <div id="wpac-rating"></div>
+          </div>
+        
+
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/21/web/xss简介/" rel="next" title="xss简介">
+                <i class="fa fa-chevron-left"></i> xss简介
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/21/code/Python的图片处理库PIL/" rel="prev" title="Python的图片处理库PIL">
+                Python的图片处理库PIL <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="gitalk-container"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/me.jpg"
+               alt="Introspelliam" />
+          <p class="site-author-name" itemprop="name">Introspelliam</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">125</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">56</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/Introspelliam" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/3008590672" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                    
+                      Weibo
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-bot之前"><span class="nav-text">1. bot之前</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-selenium"><span class="nav-text">1.1 selenium</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-chrome-webdriver"><span class="nav-text">1.2 chrome webdriver</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-firefox-webdriver"><span class="nav-text">1.3 firefox webdriver</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-4-phantomjs"><span class="nav-text">1.4 phantomjs</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-bot的背后"><span class="nav-text">2. bot的背后</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-完成bot"><span class="nav-text">3. 完成bot</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-report-bug型xss"><span class="nav-text">3.1 report bug型xss</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-聊天类的交互式xss"><span class="nav-text">3.2 聊天类的交互式xss</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Introspelliam</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <script src="/js/md5.min.js"></script>
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '41857e5205be9fe36c48',
+          clientSecret: 'c927ea37a432eff67cdb1081658112c7409ca7ff',
+          repo: 'Introspelliam.github.io',
+          owner: 'Introspelliam',
+          admin: ['Introspelliam'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  <script type="text/javascript">
+  wpac_init = window.wpac_init || [];
+  wpac_init.push({widget: 'Rating', id: ,
+    el: 'wpac-rating',
+    color: 'fc6423'
+  });
+  (function() {
+    if ('WIDGETPACK_LOADED' in window) return;
+    WIDGETPACK_LOADED = true;
+    var mc = document.createElement('script');
+    mc.type = 'text/javascript';
+    mc.async = true;
+    mc.src = '//embed.widgetpack.com/widget.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+  })();
+  </script>
+
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

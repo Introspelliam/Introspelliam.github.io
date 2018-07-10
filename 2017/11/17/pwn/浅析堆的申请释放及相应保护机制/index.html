@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next mist" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="googleaf0347feb5ea0936.html" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="heap," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Introspelliam" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="0×00 前面的话在了解这部分的时候，首先你最好阅读一下这两篇博客： Linux堆内存管理深入分析上 Linux堆内存管理深入分析下 在内存中，堆是一个很有趣的地方，因为它可以由用户去直接的进行分配与销毁，所以也产生了一些很有趣、奇思妙想的漏洞，像unlink漏洞、House系列漏洞等等。但是在学习的过程中，我们很容易难以理解那些介绍的比较模糊的概念，比如 unsortedbin 在某些条件下会放">
+<meta name="keywords" content="heap">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅析堆的申请释放及相应保护机制">
+<meta property="og:url" content="http://yoursite.com/2017/11/17/pwn/浅析堆的申请释放及相应保护机制/index.html">
+<meta property="og:site_name" content="Introspelliam">
+<meta property="og:description" content="0×00 前面的话在了解这部分的时候，首先你最好阅读一下这两篇博客： Linux堆内存管理深入分析上 Linux堆内存管理深入分析下 在内存中，堆是一个很有趣的地方，因为它可以由用户去直接的进行分配与销毁，所以也产生了一些很有趣、奇思妙想的漏洞，像unlink漏洞、House系列漏洞等等。但是在学习的过程中，我们很容易难以理解那些介绍的比较模糊的概念，比如 unsortedbin 在某些条件下会放">
+<meta property="og:updated_time" content="2018-07-09T13:35:49.338Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="浅析堆的申请释放及相应保护机制">
+<meta name="twitter:description" content="0×00 前面的话在了解这部分的时候，首先你最好阅读一下这两篇博客： Linux堆内存管理深入分析上 Linux堆内存管理深入分析下 在内存中，堆是一个很有趣的地方，因为它可以由用户去直接的进行分配与销毁，所以也产生了一些很有趣、奇思妙想的漏洞，像unlink漏洞、House系列漏洞等等。但是在学习的过程中，我们很容易难以理解那些介绍的比较模糊的概念，比如 unsortedbin 在某些条件下会放">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"right","display":"always","offset":0,"offset_float":0,"b2t":true,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: false,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/11/17/pwn/浅析堆的申请释放及相应保护机制/"/>
+
+
+
+
+
+  <title>浅析堆的申请释放及相应保护机制 | Introspelliam</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?663212c5ef558c27e77385b620f14823";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Introspelliam</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Just do what works for you, because there will always be someone who thinks differently.</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/11/17/pwn/浅析堆的申请释放及相应保护机制/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Introspelliam">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">浅析堆的申请释放及相应保护机制</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-17T20:04:44+08:00">
+                2017-11-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/pwn/" itemprop="url" rel="index">
+                    <span itemprop="name">pwn</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="0×00-前面的话"><a href="#0×00-前面的话" class="headerlink" title="0×00 前面的话"></a>0×00 前面的话</h2><p>在了解这部分的时候，首先你最好阅读一下这两篇博客：</p>
+<p><a href="/2017/09/10/pwn/Linux堆内存管理深入分析上/">Linux堆内存管理深入分析上</a></p>
+<p><a href="/2017/09/15/pwn/Linux堆内存管理深入分析下/">Linux堆内存管理深入分析下</a></p>
+<p><strong>在内存中，堆是一个很有趣的地方，因为它可以由用户去直接的进行分配与销毁，所以也产生了一些很有趣、奇思妙想的漏洞，像unlink漏洞、House系列漏洞等等。但是在学习的过程中，我们很容易难以理解那些介绍的比较模糊的概念，比如 unsortedbin 在某些条件下会放回 smallbin 或 largebin 中，那到底是什么时候？也会对一些大佬构造的 payload 犯迷糊，为什么这里多了一个chunk，为什么这个字节要填充…，大佬们往往不对这些细节做过多的解释，但是这可难为了我们初学堆利用的新兵，所以，我想写几篇文章，将堆的运作机制，例如一些基本的概念，malloc机制、free机制、保护机制，和利用方法结合起来说一下，让大家能够对堆这一块有个较为清楚的认识，少走一些弯路。首先呢，我想在这篇文章中较为细致的介绍一下堆中的一些情况，剩下的有机会的话我会一并写成一个系列。</strong></p>
+<p>这篇文章主要分为四个部分：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">0x01 chunk 简介</div><div class="line">0x02 bin 简介</div><div class="line">0x03 malloc 机制</div><div class="line">0x04 free 机制</div></pre></td></tr></table></figure>
+<p>这些内容相对比较重要，如果看完还觉得不够的，推荐大家去读一下华庭老师的《glibc内存管理ptmalloc源代码分析》。</p>
+<h2 id="0×01-chunk-简介"><a href="#0×01-chunk-简介" class="headerlink" title="0×01 chunk 简介"></a>0×01 chunk 简介</h2><p>首先先说一下堆是如何分配的，在内存中，堆（低地址到高地址，属性RW）有两种分配方式（与malloc申请chunk做区分）:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mmap: 当申请的size大于128kb时，由mmap分配。有时候是0x22000</div><div class="line">brk: 当申请的size小于128kb时，由brk分配，第一次分配132KB（main arena）,第二次在brk下分配，不够则执行系统调用，向系统申请</div></pre></td></tr></table></figure>
+<p>在内存中进行堆的管理时，系统基本是以 chunk 作为基本单位，chunk的结构在源码中有定义</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">struct malloc_chunk &#123;</div><div class="line">    INTERNAL_SIZE_T prev_size; /* Size of previous chunk (if free). */</div><div class="line">    INTERNAL_SIZE_T size; /* Size in bytes, including overhead. */</div><div class="line">    struct malloc_chunk* fd; /* double links -- used only if free. */</div><div class="line">    struct malloc_chunk* bk;</div><div class="line">    /* Only used for large blocks: pointer to next larger size. */</div><div class="line">    struct malloc_chunk* fd_nextsize; /* double links -- used only if free. */</div><div class="line">    struct malloc_chunk* bk_nextsize;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>INTERNAL_SIZE_T 即 size_t</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">#ifndef INTERNAL_SIZE_T</div><div class="line">#define INTERNAL_SIZE_T size_t</div><div class="line">#endif</div></pre></td></tr></table></figure>
+<p>我们可以打印一下本机的 sizeof(size_t)，这个长度可以说是一个基准单位</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">#include&lt;stdio.h&gt;</div><div class="line">int main() &#123;</div><div class="line">    printf(&quot;sizeof(size_t) is %d\n&quot;,sizeof(size_t));</div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这个结构不再多谈，相关的介绍网上很多，主要提一下结构体中最后两个指针 fd_nextsize 和 bk_nextsize，这两个指针只在 largebin 中使用，其他情况下为 NULL。我们可以根据 chunk 的状态将其分为三种（allocated chunk、free chunk、top chunk）:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">allocated chunk:</div><div class="line">        chunk header:</div><div class="line">            prev_size（当上一块是free状态时，存储该chunk的size，否则被上一块chunk使用）</div><div class="line">            size（该chunk大小（包括chunk header），某位3 bits为标志位）</div><div class="line">                0bit表示上一chunk是否free</div><div class="line">                1bit表示该chunk是否由mmap分配</div><div class="line">                2bit表示该chunk是否属于main arena</div><div class="line">        data:</div><div class="line"> </div><div class="line"> </div><div class="line">free chunk:</div><div class="line">        chunk header:</div><div class="line">            prev_size:</div><div class="line">            size:</div><div class="line">        fd:指向 bin 中的next chunk</div><div class="line">        bk:指向 bin 中的last chunk（bin中先进的为last，后进的为next）</div><div class="line">        fd_nextsize:</div><div class="line">        bk_nextsize:</div><div class="line"></div><div class="line"></div><div class="line">top chunk:brk中未分配的顶端chunk</div><div class="line">        chunk header:</div><div class="line">            prev_size:</div><div class="line">            size:</div></pre></td></tr></table></figure>
+<p>其中在 free chunk中有一种特殊的chunk(last remainder chunk):</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">last remainder chunk:从free chunk中malloc时，如果该chunk足够大，那么将其分为两部分，未分配的放到last remainder中并交由 unsorted bin 管理。</div></pre></td></tr></table></figure>
+<p>重点强调一下：这里的上一块表示在内存的堆中连续的chunk的上一块，区别bin中的前后关系。另外 chunk 的前后关系只有在bin中是使用fd、bk指针标识的，在内存中连续的chunk则通过 prev_size 和 size 来寻找前后 chunk，当然，这也就造成了漏洞。</p>
+<font color="#f00">由于chunk会在几种状态之间切换，当其为free chunk时，最少需要4<em>sizeof(size_t)的空间，所以有最小分配大小。<br><br>并且由于prev_size的复用，所以实际申请的大小为 max(2sizeof(size_t)(chunk_header)-sizeof(size_t)(prev_size)+申请大小, 最小分配大小)，而且 chunk的size是按照 2sizeof(size_t)对齐的，也就是说当你申请一个不是 2</em>sizeof(size_t)整倍数的空间时， malloc 返回的 size 有会对齐，大于实际申请的空间。</font>
+
+<p>另外提一下，当 malloc 一个chunk后，实际返回用户的地址为chunk除去chunk header后的地址，而在bin中存储的是chunk的地址，也就是说</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">p = malloc(0x40); // 假设chunk的地址为 0xdeadbeef,则返回给用户的地址是 0xdeadbeef+sizeof(chunk header)</div><div class="line">free(p)  //将p释放掉后，保存在bin中的地址为 0xdeadbeef</div></pre></td></tr></table></figure>
+<h2 id="0×02-bin简介"><a href="#0×02-bin简介" class="headerlink" title="0×02 bin简介"></a>0×02 bin简介</h2><p>bin在内存中用来管理free chunk，bin为带有头结点（链表头部不是chunk）的链表数组，根据特点，将bin分为四种，分别为(fastbin、unsortedbin、smallbin、largebin):</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">fastbin:</div><div class="line">    根据chunk大小维护多个单向链表</div><div class="line">    sizeof(chunk) &lt; 64(bytes)</div><div class="line">    下一chunk（内存中）的free标志位不取消，显示其仍在使用</div><div class="line">    后进先出（类似栈），后free的先被malloc</div><div class="line">    拥有维护固定大小chunk的10个链表</div><div class="line">unsortedbin:</div><div class="line">    双向循环链表</div><div class="line">    不排序</div><div class="line">    暂时存储free后的chunk，一段时间后会将chunk放入对应的bin中（详见0x02）</div><div class="line">    只有一个链表</div><div class="line">smallbin:</div><div class="line">    双向循环链表</div><div class="line">    sizeof(chunk) &lt; 512 (bytes)</div><div class="line">    先进先出（类似队列）</div><div class="line">    16,24...64,72...508 bytes(62个链表)</div><div class="line">largebin:</div><div class="line">    双向循环链表</div><div class="line">    sizeof(chunk) &gt;= 512 (bytes)</div><div class="line">    free chunk中多两个指针分别指向前后的large chunk</div><div class="line">    63个链表:0-31(512+64*i)</div><div class="line">            32-48(2496+512*i)</div><div class="line">            ...</div><div class="line">    链表中chunk大小不固定，先大后小</div></pre></td></tr></table></figure>
+<p>这其中 fastbin 像是cache，用来实现快速的chunk分配，其中的chunk size大小与smallbin中的有重复（只是说大小，chunk并不重复）</p>
+<p>unsortedbin 功能也是作为cache，尽量减少搜索合适chunk的时间。</p>
+<p>这四个bin中，除了fastbin，其他三个都是维护双向循环链表，并且由一个长度为128 size_t的数组bins维护，bins结构如下：</p>
+<table>
+<thead>
+<tr>
+<th>NULL</th>
+<th>unsortbin</th>
+<th>smallbin</th>
+<th>largebin</th>
+<th>NULL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>1</td>
+<td>2-63</td>
+<td>64-126</td>
+<td>127</td>
+</tr>
+</tbody>
+</table>
+<h2 id="0×03-malloc机制"><a href="#0×03-malloc机制" class="headerlink" title="0×03 malloc机制"></a>0×03 malloc机制</h2><p>malloc功能主要由 _int_malloc() 函数实现，原型如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">static Void_t* _int_malloc(mstate av,size_t bytes)</div></pre></td></tr></table></figure>
+<p>当接收到申请的内存大小后，我们看一下malloc的申请过程。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">长度位于 fastbin 时:</div><div class="line">    1.根据大小获得fastbin的index</div><div class="line">    2.根据index获取fastbin中链表的头指针</div><div class="line">        如果头指针为 NULL，转去smallbin</div><div class="line">    3.将头指针的下一个chunk地址作为链表头指针</div><div class="line">    4.分配的chunk保持inuse状态，避免被合并</div><div class="line">    5.返回除去chunk_header的地址</div><div class="line">长度位于 smallbin 时:</div><div class="line">    1.根据大小获得smallbin的index</div><div class="line">    2.根据index获取smallbin中双向循环链表的头指针</div><div class="line">    3.将链表最后一个chunk赋值给victim</div><div class="line">    4.if(victim == 表头)</div><div class="line">        链表为空，不从smallbin中分配</div><div class="line">      else if(victim == 0)</div><div class="line">        链表未初始化，将fastbin中的chunk合并</div><div class="line">      else</div><div class="line">        取出victim,设置inuse</div><div class="line">    5.检查victim是否为main_arena,设置标志位</div><div class="line">    6.返回除去chunk_header的地址</div><div class="line">长度位于 largebin 时:</div><div class="line">    1.根据大小获得largebin的index</div><div class="line">    2.将fastbin中chunk合并，加入到unsortbin中</div></pre></td></tr></table></figure>
+<p>留意一点：系统实际分配的内存地址与返回的地址是不同的，返回的地址直接指向了除去 chunk header 的地址。</p>
+<p>当然，我们注意到上面的分配过程并没有完成，当 smallbin 中没有 chunk 或者 smallbin 未初始化时，并没有返回分配结果，这种情况下的chunk分配将在后面与largebin的分配一起处理</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">unsortedbin:</div><div class="line">    1.反向遍历unsortedbin,检查 2*size_t&lt;chunk_size&lt;内存总分配量</div><div class="line">    2.unsortedbin的特殊分配:</div><div class="line">            如果前一步smallbin分配未完成</div><div class="line">            并且 unsortedbin中只有一个chunk</div><div class="line">            并且该chunk为 last remainder chunk</div><div class="line">            并且该chunk大小 &gt;（所需大小+最小分配大小）</div><div class="line">       则切分一块分配</div><div class="line">    3.如果请求大小正好等于当前遍历chunk的大小，则直接分配</div><div class="line">    4.继续遍历，将合适大小的chunk加入到smallbin中，向前插入作为链表的第一个chunk。(smallbin中每个链表中chunk大小相同)</div><div class="line">    5.将合适大小的chunk加入到largebin中，插入到合适的位置（largebin中每个链表chunk由大到小排列）</div><div class="line">largebin:</div><div class="line">    1.反向遍历largebin，由下到上查找，找到合适大小后切分</div><div class="line">        切分后大小&lt;最小分配大小，返回整个chunk，会略大于申请大小</div><div class="line">        切分后大小&gt;最小分配大小，加入 unsortedbin。</div><div class="line">    2.未找到，index+1，继续寻找</div></pre></td></tr></table></figure>
+<p>如果这之后还未找到合适的chunk，那么就会使用top chunk进行分配,还是没有的话，如果在多线程环境中，fastbin可能会有新的chunk，再次执行合并，并向unsortedbin中重复上面，还是没有的话，就只能向系统申请了。</p>
+<p>以上就是malloc分配的全经过。</p>
+<p>几个malloc检查：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">1.从fastbin中取出chunk后，检查size是否属于fastbin</div><div class="line">2.从smallbin中除去chunk后，检查victim-&gt;bk-&gt;fd == victim</div><div class="line">3.从unsortbin取chunk时，要检查2*size_t&lt;chunk_size&lt;内存总分配量</div><div class="line">4.从largebin取chunk时，切分后的chunk要加入unsortedbin,需要检查 unsortedbin的第一个chunk的bk是否指向unsortedbin</div></pre></td></tr></table></figure>
+<h2 id="0×04-free机制"><a href="#0×04-free机制" class="headerlink" title="0×04 free机制"></a>0×04 free机制</h2><h3 id="1-首先使用-chunksize-p-宏获取p的size"><a href="#1-首先使用-chunksize-p-宏获取p的size" class="headerlink" title="1.首先使用 chunksize(p) 宏获取p的size"></a>1.首先使用 chunksize(p) 宏获取p的size</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">#define PREV_INUSE 0x1</div><div class="line">#define IS_MMAPPED 0x2</div><div class="line">#define NON_MAIN_ARENA 0x4</div><div class="line">#define SIZE_BITS (PREV_INUSE|IS_MMAPPED|NON_MAIN_ARENA)</div><div class="line">#define chunksize(p) ((p)-&gt;size &amp; ~(SIZE_BITS))</div></pre></td></tr></table></figure>
+<p>也就是直接屏蔽了控制位信息，不过不要紧，chunk的分配是 2*sizeof(size_t) 对齐的，所以屏蔽低三位对大小无影响</p>
+<h3 id="2-安全检查："><a href="#2-安全检查：" class="headerlink" title="2.安全检查："></a>2.安全检查：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">chunk的指针地址不能溢出</div><div class="line">chunk 的大小 &gt;= MINSIZE(最小分配大小)，并且检查地址是否对齐</div></pre></td></tr></table></figure>
+<h3 id="3-大小为fastbin的情况-不改变inuse位"><a href="#3-大小为fastbin的情况-不改变inuse位" class="headerlink" title="3.大小为fastbin的情况(不改变inuse位)"></a>3.大小为fastbin的情况(不改变inuse位)</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">1).检查下一个chunk的size：2*size_t&lt;chunk_size&lt;内存总分配量</div><div class="line">2).double free检查：</div><div class="line">    检查当前free的chunk是否与fastbin中的第一个chunk相同，相同则报错</div></pre></td></tr></table></figure>
+<p>简单的小例子</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line">int main() &#123;</div><div class="line">    char *a=malloc(24);</div><div class="line">    char *b=malloc(24);</div><div class="line">    free(a);</div><div class="line">    free(a);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>报错</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line">int main() &#123;</div><div class="line">    char *a=malloc(24);</div><div class="line">    char *b=malloc(24);</div><div class="line">    free(a);</div><div class="line">    free(b);</div><div class="line">    free(a);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>没问题</p>
+<h3 id="4-其他情况"><a href="#4-其他情况" class="headerlink" title="4.其他情况"></a>4.其他情况</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">1).检查下一个chunk的size：2*size_t&lt;chunk_size&lt;内存总分配量</div><div class="line">    如果当前 chunk 为 sbrk()分配，那么它相邻的下一块 chunk 超过了分配区的地址，会报错</div><div class="line">2).double free检查：</div><div class="line">    检查当前free的chunk是否为top chunk，是则报错</div><div class="line">    根据下一块的inuse标识检查当前free的chunk是否已被free</div><div class="line">3) unlink合并：</div><div class="line">    检查前后chunk是否free，然后向后（top chunk方向）合并，并改变对应的inuse标志位</div><div class="line">    unlink检查： I.当前chunk的size是否等于下一chunk的prev_size</div><div class="line">                II.P-&gt;bk-&gt;fd == P &amp;&amp; P-&gt;bk-&gt;fd == P</div><div class="line">    如果合并后 chunk_size &gt; 64bytes,则调用函数合并fastbin中的chunk到unsortedbin中</div><div class="line">    将合并后的chunk加入unsortedbin</div><div class="line">4) unsortedbin检查</div><div class="line">    需要检查 unsortedbin的第一个chunk的bk是否指向unsortedbin</div></pre></td></tr></table></figure>
+<p>我们可以看到，针对free的检查主要是下一块的size和inuse位，另外fastbin的检查可以用来做double free。</p>
+<h2 id="0×05"><a href="#0×05" class="headerlink" title="0×05"></a>0×05</h2><p>以上就是对堆的情况所做的一些介绍，了解堆的保护机制后，我们便可以在攻击时想办法进行绕过，从而构造出那些光怪陆离的payload。</p>
+<p><strong>*本文原创作者：hellowuzekai，属于FreeBuf奖励计划，禁止转载</strong></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/heap/" rel="tag"># heap</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+          <div class="wp_rating">
+            <div id="wpac-rating"></div>
+          </div>
+        
+
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/11/15/web/渗透测试经验之谈/" rel="next" title="渗透测试经验之谈">
+                <i class="fa fa-chevron-left"></i> 渗透测试经验之谈
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/11/17/pwn/堆利用的方法/" rel="prev" title="堆利用的方法">
+                堆利用的方法 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="gitalk-container"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/me.jpg"
+               alt="Introspelliam" />
+          <p class="site-author-name" itemprop="name">Introspelliam</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">125</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">56</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/Introspelliam" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/3008590672" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                    
+                      Weibo
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0×00-前面的话"><span class="nav-text">0×00 前面的话</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0×01-chunk-简介"><span class="nav-text">0×01 chunk 简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0×02-bin简介"><span class="nav-text">0×02 bin简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0×03-malloc机制"><span class="nav-text">0×03 malloc机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0×04-free机制"><span class="nav-text">0×04 free机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-首先使用-chunksize-p-宏获取p的size"><span class="nav-text">1.首先使用 chunksize(p) 宏获取p的size</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-安全检查："><span class="nav-text">2.安全检查：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-大小为fastbin的情况-不改变inuse位"><span class="nav-text">3.大小为fastbin的情况(不改变inuse位)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-其他情况"><span class="nav-text">4.其他情况</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0×05"><span class="nav-text">0×05</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Introspelliam</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <script src="/js/md5.min.js"></script>
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '41857e5205be9fe36c48',
+          clientSecret: 'c927ea37a432eff67cdb1081658112c7409ca7ff',
+          repo: 'Introspelliam.github.io',
+          owner: 'Introspelliam',
+          admin: ['Introspelliam'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  <script type="text/javascript">
+  wpac_init = window.wpac_init || [];
+  wpac_init.push({widget: 'Rating', id: ,
+    el: 'wpac-rating',
+    color: 'fc6423'
+  });
+  (function() {
+    if ('WIDGETPACK_LOADED' in window) return;
+    WIDGETPACK_LOADED = true;
+    var mc = document.createElement('script');
+    mc.type = 'text/javascript';
+    mc.async = true;
+    mc.src = '//embed.widgetpack.com/widget.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+  })();
+  </script>
+
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

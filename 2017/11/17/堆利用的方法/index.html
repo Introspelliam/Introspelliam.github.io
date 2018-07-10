@@ -2,10 +2,8 @@
 
 
 
-  
 
-
-<html class="theme-next mist use-motion" lang="zh-Hans">
+<html class="theme-next mist" lang="zh-Hans">
 <head>
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -108,7 +106,7 @@
 <meta property="og:description" content="在实际考虑堆利用方法时，chunk size的计算是个需要小心的地方，因为这里包括了 prev_size的复用，以及根据不同系统考虑的对齐情况，还有 chunk 的size位表示的是包括chunk header在内的size，而实际可用的size与此不同，它是减去chunk header后的大小。 我们还可以根据不同的条件去构造不同的chunk复用，像是只利用一个字节溢出（off-by-one）来">
 <meta property="og:image" content="http://yoursite.com/images/2017-11-17/420rc04q9ad0.png">
 <meta property="og:image" content="http://yoursite.com/images/2017-11-17/420rc31ppb10.jpg">
-<meta property="og:updated_time" content="2018-03-27T16:19:19.031Z">
+<meta property="og:updated_time" content="2018-07-09T11:41:14.969Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="堆利用的方法">
 <meta name="twitter:description" content="在实际考虑堆利用方法时，chunk size的计算是个需要小心的地方，因为这里包括了 prev_size的复用，以及根据不同系统考虑的对齐情况，还有 chunk 的size位表示的是包括chunk header在内的size，而实际可用的size与此不同，它是减去chunk header后的大小。 我们还可以根据不同的条件去构造不同的chunk复用，像是只利用一个字节溢出（off-by-one）来">
@@ -122,10 +120,10 @@
     root: '/',
     scheme: 'Mist',
     version: '5.1.2',
-    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":false,"onmobile":true},
+    sidebar: {"position":"right","display":"always","offset":0,"offset_float":0,"b2t":true,"scrollpercent":true,"onmobile":true},
     fancybox: true,
     tabs: true,
-    motion: true,
+    motion: false,
     duoshuo: {
       userId: '0',
       author: '博主'
@@ -708,7 +706,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">133</span>
+                <span class="site-state-item-count">130</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -719,7 +717,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">16</span>
+                <span class="site-state-item-count">15</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -730,7 +728,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">55</span>
+                <span class="site-state-item-count">54</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -807,6 +805,8 @@
       
         <div class="back-to-top">
           <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
           
         </div>
       

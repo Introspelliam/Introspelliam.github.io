@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next mist" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="googleaf0347feb5ea0936.html" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="heap," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Introspelliam" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="1. free源码分析—__libc_free本章继续之前的glibc中的《malloc源码分析》系列开始分析free的源代码，malloc的源码分析可以查看博客里同类别文章下的《malloc源码分析—1》到《malloc源码分析—5》，因此free的源码中有一些结构和malloc相似的地方就不会做过多的介绍了。 首先在glibc的malloc.c中有如下定义， 1234strong_alias(">
+<meta name="keywords" content="heap">
+<meta property="og:type" content="article">
+<meta property="og:title" content="free源码分析——__libc_free">
+<meta property="og:url" content="http://yoursite.com/2018/05/21/pwn/free源码分析——1/index.html">
+<meta property="og:site_name" content="Introspelliam">
+<meta property="og:description" content="1. free源码分析—__libc_free本章继续之前的glibc中的《malloc源码分析》系列开始分析free的源代码，malloc的源码分析可以查看博客里同类别文章下的《malloc源码分析—1》到《malloc源码分析—5》，因此free的源码中有一些结构和malloc相似的地方就不会做过多的介绍了。 首先在glibc的malloc.c中有如下定义， 1234strong_alias(">
+<meta property="og:updated_time" content="2018-07-09T13:12:56.539Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="free源码分析——__libc_free">
+<meta name="twitter:description" content="1. free源码分析—__libc_free本章继续之前的glibc中的《malloc源码分析》系列开始分析free的源代码，malloc的源码分析可以查看博客里同类别文章下的《malloc源码分析—1》到《malloc源码分析—5》，因此free的源码中有一些结构和malloc相似的地方就不会做过多的介绍了。 首先在glibc的malloc.c中有如下定义， 1234strong_alias(">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"right","display":"always","offset":0,"offset_float":0,"b2t":true,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: false,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/05/21/pwn/free源码分析——1/"/>
+
+
+
+
+
+  <title>free源码分析——__libc_free | Introspelliam</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?663212c5ef558c27e77385b620f14823";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Introspelliam</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Just do what works for you, because there will always be someone who thinks differently.</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/21/pwn/free源码分析——1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Introspelliam">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">free源码分析——__libc_free</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-21T14:44:59+08:00">
+                2018-05-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/pwn/" itemprop="url" rel="index">
+                    <span itemprop="name">pwn</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="1-free源码分析—-libc-free"><a href="#1-free源码分析—-libc-free" class="headerlink" title="1. free源码分析—__libc_free"></a>1. free源码分析—__libc_free</h1><p>本章继续之前的glibc中的《malloc源码分析》系列开始分析free的源代码，malloc的源码分析可以查看博客里同类别文章下的《malloc源码分析—1》到《malloc源码分析—5》，因此free的源码中有一些结构和malloc相似的地方就不会做过多的介绍了。</p>
+<p>首先在glibc的malloc.c中有如下定义，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">strong_alias( __libc_free, __cfree)</div><div class="line">weak_alias( __libc_free, cfree)</div><div class="line">strong_alias( __libc_free, __free)</div><div class="line">strong_alias( __libc_free, free)</div></pre></td></tr></table></figure>
+<p>因此，<code>free</code>是<code>__libc_free</code>的别名，实际执行的是<code>__libc_free</code>函数，下面来看，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">void __libc_free(void *mem) &#123;</div><div class="line">    mstate ar_ptr;</div><div class="line">    mchunkptr p;</div><div class="line"></div><div class="line">    void (*hook)(void *, const void *) = atomic_forced_read (__free_hook);</div><div class="line">    if (__builtin_expect(hook != NULL, 0)) &#123;</div><div class="line">        (*hook)(mem, RETURN_ADDRESS(0));</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    if (mem == 0)</div><div class="line">        return;</div><div class="line"></div><div class="line">    p = mem2chunk(mem);</div><div class="line"></div><div class="line">    if (chunk_is_mmapped(p))&#123;</div><div class="line">        if (!mp_.no_dyn_threshold</div><div class="line">                &amp;&amp; p-&gt;size</div><div class="line">                        &gt; mp_.mmap_threshold&amp;&amp; p-&gt;size &lt;= DEFAULT_MMAP_THRESHOLD_MAX) &#123;</div><div class="line">            mp_.mmap_threshold = chunksize(p);</div><div class="line">            mp_.trim_threshold = 2 * mp_.mmap_threshold;</div><div class="line">            LIBC_PROBE (memory_mallopt_free_dyn_thresholds, 2,</div><div class="line">                    mp_.mmap_threshold, mp_.trim_threshold);</div><div class="line">        &#125;</div><div class="line">        munmap_chunk(p);</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    ar_ptr = arena_for_chunk(p);</div><div class="line">    _int_free(ar_ptr, p, 0);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>__libc_free</code>首先查看是否有<code>__free_hook</code>函数，如果有就直接调用，这里假设没有默认函数可用。接下来通过<code>mem2chunk</code>将虚拟内存的指针<code>mem</code>转换为对应的chunk指针<code>p</code>，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">#define mem2chunk(mem) ((mchunkptr)((char*)(mem) - 2*SIZE_SZ))</div></pre></td></tr></table></figure>
+<p>因为一个使用中的chunk结构体只使用其<code>prev_size</code>和<code>size</code>字段，因此这里只需要减去<code>2*SIZE_SZ</code>。<br>接下来，<code>chunk_is_mmapped</code>用来检查size最低三位中的标志位，判断该chunk是否是由mmap分配的，如果是，就调用<code>munmap_chunk</code>释放该chunk并返回，在调用<code>munmap_chunk</code>之前，需要更新全局的mmap阀值和收缩阀值。<br>再往下，如果该chunk不是由mmap分配的，就通过<code>arena_for_chunk</code>获得分配区指针<code>ar_ptr</code>，并调用<code>_int_free</code>释放内存。<code>_int_free</code>放在下一章分析，本章重点分析<code>munmap_chunk</code>函数。</p>
+<h2 id="1-1-munmap-chunk"><a href="#1-1-munmap-chunk" class="headerlink" title="1.1 munmap_chunk"></a>1.1 munmap_chunk</h2><p>munmap_chunk用来释放由mmap分配的chunk，下面来看，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">static void internal_function munmap_chunk(mchunkptr p) &#123;</div><div class="line">    INTERNAL_SIZE_T size = chunksize(p);</div><div class="line"></div><div class="line">    assert(chunk_is_mmapped (p));</div><div class="line"></div><div class="line">    uintptr_t block = (uintptr_t) p - p-&gt;prev_size;</div><div class="line">    size_t total_size = p-&gt;prev_size + size;</div><div class="line"></div><div class="line">    if (__builtin_expect(((block | total_size) &amp; (GLRO(dl_pagesize) - 1)) != 0,</div><div class="line">            0)) &#123;</div><div class="line">        malloc_printerr(check_action, &quot;munmap_chunk(): invalid pointer&quot;,</div><div class="line">                chunk2mem(p), NULL);</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    atomic_decrement(&amp;mp_.n_mmaps);</div><div class="line">    atomic_add(&amp;mp_.mmapped_mem, -total_size);</div><div class="line"></div><div class="line">    __munmap((char *) block, total_size);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>首先获得前一个chunk的指针<code>block</code>，计算这两个chunk的<code>size</code>之和至<code>total_size</code>，接着对全局结构<code>mp_</code>进行相应的设置后，就通过<code>__munmap</code>释放这两个chunk。根据malloc的源码可知，由mmap分配的chunk是独立的，大部分情况下，<code>p-&gt;prev_size</code>为0，因此这里还是释放一个chunk，特殊情况下需要释放两个chunk，特殊情况请参考<code>_int_malloc</code>中的代码。<br><code>__munmap</code>再往下就是系统调用了，定义在linux内核代码的mmap.c中，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">SYSCALL_DEFINE2(munmap, unsigned long, addr, size_t, len)&#123;</div><div class="line"></div><div class="line">    profile_munmap(addr);</div><div class="line">    return vm_munmap(addr, len);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>profile_munmap</code>为空函数，下面看vm_munmap，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">int vm_munmap(unsigned long start, size_t len)&#123;</div><div class="line"></div><div class="line">    int ret;</div><div class="line">    struct mm_struct *mm = current-&gt;mm;</div><div class="line"></div><div class="line">    down_write(&amp;mm-&gt;mmap_sem);</div><div class="line">    ret = do_munmap(mm, start, len);</div><div class="line">    up_write(&amp;mm-&gt;mmap_sem);</div><div class="line">    return ret;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里就是信号量的操作，最主要是执行<code>do_munmap</code>释放内存，为了方便分析和查看，只复制了<code>do_munmap</code>的关键代码，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line">int do_munmap(struct mm_struct *mm, unsigned long start, size_t len)&#123;</div><div class="line"></div><div class="line">    unsigned long end;</div><div class="line">    struct vm_area_struct *vma, *prev, *last;</div><div class="line"></div><div class="line">    if ((start &amp; ~PAGE_MASK) || start &gt; TASK_SIZE || len &gt; TASK_SIZE-start)</div><div class="line">        return -EINVAL;</div><div class="line">    len = PAGE_ALIGN(len);</div><div class="line"></div><div class="line">    vma = find_vma(mm, start);</div><div class="line">    prev = vma-&gt;vm_prev;</div><div class="line">    end = start + len;</div><div class="line">    if (vma-&gt;vm_start &gt;= end)</div><div class="line">        return 0;</div><div class="line"></div><div class="line">    if (start &gt; vma-&gt;vm_start) &#123;</div><div class="line">        int error;</div><div class="line"></div><div class="line">        if (end &lt; vma-&gt;vm_end &amp;&amp; mm-&gt;map_count &gt;= sysctl_max_map_count)</div><div class="line">            return -ENOMEM;</div><div class="line"></div><div class="line">        error = __split_vma(mm, vma, start, 0);</div><div class="line">        if (error)</div><div class="line">            return error;</div><div class="line">        prev = vma;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    last = find_vma(mm, end);</div><div class="line">    if (last &amp;&amp; end &gt; last-&gt;vm_start) &#123;</div><div class="line">        int error = __split_vma(mm, last, end, 1);</div><div class="line">        if (error)</div><div class="line">            return error;</div><div class="line">    &#125;</div><div class="line">    vma = prev ? prev-&gt;vm_next : mm-&gt;mmap;</div><div class="line"></div><div class="line">    detach_vmas_to_be_unmapped(mm, vma, prev, end);</div><div class="line">    unmap_region(mm, vma, prev, start, end);</div><div class="line">    arch_unmap(mm, vma, start, end);</div><div class="line">    remove_vma_list(mm, vma);</div><div class="line"></div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>首先对传入的参数进行检查，需要释放的虚拟内存的开始地址<code>start</code>和长度<code>len</code>必须按页对齐，且不能释放内核空间的内存。<br>接着通过<code>find_vma</code>在进程的管理内存的AVL树上查找第一个结束地址大于<code>start</code>的虚拟内存<code>vma</code>，如果<code>vma-&gt;vm_start &gt;= end</code>，说明需要释放的虚拟内存本来就不存在，因此什么也不做返回；如果<code>start &gt; vma-&gt;vm_start</code>，则表示找到的<code>vma</code>包含了需要释放的内存，这时候通过<code>__split_vma</code>函数将该<code>vma</code>根据<code>start</code>地址划分成两块，因此需要判断虚拟内存的数量是否超过了系统的限制<code>sysctl_max_map_count</code>。为了方便分析，下面只给出了<code>__split_vma</code>的几行关键代码，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">static int __split_vma(struct mm_struct *mm, struct vm_area_struct *vma,</div><div class="line">          unsigned long addr, int new_below)&#123;</div><div class="line"></div><div class="line">    struct vm_area_struct *new;</div><div class="line">    new = kmem_cache_alloc(vm_area_cachep, GFP_KERNEL);</div><div class="line">    *new = *vma;</div><div class="line"></div><div class="line">    if (new_below)</div><div class="line">        new-&gt;vm_end = addr;</div><div class="line">    else &#123;</div><div class="line">        new-&gt;vm_start = addr;</div><div class="line">        new-&gt;vm_pgoff += ((addr - vma-&gt;vm_start) &gt;&gt; PAGE_SHIFT);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    if (new_below)</div><div class="line">        err = vma_adjust(vma, addr, vma-&gt;vm_end, vma-&gt;vm_pgoff +</div><div class="line">            ((addr - new-&gt;vm_start) &gt;&gt; PAGE_SHIFT), new);</div><div class="line">    else</div><div class="line">        err = vma_adjust(vma, vma-&gt;vm_start, addr, vma-&gt;vm_pgoff, new);</div><div class="line"></div><div class="line">    if (!err)</div><div class="line">        return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>首先分配一个<code>vm_area_struct</code>结构体<code>new</code>，然后将<code>vma</code>中的所有内容拷贝到<code>new</code>中，<code>new_below</code>决定将原<code>vma</code>按照<code>addr</code>决定的地址分割成两个后，<code>vma</code>中保存低地址部分还是高地址部分。<code>do_munmap</code>第一次进入<code>__split_vma</code>时<code>new_below</code>为0，因此返回的<code>vma</code>保存低地址部分。然后调用<code>vma_adjust</code>对低地址部分的<code>vma</code>进行相应的设置，主要是更改其<code>end</code>变量为<code>addr</code>，并将高地址部分插入进程内存的管理树中。</p>
+<p>回到<code>do_munmap</code>中，<code>find_vma(mm, end)</code>获得最尾部的<code>last</code>，如果该<code>last</code>包含了需要释放的虚拟内存，就继续将其拆成两部分，这时候由于<code>new_below</code>为1，因此返回的<code>last</code>为高地址部分。返回后，<code>vma</code>将指向低地址部分。</p>
+<p>结合前面的分析，在执行<code>detach_vmas_to_be_unmapped</code>之前，原来的vma被拆成如下所示<br>| prev | vma | … | vma | last |<br><code>mm-&gt;mmap</code>的赋值是在<code>vma_adjust</code>中，其实就是拆分后低地址处那块虚拟内存。<br>接下来<code>detach_vmas_to_be_unmapped</code>用于将所有和要释放的内存有交集的<code>vma</code>从红黑树中删除，并形成一个以<code>vma</code>为链表头的链表。根据刚刚<code>vma</code>被拆开成的结果，其实就是取数组中所有除了<code>prev</code>和<code>last</code>的元素构成一个链表。即<br>| prev | vma | … | vma | last |<br>经过<code>detach_vmas_to_be_unmapped</code>后变成，<br>| prev| last |<br>| vma | … | vma |<br>往下就是要释放第二部分。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">static void detach_vmas_to_be_unmapped(struct mm_struct *mm, struct vm_area_struct *vma,</div><div class="line">    struct vm_area_struct *prev, unsigned long end)&#123;</div><div class="line"></div><div class="line">    struct vm_area_struct **insertion_point;</div><div class="line">    struct vm_area_struct *tail_vma = NULL;</div><div class="line"></div><div class="line">    insertion_point = (prev ? &amp;prev-&gt;vm_next : &amp;mm-&gt;mmap);</div><div class="line">    vma-&gt;vm_prev = NULL;</div><div class="line">    do &#123;</div><div class="line">        vma_rb_erase(vma, &amp;mm-&gt;mm_rb);</div><div class="line">        mm-&gt;map_count--;</div><div class="line">        tail_vma = vma;</div><div class="line">        vma = vma-&gt;vm_next;</div><div class="line">    &#125; while (vma &amp;&amp; vma-&gt;vm_start &lt; end);</div><div class="line">    *insertion_point = vma;</div><div class="line">    if (vma) &#123;</div><div class="line">        vma-&gt;vm_prev = prev;</div><div class="line">        vma_gap_update(vma);</div><div class="line">    &#125; else</div><div class="line">        mm-&gt;highest_vm_end = prev ? prev-&gt;vm_end : 0;</div><div class="line">    tail_vma-&gt;vm_next = NULL;</div><div class="line"></div><div class="line">    vmacache_invalidate(mm);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>回到<code>do_munmap</code>中，<code>unmap_region</code>就是用于释放内存了。下面来看，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">static void unmap_region(struct mm_struct *mm,</div><div class="line">        struct vm_area_struct *vma, struct vm_area_struct *prev,</div><div class="line">        unsigned long start, unsigned long end)&#123;</div><div class="line"></div><div class="line">    struct vm_area_struct *next = prev ? prev-&gt;vm_next : mm-&gt;mmap;</div><div class="line">    struct mmu_gather tlb;</div><div class="line"></div><div class="line">    lru_add_drain();</div><div class="line">    tlb_gather_mmu(&amp;tlb, mm, start, end);</div><div class="line">    update_hiwater_rss(mm);</div><div class="line">    unmap_vmas(&amp;tlb, vma, start, end);</div><div class="line">    free_pgtables(&amp;tlb, vma, prev ? prev-&gt;vm_end : FIRST_USER_ADDRESS,</div><div class="line">                 next ? next-&gt;vm_start : USER_PGTABLES_CEILING);</div><div class="line">    tlb_finish_mmu(&amp;tlb, start, end);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>lru_add_drain</code>用于将<code>percpu</code>变量<code>pagevec</code>对应的每个<code>page</code>放回其对应的<code>zone</code>的<code>lru</code>链表中，因为马上要解映射了，这些缓存的page变量由可能被改变。<br><code>tlb_gather_mmu</code>构造了一个<code>mmu_gather</code>变量并初始化。<br>接下来的<code>unmap_vmas</code>用于解映射，即释放存在物理页面映射的虚拟内存，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">void unmap_vmas(struct mmu_gather *tlb, struct vm_area_struct *vma, unsigned long start_addr, unsigned long end_addr)&#123;</div><div class="line"></div><div class="line">    struct mm_struct *mm = vma-&gt;vm_mm;</div><div class="line"></div><div class="line">    mmu_notifier_invalidate_range_start(mm, start_addr, end_addr);</div><div class="line">    for ( ; vma &amp;&amp; vma-&gt;vm_start &lt; end_addr; vma = vma-&gt;vm_next)</div><div class="line">        unmap_single_vma(tlb, vma, start_addr, end_addr, NULL);</div><div class="line">    mmu_notifier_invalidate_range_end(mm, start_addr, end_addr);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里开始遍历<code>vma</code>链表，对每个<code>vma</code>调用<code>unmap_single_vma</code>进行释放，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">static void unmap_single_vma(struct mmu_gather *tlb, struct vm_area_struct *vma,                        unsigned long start_addr, unsigned long end_addr, struct zap_details *details)&#123;</div><div class="line">    unsigned long start = max(vma-&gt;vm_start, start_addr);</div><div class="line">    unsigned long end;</div><div class="line"></div><div class="line">    if (start &gt;= vma-&gt;vm_end)</div><div class="line">        return;</div><div class="line">    end = min(vma-&gt;vm_end, end_addr);</div><div class="line">    if (end &lt;= vma-&gt;vm_start)</div><div class="line">        return;</div><div class="line"></div><div class="line">    if (vma-&gt;vm_file)</div><div class="line">        uprobe_munmap(vma, start, end);</div><div class="line"></div><div class="line">    if (unlikely(vma-&gt;vm_flags &amp; VM_PFNMAP))</div><div class="line">        untrack_pfn(vma, 0, 0);</div><div class="line"></div><div class="line">    if (start != end) &#123;</div><div class="line">        if (unlikely(is_vm_hugetlb_page(vma))) &#123;</div><div class="line">            if (vma-&gt;vm_file) &#123;</div><div class="line">                i_mmap_lock_write(vma-&gt;vm_file-&gt;f_mapping);</div><div class="line">                __unmap_hugepage_range_final(tlb, vma, start, end, NULL);</div><div class="line">                i_mmap_unlock_write(vma-&gt;vm_file-&gt;f_mapping);</div><div class="line">            &#125;</div><div class="line">        &#125; else</div><div class="line">            unmap_page_range(tlb, vma, start, end, details);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里主要就是通过<code>unmap_page_range</code>进行释放。再往下因为涉及太多linux内核内存管理的知识，这里就不深入分析了，最后就是通过虚拟地址找到页表<code>pte</code>，解开和物理页面之间的映射，并设置一些page结构。<br>由于<code>unmap_vmas</code>后，一些页表里没有了相对应的物理页面，<code>free_pgtables</code>将这些页表释放。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">void free_pgtables(struct mmu_gather *tlb, struct vm_area_struct *vma,</div><div class="line">        unsigned long floor, unsigned long ceiling)&#123;</div><div class="line"></div><div class="line">    while (vma) &#123;</div><div class="line">        struct vm_area_struct *next = vma-&gt;vm_next;</div><div class="line">        unsigned long addr = vma-&gt;vm_start;</div><div class="line"></div><div class="line">        unlink_anon_vmas(vma);</div><div class="line">        unlink_file_vma(vma);</div><div class="line"></div><div class="line">        if (is_vm_hugetlb_page(vma)) &#123;</div><div class="line">            hugetlb_free_pgd_range(tlb, addr, vma-&gt;vm_end,</div><div class="line">                floor, next? next-&gt;vm_start: ceiling);</div><div class="line">        &#125; else &#123;</div><div class="line"></div><div class="line">            while (next &amp;&amp; next-&gt;vm_start &lt;= vma-&gt;vm_end + PMD_SIZE</div><div class="line">                   &amp;&amp; !is_vm_hugetlb_page(next)) &#123;</div><div class="line">                vma = next;</div><div class="line">                next = vma-&gt;vm_next;</div><div class="line">                unlink_anon_vmas(vma);</div><div class="line">                unlink_file_vma(vma);</div><div class="line">            &#125;</div><div class="line">            free_pgd_range(tlb, addr, vma-&gt;vm_end,</div><div class="line">                floor, next? next-&gt;vm_start: ceiling);</div><div class="line">        &#125;</div><div class="line">        vma = next;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里主要是调用<code>free_pgd_range</code>。该函数中，假设要释放的虚拟内存为vma，其前一个vma为<code>prev</code>，后一个为<code>last</code>，如果释放完<code>vma</code>后，<code>prev-&gt;vm_end</code>到<code>last-&gt;vm_start</code>大于一个pgd管理的内存大小（32位系统下为4MB），就释放pgd里的所有页表，如果小于4MB，就什么也不做返回。</p>
+<p>再回到<code>do_munmap</code>中，<code>arch_unmap</code>是一些体系结构相关的操作，不管它。<code>remove_vma_list</code>释放每个<code>vma</code>对应的<code>vm_area_struct</code>结构至slab分配器中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">static void remove_vma_list(struct mm_struct *mm, struct vm_area_struct *vma)&#123;</div><div class="line">    unsigned long nr_accounted = 0;</div><div class="line"></div><div class="line">    update_hiwater_vm(mm);</div><div class="line">    do &#123;</div><div class="line">        long nrpages = vma_pages(vma);</div><div class="line"></div><div class="line">        if (vma-&gt;vm_flags &amp; VM_ACCOUNT)</div><div class="line">            nr_accounted += nrpages;</div><div class="line">        vm_stat_account(mm, vma-&gt;vm_flags, vma-&gt;vm_file, -nrpages);</div><div class="line">        vma = remove_vma(vma);</div><div class="line">    &#125; while (vma);</div><div class="line">    vm_unacct_memory(nr_accounted);</div><div class="line">    validate_mm(mm);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>主要的函数是<code>remove_vma</code>，该函数通过<code>kmem_cache_free</code>释放对应的<code>vma</code>，并返回链表上的下一个<code>vma</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">static struct vm_area_struct *remove_vma(struct vm_area_struct *vma)&#123;</div><div class="line"></div><div class="line">    struct vm_area_struct *next = vma-&gt;vm_next;</div><div class="line"></div><div class="line">    might_sleep();</div><div class="line">    if (vma-&gt;vm_ops &amp;&amp; vma-&gt;vm_ops-&gt;close)</div><div class="line">        vma-&gt;vm_ops-&gt;close(vma);</div><div class="line">    if (vma-&gt;vm_file)</div><div class="line">        fput(vma-&gt;vm_file);</div><div class="line">    mpol_put(vma_policy(vma));</div><div class="line">    kmem_cache_free(vm_area_cachep, vma);</div><div class="line">    return next;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/heap/" rel="tag"># heap</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+          <div class="wp_rating">
+            <div id="wpac-rating"></div>
+          </div>
+        
+
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/05/21/pwn/malloc源码分析—sysmalloc/" rel="next" title="malloc源码分析——sysmalloc">
+                <i class="fa fa-chevron-left"></i> malloc源码分析——sysmalloc
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/05/21/pwn/free源码分析——2/" rel="prev" title="free源码分析——_int_free">
+                free源码分析——_int_free <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="gitalk-container"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/me.jpg"
+               alt="Introspelliam" />
+          <p class="site-author-name" itemprop="name">Introspelliam</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">125</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">56</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/Introspelliam" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/3008590672" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                    
+                      Weibo
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-free源码分析—-libc-free"><span class="nav-text">1. free源码分析—__libc_free</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-munmap-chunk"><span class="nav-text">1.1 munmap_chunk</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Introspelliam</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <script src="/js/md5.min.js"></script>
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '41857e5205be9fe36c48',
+          clientSecret: 'c927ea37a432eff67cdb1081658112c7409ca7ff',
+          repo: 'Introspelliam.github.io',
+          owner: 'Introspelliam',
+          admin: ['Introspelliam'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  <script type="text/javascript">
+  wpac_init = window.wpac_init || [];
+  wpac_init.push({widget: 'Rating', id: ,
+    el: 'wpac-rating',
+    color: 'fc6423'
+  });
+  (function() {
+    if ('WIDGETPACK_LOADED' in window) return;
+    WIDGETPACK_LOADED = true;
+    var mc = document.createElement('script');
+    mc.type = 'text/javascript';
+    mc.async = true;
+    mc.src = '//embed.widgetpack.com/widget.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+  })();
+  </script>
+
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

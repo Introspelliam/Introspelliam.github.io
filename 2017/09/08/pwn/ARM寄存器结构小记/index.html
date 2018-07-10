@@ -1,0 +1,1580 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next mist" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="googleaf0347feb5ea0936.html" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="arm," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Introspelliam" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="ARM处理器共有37个寄存器，被分为若干个组，这些寄存器包括：  31个通用寄存器，包括未分组寄存器R0-R7、分组寄存器R8-R14和程序计数器（ PC 指针），均为32位的寄存器。 6个状态寄存器，包括程序状态寄存器 CPSR 和5个物理状态寄存器 SPSR （用以异常发生时保存 CPSR 的值，异常退出时恢复 CPSR ）。 这些状态寄存器用以标识 CPU 的工作状态及程序的运行状态，均为3">
+<meta name="keywords" content="arm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ARM寄存器结构小记">
+<meta property="og:url" content="http://yoursite.com/2017/09/08/pwn/ARM寄存器结构小记/index.html">
+<meta property="og:site_name" content="Introspelliam">
+<meta property="og:description" content="ARM处理器共有37个寄存器，被分为若干个组，这些寄存器包括：  31个通用寄存器，包括未分组寄存器R0-R7、分组寄存器R8-R14和程序计数器（ PC 指针），均为32位的寄存器。 6个状态寄存器，包括程序状态寄存器 CPSR 和5个物理状态寄存器 SPSR （用以异常发生时保存 CPSR 的值，异常退出时恢复 CPSR ）。 这些状态寄存器用以标识 CPU 的工作状态及程序的运行状态，均为3">
+<meta property="og:updated_time" content="2018-07-10T00:37:28.399Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ARM寄存器结构小记">
+<meta name="twitter:description" content="ARM处理器共有37个寄存器，被分为若干个组，这些寄存器包括：  31个通用寄存器，包括未分组寄存器R0-R7、分组寄存器R8-R14和程序计数器（ PC 指针），均为32位的寄存器。 6个状态寄存器，包括程序状态寄存器 CPSR 和5个物理状态寄存器 SPSR （用以异常发生时保存 CPSR 的值，异常退出时恢复 CPSR ）。 这些状态寄存器用以标识 CPU 的工作状态及程序的运行状态，均为3">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"right","display":"always","offset":0,"offset_float":0,"b2t":true,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: false,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/09/08/pwn/ARM寄存器结构小记/"/>
+
+
+
+
+
+  <title>ARM寄存器结构小记 | Introspelliam</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?663212c5ef558c27e77385b620f14823";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Introspelliam</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Just do what works for you, because there will always be someone who thinks differently.</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/08/pwn/ARM寄存器结构小记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Introspelliam">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">ARM寄存器结构小记</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-08T22:43:17+08:00">
+                2017-09-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/pwn/" itemprop="url" rel="index">
+                    <span itemprop="name">pwn</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>ARM处理器共有37个寄存器，被分为若干个组，这些寄存器包括：</p>
+<ul>
+<li>31个通用寄存器，包括未分组寄存器R0-R7、分组寄存器R8-R14和程序计数器（ PC 指针），均为32位的寄存器。</li>
+<li>6个状态寄存器，包括程序状态寄存器 CPSR 和5个物理状态寄存器 SPSR （用以异常发生时保存 CPSR 的值，异常退出时恢复 CPSR ）。 这些状态寄存器用以标识 CPU 的工作状态及程序的运行状态，均为32位。</li>
+</ul>
+<p>具体如下表所示：</p>
+<table>
+<thead>
+<tr>
+<th>用户模式 usr</th>
+<th>系统模式 sys</th>
+<th>特权模式 svc</th>
+<th>中止模式 abt</th>
+<th>未定义指令模式 und</th>
+<th>外部中断模式 irq</th>
+<th>快速中断模式 fiq</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R0</td>
+<td>R0</td>
+<td>R0</td>
+<td>R0</td>
+<td>R0</td>
+<td>R0</td>
+<td>R0</td>
+</tr>
+<tr>
+<td>R1</td>
+<td>R1</td>
+<td>R1</td>
+<td>R1</td>
+<td>R1</td>
+<td>R1</td>
+<td>R1</td>
+</tr>
+<tr>
+<td>R2</td>
+<td>R2</td>
+<td>R2</td>
+<td>R2</td>
+<td>R2</td>
+<td>R2</td>
+<td>R2</td>
+</tr>
+<tr>
+<td>R3</td>
+<td>R3</td>
+<td>R3</td>
+<td>R3</td>
+<td>R3</td>
+<td>R3</td>
+<td>R3</td>
+</tr>
+<tr>
+<td>R4</td>
+<td>R4</td>
+<td>R4</td>
+<td>R4</td>
+<td>R4</td>
+<td>R4</td>
+<td>R4</td>
+</tr>
+<tr>
+<td>R5</td>
+<td>R5</td>
+<td>R5</td>
+<td>R5</td>
+<td>R5</td>
+<td>R5</td>
+<td>R5</td>
+</tr>
+<tr>
+<td>R6</td>
+<td>R6</td>
+<td>R6</td>
+<td>R6</td>
+<td>R6</td>
+<td>R6</td>
+<td>R6</td>
+</tr>
+<tr>
+<td>R8</td>
+<td>R8</td>
+<td>R8</td>
+<td>R8</td>
+<td>R8</td>
+<td>R8</td>
+<td>R8_fiq</td>
+</tr>
+<tr>
+<td>R9</td>
+<td>R9</td>
+<td>R9</td>
+<td>R9</td>
+<td>R9</td>
+<td>R9</td>
+<td>R9_fiq</td>
+</tr>
+<tr>
+<td>R10</td>
+<td>R10</td>
+<td>R10</td>
+<td>R10</td>
+<td>R10</td>
+<td>R10</td>
+<td>R10_fiq</td>
+</tr>
+<tr>
+<td>R11</td>
+<td>R11</td>
+<td>R11</td>
+<td>R11</td>
+<td>R11</td>
+<td>R11</td>
+<td>R11_fiq</td>
+</tr>
+<tr>
+<td>R12</td>
+<td>R12</td>
+<td>R12</td>
+<td>R12</td>
+<td>R12</td>
+<td>R12</td>
+<td>R12_fiq</td>
+</tr>
+<tr>
+<td>R13(SP)</td>
+<td>R13</td>
+<td>R13_svc</td>
+<td>R13_abt</td>
+<td>R13_und</td>
+<td>R13_inq</td>
+<td>R13_fiq</td>
+</tr>
+<tr>
+<td>R14(LR)</td>
+<td>R14</td>
+<td>R14_svc</td>
+<td>R14_abt</td>
+<td>R14_und</td>
+<td>R14_inq</td>
+<td>R14_fiq</td>
+</tr>
+<tr>
+<td>PC(R15)</td>
+<td>PC</td>
+<td>PC</td>
+<td>PC</td>
+<td>PC</td>
+<td>PC</td>
+<td>PC</td>
+</tr>
+<tr>
+<td>CPSR</td>
+<td>CPSR</td>
+<td>CPSR</td>
+<td>CPSR</td>
+<td>CPSR</td>
+<td>CPSR</td>
+<td>CPSR</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>SPSR_svc</td>
+<td>SPSR_abt</td>
+<td>SPSR_und</td>
+<td>SPSR_inq</td>
+<td>SPSR_fiq</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-未分组寄存器-R0-R7"><a href="#1-未分组寄存器-R0-R7" class="headerlink" title="1. 未分组寄存器 R0 - R7"></a>1. 未分组寄存器 R0 - R7</h2><p>对于未分组寄存器，它们没有被系统用于特别的用途，因此任何可采用通用寄存器的应用场合都可以使用未分组寄存器。<br>但需要注意一点，未分组寄存器不会因为处理器模式的改变而更改指向的寄存器，因此在所有的处理器模式下未分组寄存器都指向同一个寄存器，当中断或异常处理造成处理器模式转换的时候，由于不同的处理器模式使用了相同的物理寄存器，这就有可能造成寄存器中的数据被破坏。 </p>
+<h2 id="2-分组寄存器-R8-R14"><a href="#2-分组寄存器-R8-R14" class="headerlink" title="2. 分组寄存器 R8 - R14"></a>2. 分组寄存器 R8 - R14</h2><p>对于分组寄存器，它们每一次所访问的物理寄存器和处理器当前的运行模式有关。例如在快速中断模式 fiq下R8-R12访问寄存器 R8_fiq-R12_fiq ；而在其他模式下又访问 R8_usr-R12_usr 。因此它们每个对应着两个不同的寄存器。</p>
+<p>对于R13（SP）、R14（LR）来说，每个寄存器对应着6个不同的物理寄存器，其中的一个是用户模式与系统模式共用，另外5个物理寄存器对应于其他5种不同的运行模式。采用以下的记号来区分不同的物理寄存器：<br>R13_&lt; mode &gt;<br>R14_&lt; mode &gt;<br>其中，mode为以下几种模式之一：usr、fiq、irq、svc、abt、und。</p>
+<h3 id="2-1-R13（SP）"><a href="#2-1-R13（SP）" class="headerlink" title="2.1 R13（SP）"></a>2.1 R13（SP）</h3><p>寄存器 R13 在 ARM 指令还有着一个非常重要的作用，通常他被用作堆栈指针，当然这只是一种习惯用法，用户也可以使用其他的寄存器作为堆栈指针，但在Thumb指令集中，某些指令强制性地要求使用R13作为堆栈指针。</p>
+<p>由于处理器的每种运行模式均有自己福利的物理寄存器R13，使其指向该运行模式下的栈空间，这样，当程序的运行进入异常模式时，可以将需要保护的寄存器放入R13所指向的堆栈，而当程序从异常模式返回时，则从对应的堆栈恢复，采用这种方式可以保证异常发生后程序的正常执行。</p>
+<h3 id="2-2-R14（LR）"><a href="#2-2-R14（LR）" class="headerlink" title="2.2 R14（LR）"></a>2.2 R14（LR）</h3><p>R14 也称作子程序连接寄存器（Subroutine Link Register）或连接寄存器 LR 。当执行 BL 子程序调用指令时，R14 中得到 R15 （程序计数器PC）的备份。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">0x00008d68 &lt;+44&gt;:    bl  0x8cd4 &lt;func&gt;</div><div class="line">0x00008d6c &lt;+48&gt;:    ...</div><div class="line">0x00008d70 &lt;+52&gt;:    ...123</div></pre></td></tr></table></figure>
+<p>通常情况下，在汇编代码中不会出现 R14 中产生 PC 备份的指令语句。可以简单的理解为在执行调用的同时，将当前 PC 的指向的值 0x00008d70 减去一条指令的长度，这里是ARM工作状态，指令长度为 0x00000004，并交由R14保存。减去一条指令的原因很简单，不减的话返回的时候中间 0x00008d6c 处的那条指令就被跳过了。</p>
+<font color="#f00">（当前执行的是 0x00008d68 处的指令，0x00008d6c 处的指令处于译码阶段，0x00008d70 的指令处于取指阶段，PC总是指向取指阶段的指令。关于  ARM 处理器的流水线机制和 PC 指向的值 详见下文。） </font>
+
+<p> 其他情况下，R14 也可以用作通用寄存器。与之类似，当发生中断或异常时，对应的分组寄存器 R14_svc、R14_irq、R14_fiq、R14_abt 和 R14_und 用来保存 R15 的返回值。</p>
+<p>每一种处理器模式在自己的物理 R14 中存放当前子程序的返回地址。当通过BL、BX 等指令调用子程序时，R14就被设置成该子程序的返回地址。例如有汇编指令如下：</p>
+<ul>
+<li>执行以下任意一条指令：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">MOV PC，LR</div><div class="line">BX LR12</div></pre></td></tr></table></figure>
+<ul>
+<li>在子程序入口处使用以下指令将R14存入堆栈：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">STMFD SP！,&#123;&lt;Regs&gt;,LR&#125;1</div></pre></td></tr></table></figure>
+<ul>
+<li>对应的，使用以下指令可以完成子程序返回：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">LDMFD SP！,&#123;&lt;Regs&gt;,PC&#125;1</div></pre></td></tr></table></figure>
+<p>当发生异常中断的时候，该模式下的特定物理R14被设置成该异常模式将要返回的地址。</p>
+<h3 id="2-3-R15（PC）"><a href="#2-3-R15（PC）" class="headerlink" title="2.3 R15（PC）"></a>2.3 R15（PC）</h3><p>介绍R15之前先简单了解一下 ARM 处理器的是流水线机制。 ARM7 处理器采用3级流水线来增加处理器指令流的速度，能提供 0.9MIPS/MHz 的指令处理速度。</p>
+<p>ARM7 的流水线有3个阶段，因此指令分3个阶段执行。<br>⑴ 取指从存储器装载一条指令<br>⑵ 译码识别将要被执行的指令<br>⑶ 执行处理指令并将结果写会寄存器</p>
+<p>对于x86处理器来说，只有完成一条指令的读取和执行后，才会执行下一条指令。这样， PC 始终指向的正在“执行”的指令。<br>而对于 ARM7 来说因为是3级流水线，所以把指令的处理分为了上面所述的3个阶段。所以处理时实际是这样的： ARM 正在执行第1条指令的同时对第2条指令进行译码，并将第3条指令从存储器中取出。因此 ARM7 流水线只有在取第4条指令时，第1条指令才算完成执行。继而 ARM 的 PC 寄存器永远指向当前执行的指令后的第二条指令，即处于取指阶段的指令。</p>
+<p>另外，在ARM状态下，最低的两位[1:0]为0，其他位[31:2]用于保存PC；在Thumb状态下，最低位[0]为0，其他位 [31:1]用于保存PC；所以 R15（PC）虽然可以用作通用寄存器，但是有一些指令在使用R15时有一些特殊限制，当违反了这些限制时，程序的执行结果是未知的。</p>
+<h3 id="2-4-R16（CPSR）"><a href="#2-4-R16（CPSR）" class="headerlink" title="2.4 R16（CPSR）"></a>2.4 R16（CPSR）</h3><p>寄存器R16用作当前程序状态寄存器 CPSR （Current Program Status Register），可在任何运行模式下被访问，它包括条件标志位、中断禁止位、当前处理器模式标志位，以及其他一些相关的控制和状态位。</p>
+<p>每一种运行模式下又都有一个专用的物理状态寄存器，称为备份的程序状态寄存器 SPSR （Saved Program Status Register），当异常发生时， SPSR 用于保存 CPSR 的当前值，从异常退出时则可由 SPSR 来恢复 CPSR 。</p>
+<p>由于用户模式和系统模式不属于异常模式，他们没有 SPSR ，当在这两种模式下访问 SPSR ，结果是未知的。</p>
+<h3 id="2-5-执行条件标志位"><a href="#2-5-执行条件标志位" class="headerlink" title="2.5 执行条件标志位"></a>2.5 执行条件标志位</h3><p>ARM 的执行条件与 x86 下面的标志位有些类似，系统通过对这些标志位的判断来确定是否满足执行条件。几乎所有的 ARM 指令都包含一个4位的条件码，位于指令的最高4位。条件码共有16种，每种条件码可用两个字符表示，这两个字符可以添加在指令助记符的后面和指令同时使用。</p>
+<p>例如，跳转指令 B 可以加上后缀 EQ 变成 BEQ 表示“相同则跳转”，即当 CPSR 中的Z标志置位时发生跳转。在16种条件标志码中，只有15种可以使用，如下表所示。第十六种（1111）为系统保留，暂时不能使用。</p>
+<table>
+<thead>
+<tr>
+<th>编 码</th>
+<th>条件助记符</th>
+<th>标志位</th>
+<th>含 义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0000</td>
+<td>EQ</td>
+<td>Z=1</td>
+<td>相等</td>
+</tr>
+<tr>
+<td>0001</td>
+<td>NE</td>
+<td>Z=0</td>
+<td>不相等</td>
+</tr>
+<tr>
+<td>0010</td>
+<td>CS</td>
+<td>C=1</td>
+<td>无符号大于或等于</td>
+</tr>
+<tr>
+<td>0011</td>
+<td>CC</td>
+<td>C=0</td>
+<td>无符号小于</td>
+</tr>
+<tr>
+<td>0100</td>
+<td>MI</td>
+<td>N=1</td>
+<td>负值</td>
+</tr>
+<tr>
+<td>0101</td>
+<td>PL</td>
+<td>N=0</td>
+<td>正值或 0</td>
+</tr>
+<tr>
+<td>0110</td>
+<td>VS</td>
+<td>V=1</td>
+<td>溢出</td>
+</tr>
+<tr>
+<td>0111</td>
+<td>VC</td>
+<td>V=0</td>
+<td>无溢出</td>
+</tr>
+<tr>
+<td>1000</td>
+<td>HI</td>
+<td>C=1 且 Z=0</td>
+<td>无符号大于</td>
+</tr>
+<tr>
+<td>1001</td>
+<td>LS</td>
+<td>C=0 且 Z=1</td>
+<td>无符号小于或等于</td>
+</tr>
+<tr>
+<td>1010</td>
+<td>GE</td>
+<td>N 和 V 相同</td>
+<td>有符号大于或等于</td>
+</tr>
+<tr>
+<td>1011</td>
+<td>LT</td>
+<td>N 和 V 不相同</td>
+<td>有符号小于</td>
+</tr>
+<tr>
+<td>1100</td>
+<td>GT</td>
+<td>Z=0 且 N 等于 V</td>
+<td>有符号大于</td>
+</tr>
+<tr>
+<td>1101</td>
+<td>LE</td>
+<td>Z=1 且 N 不等于 V</td>
+<td>有符号小于或等于</td>
+</tr>
+<tr>
+<td>1110</td>
+<td>AL</td>
+<td>任意</td>
+<td>无条件执行（不推荐使用）</td>
+</tr>
+<tr>
+<td>1111</td>
+<td>NV</td>
+<td>任意</td>
+<td>从不执行（不要使用）</td>
+</tr>
+</tbody>
+</table>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/arm/" rel="tag"># arm</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+          <div class="wp_rating">
+            <div id="wpac-rating"></div>
+          </div>
+        
+
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/08/pwn/ARM状态结构小记/" rel="next" title="ARM状态结构小记">
+                <i class="fa fa-chevron-left"></i> ARM状态结构小记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/09/pwn/shellshock原理介绍/" rel="prev" title="shellshock原理介绍">
+                shellshock原理介绍 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="gitalk-container"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/me.jpg"
+               alt="Introspelliam" />
+          <p class="site-author-name" itemprop="name">Introspelliam</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">125</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">56</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/Introspelliam" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/3008590672" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                    
+                      Weibo
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-未分组寄存器-R0-R7"><span class="nav-text">1. 未分组寄存器 R0 - R7</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-分组寄存器-R8-R14"><span class="nav-text">2. 分组寄存器 R8 - R14</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-R13（SP）"><span class="nav-text">2.1 R13（SP）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-R14（LR）"><span class="nav-text">2.2 R14（LR）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-R15（PC）"><span class="nav-text">2.3 R15（PC）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-R16（CPSR）"><span class="nav-text">2.4 R16（CPSR）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-执行条件标志位"><span class="nav-text">2.5 执行条件标志位</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Introspelliam</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <script src="/js/md5.min.js"></script>
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '41857e5205be9fe36c48',
+          clientSecret: 'c927ea37a432eff67cdb1081658112c7409ca7ff',
+          repo: 'Introspelliam.github.io',
+          owner: 'Introspelliam',
+          admin: ['Introspelliam'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  <script type="text/javascript">
+  wpac_init = window.wpac_init || [];
+  wpac_init.push({widget: 'Rating', id: ,
+    el: 'wpac-rating',
+    color: 'fc6423'
+  });
+  (function() {
+    if ('WIDGETPACK_LOADED' in window) return;
+    WIDGETPACK_LOADED = true;
+    var mc = document.createElement('script');
+    mc.type = 'text/javascript';
+    mc.async = true;
+    mc.src = '//embed.widgetpack.com/widget.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+  })();
+  </script>
+
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

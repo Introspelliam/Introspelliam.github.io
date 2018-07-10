@@ -2,10 +2,8 @@
 
 
 
-  
 
-
-<html class="theme-next mist use-motion" lang="zh-Hans">
+<html class="theme-next mist" lang="zh-Hans">
 <head>
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -106,7 +104,7 @@
 <meta property="og:url" content="http://yoursite.com/2017/11/17/浅析堆的申请释放及相应保护机制/index.html">
 <meta property="og:site_name" content="上善若水">
 <meta property="og:description" content="0×00 前面的话在了解这部分的时候，首先你最好阅读一下这两篇博客： Linux堆内存管理深入分析（上） Linux堆内存管理深入分析（下） 在内存中，堆是一个很有趣的地方，因为它可以由用户去直接的进行分配与销毁，所以也产生了一些很有趣、奇思妙想的漏洞，像unlink漏洞、House系列漏洞等等。但是在学习的过程中，我们很容易难以理解那些介绍的比较模糊的概念，比如 unsortedbin 在某些条">
-<meta property="og:updated_time" content="2017-11-20T13:44:42.429Z">
+<meta property="og:updated_time" content="2018-07-09T11:41:14.993Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="浅析堆的申请释放及相应保护机制">
 <meta name="twitter:description" content="0×00 前面的话在了解这部分的时候，首先你最好阅读一下这两篇博客： Linux堆内存管理深入分析（上） Linux堆内存管理深入分析（下） 在内存中，堆是一个很有趣的地方，因为它可以由用户去直接的进行分配与销毁，所以也产生了一些很有趣、奇思妙想的漏洞，像unlink漏洞、House系列漏洞等等。但是在学习的过程中，我们很容易难以理解那些介绍的比较模糊的概念，比如 unsortedbin 在某些条">
@@ -119,10 +117,10 @@
     root: '/',
     scheme: 'Mist',
     version: '5.1.2',
-    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":false,"onmobile":true},
+    sidebar: {"position":"right","display":"always","offset":0,"offset_float":0,"b2t":true,"scrollpercent":true,"onmobile":true},
     fancybox: true,
     tabs: true,
-    motion: true,
+    motion: false,
     duoshuo: {
       userId: '0',
       author: '博主'
@@ -638,7 +636,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">133</span>
+                <span class="site-state-item-count">130</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -649,7 +647,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">16</span>
+                <span class="site-state-item-count">15</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -660,7 +658,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">55</span>
+                <span class="site-state-item-count">54</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -737,6 +735,8 @@
       
         <div class="back-to-top">
           <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
           
         </div>
       

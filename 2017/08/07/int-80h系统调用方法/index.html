@@ -2,10 +2,8 @@
 
 
 
-  
 
-
-<html class="theme-next mist use-motion" lang="zh-Hans">
+<html class="theme-next mist" lang="zh-Hans">
 <head>
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -106,7 +104,7 @@
 <meta property="og:url" content="http://yoursite.com/2017/08/07/int-80h系统调用方法/index.html">
 <meta property="og:site_name" content="上善若水">
 <meta property="og:description" content="1. int 0x80简介先看看下面通过系统调用实现的hello world代码：1234567891011121314151617.section .datamsg:        .ascii &amp;quot;Hello world!\n&amp;quot;.section .text.globl _start_start:        movl $4, %eax        movl $1, %eb">
-<meta property="og:updated_time" content="2017-10-12T15:30:29.834Z">
+<meta property="og:updated_time" content="2018-07-09T11:41:14.963Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="int 80h系统调用方法">
 <meta name="twitter:description" content="1. int 0x80简介先看看下面通过系统调用实现的hello world代码：1234567891011121314151617.section .datamsg:        .ascii &amp;quot;Hello world!\n&amp;quot;.section .text.globl _start_start:        movl $4, %eax        movl $1, %eb">
@@ -119,10 +117,10 @@
     root: '/',
     scheme: 'Mist',
     version: '5.1.2',
-    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":false,"onmobile":true},
+    sidebar: {"position":"right","display":"always","offset":0,"offset_float":0,"b2t":true,"scrollpercent":true,"onmobile":true},
     fancybox: true,
     tabs: true,
-    motion: true,
+    motion: false,
     duoshuo: {
       userId: '0',
       author: '博主'
@@ -617,7 +615,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">133</span>
+                <span class="site-state-item-count">130</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -628,7 +626,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">16</span>
+                <span class="site-state-item-count">15</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -639,7 +637,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">55</span>
+                <span class="site-state-item-count">54</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -716,6 +714,8 @@
       
         <div class="back-to-top">
           <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
           
         </div>
       

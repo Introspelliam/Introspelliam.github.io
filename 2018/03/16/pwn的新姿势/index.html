@@ -2,10 +2,8 @@
 
 
 
-  
 
-
-<html class="theme-next mist use-motion" lang="zh-Hans">
+<html class="theme-next mist" lang="zh-Hans">
 <head>
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -106,7 +104,7 @@
 <meta property="og:url" content="http://yoursite.com/2018/03/16/pwn的新姿势/index.html">
 <meta property="og:site_name" content="上善若水">
 <meta property="og:description" content="1. 调用malloc的其它常见函数 没有setbuf(stdin,0)的时候，scanf也会malloc个堆作为缓冲区。 没有setbuf(stdout,0)的时候，printf才会调用malloc用来在堆上分配缓冲区。  https://paper.seebug.org/450/ 2. read函数读入指定长度的数据当做pwn题时，经常会遇到read一个长度，但是此时输入长度不够，导致其读入了">
-<meta property="og:updated_time" content="2018-04-12T08:23:12.144Z">
+<meta property="og:updated_time" content="2018-07-09T11:41:14.937Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="pwn的新姿势">
 <meta name="twitter:description" content="1. 调用malloc的其它常见函数 没有setbuf(stdin,0)的时候，scanf也会malloc个堆作为缓冲区。 没有setbuf(stdout,0)的时候，printf才会调用malloc用来在堆上分配缓冲区。  https://paper.seebug.org/450/ 2. read函数读入指定长度的数据当做pwn题时，经常会遇到read一个长度，但是此时输入长度不够，导致其读入了">
@@ -119,10 +117,10 @@
     root: '/',
     scheme: 'Mist',
     version: '5.1.2',
-    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":false,"onmobile":true},
+    sidebar: {"position":"right","display":"always","offset":0,"offset_float":0,"b2t":true,"scrollpercent":true,"onmobile":true},
     fancybox: true,
     tabs: true,
-    motion: true,
+    motion: false,
     duoshuo: {
       userId: '0',
       author: '博主'
@@ -577,7 +575,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">133</span>
+                <span class="site-state-item-count">130</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -588,7 +586,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">16</span>
+                <span class="site-state-item-count">15</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -599,7 +597,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">55</span>
+                <span class="site-state-item-count">54</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -676,6 +674,8 @@
       
         <div class="back-to-top">
           <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
           
         </div>
       

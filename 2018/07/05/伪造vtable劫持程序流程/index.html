@@ -2,10 +2,8 @@
 
 
 
-  
 
-
-<html class="theme-next mist use-motion" lang="zh-Hans">
+<html class="theme-next mist" lang="zh-Hans">
 <head>
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -106,7 +104,7 @@
 <meta property="og:url" content="http://yoursite.com/2018/07/05/伪造vtable劫持程序流程/index.html">
 <meta property="og:site_name" content="上善若水">
 <meta property="og:description" content="伪造vtable劫持程序流程简介前面我们介绍了Linux中文件流的特性（FILE），我们可以得知Linux中的一些常见的IO操作函数都需要经过FILE结构进行处理。尤其是_IO_FILE_plus结构中存在vtable，一些函数会取出vtable中的指针进行调用。 因此伪造vtable劫持程序流程的中心思想就是针对_IO_FILE_plus的vtable动手脚，通过把vtable指向我们控制的内存">
-<meta property="og:updated_time" content="2018-07-05T02:51:02.663Z">
+<meta property="og:updated_time" content="2018-07-09T11:41:14.979Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="伪造vtable劫持程序流程">
 <meta name="twitter:description" content="伪造vtable劫持程序流程简介前面我们介绍了Linux中文件流的特性（FILE），我们可以得知Linux中的一些常见的IO操作函数都需要经过FILE结构进行处理。尤其是_IO_FILE_plus结构中存在vtable，一些函数会取出vtable中的指针进行调用。 因此伪造vtable劫持程序流程的中心思想就是针对_IO_FILE_plus的vtable动手脚，通过把vtable指向我们控制的内存">
@@ -119,10 +117,10 @@
     root: '/',
     scheme: 'Mist',
     version: '5.1.2',
-    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":false,"onmobile":true},
+    sidebar: {"position":"right","display":"always","offset":0,"offset_float":0,"b2t":true,"scrollpercent":true,"onmobile":true},
     fancybox: true,
     tabs: true,
-    motion: true,
+    motion: false,
     duoshuo: {
       userId: '0',
       author: '博主'
@@ -580,7 +578,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">133</span>
+                <span class="site-state-item-count">130</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -591,7 +589,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">16</span>
+                <span class="site-state-item-count">15</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -602,7 +600,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">55</span>
+                <span class="site-state-item-count">54</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -679,6 +677,8 @@
       
         <div class="back-to-top">
           <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
           
         </div>
       

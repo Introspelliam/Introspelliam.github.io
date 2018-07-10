@@ -2,10 +2,8 @@
 
 
 
-  
 
-
-<html class="theme-next mist use-motion" lang="zh-Hans">
+<html class="theme-next mist" lang="zh-Hans">
 <head>
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -106,7 +104,7 @@
 <meta property="og:url" content="http://yoursite.com/2018/04/08/IDA使用指南/index.html">
 <meta property="og:site_name" content="上善若水">
 <meta property="og:description" content="0x01 前言IDA之于逆向人员、PWN手的重要性几乎等同于左右手之于人。所以学好IDA是我们关键的一步。 0x02 基本快捷键2.1 View2.2 Jump Esc   jump to previous position Ctrl+Enter  jump to next postion  0x03 patch以前逆向的时候，为了将有些部分的jz改为jnz，我们很可能会关闭IDA-gui，在Ul">
-<meta property="og:updated_time" content="2018-04-08T11:28:33.550Z">
+<meta property="og:updated_time" content="2018-07-09T11:41:14.966Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="IDA使用指南">
 <meta name="twitter:description" content="0x01 前言IDA之于逆向人员、PWN手的重要性几乎等同于左右手之于人。所以学好IDA是我们关键的一步。 0x02 基本快捷键2.1 View2.2 Jump Esc   jump to previous position Ctrl+Enter  jump to next postion  0x03 patch以前逆向的时候，为了将有些部分的jz改为jnz，我们很可能会关闭IDA-gui，在Ul">
@@ -119,10 +117,10 @@
     root: '/',
     scheme: 'Mist',
     version: '5.1.2',
-    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":false,"onmobile":true},
+    sidebar: {"position":"right","display":"always","offset":0,"offset_float":0,"b2t":true,"scrollpercent":true,"onmobile":true},
     fancybox: true,
     tabs: true,
-    motion: true,
+    motion: false,
     duoshuo: {
       userId: '0',
       author: '博主'
@@ -511,7 +509,7 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/04/03/线性分析法/" rel="next" title="线性分析法">
+              <a href="/2018/04/03/crypto/线性分析法/" rel="next" title="线性分析法">
                 <i class="fa fa-chevron-left"></i> 线性分析法
               </a>
             
@@ -606,7 +604,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">133</span>
+                <span class="site-state-item-count">130</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -617,7 +615,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">16</span>
+                <span class="site-state-item-count">15</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -628,7 +626,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">55</span>
+                <span class="site-state-item-count">54</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -705,6 +703,8 @@
       
         <div class="back-to-top">
           <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
           
         </div>
       

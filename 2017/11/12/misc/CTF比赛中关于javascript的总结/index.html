@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next mist" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="googleaf0347feb5ea0936.html" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="javascript," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Introspelliam" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="0x1 前言在CTF比赛中MISC、CRYPTO、WEB中，经常会遇到有关js方面的题目，这些题目内容很杂，难度不一，所以成套的体系很难总结出来。所以本文只是笔者根据个人经历，总结的一套较为行之有效的工具书！ 0x2 技术介绍0x2.1 JavaScript简介JavaScript一种动态类型、弱类型、基于原型的客户端脚本语言，用来给HTML网页增加动态功能。  动态：在运行时确定数据类型。变量使">
+<meta name="keywords" content="javascript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CTF比赛中关于javascript的总结">
+<meta property="og:url" content="http://yoursite.com/2017/11/12/misc/CTF比赛中关于javascript的总结/index.html">
+<meta property="og:site_name" content="Introspelliam">
+<meta property="og:description" content="0x1 前言在CTF比赛中MISC、CRYPTO、WEB中，经常会遇到有关js方面的题目，这些题目内容很杂，难度不一，所以成套的体系很难总结出来。所以本文只是笔者根据个人经历，总结的一套较为行之有效的工具书！ 0x2 技术介绍0x2.1 JavaScript简介JavaScript一种动态类型、弱类型、基于原型的客户端脚本语言，用来给HTML网页增加动态功能。  动态：在运行时确定数据类型。变量使">
+<meta property="og:image" content="http://yoursite.com/images/2017-11-12/31.png">
+<meta property="og:image" content="http://yoursite.com/images/2017-11-12/41.png">
+<meta property="og:image" content="http://yoursite.com/images/2017-11-12/52.png">
+<meta property="og:image" content="http://yoursite.com/images/2017-11-12/61.png">
+<meta property="og:updated_time" content="2018-07-10T07:14:16.642Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CTF比赛中关于javascript的总结">
+<meta name="twitter:description" content="0x1 前言在CTF比赛中MISC、CRYPTO、WEB中，经常会遇到有关js方面的题目，这些题目内容很杂，难度不一，所以成套的体系很难总结出来。所以本文只是笔者根据个人经历，总结的一套较为行之有效的工具书！ 0x2 技术介绍0x2.1 JavaScript简介JavaScript一种动态类型、弱类型、基于原型的客户端脚本语言，用来给HTML网页增加动态功能。  动态：在运行时确定数据类型。变量使">
+<meta name="twitter:image" content="http://yoursite.com/images/2017-11-12/31.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"right","display":"always","offset":0,"offset_float":0,"b2t":true,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: false,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/11/12/misc/CTF比赛中关于javascript的总结/"/>
+
+
+
+
+
+  <title>CTF比赛中关于javascript的总结 | Introspelliam</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?663212c5ef558c27e77385b620f14823";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Introspelliam</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Just do what works for you, because there will always be someone who thinks differently.</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/11/12/misc/CTF比赛中关于javascript的总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Introspelliam">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">CTF比赛中关于javascript的总结</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-12T20:06:05+08:00">
+                2017-11-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/misc/" itemprop="url" rel="index">
+                    <span itemprop="name">misc</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="0x1-前言"><a href="#0x1-前言" class="headerlink" title="0x1 前言"></a>0x1 前言</h2><p>在CTF比赛中MISC、CRYPTO、WEB中，经常会遇到有关js方面的题目，这些题目内容很杂，难度不一，所以成套的体系很难总结出来。所以本文只是笔者根据个人经历，总结的一套较为行之有效的工具书！</p>
+<h2 id="0x2-技术介绍"><a href="#0x2-技术介绍" class="headerlink" title="0x2 技术介绍"></a>0x2 技术介绍</h2><h3 id="0x2-1-JavaScript简介"><a href="#0x2-1-JavaScript简介" class="headerlink" title="0x2.1 JavaScript简介"></a>0x2.1 JavaScript简介</h3><p>JavaScript一种动态类型、弱类型、基于原型的客户端脚本语言，用来给HTML网页增加动态功能。</p>
+<blockquote>
+<p>动态：在运行时确定数据类型。变量使用之前不需要类型声明，通常变量的类型是被赋值的那个值的类型。</p>
+<p>弱类：计算时可以不同类型之间对使用者透明地隐式转换，即使类型不正确，也能通过隐式转换来得到正确的类型。</p>
+<p>原型：新对象继承对象（作为模版），将自身的属性共享给新对象，模版对象称为原型。这样新对象实例化后不但可以享有自己创建时和运行时定义的属性，而且可以享有原型对象的属性。</p>
+</blockquote>
+<p>PS：新对象指函数，模版对象是实例对象，实例对象是不能继承原型的，函数才可以的。</p>
+<h3 id="0x2-2-JavaScript组成部分"><a href="#0x2-2-JavaScript组成部分" class="headerlink" title="0x2.2 JavaScript组成部分"></a>0x2.2 JavaScript组成部分</h3><h4 id="0x2-2-1-ECMAScript（核心）"><a href="#0x2-2-1-ECMAScript（核心）" class="headerlink" title="0x2.2.1 ECMAScript（核心）"></a>0x2.2.1 ECMAScript（核心）</h4><p>作为核心，它规定了语言的组成部分：语法、类型、语句、关键字、保留字、操作符、对象。</p>
+<p>具体参考es6  <a href="http://es6.ruanyifeng.com/" target="_blank" rel="external">http://es6.ruanyifeng.com/</a></p>
+<p>如果想查看每种浏览器的兼容性情况，可以参考以下博客</p>
+<p>es5兼容性： <a href="http://kangax.github.io/compat-table/es5/" target="_blank" rel="external">http://kangax.github.io/compat-table/es5/</a></p>
+<p>es6兼容性： <a href="http://kangax.github.io/compat-table/es6/" target="_blank" rel="external">http://kangax.github.io/compat-table/es6/</a></p>
+<h4 id="0x2-2-2-DOM（文档对象模型）"><a href="#0x2-2-2-DOM（文档对象模型）" class="headerlink" title="0x2.2.2 DOM（文档对象模型）"></a>0x2.2.2 DOM（文档对象模型）</h4><p>DOM把整个页面映射为一个多层节点结果，开发人员可借助DOM提供的API，轻松地删除、添加、替换或修改任何节点。</p>
+<h4 id="0x2-2-3-BOM-（浏览器对象模型）"><a href="#0x2-2-3-BOM-（浏览器对象模型）" class="headerlink" title="0x2.2.3 BOM （浏览器对象模型）"></a>0x2.2.3 BOM （浏览器对象模型）</h4><p>支持可以访问和操作浏览器窗口的浏览器对象模型，开发人员可以控制浏览器显示的页面以外的部分。</p>
+<h3 id="0x2-3-javascript中部分常见的书写方式"><a href="#0x2-3-javascript中部分常见的书写方式" class="headerlink" title="0x2.3 javascript中部分常见的书写方式"></a>0x2.3 javascript中部分常见的书写方式</h3><p>说实在的，很多小伙伴表示javascript的表达方式太多了，而且其中有太多不为人知的利用策略。所以熊师傅给出一种套路，翻看工具书，上面已经给出了es6的参考博客！</p>
+<h4 id="0x2-3-1-对象的变量或函数"><a href="#0x2-3-1-对象的变量或函数" class="headerlink" title="0x2.3.1 对象的变量或函数"></a>0x2.3.1 对象的变量或函数</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&gt; <span class="keyword">var</span> s = <span class="string">"class"</span>;</div><div class="line">&gt; s.length	<span class="comment">// 等价于 s["length"]</span></div><div class="line"><span class="number">5</span></div><div class="line">&gt; s.substr(<span class="number">2</span>,<span class="number">2</span>)		<span class="comment">// 等价于 s["substr"](2,2)</span></div><div class="line"><span class="keyword">as</span></div></pre></td></tr></table></figure>
+<p>这里说明了javascript中对象访问属性有两种方法</p>
+<p>obj.paramName，使用.访问</p>
+<p>obj[parameName]，使用中括号属性名访问</p>
+<h4 id="0x2-3-2-类和函数的定义与使用"><a href="#0x2-3-2-类和函数的定义与使用" class="headerlink" title="0x2.3.2 类和函数的定义与使用"></a>0x2.3.2 类和函数的定义与使用</h4><ol>
+<li><p>构造函数法定义类</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">Cat</span>(<span class="params"></span>) </span>&#123;</div><div class="line">	<span class="keyword">this</span>.name = <span class="string">"大毛"</span>;</div><div class="line">&#125;</div><div class="line"><span class="comment">// 类的属性和方法</span></div><div class="line">Cat.prototype.makeSound = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">	alert(<span class="string">"喵喵喵"</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">var</span> cat1 = <span class="keyword">new</span> Cat();</div><div class="line">alert(cat1.name); <span class="comment">// 大毛</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>Object.create()法</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> Cat = &#123;</div><div class="line">	<span class="attr">name</span>: <span class="string">"大毛"</span>,</div><div class="line">	<span class="attr">makeSound</span>: <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123; alert(<span class="string">"喵喵喵"</span>); &#125;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="keyword">var</span> cat1 = <span class="built_in">Object</span>.create(Cat);</div><div class="line">alert(cat1.name); <span class="comment">// 大毛</span></div><div class="line">cat1.makeSound(); <span class="comment">// 喵喵喵</span></div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 兼容性考虑, 自己定义一个create函数</span></div><div class="line"><span class="keyword">if</span> (!<span class="built_in">Object</span>.create) &#123;</div><div class="line">	<span class="built_in">Object</span>.create = <span class="function"><span class="keyword">function</span> (<span class="params">o</span>) </span>&#123;</div><div class="line">		<span class="function"><span class="keyword">function</span> <span class="title">F</span>(<span class="params"></span>) </span>&#123;&#125;</div><div class="line">		F.prototype = o;</div><div class="line">		<span class="keyword">return</span> <span class="keyword">new</span> F();</div><div class="line">	&#125;;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>极简主义法（用得最多）</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> Cat = &#123;</div><div class="line">	<span class="attr">createNew</span>: <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;		<span class="comment">// createNew为构造函数，定义一个实例对象，把实例对象作为返回值</span></div><div class="line">		<span class="keyword">var</span> cat = &#123;&#125;;</div><div class="line">		cat.name = <span class="string">"大毛"</span>;</div><div class="line">		cat.makeSound = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123; alert(<span class="string">"喵喵喵"</span>); &#125;;</div><div class="line">		<span class="keyword">return</span> cat;</div><div class="line">	&#125;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="keyword">var</span> cat1 = Cat.createNew();</div><div class="line">cat1.makeSound(); <span class="comment">// 喵喵喵</span></div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 此处演示的是继承</span></div><div class="line"><span class="keyword">var</span> Animal = &#123;</div><div class="line">	<span class="attr">createNew</span>: <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">		<span class="keyword">var</span> animal = &#123;&#125;;</div><div class="line">		animal.sleep = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123; alert(<span class="string">"睡懒觉"</span>); &#125;;</div><div class="line">		<span class="keyword">return</span> animal;</div><div class="line">	&#125;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="keyword">var</span> Cat = &#123;</div><div class="line">	<span class="attr">createNew</span>: <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">		<span class="keyword">var</span> cat = Animal.createNew();</div><div class="line">		cat.name = <span class="string">"大毛"</span>;</div><div class="line">		cat.makeSound = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123; alert(<span class="string">"喵喵喵"</span>); &#125;;</div><div class="line">		<span class="keyword">return</span> cat;</div><div class="line">	&#125;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="keyword">var</span> cat1 = Cat.createNew();</div><div class="line">cat1.sleep(); <span class="comment">// 睡懒觉</span></div></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="0x3-CTF实践"><a href="#0x3-CTF实践" class="headerlink" title="0x3 CTF实践"></a>0x3 CTF实践</h2><h3 id="0x3-1-js压缩与解压缩"><a href="#0x3-1-js压缩与解压缩" class="headerlink" title="0x3.1 js压缩与解压缩"></a>0x3.1 js压缩与解压缩</h3><h4 id="0x3-1-1-js压缩"><a href="#0x3-1-1-js压缩" class="headerlink" title="0x3.1.1 js压缩"></a>0x3.1.1 js压缩</h4><p>压缩js文件可以减少文件体积方便传输，还可以让别人看不懂。</p>
+<p>简单的压缩一般是：删除注释和空白符，替换变量名。</p>
+<p>更激进点的做法还包括：删除无用代码，内联函数，等价语句替换等。 </p>
+<p>开始压缩的时候必须要做到以下几点：</p>
+<blockquote>
+<ol>
+<li>压缩前的代码格式要标准。因为去掉换行与空格时，所有语句就变成一行了，如果你的代码有瑕疵（比如某行少了个分号），那就会导致整个文件报错。当然，现在有的压缩工具已经比较智能了。</li>
+<li>备份原文件</li>
+<li>压缩很可能不会一次成功，一般要多试，多改</li>
+</ol>
+</blockquote>
+<p>压缩js的工具，常见的有：<a href="http://ganquan.info/yui/" target="_blank" rel="external">YUI Compressor</a>、<a href="https://tool.css-js.com/" target="_blank" rel="external">UglifyJS</a>、<a href="(http://closure-compiler.appspot.com/">Google Closure Compiler</a>) 、<a href="https://tool.css-js.com/" target="_blank" rel="external">JSMin</a>等。</p>
+<h4 id="0x3-1-2-js解压缩"><a href="#0x3-1-2-js解压缩" class="headerlink" title="0x3.1.2 js解压缩"></a>0x3.1.2 js解压缩</h4><p>那么既然能压缩，那也应该能够解压缩，但是需要注意的是，如果按照上面给的标准，我们无法实现完全的解压缩，但是可以还原出一个多行且具有鲜明的层次化结构的js代码。</p>
+<p>js解压缩的工具有：chrome开发者模式支持解压缩</p>
+<p>​            菜鸟工具  <a href="https://c.runoob.com/front-end/51" target="_blank" rel="external">https://c.runoob.com/front-end/51</a></p>
+<p>​            Chinaz    <a href="http://tool.chinaz.com/js.aspx" target="_blank" rel="external">http://tool.chinaz.com/js.aspx</a></p>
+<p>​            tool.lu在线工具    <a href="http://tool.lu/js/" target="_blank" rel="external">http://tool.lu/js/</a></p>
+<p>​            CSS-JS    <a href="https://tool.css-js.com/" target="_blank" rel="external">https://tool.css-js.com/</a></p>
+<h3 id="0x3-2-js加密与解密"><a href="#0x3-2-js加密与解密" class="headerlink" title="0x3.2 js加密与解密"></a>0x3.2 js加密与解密</h3><h4 id="0x3-2-1-escape加密-unescape解密"><a href="#0x3-2-1-escape加密-unescape解密" class="headerlink" title="0x3.2.1 escape加密\unescape解密"></a>0x3.2.1 escape加密\unescape解密</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//加密</span></div><div class="line">&gt; <span class="built_in">escape</span>(<span class="string">'alert("黑客防线"); '</span>)</div><div class="line"><span class="string">"alert%28%22%u9ED1%u5BA2%u9632%u7EBF%22%29%3B"</span></div><div class="line"></div><div class="line"><span class="comment">//解密</span></div><div class="line">&gt; <span class="built_in">unescape</span>(<span class="string">"alert%28%22%u9ED1%u5BA2%u9632%u7EBF%22%29%3B"</span>)</div><div class="line"><span class="string">"alert("</span>黑客防线<span class="string">"); "</span></div></pre></td></tr></table></figure>
+<p>工具   <a href="http://www.haokuwang.com/unescape.htm" target="_blank" rel="external">http://www.haokuwang.com/unescape.htm</a></p>
+<h4 id="0x3-2-2-转义字符加解密"><a href="#0x3-2-2-转义字符加解密" class="headerlink" title="0x3.2.2 转义字符加解密"></a>0x3.2.2 转义字符加解密</h4><p>转义字符&quot;&quot;，对于JavaScript提供了一些特殊字符如：n （换行）、 r （回车）、&#39; （单引号）等应该是有所了解 </p>
+<p>的吧？其实&quot;&quot;后面还可以跟八进制或十六进制的数字，如字符&quot;a&quot;则可以表示为：&quot;141&quot;或&quot;x61&quot;（注意是小写字符&quot;x&quot;），至于双字节字符如汉字&quot;黑&quot;则仅能用十六进制表示为&quot;u9ED1&quot;（注意是小写字符&quot;u&quot;），其中字符&quot;u&quot;表示是双字节字符，根据这个原理例子代码则可以表示为： </p>
+<p>八进制转义字符串如下: </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 使用console.log 或者 alert 或者confirm 或者 prompt调试 或者 document.write</span></div><div class="line">&gt; <span class="built_in">console</span>.log(<span class="string">"\141\154\145\162\164\50\42\u9ED1\u5BA2\u9632\u7EBF\42\51\73"</span>)</div><div class="line">alert(<span class="string">"黑客防线"</span>);</div></pre></td></tr></table></figure>
+<p>十六进制转义字符串如下: </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt; <span class="built_in">console</span>.log(<span class="string">"\x61\x6C\x65\x72\x74\x28\x22\u9ED1\u5BA2\u9632\u7EBF\x22\x29\x3B"</span>)</div><div class="line">alert(<span class="string">"黑客防线"</span>);</div></pre></td></tr></table></figure>
+<p>常见工具：    工具包-&gt;其他辅助工具-&gt;编码转换</p>
+<p>​            <a href="http://web2hack.org/xssee/" target="_blank" rel="external">http://web2hack.org/xssee/</a></p>
+<h4 id="0x3-2-3-Script-Encoder来进行编码"><a href="#0x3-2-3-Script-Encoder来进行编码" class="headerlink" title="0x3.2.3 Script Encoder来进行编码"></a>0x3.2.3 Script Encoder来进行编码</h4><p>脚本编码器Script Encoder是Microsoft出品的脚本编码器。这里需要调用控件Scripting.Encoder完成的编码！由于很多电脑上没有安装这个控件，所以很多时候，你的主机运行不起来这个js代码。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&lt;SCRIPT LANGUAGE=<span class="string">"JavaScript"</span>&gt; </div><div class="line"><span class="keyword">var</span> Senc=<span class="keyword">new</span> ActiveXObject(<span class="string">"Scripting.Encoder"</span>); </div><div class="line"><span class="keyword">var</span> code=<span class="string">'12345'</span>; </div><div class="line"><span class="keyword">var</span> Encode=Senc.EncodeScriptFile(<span class="string">".htm"</span>,code,<span class="number">0</span>,<span class="string">""</span>); </div><div class="line">alert(Encode); </div><div class="line">&lt;/SCRIPT&gt;</div></pre></td></tr></table></figure>
+<p>编码后的结果如下：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;SCRIPT LANGUAGE="JScript.Encode"&gt;#@~^BQAAAA==qy&amp;*l/wAAAA==^#~@&lt;/SCRIPT&gt;</div></pre></td></tr></table></figure>
+<p>解密方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&lt;SCRIPT LANGUAGE=&quot;JScript.Encode&quot;&gt; </div><div class="line">function decode() </div><div class="line">alert(decode.toString()); </div><div class="line">&lt;/SCRIPT&gt;</div></pre></td></tr></table></figure>
+<p>它是原理是：编码后的代码运行前IE会先对其进行解码，如果我们先把加密的代码放入一个自定义函数如上面的decode()中，然后对自定义函数decode调用toString()方法，得到的将是解码后的代码！ </p>
+<p>如果你觉得这样编码得到的代码LANGUAGE属性是JScript.Encode，很容易让人识破，那么还有一个几乎不为人知的window对象的方法execScript() ，其原形为： window.execScript( sExpression, sLanguage)</p>
+<p>ps: 现在的es6中，已经不支持execScript了!!!</p>
+<p>参数：<br>sExpression: 必选项。字符串(String)。要被执行的代码。<br>sLanguage　: 必选项。字符串(String)。指定执行的代码的语言。默认值为 Microsoft JScript </p>
+<p><strong>工具选择</strong>：</p>
+<p>加密工具： srcenc.exe</p>
+<p>解密工具：srcdec18-VC8.exe</p>
+<h4 id="0x3-2-4-任意添加NUL空字符（十六进制00H）"><a href="#0x3-2-4-任意添加NUL空字符（十六进制00H）" class="headerlink" title="0x3.2.4  任意添加NUL空字符（十六进制00H）"></a>0x3.2.4  任意添加NUL空字符（十六进制00H）</h4><p>一次偶然的实验，使我发现在HTML网页中任意位置添加任意个数的&quot;空字符&quot;，IE照样会正常显示其中的内容，并正常执行其中的JavaScript 代码，而我们在用一般的编辑器查看时，添加的&quot;空字符&quot;会显示形如空格或黑块，使得原码很难看懂，如用记事本查看&quot;空字符&quot;则会变成&quot;空格&quot;，</p>
+<p>利用这个原理加密结果如下：（其中显示的&quot;空格&quot;代表&quot;空字符&quot;） </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;S C RI P T L ANG U A G E =<span class="string">" J a v a S c r i p t "</span>&gt; </div><div class="line">a l er t (<span class="string">" S w e e t"</span>) ; </div><div class="line">&lt; / SC R I P T&gt;</div></pre></td></tr></table></figure>
+<p>如何？是不是显得乱七八糟的？如果不知道方法的人很难想到要去掉里面的&quot;空字符&quot;（00H）的！</p>
+<h4 id="0x3-2-5-无用内容混乱以及换行空格TAB大法"><a href="#0x3-2-5-无用内容混乱以及换行空格TAB大法" class="headerlink" title="0x3.2.5 无用内容混乱以及换行空格TAB大法"></a>0x3.2.5 无用内容混乱以及换行空格TAB大法</h4><p>在JAVASCRIPT代码中我们可以加入大量的无用字符串或数字，以及无用代码和注释内容等等，使真正的有用代码埋没在其中，并把有用的 代码中能加入换行、空格、TAB的地方加入大量换行、空格、TAB，并可以把正常的字符串用&quot;&quot;来进行换行，这样就会使得代码难以看懂。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">&lt;SCRIPT LANGUAGE=<span class="string">"JavaScript"</span>&gt; </div><div class="line"><span class="string">"xajgxsadffgds"</span>;<span class="number">1234567890</span> </div><div class="line"><span class="number">625623216</span>;<span class="keyword">var</span> $=<span class="number">0</span>;alert<span class="comment">//@$%%&amp;*()(&amp;(^%^ </span></div><div class="line"><span class="comment">//cctv function// </span></div><div class="line">(<span class="comment">//hhsaasajx xc </span></div><div class="line"><span class="comment">/* </span></div><div class="line">asjgdsgu*/ </div><div class="line"><span class="string">"Sweet"</span><span class="comment">//ashjgfgf </span></div><div class="line"><span class="comment">/* </span></div><div class="line">@#%$^&amp;%$96667r45fggbhytjty </div><div class="line">*/ </div><div class="line"><span class="comment">//window </span></div><div class="line">) </div><div class="line">;<span class="string">"#@$#%@#432hu"</span>;<span class="number">212351436</span> </div><div class="line">&lt;<span class="regexp">/SCRIPT&gt;</span></div></pre></td></tr></table></figure>
+<h4 id="0x3-2-6-JSPacker加解密"><a href="#0x3-2-6-JSPacker加解密" class="headerlink" title="0x3.2.6 JSPacker加解密"></a>0x3.2.6 JSPacker加解密</h4><p>这类最突出的特点就是eval(function(p,a,c,k,e,r).....</p>
+<p>所以当你遇到这类代码的时候，不妨试着使用一下JSPacker解密工具</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//源代码</span></div><div class="line"><span class="built_in">eval</span>(<span class="number">1</span>);</div><div class="line"><span class="comment">//加密后代码</span></div><div class="line"><span class="built_in">eval</span>(<span class="function"><span class="keyword">function</span>(<span class="params">p,a,c,k,e,r</span>)</span>&#123;e=<span class="built_in">String</span>;<span class="keyword">if</span>(!<span class="string">''</span>.replace(<span class="regexp">/^/</span>,<span class="built_in">String</span>))&#123;<span class="keyword">while</span>(c--)r[c]=k[c]||c;k=[<span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;<span class="keyword">return</span> r[e]&#125;];e=<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="keyword">return</span><span class="string">'\\w+'</span>&#125;;c=<span class="number">1</span>&#125;;<span class="keyword">while</span>(c--)<span class="keyword">if</span>(k[c])p=p.replace(<span class="keyword">new</span> <span class="built_in">RegExp</span>(<span class="string">'\\b'</span>+e(c)+<span class="string">'\\b'</span>,<span class="string">'g'</span>),k[c]);<span class="keyword">return</span> p&#125;(<span class="string">'0(1);'</span>,<span class="number">2</span>,<span class="number">2</span>,<span class="string">'alert|'</span>.split(<span class="string">'|'</span>),<span class="number">0</span>,&#123;&#125;))</div></pre></td></tr></table></figure>
+<p>加解密工具：</p>
+<p>tool.lu在线解密        <a href="http://tool.lu/js/" target="_blank" rel="external">http://tool.lu/js/</a></p>
+<p>CSS-JS                <a href="https://tool.css-js.com/" target="_blank" rel="external">https://tool.css-js.com/</a></p>
+<p>手动解密：            其实将加密后的代码美化之后，会发现return p语句，在此之前，你只需要加上一句console.log(p)就能获得对应的解密后代码。</p>
+<h4 id="0x3-2-7-JSFuck加解密"><a href="#0x3-2-7-JSFuck加解密" class="headerlink" title="0x3.2.7 JSFuck加解密"></a>0x3.2.7 JSFuck加解密</h4><p>JSFuck 可以让你只用 6 个字符 <code>[ ]( ) ! +</code> 来编写 JavaScript 程序，所以很明显</p>
+<p>jsfuck加密工具        <a href="http://www.jsfuck.com/" target="_blank" rel="external">http://www.jsfuck.com/</a></p>
+<p>jsfuck解密工具        <a href="https://enkhee-osiris.github.io/Decoder-JSFuck/" target="_blank" rel="external">https://enkhee-osiris.github.io/Decoder-JSFuck/</a></p>
+<p>​            手动：    其实jjencode的最后是一个函数，为此，我们只需要最后的()改成.toString()即可</p>
+<h4 id="0x3-2-8-jjencode-aaencode"><a href="#0x3-2-8-jjencode-aaencode" class="headerlink" title="0x3.2.8 jjencode/aaencode"></a>0x3.2.8 jjencode/aaencode</h4><p>jjencode将JS代码转换成只有符号的字符串，类似于rrencode，但是符号大多数为\$+~[]\￥等</p>
+<p>加密工具                <a href="http://utf-8.jp/public/jjencode.html" target="_blank" rel="external">http://utf-8.jp/public/jjencode.html</a></p>
+<p>解密工具                <a href="https://github.com/jacobsoo/Decoder-JJEncode" target="_blank" rel="external">https://github.com/jacobsoo/Decoder-JJEncode</a></p>
+<p>​            手动：    其实jjencode的最后是一个函数，为此，我们只需要最后的()改成.toString()即可</p>
+<p>aaencode将JS代码转换成只有符号的字符串，aaencode可以将JS代码转换成常用的网络表情，也就是我们说的颜文字js加密。纯粹的表情</p>
+<p>加密工具                <a href="http://utf-8.jp/public/aaencode.html" target="_blank" rel="external">http://utf-8.jp/public/aaencode.html</a></p>
+<p>解密工具                <a href="https://cat-in-136.github.io/2010/12/aadecode-decode-encoded-as-aaencode.html" target="_blank" rel="external">https://cat-in-136.github.io/2010/12/aadecode-decode-encoded-as-aaencode.html</a></p>
+<p>​            手动：    其实aaencode的最后是一个函数，为此，我们只需要最后的(&#39;_&#39;)改成.toString()即可</p>
+<h4 id="0x3-2-9-jother加解密"><a href="#0x3-2-9-jother加解密" class="headerlink" title="0x3.2.9 jother加解密"></a>0x3.2.9 jother加解密</h4><p>jother是一种运用于javascript语言中利用少量字符构造精简的匿名函数方法对于字符串进行的编码方式。其中8个少量字符包括： <code>! + ( ) [ ] { }</code> 。只用这些字符就能完成对任意字符串的编码。不同于jsfuck，它多了{}这两个大括号</p>
+<p>这里可以参考文章<a href="http://wps2015.org/drops/drops/jother%E7%BC%96%E7%A0%81%E4%B9%8B%E8%B0%9C.html" target="_blank" rel="external">jother编码之谜</a></p>
+<p>加密工具                工具包-&gt;Misc-&gt;jother</p>
+<p>解密工具                由于jother执行之后所得到的结果分为字符串和函数两种，所以解密的方法也不相同。</p>
+<p>​            字符串：直接在Console界面中输入并回车即可</p>
+<p>​            函数：    对于函数类型的jother加密结果，我们只需要将最后的()改成.toString()即可</p>
+<h4 id="0x3-2-10-自定义加密算法"><a href="#0x3-2-10-自定义加密算法" class="headerlink" title="0x3.2.10 自定义加密算法"></a>0x3.2.10 自定义加密算法</h4><p>这无疑是这里面最难的一类。这样的一类算法，有可能是非对称的，经过加密之后仍能完成对应的功能！</p>
+<p>当然有些对称的，如果作者给出解密算法，可能就比较容易。关键是作者会不会这么做了</p>
+<p>ps：基于大多数情况下，js代码加密之后，对应代码不一定能执行，所以通常js文件中会有对应的解密算法！</p>
+<h3 id="0x3-3-js混淆"><a href="#0x3-3-js混淆" class="headerlink" title="0x3.3 js混淆"></a>0x3.3 js混淆</h3><p>混淆应该是工业界和ctf题中用得最多的方式之一了。Javascript 作为一种运行在客户端的脚本语言，其源代码对用户来说是完全可见的。但不是每一个 js 开发者都希望自己的代码能被直接阅读，比如恶意软件的制造者们。为了增加代码分析的难度，混淆（obfuscate）工具被应用到了许多恶意软件（如 0day 挂马、跨站攻击等）当中。分析人员为了掀开恶意软件的面纱，首先就得对脚本进行反混淆（deobfuscate）处理。</p>
+<p><strong>这一节的js混淆，强调的只是复杂化表达式</strong></p>
+<p>代码混淆不一定会调用 eval，也可以通过在代码中填充无效的指令来增加代码复杂度，极大地降低可读性。Javascript 中存在许多称得上丧心病狂的特性，这些特性组合起来，可以把原本简单的字面量（Literal）、成员访问（MemberExpression）、函数调 用（CallExpression）等代码片段变得难以阅读。</p>
+<p>Js 中的字面量有字符串、数字、正则表达式</p>
+<p>下面简单举一个例子。</p>
+<ul>
+<li>访问一个对象的成员有两种方法——点运算符和下标运算符。调用 window 的 eval 方法，既可以写成 <code>window.eval()</code>，也可以 <code>window[&#39;eval&#39;]</code>；</li>
+<li>为了让代码更变态一些，混淆器选用第二种写法，然后再在字符串字面量上做文章。先把字符串拆成几个部分：<code>&#39;e&#39; + &#39;v&#39; + &#39;al&#39;</code>；</li>
+<li>这样看上去还是很明显，再利用一个数字进制转换的技巧：<code>14..toString(15) + 31..toString(32) + 0xf1.toString(22)</code>；</li>
+<li>一不做二不休，把数字也展开：<code>(0b1110).toString(4&lt;&lt;2) + (&#39; &#39;.charCodeAt() - 1).toString(Math.log(0x100000000) / Math.log(2)) + 0xf1.toString(11 &lt;&lt; 1)</code>；</li>
+<li>最后的效果：<code>window[(2*7).toString(4&lt;&lt;2) + (&#39; &#39;.charCodeAt() - 1).toString(Math.log(0x100000000) / Math.log(2)) + 0xf1.toString(11 &lt;&lt; 1)](&#39;alert(1)&#39;)</code></li>
+</ul>
+<p>在 js 中可以找到许多这样互逆的运算，通过使用随机生成的方式将其组合使用，可以把简单的表达式无限复杂化。</p>
+<h4 id="0x3-3-1-解析和变换代码"><a href="#0x3-3-1-解析和变换代码" class="headerlink" title="0x3.3.1 解析和变换代码"></a>0x3.3.1 解析和变换代码</h4><p>本文对 Javascript 实现反混淆的思路是模拟执行代码中可预测结果的部分，编写一个简单的脚本执行引擎，只执行符合某些预定规则的代码块，最后将计算结果替换掉原本冗长的代码，实现表达式的简化。</p>
+<p>如果对脚本引擎解释器的原理有初步了解的话，可以知道解释器在为了“读懂”代码，会对源代码进行词法分析、语法分析，将代码的字符串转换为抽象语法树（<a href="https://en.wikipedia.org/wiki/Abstract_syntax_tree" target="_blank" rel="external">Abstract Syntax Tree</a>, AST）的数据形式。</p>
+<p>如这段代码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> a = <span class="number">42</span>; <span class="keyword">var</span> b = <span class="number">5</span>; <span class="function"><span class="keyword">function</span> <span class="title">addA</span>(<span class="params">d</span>) </span>&#123; <span class="keyword">return</span> a + d; &#125; <span class="keyword">var</span> c = addA(<span class="number">2</span>) + b;</div></pre></td></tr></table></figure>
+<p>对应的语法树如图：</p>
+<p><img src="/images/2017-11-12/31.png" alt=""></p>
+<p>（由 <a href="http://jointjs.com/demos/javascript-ast" target="_blank" rel="external">JointJS</a>的在线工具生成）</p>
+<p>不考虑 JIT 技术，解释器可以从语法树的根节点开始，使用深度优先遍历整棵树的所有节点，根据节点上分析出来的指令逐个执行，直到脚本结束返回结果。</p>
+<p>通过 js 代码生成抽象语法树的工具很多，如压缩器 <a href="https://github.com/mishoo/UglifyJS" target="_blank" rel="external">UglifyJS</a> 带的 parser，还有本文使用的 <a href="http://esprima.org/" target="_blank" rel="external">esprima</a>。</p>
+<p>esprima 提供的接口很简单：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> ast = <span class="built_in">require</span>(<span class="string">'esprima'</span>).parse(code)</div></pre></td></tr></table></figure>
+<p>另外 Esprima 提供了一个在线工具，可以把任意（合法的）Javascript 代码解析成为 AST 并输出： <a href="http://esprima.org/demo/parse.html" target="_blank" rel="external">http://esprima.org/demo/parse.html</a></p>
+<p>再结合 estools 的几个辅助库即可对 js 进行静态代码分析：</p>
+<ul>
+<li><a href="https://github.com/estools/escope" target="_blank" rel="external">escope</a> Javascript 作用域分析工具</li>
+<li><a href="https://github.com/estools/esutils" target="_blank" rel="external">esutil</a> 辅助函数库，检查语法树节点是否满足某些条件</li>
+<li><a href="http://github.com/estools/estraverse" target="_blank" rel="external">estraverse</a>语法树遍历辅助库，接口有一点类似 SAX 方式解析 XML</li>
+<li><a href="http://github.com/estools/esrecurse" target="_blank" rel="external">esrecurse</a> 另一个语法树遍历工具，使用递归</li>
+<li><a href="https://github.com/estools/esquery" target="_blank" rel="external">esquery</a> 使用 css 选择器的语法从语法树中提取符合条件的节点</li>
+<li><a href="http://github.com/estools/escodegen" target="_blank" rel="external">escodegen</a>与 esprima 功能互逆，将语法树还原为代码</li>
+</ul>
+<p>项目中使用的遍历工具是 estraverse。其提供了两个静态方法，<code>estraverse.traverse</code> 和 <code>estraverse.replace</code>。前者单纯遍历 AST 的节点，通过返回值控制是否继续遍历到叶子节点；而 replace 方法则可以在遍历的过程中直接修改 AST，实现代码重构功能。具体的用法可以参考其官方文档，或者本文附带的示例代码。</p>
+<h4 id="0x3-3-2-规则设计"><a href="#0x3-3-2-规则设计" class="headerlink" title="0x3.3.2 规则设计"></a>0x3.3.2 规则设计</h4><p>从实际遇到的代码入手。最近在研究一些 XSS 蠕虫的时候遇到了类似如下代码混淆：</p>
+<p><img src="/images/2017-11-12/41.png" alt=""></p>
+<p>观察其代码风格，发现这个混淆器做了这几件事：</p>
+<ul>
+<li>字符串字面量混淆：首先提取全部的字符串，在全局作用域创建一个字符串数组，同时转义字符增大阅读难度，然后将字符串出现的地方替换成为数组元素的引用</li>
+<li>变量名混淆：不同于压缩器的缩短命名，此处使用了下划线加数字的格式，变量之间区分度很低，相比单个字母更难以阅读</li>
+<li>成员运算符混淆：将点运算符替换为字符串下标形式，然后对字符串进行混淆</li>
+<li>删除多余的空白字符：减小文件体积，这是所有压缩器都会做的事</li>
+</ul>
+<p>经过搜索，这样的代码很有可能是通过 <a href="http://javascriptobfuscator.com/Javascript-Obfuscator.aspx" target="_blank" rel="external">javascriptobfuscator.com</a>的免费版生成的。其中免费版可以使用的三个选项（<code>Encode Strings / Move Strings / Replace Names</code>）也印证了前面观察到的现象。</p>
+<p>这些变换中，变量名混淆是不可逆的。要是可以智能给变量命名的工具也不错，比如这个 <a href="http://jsnice.org/" target="_blank" rel="external">jsnice</a> 网站提供了一个在线工具，可以分析变量具体作用自动重命名。就算不能做到十全十美，实在不行就用人工的方式，使用 IDE（如 WebStorm）的代码重构功能，结合代码行为分析进行手工重命名还原。</p>
+<p>再看字符串的处理。由于字符串将会被提取到一个全局的数组，在语法树中可以观察到这样的特征： 在全局作用域下，出现一个 VariableDeclarator，其 init 属性为 ArrayExpression，而且所有元素都是 Literal ——这说明这个数组所有元素都是常量。简单地将其求值，与变量名（标识符）关联起来。注意，此处为了简化处理，并没有考虑变量名作用域链的问题。在 js 中，作用域链上存在变量名的优先级，比如全局上的变量名是可以被局部变量重新定义的。如果混淆器再变态一点，在不同的作用域上使用相同的变量名，反混淆器 又没有处理作用域的情况，将会导致解出来的代码出错。</p>
+<p>在测试程序中我设置了如下的替换规则：</p>
+<ul>
+<li>全局变量声明的字符串数组，在代码中直接使用数字下标引用其值</li>
+<li>结果确定的一连串二元运算，如 <code>1 * 2 + 3 / 4 - 6 % 5</code></li>
+<li>正则表达式字面量的 source，字符串字面量的 length</li>
+<li>完全由字符串常量组成的数组，其<code>join / reverse / slice</code> 等方法的返回值</li>
+<li>字符串常量的 <code>substr / charAt</code> 等方法的返回值</li>
+<li>decodeURIComponent 等全局函数，其所有参数为常量的，替换为其返回值</li>
+<li>结果为常数的数学函数调用，如 <code>Math.sin(3.14)</code></li>
+</ul>
+<p>至于缩进的还原，这是 escodegen 自带的功能。在调用 <code>escodegen.generate</code>方法生成代码的时候使用默认的配置（忽略第二个参数）即可。</p>
+<h4 id="0x3-3-3-DEMO-程序"><a href="#0x3-3-3-DEMO-程序" class="headerlink" title="0x3.3.3 DEMO 程序"></a>0x3.3.3 DEMO 程序</h4><p>这个反混淆器的原型放在 GitHub 上：<a href="https://github.com/ChiChou/etacsufbo" target="_blank" rel="external">https://github.com/ChiChou/etacsufbo</a></p>
+<p>运行环境和使用方法参考仓库的 README。</p>
+<p>从  <a href="http://youmightnotneedjquery.com/" target="_blank" rel="external">YOU MIGHT NOT NEED JQUERY</a>上摘抄了一段代码，放入 <a href="https://javascriptobfuscator.com/Javascript-Obfuscator.aspx" target="_blank" rel="external">javascriptobfuscator.com</a> 测试混淆：</p>
+<p><img src="/images/2017-11-12/52.png" alt=""></p>
+<p>将混淆结果<a href="https://github.com/ChiChou/etacsufbo/blob/master/tests/cases/jsobfuscator.com.js" target="_blank" rel="external">https://github.com/ChiChou/etacsufbo/blob/master/tests/cases/jsobfuscator.com.js</a>进行解开，结果如下：</p>
+<p><img src="/images/2017-11-12/61.png" alt=""></p>
+<p>虽然变量名可读性依旧很差，但已经可以大体看出代码的行为了。</p>
+<p>演示程序目前存在大量局限性，只能算一个半自动的辅助工具，还有许多没有实现的功能。</p>
+<p>一些混淆器会对字符串字面量进行更复杂的保护，将字符串转换为 f(x) 的形式，其中 f 函数为一个解密函数，参数 x 为密文的字符串。也有原地生成一个匿名函数，返回值为字符串的。这种方式通常使用的函数表达式具有上下文无关的特性——其返回值只与函数的输入有关，与当 前代码所处的上下文（比如类的成员、DOM 中取到的值）无关。如以下代码片段中的 xor 函数：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> xor = <span class="function"><span class="keyword">function</span>(<span class="params">str, a, b</span>) </span>&#123;</div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">return</span> <span class="built_in">String</span>.fromCharCode.apply(<span class="literal">null</span>, str.split(<span class="string">''</span>).map(<span class="function"><span class="keyword">function</span>(<span class="params">c, i</span>) </span>&#123; <span class="keyword">var</span> ascii = c.charCodeAt(<span class="number">0</span>);</div></pre></td></tr></table></figure>
+<p>如何判断某个函数是否具有这样的特性呢？首先一些库函数可以确定符合，如 <code>btoa，escape，String.fromCharCode</code> 等，只要输入值是常量，返回值就是固定的。建立一个这样的内置函数白名单，接着遍历函数表达式的 AST，若该函数参与计算的参数均没有来自外部上下文，且其所有 CallExpression 的 callee 在函数白名单内，那么通过递归的方式可以确认一个函数是否满足条件。</p>
+<p>还有的混淆器会给变量创建大量的引用实例，也就是给同一个对象使用了多个别名，阅读起来非常具有干扰性。可以派出 escope 工具对变量标识符进行数据流分析，替换为所指向的正确值。还有利用数学的恒等式进行混淆的。如声明一个变量 a，若 a 为 Number，则表达式 <code>a-a</code>、<code>a * 0</code> 均恒为 0。但如果 a 满足 <code>isNaN(a)</code>，则表达式返回 <code>NaN</code>。要清理这类代码，同样需要借助数据流分析的方法。</p>
+<p>目前还没有见到使用扁平化流程跳转实现的 js 混淆样本，笔者认为可能跟 js 语言本身的使用场景和特点有关。一般 js 的代都是偏业务型的，不会有太复杂的流程控制或者算法，混淆起来效果不一定理想。</p>
+<h4 id="0x3-3-4-工具总结"><a href="#0x3-3-4-工具总结" class="headerlink" title="0x3.3.4 工具总结"></a>0x3.3.4 工具总结</h4><p>混淆工具：        <a href="https://javascriptobfuscator.com/Javascript-Obfuscator.aspx" target="_blank" rel="external">https://javascriptobfuscator.com/Javascript-Obfuscator.aspx</a>    ( Encode Strings / Move Strings / Replace Names )</p>
+<p>​                <a href="http://tool.lu/js/" target="_blank" rel="external">http://tool.lu/js/</a>        ( Replace Names )</p>
+<p>​                <a href="https://jscrambler.com" target="_blank" rel="external">https://jscrambler.com</a></p>
+<p>去混淆工具：        <a href="https://github.com/ChiChou/etacsufbo" target="_blank" rel="external">https://github.com/ChiChou/etacsufbo</a>  ( 该工具去混淆能力太差 )</p>
+<p>​                <a href="http://jsnice.org/" target="_blank" rel="external">http://jsnice.org/</a></p>
+<p>​                <a href="http://www.bm8.com.cn/jsConfusion/" target="_blank" rel="external">http://www.bm8.com.cn/jsConfusion/</a></p>
+<p>​        反混淆终极工具： <a href="https://prepack.io/" target="_blank" rel="external">https://prepack.io/</a></p>
+<p>​        最终推荐： 如果代码量不是特别大的化，手动去混淆吧，少年！</p>
+<p>这儿找到了一个手动去混淆的栗子，供大家观摩<a href="https://www.blackglory.me/l1l-document-all-features-detailed-js-confused-with-anti-aliasing-process/" target="_blank" rel="external">https://www.blackglory.me/l1l-document-all-features-detailed-js-confused-with-anti-aliasing-process/</a></p>
+<p>​                </p>
+<p>​            </p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/javascript/" rel="tag"># javascript</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+          <div class="wp_rating">
+            <div id="wpac-rating"></div>
+          </div>
+        
+
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/11/12/misc/CTF比赛中关于zip的总结/" rel="next" title="CTF比赛中关于zip的总结">
+                <i class="fa fa-chevron-left"></i> CTF比赛中关于zip的总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/11/13/misc/javascript的调试/" rel="prev" title="javascript的调试">
+                javascript的调试 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="gitalk-container"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/me.jpg"
+               alt="Introspelliam" />
+          <p class="site-author-name" itemprop="name">Introspelliam</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">125</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">56</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/Introspelliam" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/3008590672" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                    
+                      Weibo
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x1-前言"><span class="nav-text">0x1 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x2-技术介绍"><span class="nav-text">0x2 技术介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x2-1-JavaScript简介"><span class="nav-text">0x2.1 JavaScript简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x2-2-JavaScript组成部分"><span class="nav-text">0x2.2 JavaScript组成部分</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#0x2-2-1-ECMAScript（核心）"><span class="nav-text">0x2.2.1 ECMAScript（核心）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x2-2-2-DOM（文档对象模型）"><span class="nav-text">0x2.2.2 DOM（文档对象模型）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x2-2-3-BOM-（浏览器对象模型）"><span class="nav-text">0x2.2.3 BOM （浏览器对象模型）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x2-3-javascript中部分常见的书写方式"><span class="nav-text">0x2.3 javascript中部分常见的书写方式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#0x2-3-1-对象的变量或函数"><span class="nav-text">0x2.3.1 对象的变量或函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x2-3-2-类和函数的定义与使用"><span class="nav-text">0x2.3.2 类和函数的定义与使用</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x3-CTF实践"><span class="nav-text">0x3 CTF实践</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x3-1-js压缩与解压缩"><span class="nav-text">0x3.1 js压缩与解压缩</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#0x3-1-1-js压缩"><span class="nav-text">0x3.1.1 js压缩</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x3-1-2-js解压缩"><span class="nav-text">0x3.1.2 js解压缩</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x3-2-js加密与解密"><span class="nav-text">0x3.2 js加密与解密</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#0x3-2-1-escape加密-unescape解密"><span class="nav-text">0x3.2.1 escape加密\unescape解密</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x3-2-2-转义字符加解密"><span class="nav-text">0x3.2.2 转义字符加解密</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x3-2-3-Script-Encoder来进行编码"><span class="nav-text">0x3.2.3 Script Encoder来进行编码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x3-2-4-任意添加NUL空字符（十六进制00H）"><span class="nav-text">0x3.2.4  任意添加NUL空字符（十六进制00H）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x3-2-5-无用内容混乱以及换行空格TAB大法"><span class="nav-text">0x3.2.5 无用内容混乱以及换行空格TAB大法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x3-2-6-JSPacker加解密"><span class="nav-text">0x3.2.6 JSPacker加解密</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x3-2-7-JSFuck加解密"><span class="nav-text">0x3.2.7 JSFuck加解密</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x3-2-8-jjencode-aaencode"><span class="nav-text">0x3.2.8 jjencode/aaencode</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x3-2-9-jother加解密"><span class="nav-text">0x3.2.9 jother加解密</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x3-2-10-自定义加密算法"><span class="nav-text">0x3.2.10 自定义加密算法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x3-3-js混淆"><span class="nav-text">0x3.3 js混淆</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#0x3-3-1-解析和变换代码"><span class="nav-text">0x3.3.1 解析和变换代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x3-3-2-规则设计"><span class="nav-text">0x3.3.2 规则设计</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x3-3-3-DEMO-程序"><span class="nav-text">0x3.3.3 DEMO 程序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x3-3-4-工具总结"><span class="nav-text">0x3.3.4 工具总结</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Introspelliam</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <script src="/js/md5.min.js"></script>
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '41857e5205be9fe36c48',
+          clientSecret: 'c927ea37a432eff67cdb1081658112c7409ca7ff',
+          repo: 'Introspelliam.github.io',
+          owner: 'Introspelliam',
+          admin: ['Introspelliam'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  <script type="text/javascript">
+  wpac_init = window.wpac_init || [];
+  wpac_init.push({widget: 'Rating', id: ,
+    el: 'wpac-rating',
+    color: 'fc6423'
+  });
+  (function() {
+    if ('WIDGETPACK_LOADED' in window) return;
+    WIDGETPACK_LOADED = true;
+    var mc = document.createElement('script');
+    mc.type = 'text/javascript';
+    mc.async = true;
+    mc.src = '//embed.widgetpack.com/widget.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+  })();
+  </script>
+
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

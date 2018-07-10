@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next mist" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="googleaf0347feb5ea0936.html" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="fuzz," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Introspelliam" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="1. Smart Fuzz1.1 文件格式Fuzz的基本方法不管IE还是Office，都有一个共同点，就是用文件作为程序的主要输入。从本质上讲，这些软件都是按照事先约定好的数据结构对文件中不同的数据域进行解析，以决定用什么颜色、在什么位置显示这些数据。 文件格式Fuzz（File Fuzz）就是利用“畸形文件”测试软件鲁棒性的方法。 File Fuzz工具的工作流程大体如下：  以正常的文件模板为">
+<meta name="keywords" content="fuzz">
+<meta property="og:type" content="article">
+<meta property="og:title" content="文件类型漏洞挖掘与Smart Fuzz">
+<meta property="og:url" content="http://yoursite.com/2017/07/28/0day/文件类型漏洞挖掘与Smart-Fuzz/index.html">
+<meta property="og:site_name" content="Introspelliam">
+<meta property="og:description" content="1. Smart Fuzz1.1 文件格式Fuzz的基本方法不管IE还是Office，都有一个共同点，就是用文件作为程序的主要输入。从本质上讲，这些软件都是按照事先约定好的数据结构对文件中不同的数据域进行解析，以决定用什么颜色、在什么位置显示这些数据。 文件格式Fuzz（File Fuzz）就是利用“畸形文件”测试软件鲁棒性的方法。 File Fuzz工具的工作流程大体如下：  以正常的文件模板为">
+<meta property="og:image" content="http://yoursite.com/images/2017-07-28/file_fuzz.jpg">
+<meta property="og:image" content="http://yoursite.com/images/2017-07-28/png.jpg">
+<meta property="og:image" content="http://yoursite.com/images/2017-07-28/file_structure.jpg">
+<meta property="og:updated_time" content="2018-07-09T11:41:14.968Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="文件类型漏洞挖掘与Smart Fuzz">
+<meta name="twitter:description" content="1. Smart Fuzz1.1 文件格式Fuzz的基本方法不管IE还是Office，都有一个共同点，就是用文件作为程序的主要输入。从本质上讲，这些软件都是按照事先约定好的数据结构对文件中不同的数据域进行解析，以决定用什么颜色、在什么位置显示这些数据。 文件格式Fuzz（File Fuzz）就是利用“畸形文件”测试软件鲁棒性的方法。 File Fuzz工具的工作流程大体如下：  以正常的文件模板为">
+<meta name="twitter:image" content="http://yoursite.com/images/2017-07-28/file_fuzz.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"right","display":"always","offset":0,"offset_float":0,"b2t":true,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: false,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/07/28/0day/文件类型漏洞挖掘与Smart-Fuzz/"/>
+
+
+
+
+
+  <title>文件类型漏洞挖掘与Smart Fuzz | Introspelliam</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?663212c5ef558c27e77385b620f14823";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Introspelliam</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Just do what works for you, because there will always be someone who thinks differently.</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/28/0day/文件类型漏洞挖掘与Smart-Fuzz/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Introspelliam">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">文件类型漏洞挖掘与Smart Fuzz</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-28T22:25:03+08:00">
+                2017-07-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全技术/" itemprop="url" rel="index">
+                    <span itemprop="name">安全技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-Smart-Fuzz"><a href="#1-Smart-Fuzz" class="headerlink" title="1. Smart Fuzz"></a>1. Smart Fuzz</h3><h4 id="1-1-文件格式Fuzz的基本方法"><a href="#1-1-文件格式Fuzz的基本方法" class="headerlink" title="1.1 文件格式Fuzz的基本方法"></a>1.1 文件格式Fuzz的基本方法</h4><p>不管IE还是Office，都有一个共同点，就是用文件作为程序的主要输入。从本质上讲，这些软件都是按照事先约定好的数据结构对文件中不同的数据域进行解析，以决定用什么颜色、在什么位置显示这些数据。</p>
+<p>文件格式Fuzz（File Fuzz）就是利用“畸形文件”测试软件鲁棒性的方法。</p>
+<p>File Fuzz工具的工作流程大体如下：</p>
+<ol>
+<li>以正常的文件模板为基础，按照一定规则生成一批畸形文件</li>
+<li>将畸形文件逐一送入软件进行解析，并监视软件是否会抛出异常</li>
+<li>记录软件产生的错误星系，如寄存器状态、栈状态等</li>
+<li>用日志或其他UI形式向测试人员展示异常信息，以进一步鉴定这些错误是否能被利用</li>
+</ol>
+<p><img src="/images/2017-07-28/file_fuzz.jpg" alt="File Fuzz的一般步骤"></p>
+<h4 id="1-2-Blind-Fuzz和Smart-Fuzz"><a href="#1-2-Blind-Fuzz和Smart-Fuzz" class="headerlink" title="1.2 Blind Fuzz和Smart Fuzz"></a>1.2 Blind Fuzz和Smart Fuzz</h4><p>Blind Fuzz就是“盲测”，也即在随机位置插入随机的数据以生成畸形文件。现代软件往往使用非常复杂的数据结构，而数据结构越复杂，解析逻辑越复杂，就越容易出现漏洞。复杂的数据结构有以下特征：</p>
+<ol>
+<li>拥有一批预定义的静态数据，如magic、cmd id等</li>
+<li>数据结构的内容是可以动态改变的</li>
+<li>数据结构之间是嵌套的 </li>
+<li>数据中存在多种数据关系（size of, point to, reference of, CRC）</li>
+<li>有意义的数据被编码或压缩，甚至用另一种文件形式来存储。</li>
+</ol>
+<p>对于复杂数据结构的复杂文件进行漏洞挖掘，若用Blind Fuzz，则产生测试用例的策略缺少针对性，生成大量无效测试用例，难以发现复杂解析器深层逻辑的漏洞等。</p>
+<p>Smart Fuzz的特征：</p>
+<ol>
+<li>面向逻辑（Logic Oriented Fuzzing）：目标是解析文件的程序逻辑。即明确测试“深度”以及畸形数据的测试“粒度”。</li>
+<li>面向数据类型测试（Data Type Oriented Fuzzing）<ul>
+<li>算术型，以HEX、ASCII、Unicode、Raw格式存在的各种数值</li>
+<li>指针型，Null指针、合法/非法的内存指针等</li>
+<li>字符串型，超长字符串、缺少终止符(0x00)的字符串等</li>
+<li>特殊字符，#,@,*,&lt;,&gt;,/,\,../等</li>
+</ul>
+</li>
+<li>基于样本（Sample Based Fuzzing）：首先构造合法的样本文件（模板文件），然后以这个文件为模板，每次只改动小部分数据和逻辑来生成畸形文件，这也叫做变异（Mutation）</li>
+</ol>
+<h3 id="2-用Peach挖掘文件漏洞"><a href="#2-用Peach挖掘文件漏洞" class="headerlink" title="2. 用Peach挖掘文件漏洞"></a>2. 用Peach挖掘文件漏洞</h3><h4 id="2-1-Peach-介绍与安装"><a href="#2-1-Peach-介绍与安装" class="headerlink" title="2.1 Peach 介绍与安装"></a>2.1 Peach 介绍与安装</h4><p>Peach是一款用Python写的开源Smart Fuzz工具，其支持两种文件Fuzz方法：基于生长(Generation Based)和基于变异(Mutation Based)。基于生长的Fuzz方法产生随机或启发性数据来填充给定的数据模型，从而生成畸形文件。基于变异的Fuzz方法在一个给定的样本文件基础上进行修改从而产生畸形文件。</p>
+<h4 id="2-2-XML介绍"><a href="#2-2-XML介绍" class="headerlink" title="2.2 XML介绍"></a>2.2 XML介绍</h4><p>XML即&quot;Extensible Generalized Markup Language&quot;，可扩展标记性语言；其与HTML一样都是标准通用标记性语言（Standard Generalized Markup Language, SGML）</p>
+<p>XML分为文件序言(Prolog)和文件主体两大部分。文件序言为XML第一行，告诉解析器该如何工作（例如：&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;）。其中version是XML文件所用的标准版本号，必须要有：encoding标明此XML文件的编码类型，如果是Unicode编码时则可以省略。文件主体分为以下几个部分：</p>
+<ol>
+<li>元素(Element)：&lt;title&gt; lang=&quot;cn&quot;&gt;XML&lt;/title&gt;</li>
+<li>标签(Tag)：&lt;tile&gt;</li>
+<li>属性(Attribute)：lang就是&lt;title&gt;的属性</li>
+<li>根元素(Root Element)：又称文档元素。起始标签</li>
+<li>注释(Comment)：&lt;!-- --!&gt;来注释</li>
+</ol>
+<h4 id="2-3-定义简单的Peach-Pit"><a href="#2-3-定义简单的Peach-Pit" class="headerlink" title="2.3 定义简单的Peach Pit"></a>2.3 定义简单的Peach Pit</h4><p>Peach Pit文件包括以下5个模块：</p>
+<ol>
+<li>GeneralConf</li>
+<li>DataModel</li>
+<li>StateModel</li>
+<li>Agents and Monitors</li>
+<li>Test and Run Configuration</li>
+</ol>
+<p>所有元素都包含在根元素&lt;Peach&gt;里</p>
+<pre><code>&lt;?xml version="1.0" encoding="utf-8" ?&gt;
+&lt;Peach xmlns="http://phed.org/2008/Peach" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://phed.org/2008/Peach ../peach.xsd" version="1.0"&gt;
+</code></pre>
+
+<p>上面的Peach元素的各个属性基本上是固定的，不要轻易改动</p>
+<p>一、 GeneralConf<br>GeneralConf是Peach Pit文件的第一部分，用来定义基本配置信息。包括:</p>
+<pre><code>* include: 要包含的其他Peach Pit文件
+* Import：要导入的Python库
+* PythonPath：要添加的python库路径
+</code></pre><p>在HelloWorld中，GeneralConf部分只需写入:</p>
+<pre><code>&lt;!-- Import defaults for Peach instance --&gt;
+&lt;Include ns="default" src="file:defaults.xml" /&gt;
+</code></pre>
+
+<p>二、 DataModel<br>DataModel用来定义数据模型，包括数据结构和数据关系等。一个Peach Pit文件中需要包含一个或多个数据类型。常见的有:</p>
+<pre><code>* String：属性有name, size, value, isStatic
+* Number：属性有name, size
+* Blob: 无具体数据类型，属性有name
+* Block： 用于对数据进行分组，属性有name
+</code></pre><p>HelloWorld程序中定义的:</p>
+<pre><code>&lt;!-- Create a simple data template containing a single string --&gt;
+&lt;DataModel name="HelloWorldTemplate"&gt;
+        &lt;String value="Hello World!" /&gt;
+&lt;/DataModel&gt;
+</code></pre>
+
+<p>三、StateModel<br>StateModel用于描述如何向目标程序发送/接收数据。StateModel由至少一个State组成，并且用initialState指定一个State；每个State由至少一个Action组成，Action用于定义StateModel中的各种动作，动作类型由type来指定。Action支持的动作类型包括start、stop、open、close、input、output、call等。</p>
+<p>当代码中有多个Action时，则从上往下依次执行。</p>
+<pre><code>&lt;StateModel name="State" initialState="State1" &gt;
+        &lt;State name="State1"&gt;
+                &lt;Action type="output" &gt;
+                        &lt;DataModel ref="HelloWorldTemplate"/&gt;
+                &lt;/Action&gt;
+        &lt;/State&gt;
+&lt;/StateModel&gt;
+</code></pre>
+
+<p>四、Agent<br>Agent用于定义代理和监视器，可以用来调用Windbg等调试器来检测程序运行的错误信息等，一个Peach Pit文件可以定义多个Agent，每个Agent下可以定义多个Monitor。<br>Monitor类型为debugger.WindowsDebugEngine，是调用Windbg来执行下面的&quot;notepad.exe filename&quot;命令；而若类型为process.PageHeap，则是为notepad.exe开启页堆调试(Page Heap Debug)。</p>
+<p>五、Test and Run configuration<br>Test元素用来定义一个测试的配置，包括一个StateModel和一个Publisher，以及including/execluding、Agent信息等。其中StateModel和Publisher是必须定义的，其他可选。Publisher用来定义Peach的IO连接，可以构造网络数据流(如TCP，UDP，HTTP)和文件流(如FileWriter，FileReader)等</p>
+<p>在HelloWorld程序中，需要的是将畸形数据显示到命令行，所以Publisher用的是标准输出stdout.Stdout</p>
+<pre><code>&lt;Test name="HelloWorldTest"&gt;
+        &lt;StateModel ref="State"/&gt;
+        &lt;!-- Display test cases to the console --&gt;
+        &lt;Publisher class="stdout.Stdout" /&gt;
+&lt;/Test&gt;
+</code></pre>
+
+
+<p>Run元素用来定义要运行哪些测试，包括一个或多个Test，另外还可以通过Logger元素配置日志来捕获运行结果。当然，Logger是可选的</p>
+<p>HelloWorld程序中，run配置如下：</p>
+<pre><code>&lt;!-- Configure a single run --&gt;
+&lt;Run name="DefaultRun" description="Stdout HelloWorld Run"&gt;
+
+        &lt;Test ref="HelloWorldTest" /&gt;
+
+&lt;/Run&gt;
+</code></pre>
+
+
+<h4 id="2-4-定义数据之间的依存关系"><a href="#2-4-定义数据之间的依存关系" class="headerlink" title="2.4 定义数据之间的依存关系"></a>2.4 定义数据之间的依存关系</h4><p>在Peach Pit中可以用Relation元素来表示数据长度、数据个数以及数据偏移等信息。格式如下:</p>
+<pre><code>&lt;Relation type="size" of="Data" /&gt;
+&lt;Relation type="count" of="Data" /&gt;
+&lt;Relation type="offset" of="Data" /&gt;
+</code></pre>
+
+<p>同样，数据校验值也可以通过Fixup来表示。Fixup支持的校验类型包括CRC32、MD5、SHA1、SHA256、EthernetChecksum、SspiAuthentication等，这可参考官方文档。Fixup格式如下:</p>
+<pre><code>&lt;Fixup class="FixupClass"&gt;
+    &lt;Param name="ref" value="Data" /&gt;
+&lt;/Fixup&gt;
+</code></pre>
+
+<p>FixupClass可以为checksum.Crc32Fixup、checksum.SHA256Fixup等。</p>
+<p>Crc32Fixup数据模型示例:</p>
+<table>
+<thead>
+<tr>
+<th>Offset</th>
+<th>Size</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0x00</td>
+<td>4 bytes</td>
+<td>Length of Data</td>
+</tr>
+<tr>
+<td>0x04</td>
+<td>4 bytes</td>
+<td>Type</td>
+</tr>
+<tr>
+<td>0x08</td>
+<td>Data</td>
+</tr>
+<tr>
+<td>after data</td>
+<td>4 bytes</td>
+<td>CRC of Type and Data</td>
+</tr>
+</tbody>
+</table>
+<p>上面数据模型的实现:</p>
+<pre><code>&lt;DataModel name="HelloData"&gt;
+&lt;Number name="Length" size="32"&gt;
+    &lt;Relation type="size" of="Data"/&gt;
+&lt;/Number&gt;
+&lt;Block name="TypeAndData"&gt;
+    &lt;String name="Type" size="32" /&gt;
+    &lt;Blob name="Data"/&gt;
+&lt;/Block&gt;
+&lt;Number name="CRC" size="32"&gt;
+    &lt;Fixup class="checksums.Crc32Fixup"&gt;
+        &lt;Param name="ref" value="TypeAndData" /&gt;
+    &lt;/Fixup&gt;
+&lt;/Number&gt;
+&lt;/DataModel&gt;
+</code></pre>
+
+<h4 id="2-5-用Peach-Fuzz-PNG文件"><a href="#2-5-用Peach-Fuzz-PNG文件" class="headerlink" title="2.5 用Peach Fuzz PNG文件"></a>2.5 用Peach Fuzz PNG文件</h4><p>首先看看png图片的格式，如图所示:<br><img src="/images/2017-07-28/png.jpg" alt="png文件格式"></p>
+<p>png最前面是8字节PNG签名，十六进制为89 50 4E 0D 0A 1A 0A。随后是若干个数据区块(Chunk)，包括IDHR、IDAT、IEND等。</p>
+<p>png文件Chunk格式</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Size</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Length</td>
+<td>4 bytes</td>
+<td>Length of data field</td>
+</tr>
+<tr>
+<td>Type</td>
+<td>4 bytes</td>
+<td>Chunk type code</td>
+</tr>
+<tr>
+<td>Data</td>
+<td></td>
+<td>Data Bytes</td>
+</tr>
+<tr>
+<td>CRC</td>
+<td>4 bytes</td>
+<td>CRC of type and data</td>
+</tr>
+</tbody>
+</table>
+<p>可以将Chunk的DataModel定义如下:</p>
+<pre><code>&lt;DataModel name="Chunk"&gt;
+&lt;Number name="Length" size="32" signed="false"&gt;
+    &lt;Relation type="size" of="Data"/&gt;
+&lt;/Number&gt;
+&lt;Block name="TypeAndData"&gt;
+    &lt;String name="Type" size="4" /&gt;
+    &lt;Blob name="Data" /&gt;
+&lt;/Block&gt;
+&lt;Number name="CRC" size="32"&gt;
+    &lt;Fixup class="checksums.Crc32Fixup"&gt;
+        &lt;Param name="ref" value="TypeAndData" /&gt;
+    &lt;/Fixup&gt;
+&lt;/Number&gt;
+&lt;/DataModel&gt;
+</code></pre>
+
+<p>PNG简单地认为是由一个PNG签名和若干个结构相同的Chunk组成。在Chunk数据模型之后将PNG文件的DataModel进行如下定义：</p>
+<pre><code>&lt;DataModel name="Png"&gt;
+&lt;Blob name="pngMagic" isStatic="true" valueTyp="hex" value="89 50 4E 47 0D 0A 1A 0A" /&gt;
+&lt;Block ref="Chunk" minOccurs="1" maxOccurs="1024" /&gt;
+&lt;/DataModel&gt;
+</code></pre>
+
+<p>minOccurs=&quot;1&quot; maxOccurs=&quot;1024&quot;表示该区块最少重复1次，最多重复1024次</p>
+<p>然后配置StateModel:第一步修改文件生成畸形文件；第二部需要把文件关闭；第三步需要调用适当的程序打开生成的畸形文件（这里使用pngcheck）。</p>
+<pre><code>&lt;StateModel name="TheState" initialState="Initial"&gt;
+    &lt;State name="Initial"&gt;
+        &lt;!-- Write out our png file --&gt;
+        &lt;Action type="output"&gt;
+            &lt;DataModel ref="Png" /&gt;
+            &lt;!-- This is our sample file to read in --&gt;
+            &lt;Data name="data" fileName="sample.png" /&gt;
+        &lt;/Action&gt;
+    &lt;/State&gt;
+
+    &lt;!-- Close file --&gt;
+    &lt;Action type="close"/&gt;
+
+    &lt;!-- Launch the target process --&gt;
+    &lt;Action type="call" method="D:\tweakpng.exe"&gt;
+        &lt;Param name="png file" type="in"&gt;
+            &lt;DataModel ref="Param" /&gt;
+            &lt;Data name="fileName"&gt;
+                &lt;!-- Name of Fuzzed output file --&gt;
+                &lt;Field name="Value" value="peach.png" /&gt;
+            &lt;/Data&gt;
+        &lt;/Param&gt;
+    &lt;/Action&gt;
+&lt;/StateModel&gt;
+</code></pre>
+
+<p>在call动作中我们引入了&quot;Param&quot;的数据类型，这个数据模型用来存放传达给pngcheck.exe/tweakpng.exe的参数，即畸形文件的文件名。所以&quot;Param&quot;需要包含一个名为&quot;Value&quot;的字符型静态数据。<br>所以需要在StateModel之前定义该数据模型:</p>
+<pre><code>&lt;DataModel name="Param"&gt;
+    &lt;String name="Value" isStatic="true" /&gt;
+&lt;/DataModel&gt;
+</code></pre>
+
+<p>然后在Test元素中配置Publisher信息。这里需要FileWriterLauncher，它能在写完文件后使用call动作启用一个线程。</p>
+<pre><code>&lt;Test name="TheTest"&gt;
+    &lt;StateModel ref="TheState"/&gt;
+    &lt;Publisher class="file.FileWriterLauncher"&gt;
+        &lt;Param name="filename" value="peach.png" /&gt;
+    &lt;/Publisher&gt;
+&lt;/Test&gt;
+</code></pre>
+
+<p>最后在Run信息配置中指定要运行的测试名称</p>
+<pre><code>&lt;Run name="DefaultRun"&gt;
+    &lt;Test ref="TheTest" /&gt;
+&lt;/Run&gt;
+</code></pre>
+
+<p>接下来对png_dumb.xml进行一些改动，让程序调用windows资源管理器打开畸形文件。<br>首先，在StateModel的Action中将tweakpng.exe程序替换为&quot;explorer&quot;<br>然后，在Publisher配置中将class改为file.FileWriterLauncherGui，并且为Publisher增加一个名为WindowName、值为peach.png的参数</p>
+<p>FileWriterLauncherGui与FileWriterLauncher的区别:前者用于运行带界面的GUI程序，并且在运行后会自动关闭窗口标题中含有WindowName的值的GUI窗口。</p>
+<p>为了捕获程序的异常，还需配置Agent and Monitor，调用WinDbg进行测试。</p>
+<p>首先将StateModel中最后一个Action删掉，并添加这一行</p>
+<pre><code>&lt;Action type="call" method="ScoobySnacks" /&gt;
+</code></pre>
+
+<p>然后在StateModel下面加入Agent配置</p>
+<pre><code>&lt;Agent name="LocalAgent"&gt;
+    &lt;Monitor class="debugger.WindowsDebugEngine"&gt;
+        &lt;Param name="CommandLine" value="explorer peach.png"/&gt;
+        &lt;Param name="StartOnCall" value="ScoobySnacks" /&gt;
+    &lt;/Monitor&gt;
+
+    &lt;Monitor class="process.PageHeap"&gt;
+        &lt;Param name="Executable" value="explorer" /&gt;
+    &lt;/Monitor&gt;
+&lt;/Agent&gt;
+</code></pre>
+
+<p>然后在Test配置的第一行加入:</p>
+<pre><code>&lt;Agent ref="LocalAgent" /&gt;
+</code></pre>
+
+<p>并且在Publisher的最后一行加入名为debugger，值为true的参数</p>
+<pre><code>&lt;Param name="debugger" value="true" /&gt;
+</code></pre>
+
+<p>最后在Run配置的Test元素后面加入日志配置:</p>
+<pre><code>&lt;Logger class="logger.Filesystem"&gt;
+    &lt;Param name="path" value="logs" /&gt;
+&lt;/Logger&gt;
+</code></pre>
+
+<p>重新运行Fuzzer，实验效果是Fuzzer程序启动了一个Local Peach Agent，通过该Agent控制WinDbg进行调试并捕获异常事件。</p>
+<font color="#f00"><br>本次实验其实很简单，但是环境一定得按照要求来。<br>windbg 版本为 6.8，是否是x86，抑或是amd64，得与python安装版本一致；<br>python 版本为2.5+，一定是版本2<br>peach 版本为v2.3。该版本能与windbg 6.8兼容，但是不能与6.12兼容。<br></font>
+
+<h3 id="3-010脚本"><a href="#3-010脚本" class="headerlink" title="3. 010脚本"></a>3. 010脚本</h3><h4 id="3-1-010-Editor简介"><a href="#3-1-010-Editor简介" class="headerlink" title="3.1 010 Editor简介"></a>3.1 010 Editor简介</h4><p>010 Editor是文本/十六进制编辑器，还包括文件解析、计算器、文本比较等功能。其可以通过官方网站提供的脚本(Binary Template)对avi、bmp、png、exe等简单格式的文件进行解析，当然也可以根据需求来自己编写文件解析脚本。</p>
+<p>以PNG文件解析为例：用010 Editor打开PNG文件，然后通过Templates-&gt;Open Template菜单打开PNGTemplate.bt，按F5键运行脚本，在窗口中选择该PNG文件，就可以看到解析结果。</p>
+<h4 id="3-2-010脚本编写入门"><a href="#3-2-010脚本编写入门" class="headerlink" title="3.2 010脚本编写入门"></a>3.2 010脚本编写入门</h4><p>010 Editor分析脚本与C/C++的结构体定义比较类似。但是其是一个自上而下执行的程序，可以使用if、for、while等语句。</p>
+<pre><code>char header[4];
+int numRecords;
+</code></pre>
+
+<p>意味着文件 首4个字节将会映射到字符数组header中，下4个字节则会映射到整型变量numRecords中，并最终显示在解析结果中。<br>但是也可能有这种情况：需要定义一些变量，但是这些变量并不对应着文件中的任何字节，而仅仅是程序运行中所需要的，这时可用哪个local关键字来定义变量。</p>
+<pre><code>local int i, total=0;
+int RecordCounts[5];
+for(i=0; i&lt;5; i++)
+    total += recordCounts[i];
+double records[total];
+</code></pre>
+
+<p>另外在数据的定义中，可以加上一些附加属性，如格式、颜色、注释等。附加属性用尖括号&lt;&gt;括起来。常用的属性包括：</p>
+<pre><code>&lt;format=hex|decimal|octal|binary, fgcolor=&lt;color&gt;, bgcolor=&lt;color&gt;, comment="&lt;string&gt;", open=true|false|suppress, hidden=true|false, read=&lt;function_name&gt;, write=&lt;function_name&gt; &gt;
+</code></pre>
+
+<p>实例：<br>文件格式示例如图所示:<br><img src="/images/2017-07-28/file_structure.jpg" alt="文件格式"><br>脚本如下：</p>
+<pre><code>struct FILE{
+    struct HEADER{
+        char type[4];
+        int version;
+        int numRecords;
+    } header;
+
+    struct RECORD{
+        int len;
+        char name[20];
+        if(file.header.version == 1)
+            char data[len];
+        if(file.header.version == 2)
+            byte data[len];
+    } record[file.header.numRecords];
+
+} file;
+</code></pre>
+
+<h4 id="3-3-010脚本编写提高——PNG文件解析"><a href="#3-3-010脚本编写提高——PNG文件解析" class="headerlink" title="3.3 010脚本编写提高——PNG文件解析"></a>3.3 010脚本编写提高——PNG文件解析</h4><p>首先定义PNG签名和Chunk两种结构，PNG文件签名：</p>
+<pre><code>const uint64 PNGMAGIC = 0x89504E470D0A1A0AL;
+</code></pre>
+
+<p>然后是PNG的Chunk格式:</p>
+<pre><code>typedef struct{
+    uint32 length;
+    char ctype[4];
+    ubyte data[length];
+    uint32 crc &lt;format=hex&gt;;
+} CHUNK
+</code></pre>
+
+<p>还需定义CHUNK结构体的read函数，以便在显示解析结果时能够给出每个Chunk的名字，显然ctype的值可以作为Chunk的名字。在ctype中，每个字节的第三位还分别标识了该Chunk的一些附加信息：</p>
+<table>
+<thead>
+<tr>
+<th>位置</th>
+<th>1</th>
+<th>0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>第1字节的第3位</td>
+<td>Ancillary</td>
+<td>Critical</td>
+</tr>
+<tr>
+<td>第2字节的第3位</td>
+<td>Private</td>
+<td>Public</td>
+</tr>
+<tr>
+<td>第3字节的第3位</td>
+<td>ERROR_RESERVED</td>
+<td></td>
+</tr>
+<tr>
+<td>第4字节的第3位</td>
+<td>Safe to Copy</td>
+<td>UnSafe to Copy</td>
+</tr>
+</tbody>
+</table>
+<p>说明:</p>
+<ul>
+<li>Ancillary标识该区块是辅助区块，该区块可有可无；Critical表示该区块是关键区块，这些区块是必须的</li>
+<li>Private表示该区块是不在PNG标准规格(PNG specification)区块中，属于该PNG文件私有，其名称的第二个字母是小写；Public表示该区块属于PNG标准区块，其名称的第二个字母是大写。</li>
+<li>Safe to Copy表示该区块与图像数据无关，可以随意复制到改动过的PNG文件中；Unsafe to Copy表示该区块内容与图像数据息息相关，如果对文件的Critical区块进行了增删改等操作，则该区块也需要进行相应的修改</li>
+</ul>
+<p>于是CHUNK结构定义如下函数：</p>
+<pre><code>string readCHUNK(local CHUNK &c){
+    local string s;
+    s = c.ctype + "  (";
+    s += (c.ctype[0] & 0x20) ? "Ancillary, " : "Critical, ";
+    s += (c.ctype[1] & 0x20) ? "Private, "   : "Public, ";
+    s += (c.ctype[2] & 0x20) ? "ERROR_RESERVED, " : "";
+    s += (c.ctype[3] & 0x20) ? "Safe to Copy)" : "Unsafe to Copy)";
+    return s;
+}
+</code></pre>
+
+<p>同时在定义好的CHUNK结构体后加上read属性，即把“} CHUNK;”改为:</p>
+<pre><code>} CHUNK &lt;read=readCHUNK&gt;
+</code></pre>
+
+<p>最后写入解析&quot;主函数&quot;:</p>
+<pre><code>uint64 pngid &lt;format=hex&gt;;
+
+if(pngid != PNGMAGIC){
+    Warning("Invalid PNG File: Bad Magic Number");
+    return -1;
+}
+
+while(!FEof()){
+    CHUNK chunk;
+}
+</code></pre>
+
+<p>另外，由于PNG文件是按照BigEndian格式进行存储的，所以需要在脚本的第一行加入:</p>
+<pre><code>BigEndian();
+</code></pre>
+
+<p><b>漏洞</b></p>
+<p>实验环境<br>操作系统： Win XP SP3<br>GdiPlus.dll版本： 5.1.3102.5512</p>
+<p>在之前的PNG解析结果中找到IHDR Chunk的length位置，也就是第9-12字节，通常情况下其值为13(0x0D)，现在换成0xFFFFFFF4，并将文件另存为poc.png。<br>在实验环境下打开poc.png，打开资源管理器，会发现explorer.exe的CPU占用率升至100%，使系统接近宕机状态，只有强行结束或者重启explorer.exe进程才能使系统恢复正常。</p>
+<p>实际上gdiplus.dll在处理IHDR时存在整数溢出漏洞。该漏洞的危害：</p>
+<ol>
+<li>打开poc.png或者打开poc.png所在文件夹的未打补丁的用户死机</li>
+<li>将poc.png挂载某网页上，访问该页面的未打补丁用户死机</li>
+<li>设为QQ或MSN头像，查看头像的未打补丁用户死机</li>
+</ol>
+<h4 id="3-4-PPT文件解析"><a href="#3-4-PPT文件解析" class="headerlink" title="3.4 PPT文件解析"></a>3.4 PPT文件解析</h4><p>office系列软件使用的文件格式分为两个：<br>Office97~Office2003：使用基于二进制的文件格式，文件名后缀为doc、ppt、xls等<br>Office2003及更高版本：使用基于XML的文件格式，文件名后缀为docx、pptx、xlsx等。</p>
+<p>本节以PowerPoint97~2003所用的二进制文件格式，PPT文件的解析过程从逻辑上分为如下四层：</p>
+<table>
+<thead>
+<tr>
+<th>测试深度</th>
+<th>解析逻辑</th>
+<th>数据粒度</th>
+<th>Fuzz方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Level1</td>
+<td>OLE2 解析器</td>
+<td>离散分布的512字节数据段</td>
+<td>修改OLE文件头、FAT区块、目录区块等位置的数据结构</td>
+</tr>
+<tr>
+<td>Level2</td>
+<td>PPT 记录解析器</td>
+<td>流和信息库</td>
+<td>修改流中的数据，破坏记录头和数据的关系</td>
+</tr>
+<tr>
+<td>Level3</td>
+<td>PPT 对象创建器</td>
+<td>原子和容器</td>
+<td>用负载替换原子数据</td>
+</tr>
+<tr>
+<td>Level4</td>
+<td>PPT 对象内部逻辑</td>
+<td>原子记录内部的integer、bool、string等类型数据</td>
+<td>用相关的负载修改字节数据</td>
+</tr>
+</tbody>
+</table>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/fuzz/" rel="tag"># fuzz</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+          <div class="wp_rating">
+            <div id="wpac-rating"></div>
+          </div>
+        
+
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/07/28/re/漏洞挖掘技术简介/" rel="next" title="漏洞挖掘技术简介">
+                <i class="fa fa-chevron-left"></i> 漏洞挖掘技术简介
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/02/re/XMAN之旅-逆向基础（上）/" rel="prev" title="XMAN之旅_逆向基础（上）">
+                XMAN之旅_逆向基础（上） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="gitalk-container"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/me.jpg"
+               alt="Introspelliam" />
+          <p class="site-author-name" itemprop="name">Introspelliam</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">125</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">56</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/Introspelliam" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/3008590672" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                    
+                      Weibo
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Smart-Fuzz"><span class="nav-text">1. Smart Fuzz</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-文件格式Fuzz的基本方法"><span class="nav-text">1.1 文件格式Fuzz的基本方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-Blind-Fuzz和Smart-Fuzz"><span class="nav-text">1.2 Blind Fuzz和Smart Fuzz</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-用Peach挖掘文件漏洞"><span class="nav-text">2. 用Peach挖掘文件漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-Peach-介绍与安装"><span class="nav-text">2.1 Peach 介绍与安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-XML介绍"><span class="nav-text">2.2 XML介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-定义简单的Peach-Pit"><span class="nav-text">2.3 定义简单的Peach Pit</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-4-定义数据之间的依存关系"><span class="nav-text">2.4 定义数据之间的依存关系</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-5-用Peach-Fuzz-PNG文件"><span class="nav-text">2.5 用Peach Fuzz PNG文件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-010脚本"><span class="nav-text">3. 010脚本</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-010-Editor简介"><span class="nav-text">3.1 010 Editor简介</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-010脚本编写入门"><span class="nav-text">3.2 010脚本编写入门</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-010脚本编写提高——PNG文件解析"><span class="nav-text">3.3 010脚本编写提高——PNG文件解析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-PPT文件解析"><span class="nav-text">3.4 PPT文件解析</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Introspelliam</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <script src="/js/md5.min.js"></script>
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '41857e5205be9fe36c48',
+          clientSecret: 'c927ea37a432eff67cdb1081658112c7409ca7ff',
+          repo: 'Introspelliam.github.io',
+          owner: 'Introspelliam',
+          admin: ['Introspelliam'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  <script type="text/javascript">
+  wpac_init = window.wpac_init || [];
+  wpac_init.push({widget: 'Rating', id: ,
+    el: 'wpac-rating',
+    color: 'fc6423'
+  });
+  (function() {
+    if ('WIDGETPACK_LOADED' in window) return;
+    WIDGETPACK_LOADED = true;
+    var mc = document.createElement('script');
+    mc.type = 'text/javascript';
+    mc.async = true;
+    mc.src = '//embed.widgetpack.com/widget.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+  })();
+  </script>
+
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

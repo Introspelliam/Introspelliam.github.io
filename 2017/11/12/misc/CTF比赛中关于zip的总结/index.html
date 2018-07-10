@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next mist" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="googleaf0347feb5ea0936.html" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="zip," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Introspelliam" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="本文摘抄于http://www.360zhijia.com/360anquanke/217342.html 前言在CTF比赛的MISC和CRYPTO中，经常要和zip压缩包打交道，这里做一个zip方面的总结。 本文中用到的所有文件和工具都可在这个网盘中找到http://pan.baidu.com/s/1bWQxyA 0x01. 通过进制转换隐藏信息：这种方法比较简单，直接拿一道题讲解（题目来自IS">
+<meta name="keywords" content="zip">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CTF比赛中关于zip的总结">
+<meta property="og:url" content="http://yoursite.com/2017/11/12/misc/CTF比赛中关于zip的总结/index.html">
+<meta property="og:site_name" content="Introspelliam">
+<meta property="og:description" content="本文摘抄于http://www.360zhijia.com/360anquanke/217342.html 前言在CTF比赛的MISC和CRYPTO中，经常要和zip压缩包打交道，这里做一个zip方面的总结。 本文中用到的所有文件和工具都可在这个网盘中找到http://pan.baidu.com/s/1bWQxyA 0x01. 通过进制转换隐藏信息：这种方法比较简单，直接拿一道题讲解（题目来自IS">
+<meta property="og:image" content="http://yoursite.com/images/2017-11-12/3e25b7a0-4b87-4c8b-846f-0be33bf3eba5.png">
+<meta property="og:image" content="http://yoursite.com/images/2017-11-12/b62f4eaa-3cc6-4b67-9c05-e254dbd74a00.png">
+<meta property="og:image" content="http://yoursite.com/images/2017-11-12/9c17b419-0b59-48a1-b885-43a689efc3d1.png">
+<meta property="og:image" content="http://yoursite.com/images/2017-11-12/ee893556-4336-43f8-9c5f-fee6301bb5ea.png">
+<meta property="og:image" content="http://yoursite.com/images/2017-11-12/5dda6aaa-d385-4484-a016-924fa3b455b4.png">
+<meta property="og:image" content="http://yoursite.com/images/2017-11-12/748af5ce-12c7-49ef-9294-9236252f62ac.png">
+<meta property="og:image" content="http://yoursite.com/images/2017-11-12/0ff33b0f-00fd-4989-a3e1-79acd0508ba2.png">
+<meta property="og:image" content="http://yoursite.com/images/2017-11-12/4402f75b-6999-42ca-a368-944c48e1066c.png">
+<meta property="og:image" content="http://yoursite.com/images/2017-11-12/bef05703-6e42-4317-b03d-758534ce6a29.png">
+<meta property="og:image" content="http://yoursite.com/images/2017-11-12/082f2f7a-5090-4384-91c5-131e155f4638.png">
+<meta property="og:image" content="http://yoursite.com/images/2017-11-12/70c5d8a2-cc59-40ac-94c5-dace44d4d5d8.png">
+<meta property="og:image" content="http://yoursite.com/images/2017-11-12/d4a20959-4eb1-445d-8522-be8800af19a2.png">
+<meta property="og:image" content="http://yoursite.com/images/2017-11-12/eda9d191-8c4e-40ca-9cfc-9f28f9820744.png">
+<meta property="og:image" content="http://yoursite.com/images/2017-11-12/c37f0cf4-8cf9-4bb1-8092-2cab0352b7d1.png">
+<meta property="og:image" content="http://yoursite.com/images/2017-11-12/1b80a910-e093-4c57-94d1-3abe7e9cada8.png">
+<meta property="og:image" content="http://yoursite.com/images/2017-11-12/a050cfb3-03e7-4a58-938c-91e9190835f3.png">
+<meta property="og:image" content="http://yoursite.com/images/2017-11-12/e4e6f09e-bed2-4e4e-acc9-37cdfd3d4bae.png">
+<meta property="og:image" content="http://yoursite.com/images/2017-11-12/8c1b66a8-ae92-44b2-9b30-b3044e5d4ea1.png">
+<meta property="og:image" content="http://yoursite.com/images/2017-11-12/2c3138fd-35fd-4bf6-90c3-f0ed7879d235.png">
+<meta property="og:image" content="http://yoursite.com/images/2017-11-12/f2dd1797-5ef2-4aae-bb8e-e42f415a0c47.png">
+<meta property="og:image" content="http://yoursite.com/images/2017-11-12/3cb82d40-9d28-436f-b5a7-cdc72e531c0a.png">
+<meta property="og:image" content="http://yoursite.com/images/2017-11-12/b4adc984-cf39-4e3b-8e19-109e5325c0b8.png">
+<meta property="og:image" content="http://yoursite.com/images/2017-11-12/80c253aa-6d1a-45d0-924b-e0c04d53750c.png">
+<meta property="og:image" content="http://yoursite.com/images/2017-11-12/2de96199-e5c8-41ac-932c-816aea78148a.png">
+<meta property="og:image" content="http://yoursite.com/images/2017-11-12/aefe58e9-d708-4ef3-b7ee-cba6ab2b777b.png">
+<meta property="og:image" content="http://yoursite.com/images/2017-11-12/36822cdc-36ae-4c31-acd0-6400ace26953.png">
+<meta property="og:image" content="http://yoursite.com/images/2017-11-12/712d9efc-cdbc-4863-bcab-aa9d39ba5ae0.png">
+<meta property="og:image" content="http://yoursite.com/images/2017-11-12/22e9812a-c63a-4b22-8d4b-2ac8a9a84928.png">
+<meta property="og:image" content="http://yoursite.com/images/2017-11-12/b7e72a70-dfcb-430a-986c-37d305e6b05a.png">
+<meta property="og:updated_time" content="2018-07-10T07:10:07.586Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CTF比赛中关于zip的总结">
+<meta name="twitter:description" content="本文摘抄于http://www.360zhijia.com/360anquanke/217342.html 前言在CTF比赛的MISC和CRYPTO中，经常要和zip压缩包打交道，这里做一个zip方面的总结。 本文中用到的所有文件和工具都可在这个网盘中找到http://pan.baidu.com/s/1bWQxyA 0x01. 通过进制转换隐藏信息：这种方法比较简单，直接拿一道题讲解（题目来自IS">
+<meta name="twitter:image" content="http://yoursite.com/images/2017-11-12/3e25b7a0-4b87-4c8b-846f-0be33bf3eba5.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"right","display":"always","offset":0,"offset_float":0,"b2t":true,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: false,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/11/12/misc/CTF比赛中关于zip的总结/"/>
+
+
+
+
+
+  <title>CTF比赛中关于zip的总结 | Introspelliam</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?663212c5ef558c27e77385b620f14823";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Introspelliam</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Just do what works for you, because there will always be someone who thinks differently.</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/11/12/misc/CTF比赛中关于zip的总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Introspelliam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Introspelliam">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">CTF比赛中关于zip的总结</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-12T10:22:32+08:00">
+                2017-11-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/misc/" itemprop="url" rel="index">
+                    <span itemprop="name">misc</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文摘抄于<a href="http://www.360zhijia.com/360anquanke/217342.html" target="_blank" rel="external">http://www.360zhijia.com/360anquanke/217342.html</a></p>
+<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a><strong>前言</strong></h3><p>在CTF比赛的MISC和CRYPTO中，经常要和zip压缩包打交道，这里做一个zip方面的总结。</p>
+<p>本文中用到的所有文件和工具都可在这个网盘中找到<a href="http://pan.baidu.com/s/1bWQxyA" target="_blank" rel="external">http://pan.baidu.com/s/1bWQxyA</a></p>
+<h3 id="0x01-通过进制转换隐藏信息："><a href="#0x01-通过进制转换隐藏信息：" class="headerlink" title="0x01. 通过进制转换隐藏信息："></a><strong>0x01. 通过进制转换隐藏信息：</strong></h3><p>这种方法比较简单，直接拿一道题讲解（题目来自ISCC 2017 Basic-04）。题目给了一个txt文档如下图</p>
+<p><img src="/images/2017-11-12/3e25b7a0-4b87-4c8b-846f-0be33bf3eba5.png" alt="【技术分享】CTF比赛中关于zip的总结"></p>
+<p>经过观察，所有数据都在16进制能表示的范围之内，因此先尝试使用十六进制编码解密，python脚本如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#coding:utf-8</span></div><div class="line"><span class="keyword">with</span> open(<span class="string">'Basic-04.txt'</span>) <span class="keyword">as</span> f:</div><div class="line">    cipher = f.read()<span class="comment">#读取txt内容</span></div><div class="line">    plain = cipher.decode(<span class="string">'hex'</span>)<span class="comment">#16进制编码解密</span></div><div class="line">    <span class="keyword">print</span> plain</div></pre></td></tr></table></figure>
+<p>运行结果如下，虽然存在大量乱码，但还是能看到flag.txt，因此猜测txt中的这段字符是zip包的16进制表示（同时开头的PK也暗示这是一个zip包，PK是zip格式发明者Phil Katz的名称缩写，zip的前两个字母就用了PK）</p>
+<p><img src="/images/2017-11-12/b62f4eaa-3cc6-4b67-9c05-e254dbd74a00.png" alt="【技术分享】CTF比赛中关于zip的总结"></p>
+<p>导入到16进制编辑器中，这里用010editor做演示</p>
+<p><img src="/images/2017-11-12/9c17b419-0b59-48a1-b885-43a689efc3d1.png" alt="【技术分享】CTF比赛中关于zip的总结"></p>
+<p>导入后选择 Save As（快捷键 ctrl + shift + s），给新文件命名时加上后缀.zip，保存后发现zip文件是正常的，因此证明思路正确，此题的后续过程请继续阅读这篇文章</p>
+<p><img src="/images/2017-11-12/ee893556-4336-43f8-9c5f-fee6301bb5ea.png" alt="【技术分享】CTF比赛中关于zip的总结"></p>
+<p>另：除了16进制的编码转换，有时还会遇到2进制编码的转换，思路相同，不再复述</p>
+<h3 id="0x02-在图片中隐藏压缩包（图种）"><a href="#0x02-在图片中隐藏压缩包（图种）" class="headerlink" title="0x02. 在图片中隐藏压缩包（图种）"></a><strong>0x02. 在图片中隐藏压缩包（</strong><a href="http://baike.baidu.com/item/%E5%9B%BE%E7%A7%8D" target="_blank" rel="external"><strong>图种</strong></a><strong>）</strong></h3><p>这种方法大概是zip中最常见的，多用于在一张图片中隐藏一个压缩包，这种方法的原理是：以jpg格式的图片为例，<font color="#f00">一个完整的 JPG 文件由 FF D8 开头，FF D9结尾，图片浏览器会忽略 FF D9 以后的内容，因此可以在 JPG 文件中加入其他文件。</font></p>
+<p>也以一道题为例为例（ISCC 2017 Basic-07），对于这种隐写最简单的方法是使用Kali下的binwalk进行检测，binwalk 图片名 如下，检测出图片中存在压缩包</p>
+<p><img src="/images/2017-11-12/5dda6aaa-d385-4484-a016-924fa3b455b4.png" alt="【技术分享】CTF比赛中关于zip的总结"></p>
+<p>分离这个压缩包也有至少两种方法：</p>
+<ol>
+<li>利用Linux下的foremost工具， foremost 图片名 如下，foremost默认的输出文件夹为output，在这个文件夹中可以找到分离出的zip（推荐使用这种方法，因为foremost还能分离出其他隐藏的文件）</li>
+</ol>
+<p><img src="/images/2017-11-12/748af5ce-12c7-49ef-9294-9236252f62ac.png" alt="【技术分享】CTF比赛中关于zip的总结"></p>
+<ol start="2">
+<li>更简单粗暴的方法是直接把图片的后缀改为.zip，然后解压即可（这种方法虽然简单快速，但如果隐写了多个文件时可能会失败）</li>
+</ol>
+<p><img src="/images/2017-11-12/0ff33b0f-00fd-4989-a3e1-79acd0508ba2.png" alt="【技术分享】CTF比赛中关于zip的总结"></p>
+<p>另：本题后续步骤为构造字典，爆破握手包</p>
+<h3 id="0x03-伪加密"><a href="#0x03-伪加密" class="headerlink" title="0x03. 伪加密"></a><strong>0x03. 伪加密</strong></h3><p>Zip伪加密与zip的文件格式有关（zip的格式详解请翻到本文的最后0x07部分），zip中有一位是标记文件是否加密的，如果更改一个未加密zip包的加密标记位，那么在打开压缩包时就会提示该文件是加密的。</p>
+<p><strong>对于伪加密有以下几种方法：</strong></p>
+<ol>
+<li><p>在Mac OS及部分Linux（如Kali）系统中，可以直接打开伪加密的zip压缩包</p>
+</li>
+<li><p>使用检测伪加密的ZipCenOp.jar，解密后如果能成功打开zip包，则是伪加密，否则说明思路错误</p>
+</li>
+<li><p>使用16进制编辑器改回加密标记位</p>
+</li>
+</ol>
+<p>以HBCTF的一道题讲解这几种方法：</p>
+<p><img src="/images/2017-11-12/4402f75b-6999-42ca-a368-944c48e1066c.png" alt="【技术分享】CTF比赛中关于zip的总结"></p>
+<p>如上，尝试解压压缩包时提示有密码，根据题干：比爆破更好的方法推测为伪加密，用三种方法来解此题：</p>
+<ol>
+<li>用除windows外的系统直接打开压缩包</li>
+</ol>
+<p>在Mac OS和部分Linux系统（如Kali）中，右键解压可直接打开伪加密的zip压缩包，笔者暂未明确何种Linux能打开伪加密压缩包，如有传授，不胜感激！</p>
+<ol start="2">
+<li>使用ZipCenOp.jar（需java环境） 使用方法</li>
+</ol>
+<p>java -jar ZipCenOp.jar r xxx.zip</p>
+<p><img src="/images/2017-11-12/bef05703-6e42-4317-b03d-758534ce6a29.png" alt="【技术分享】CTF比赛中关于zip的总结"></p>
+<p>经ZipCenOp.jar解密后的压缩包可直接打开</p>
+<p><img src="/images/2017-11-12/082f2f7a-5090-4384-91c5-131e155f4638.png" alt="【技术分享】CTF比赛中关于zip的总结"></p>
+<p>推荐使用这种方法，最便捷</p>
+<ol start="3">
+<li>用16进制编辑器修改加密标记位</li>
+</ol>
+<p><img src="/images/2017-11-12/70c5d8a2-cc59-40ac-94c5-dace44d4d5d8.png" alt="【技术分享】CTF比赛中关于zip的总结"></p>
+<p>如上图，修改加密标记位为00，保存，即可打开压缩包（关于zip文件的结构，请翻到本文最末0x07部分）</p>
+<h3 id="0x04-爆破-字典-掩码攻击"><a href="#0x04-爆破-字典-掩码攻击" class="headerlink" title="0x04. 爆破/字典/掩码攻击"></a><strong>0x04. 爆破/字典/掩码攻击</strong></h3><p>把这三种归位一类是因为这三种方法在本质上都是逐个尝试，只不过待选密码的集合不同</p>
+<ol>
+<li><p>爆破：顾名思义，逐个尝试选定集合中可以组成的所有密码，知道遇到正确密码</p>
+</li>
+<li><p>字典：字典攻击的效率比爆破稍高，因为字典中存储了常用的密码，因此就避免了爆破时把时间浪费在脸滚键盘类的密码上</p>
+</li>
+<li><p>掩码攻击：如果已知密码的某几位，如已知6位密码的第3位是a，那么可以构造 ??a??? 进行掩码攻击，掩码攻击的原理相当于构造了第3位为a的字典，因此掩码攻击的效率也比爆破高出不少</p>
+</li>
+</ol>
+<p>对这一类的zip问题，推荐windows下的神器AZPR</p>
+<p>举例如下：</p>
+<ol>
+<li>对爆破，以ISCC 2017 Basic-08为例，选定暴力攻击、字符集和长度后进行爆破</li>
+</ol>
+<p><img src="/images/2017-11-12/d4a20959-4eb1-445d-8522-be8800af19a2.png" alt="【技术分享】CTF比赛中关于zip的总结"></p>
+<p><img src="/images/2017-11-12/eda9d191-8c4e-40ca-9cfc-9f28f9820744.png" alt="【技术分享】CTF比赛中关于zip的总结"></p>
+<p>点击开始，进行爆破，如下图，在4ms内就找到了密码为BIT</p>
+<p><img src="/images/2017-11-12/c37f0cf4-8cf9-4bb1-8092-2cab0352b7d1.png" alt="【技术分享】CTF比赛中关于zip的总结"></p>
+<p>另：此题后续为简单的base64解密；爆破在密码长度小于6位时较快，因此如果在7位之内没有爆破出结果时，基本就可以考虑换个方法了；此题的正规解法是培根密码的转换</p>
+<ol start="2">
+<li>字典，还以之前的ISCC 2017 Basic-07举例，从图片中分离出一个加密的zip压缩包，爆破无果后考虑字典攻击（可从网上下载字典，但大多数题目需要自己构造字典，文末的网盘连接里提供了常见的字典）</li>
+</ol>
+<p><img src="/images/2017-11-12/1b80a910-e093-4c57-94d1-3abe7e9cada8.png" alt="【技术分享】CTF比赛中关于zip的总结"></p>
+<p>字典攻击的结果如下图，在字典选择合适的情况下，用很短的时间就能找到密码</p>
+<p><img src="/images/2017-11-12/a050cfb3-03e7-4a58-938c-91e9190835f3.png" alt="【技术分享】CTF比赛中关于zip的总结"></p>
+<p>继续以此题为例，解压后的压缩包有一个txt文档和一个握手包，txt内容如下：</p>
+<p><img src="/images/2017-11-12/e4e6f09e-bed2-4e4e-acc9-37cdfd3d4bae.png" alt="【技术分享】CTF比赛中关于zip的总结"></p>
+<p>因此可知握手包的密码为ISCC****的形式（*代表大写字母或数字），自己写程序构造字典</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#coding:utf-8</span></div><div class="line"><span class="keyword">import</span> string</div><div class="line">pw = <span class="string">'ISCC'</span></div><div class="line">s = string.digits + string.uppercase<span class="comment">#s为后四位密码的可选字符集</span></div><div class="line">  </div><div class="line">f = open(<span class="string">'dic.txt'</span>, <span class="string">'w'</span>)</div><div class="line"><span class="keyword">for</span> i <span class="keyword">in</span> s:</div><div class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> s:</div><div class="line">        <span class="keyword">for</span> p <span class="keyword">in</span> s:</div><div class="line">            <span class="keyword">for</span> q <span class="keyword">in</span> s:</div><div class="line">                f.write(pw + i + j + p + q + <span class="string">'\n'</span>)<span class="comment">#注意字典中的每一条记录都以\n结尾</span></div><div class="line">                 </div><div class="line">f.close()</div></pre></td></tr></table></figure>
+<p>运行此程序得到字典如下：</p>
+<p><img src="/images/2017-11-12/8c1b66a8-ae92-44b2-9b30-b3044e5d4ea1.png" alt="【技术分享】CTF比赛中关于zip的总结"></p>
+<p>之后用aircrack-ng来选中字典跑除握手包的密码如下图，不再详述</p>
+<p><img src="/images/2017-11-12/2c3138fd-35fd-4bf6-90c3-f0ed7879d235.png" alt="【技术分享】CTF比赛中关于zip的总结"></p>
+<p><img src="/images/2017-11-12/f2dd1797-5ef2-4aae-bb8e-e42f415a0c47.png" alt="【技术分享】CTF比赛中关于zip的总结"></p>
+<ol start="3">
+<li>掩码攻击，以ISCC 2017 Misc-06为例，题目给了一个jpg图片，用0x02中的方法分离出加密的压缩包，根据题目提示：注意署名， 构造????LiHua的掩码（?可在自己定义的字符集中任意选择）进行掩码攻击，如下图：</li>
+</ol>
+<p><img src="/images/2017-11-12/3cb82d40-9d28-436f-b5a7-cdc72e531c0a.png" alt="【技术分享】CTF比赛中关于zip的总结"></p>
+<p>攻击结果如下，只耗费了很少的时间就找到了密码</p>
+<p><img src="/images/2017-11-12/b4adc984-cf39-4e3b-8e19-109e5325c0b8.png" alt="【技术分享】CTF比赛中关于zip的总结"></p>
+<h3 id="0x05-明文攻击"><a href="#0x05-明文攻击" class="headerlink" title="0x05. 明文攻击"></a><strong>0x05. 明文攻击</strong></h3><font color="#f00">明文攻击是一种较为高效的攻击手段，大致原理是当你不知道一个zip的密码，但是你有zip中的一个已知文件（文件大小要大于12Byte）时，因为同一个zip压缩包里的所有文件都是使用同一个加密密钥来加密的，所以可以用已知文件来找加密密钥，利用密钥来解锁其他加密文件</font>，更详细的原理请读者自行谷歌<br><br>举个例子，已知 明文攻击.zip 中存在的文件 明文.txt，<br><br>因此将 明文.txt 压缩，这里需要判断明文压缩后的CRC32是否与加密文件中的一致，若不一致可以换一个压缩工具。<br><br><img src="/images/2017-11-12/80c253aa-6d1a-45d0-924b-e0c04d53750c.png" alt="【技术分享】CTF比赛中关于zip的总结"><br><br><br><br>攻击过程如下：<br><br><img src="/images/2017-11-12/2de96199-e5c8-41ac-932c-816aea78148a.png" alt="【技术分享】CTF比赛中关于zip的总结"><br><br>点击开始，很快就恢复了密码<br><br><img src="/images/2017-11-12/aefe58e9-d708-4ef3-b7ee-cba6ab2b777b.png" alt="【技术分享】CTF比赛中关于zip的总结"><br><br>另：当明文的大小比较小时，攻击速度会比较慢；即使有时没有恢复密码，也可以使用明文攻击，最后点保存还是能得到压缩包里内容的。<br><br>### <strong>0x06. CRC32碰撞</strong><br><br>CRC32:CRC本身是“<a href="http://baike.baidu.com/item/CRC32" target="_blank" rel="external">冗余校验码</a>”的意思，CRC32则表示会产生一个32bit（8位十六进制数）的校验值。<br><br>在产生CRC32时，源数据块的每一位都参与了运算，因此即使数据块中只有一位发生改变也会得到不同的CRC32值，利用这个原理我们可以直接爆破出加密文件的内容<br><br>还是以之前HBCTF伪加密那道题为例，另一种解法就是CRC32碰撞，打开压缩包，可以看出压缩文件 flag6位数<br><br>的CRC32值为0x9c4d9a5d<br><br><img src="/images/2017-11-12/36822cdc-36ae-4c31-acd0-6400ace26953.png" alt="【技术分享】CTF比赛中关于zip的总结"><br><br>因此写出碰撞的脚本如下：<br><br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#coding:utf-8</span></div><div class="line"><span class="keyword">import</span> binascii</div><div class="line">  </div><div class="line">crc = <span class="number">0x9c4d9a5d</span></div><div class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">100000</span>, <span class="number">999999</span> + <span class="number">1</span>):<span class="comment">#题目提示flag为6位数，因此只选择6位数字爆破</span></div><div class="line">    <span class="keyword">if</span> (binascii.crc32(str(i)) &amp; <span class="number">0xffffffff</span>) == crc:</div><div class="line">        <span class="keyword">print</span> i</div></pre></td></tr></table></figure><br><br><font color="#f00">要特别注意<br><br>if (binascii.crc32(str(i)) &amp; 0xffffffff) == crc:<br><br>在 Python 2.x 的版本中，binascii.crc32 所计算出來的 CRC 值域为[-2^31, 2^31-1] 之间的有符号整数，为了要与一般CRC 结果作比对，需要将其转为无符号整数，所以加上&amp; 0xffffffff来进行转换。如果是 Python 3.x 的版本，其计算结果为 [0, 2^32-1] 间的无符号整数，因此不需额外加上&amp; 0xffffffff 。</font>
+
+<p>脚本的运行结果如下，即为压缩文件的内容：</p>
+<p><img src="/images/2017-11-12/712d9efc-cdbc-4863-bcab-aa9d39ba5ae0.png" alt="【技术分享】CTF比赛中关于zip的总结"></p>
+<p>再举另一个bugku中的例子，下载下来的文件是68个压缩包，并且根据binwalk的检查结果，每个压缩包里都有一个大小为4个字节，名为out.txt的压缩文件</p>
+<p><img src="/images/2017-11-12/22e9812a-c63a-4b22-8d4b-2ac8a9a84928.png" alt="【技术分享】CTF比赛中关于zip的总结"></p>
+<p>用如下的脚本碰撞出所有压缩包中的数据：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#coding:utf-8</span></div><div class="line"><span class="keyword">import</span> zipfile</div><div class="line"><span class="keyword">import</span> string</div><div class="line"><span class="keyword">import</span> binascii</div><div class="line">  </div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">CrackCrc</span><span class="params">(crc)</span>:</span></div><div class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> dic:</div><div class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> dic:</div><div class="line">            <span class="keyword">for</span> p <span class="keyword">in</span> dic:</div><div class="line">                <span class="keyword">for</span> q <span class="keyword">in</span> dic:</div><div class="line">                    s = i + j + p + q</div><div class="line">                    <span class="keyword">if</span> crc == (binascii.crc32(s) &amp; <span class="number">0xffffffff</span>):</div><div class="line">                        <span class="comment">#print s</span></div><div class="line">                        f.write(s)</div><div class="line">                        <span class="keyword">return</span></div><div class="line">  </div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">CrackZip</span><span class="params">()</span>:</span></div><div class="line">    <span class="keyword">for</span> I <span class="keyword">in</span> range(<span class="number">68</span>):</div><div class="line">        file = <span class="string">'out'</span> + str(I) + <span class="string">'.zip'</span></div><div class="line">        f = zipfile.ZipFile(file, <span class="string">'r'</span>)</div><div class="line">        GetCrc = f.getinfo(<span class="string">'data.txt'</span>)</div><div class="line">        crc = GetCrc.CRC</div><div class="line">        <span class="comment">#以上3行为获取压缩包CRC32值的步骤</span></div><div class="line">        <span class="comment">#print hex(crc)</span></div><div class="line">        CrackCrc(crc)</div><div class="line">  </div><div class="line">dic = string.ascii_letters + string.digits + <span class="string">'+/='</span></div><div class="line">  </div><div class="line">f = open(<span class="string">'out.txt'</span>, <span class="string">'w'</span>)</div><div class="line">CrackZip()</div><div class="line">f.close()</div></pre></td></tr></table></figure>
+<p>此题较为繁琐，之后的步骤不再展开</p>
+<p>另：限于CPU的能力，CRC碰撞只能用于压缩文件较小的情况</p>
+<p>笔者附：由于上述编写的代码速率不高，而且存在些许瑕疵，所以这里推荐使用工具<a href="https://github.com/theonlypwner/crc32" target="_blank" rel="external">https://github.com/theonlypwner/crc32</a></p>
+<h3 id="0x07-修改格式"><a href="#0x07-修改格式" class="headerlink" title="0x07. 修改格式"></a><strong>0x07. 修改格式</strong></h3><p>这种情况花样较多，难以做一个详细的总结，因此只列举最常见的缺少文件头或文件尾。</p>
+<p>放一个zip文件格式讲的较清楚的<a href="http://blog.csdn.net/ETF6996/article/details/51946250" target="_blank" rel="external">链接</a>，通过对zip文件格式的了解，可以解释之前伪加密的问题，同时也可以对缺少文件头或文件尾有更直观的认识。</p>
+<p><img src="/images/2017-11-12/b7e72a70-dfcb-430a-986c-37d305e6b05a.png" alt="【技术分享】CTF比赛中关于zip的总结"></p>
+<p>如上为正常zip，缺头zip和缺尾zip的binwalk扫描结果，根据扫描结果用16进制编辑器添加文件头或文件尾，即可修复zip。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a><strong>总结</strong></h3><p>Zip不仅是我们生活中常用到的一种文件格式，在CTF中也经常遇到，这里做了一个关于CTF中zip的总结，如果对读者有帮助，鄙人不胜荣幸。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/zip/" rel="tag"># zip</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+          <div class="wp_rating">
+            <div id="wpac-rating"></div>
+          </div>
+        
+
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/10/15/code/haskell学习笔记——基本语法/" rel="next" title="haskell学习笔记——基本语法">
+                <i class="fa fa-chevron-left"></i> haskell学习笔记——基本语法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/11/12/misc/CTF比赛中关于javascript的总结/" rel="prev" title="CTF比赛中关于javascript的总结">
+                CTF比赛中关于javascript的总结 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="gitalk-container"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/me.jpg"
+               alt="Introspelliam" />
+          <p class="site-author-name" itemprop="name">Introspelliam</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">125</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">56</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/Introspelliam" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/3008590672" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                    
+                      Weibo
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x01-通过进制转换隐藏信息："><span class="nav-text">0x01. 通过进制转换隐藏信息：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x02-在图片中隐藏压缩包（图种）"><span class="nav-text">0x02. 在图片中隐藏压缩包（图种）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x03-伪加密"><span class="nav-text">0x03. 伪加密</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x04-爆破-字典-掩码攻击"><span class="nav-text">0x04. 爆破/字典/掩码攻击</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x05-明文攻击"><span class="nav-text">0x05. 明文攻击</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x07-修改格式"><span class="nav-text">0x07. 修改格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Introspelliam</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <script src="/js/md5.min.js"></script>
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '41857e5205be9fe36c48',
+          clientSecret: 'c927ea37a432eff67cdb1081658112c7409ca7ff',
+          repo: 'Introspelliam.github.io',
+          owner: 'Introspelliam',
+          admin: ['Introspelliam'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  <script type="text/javascript">
+  wpac_init = window.wpac_init || [];
+  wpac_init.push({widget: 'Rating', id: ,
+    el: 'wpac-rating',
+    color: 'fc6423'
+  });
+  (function() {
+    if ('WIDGETPACK_LOADED' in window) return;
+    WIDGETPACK_LOADED = true;
+    var mc = document.createElement('script');
+    mc.type = 'text/javascript';
+    mc.async = true;
+    mc.src = '//embed.widgetpack.com/widget.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+  })();
+  </script>
+
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

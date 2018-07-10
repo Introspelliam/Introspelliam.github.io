@@ -2,10 +2,8 @@
 
 
 
-  
 
-
-<html class="theme-next mist use-motion" lang="zh-Hans">
+<html class="theme-next mist" lang="zh-Hans">
 <head>
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -106,7 +104,7 @@
 <meta property="og:url" content="http://yoursite.com/2018/05/21/free源码分析——1/index.html">
 <meta property="og:site_name" content="上善若水">
 <meta property="og:description" content="free源码分析—__libc_free本章继续之前的glibc中的《malloc源码分析》系列开始分析free的源代码，malloc的源码分析可以查看博客里同类别文章下的《malloc源码分析—1》到《malloc源码分析—5》，因此free的源码中有一些结构和malloc相似的地方就不会做过多的介绍了。 首先在glibc的malloc.c中有如下定义， 1234strong_alias( __">
-<meta property="og:updated_time" content="2018-05-21T06:55:47.715Z">
+<meta property="og:updated_time" content="2018-07-09T11:41:14.934Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="free源码分析——1">
 <meta name="twitter:description" content="free源码分析—__libc_free本章继续之前的glibc中的《malloc源码分析》系列开始分析free的源代码，malloc的源码分析可以查看博客里同类别文章下的《malloc源码分析—1》到《malloc源码分析—5》，因此free的源码中有一些结构和malloc相似的地方就不会做过多的介绍了。 首先在glibc的malloc.c中有如下定义， 1234strong_alias( __">
@@ -119,10 +117,10 @@
     root: '/',
     scheme: 'Mist',
     version: '5.1.2',
-    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":false,"onmobile":true},
+    sidebar: {"position":"right","display":"always","offset":0,"offset_float":0,"b2t":true,"scrollpercent":true,"onmobile":true},
     fancybox: true,
     tabs: true,
-    motion: true,
+    motion: false,
     duoshuo: {
       userId: '0',
       author: '博主'
@@ -599,7 +597,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">133</span>
+                <span class="site-state-item-count">130</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -610,7 +608,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">16</span>
+                <span class="site-state-item-count">15</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -621,7 +619,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">55</span>
+                <span class="site-state-item-count">54</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -698,6 +696,8 @@
       
         <div class="back-to-top">
           <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
           
         </div>
       
